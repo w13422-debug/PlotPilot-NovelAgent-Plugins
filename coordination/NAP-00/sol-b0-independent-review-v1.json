@@ -1,0 +1,259 @@
+{
+  "schema": "nap-b0-finding-manifest/v1",
+  "reviewer_task_id": "01a043c9-9693-7d72-b34f-d87df4867979",
+  "review_turn_id": "NAP-00-B0-review-turn-1",
+  "baseline_head": "c1b9519c7d25ce1fbef07984cdb548c89e7e1152",
+  "source_candidate_head": "27a8320de05319745dbf7f87db5ea64a0b75dec3",
+  "evidence_head": "8039ceb78dfe242fef773782776ebada862f0857",
+  "verdict": "BLOCK",
+  "all_findings_closed": false,
+  "b0_acceptance_eligible": false,
+  "release_NAP_01_eligible": false,
+  "manifest_frozen": true,
+  "findings": [
+    {
+      "id": "NAP-B0-F-001",
+      "severity": "P1",
+      "status": "open",
+      "scope": [
+        "E"
+      ],
+      "locations": [
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/sdk/plotpilot_plugin_sdk/verifier.py:701-835",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/sdk/typescript/verifier.ts:560-590",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/governance/frozen-design-v1/Novel-Agent功能插件化吸收正式设计-2026-08-27-v1.md:358-363",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/catalog/plugin-catalog-v1.json:2449"
+      ],
+      "contract": "failed/skipped result item 永不创建 Candidate；failed Attempt 只能为 null 或 diagnostic-bundle/v1",
+      "evidence": "把合法 candidate-batch 的 Candidate status 改为 failed，并把 bundle.partial 设为 true 后，Python verify_result_bundle 仍接受；输出 python_failed_candidate_rejected=false。TypeScript 同位置反而显式拒绝，形成跨语言漂移。",
+      "impact": "失败 Attempt 可携带可被误用或 staging 的普通 Candidate，破坏 fail-closed、事务不可见性及 Core Candidate 决策权。",
+      "required_fix": "在 Python Candidate verifier 中无条件拒绝 failed/skipped Candidate，并在 Attempt/result 聚合层强制 failed bundle 只能为 null 或 diagnostic-bundle/v1。",
+      "acceptance_test": "分别对 Python/TypeScript 构造 failed、skipped Candidate、failed Attempt candidate-batch、事务 staging 后失败等负例；所有路径必须拒绝且不得留下可见 Candidate。"
+    },
+    {
+      "id": "NAP-B0-F-002",
+      "severity": "P1",
+      "status": "open",
+      "scope": [
+        "B",
+        "I"
+      ],
+      "locations": [
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/sdk/typescript/verifier.ts:68-70,262-280,560-679",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/sdk/typescript/types.ts:175-196",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/sdk/typescript/index.ts:1-3",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/sdk/plotpilot_plugin_sdk/verifier.py:235-257,701-835,1152-1225",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/governance/frozen-design-v1/Novel-Agent功能插件化吸收正式设计-2026-08-27-v1.md:662-666"
+      ],
+      "contract": "所有 JSON object closed；package/JCS/hash/golden 及 result/receipt surface 跨 Python/TypeScript 一致",
+      "evidence": "TypeScript assertSchema 只比较 schema 字符串。反例显示未知 manifest 字段、跨 workspace write_set、partial/item status 不一致均被接受。ArtifactItem/DiagnosticItem TypeScript 字段与公共 result-bundle schema 不同，且没有 provenance receipt、Skill receipt、checkpoint、stream-prefix verifier。",
+      "impact": "TypeScript 插件可接受 Python/Core 拒绝的对象，或无法验证关键 receipt/recovery 对象，导致同一合同在不同语言产生不同安全与持久化结果。",
+      "required_fix": "让 TypeScript 使用同一冻结 JSON Schema inventory 或等价的完整 closed-object validator；补齐 Python 公共 surface 的 receipt/checkpoint/stream/Skill verifier，并修正 types.ts。",
+      "acceptance_test": "建立 Python/TypeScript differential corpus，覆盖全部正负 schema、未知/缺失字段、workspace 越界、partial 状态、receipt self-hash、checkpoint、stream 和 Skill chain；两端判定必须逐项相同。"
+    },
+    {
+      "id": "NAP-B0-F-003",
+      "severity": "P1",
+      "status": "open",
+      "scope": [
+        "B",
+        "I"
+      ],
+      "locations": [
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/sdk/typescript/package.json:1-9",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/sdk/typescript/tsconfig.json:1-15",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/tests/contracts/test_typescript_parity.py:24-28",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/coordination/NAP-00/b0-verification.md:30,36-38"
+      ],
+      "contract": "construction-plan NAP-00 acceptance: public SDK compiles",
+      "evidence": "系统和仓库均无 tsc/TypeScript dependency 或 compile script；现有测试仅执行 Node --experimental-strip-types --check，它会删除类型而不做 TypeScript 类型检查。",
+      "impact": "strict tsconfig 从未被执行，公开类型面中的错误或不兼容可以在 B0 全绿时进入后续项目；public SDK compiles 尚未被证明。",
+      "required_fix": "提供锁定版本的 TypeScript compiler 与可复现的 noEmit compile script，并把 tsc -p sdk/typescript/tsconfig.json 纳入 B0 gate。",
+      "acceptance_test": "运行锁定版本 tsc --noEmit 成功；注入一个确定的类型错误时 gate 必须失败，恢复后再成功。"
+    },
+    {
+      "id": "NAP-B0-F-004",
+      "severity": "P1",
+      "status": "open",
+      "scope": [
+        "C",
+        "I"
+      ],
+      "locations": [
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/catalog/demos/code/plugin.json:1",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/catalog/demos/code/backend/nap00_demo_code-1.0.0-py3-none-any.whl:whole-file",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/catalog/demos/code/backend/wheels/nap00_demo_wheelhouse_placeholder-0.0.0-py3-none-any.whl:whole-file",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/tests/contracts/test_catalog_demos.py:52-74",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/governance/frozen-design-v1/construction-plan-9-projects-v1.json#$.projects[0].acceptance[2]"
+      ],
+      "contract": "demo Code/Data/Skill packages",
+      "evidence": "Code manifest 声明 Wheel 与 fixture_worker:main，但主 Wheel 是 62-byte 文本“not a build artifact”，wheelhouse 文件同为文本；二者均不是 ZIP/Wheel。测试只检查文件存在和 hash。",
+      "impact": "Code demo 不能安装或加载 entrypoint，当前结果只证明任意字节的 hash 可复现，并未交付 Code package vertical slice。",
+      "required_fix": "交付最小但合法、可导入的纯 Python Wheel；重新生成 files.sha256/package_hash/release_id/receipt，并验证 entrypoint。",
+      "acceptance_test": "验证 Wheel ZIP/metadata/tag，安装或解包至隔离临时环境并成功 import fixture_worker:main；任意 Wheel 字节变化必须同步改变完整 identity/receipt 链。"
+    },
+    {
+      "id": "NAP-B0-F-005",
+      "severity": "P1",
+      "status": "open",
+      "scope": [
+        "D",
+        "E",
+        "I"
+      ],
+      "locations": [
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/sdk/plotpilot_plugin_sdk/verifier.py:1030-1059",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/sdk/typescript/verifier.ts:416-440",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/tests/contracts/test_python_sdk.py:199-210",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/contracts/json-schema/plugin-lifecycle-transition-v1.schema.json:1-159",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/governance/frozen-design-v1/Novel-Agent功能插件化吸收正式设计-2026-08-27-v1.md:723-731"
+      ],
+      "contract": "runtime/install/settings/data 失败恢复 exact LKG Generation；Plan rollback 是独立动作",
+      "evidence": "rollback_armed→rolled_back 反例在同一 install_operation_id 下修改 base_lkg_generation_id、target_generation_id 和 rollback_token，Python/TS verifier 均未拒绝；same-state 也可改变这些身份。现有测试只覆盖 selected→failed 和单个 pin。",
+      "impact": "回滚可能指向非原始 LKG 或不同 target/token，无法证明恢复完整 package/data/settings/UI member，也可能把 Plan rollback 与 Generation rollback 混写。",
+      "required_fix": "冻结同一 install operation 的 base_generation_id、base_lkg_generation_id、target_generation_id、target settings、qualification/rollback token 等身份；按状态约束字段出现与 package-store progression，并验证 rolled_back 的目标恰为原始 exact LKG。",
+      "acceptance_test": "覆盖所有合法边、非法边、same-state 更新、每个冻结字段漂移、重复 rollback、错误 LKG/target/token、时间倒退和 package-store 倒退；任何身份漂移必须 fail-closed。"
+    },
+    {
+      "id": "NAP-B0-F-006",
+      "severity": "P1",
+      "status": "open",
+      "scope": [
+        "F"
+      ],
+      "locations": [
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/plugins/provider-anthropic/descriptor.json:8-9",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/plugins/provider-gemini/descriptor.json:8-9",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/plugins/provider-anthropic/provider_anthropic/provider.py:119-142,191-240",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/plugins/provider-gemini/provider_gemini/provider.py:115-138,180-229",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/governance/frozen-design-v1/Novel-Agent功能插件化吸收正式设计-2026-08-27-v1.md:203-213"
+      ],
+      "contract": "每个 provider descriptor 固定且可验证的 closed input/output schema",
+      "evidence": "四个 model.provider.* invoke-request/invoke-result schema ID 在仓库中只有 catalog、descriptor 和常量引用，没有 schema artifact；InvocationOutcome.as_dict 也不携带或验证 advertised output schema。",
+      "impact": "Core 无法解析并执行 descriptor 所承诺的闭合输入/输出边界，未知字段、错误类型及输出 shape 只能依赖不等价的手写检查。",
+      "required_fix": "在 provider package 内交付并哈希 closed input/output schemas，确保 descriptor ID 可解析；所有输入和 InvocationOutcome 输出在使用前后按这些 schema 验证。",
+      "acceptance_test": "遍历两个 descriptor 的 input_schema/output_schema 并解析到唯一 package artifact；对每个必需字段、类型和未知字段做正负测试，输出 envelope 也必须声明并通过对应 schema。"
+    },
+    {
+      "id": "NAP-B0-F-007",
+      "severity": "P0",
+      "status": "open",
+      "scope": [
+        "F",
+        "J"
+      ],
+      "locations": [
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/plugins/provider-anthropic/provider_anthropic/provider.py:191-240,253-270,311-335",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/plugins/provider-gemini/provider_gemini/provider.py:180-229,241-258,297-322"
+      ],
+      "contract": "provider transport/credential configuration 不得由 capability request 控制",
+      "evidence": "request validator 保留未声明 base_url；wire builder 使用该字段覆盖 endpoint；HTTPTransport 随后把配置中的 API key 注入该 URL。无网络阻断 PoC 对两个 provider 均捕获 request-controlled.invalid 和 CANARY key。",
+      "impact": "能够构造 provider request 的调用方可把 Host 注入的 Anthropic/Gemini 凭据重定向到任意 endpoint。",
+      "required_fix": "从 capability request 删除并拒绝 base_url 等 transport 字段；endpoint 只能来自 Core-owned provider/model profile 或 transport 实例的固定配置，发送前执行 origin 绑定。",
+      "acceptance_test": "配置 transport 为 configured.invalid，在 request 注入 attacker.invalid 并拦截 urlopen；必须在发送前拒绝，且任何 caller-controlled URL 都不得收到 credential header。"
+    },
+    {
+      "id": "NAP-B0-F-008",
+      "severity": "P1",
+      "status": "open",
+      "scope": [
+        "F",
+        "J"
+      ],
+      "locations": [
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/plugins/provider-anthropic/provider_anthropic/provider.py:367-463,475-540,581-662",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/plugins/provider-gemini/provider_gemini/provider.py:354-448,460-525,568-641",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/plugins/provider-anthropic/provider_anthropic/mock.py:81-98",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/plugins/provider-gemini/provider_gemini/mock.py:74-91",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/contracts/json-schema/rpc-method-matrix.v1.json:341-380",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/catalog/plugin-catalog-v1.json:1752-1765,1791-1804"
+      ],
+      "contract": "Core owns Job、stream identity、Model/Provenance receipt；terminal 仅经 host.job.complete/v1",
+      "evidence": "两 provider 自造 stream_id/receipt_id，不比较 Host stream_id、checkpoint identity 或 completion provenance_receipt_id；job.event 和 job.complete 响应未验证。Host 返回 accepted=false 且 states=running 时仍得到 succeeded。",
+      "impact": "provider 可在 Core 未持久化终态时报告成功；stream、Bundle 和 receipt 链可能指向不同身份，破坏恢复、terminal hydration 和 provenance traversal。",
+      "required_fix": "使用 job start/resume 上下文中的 Core-issued stream/receipt identities；以公共 RPC verifier 校验所有 Host 结果；要求 stream/checkpoint/receipt identity 完全一致，completion accepted=true 且状态符合请求终态。",
+      "acceptance_test": "两个 provider 参数化测试 mismatched stream_id、checkpoint_id、receipt_id、accepted=false、错误 attempt/step/job state、缺失/额外 Host result 字段；全部必须 fail-closed 且不得返回 succeeded。"
+    },
+    {
+      "id": "NAP-B0-F-009",
+      "severity": "P1",
+      "status": "open",
+      "scope": [
+        "F"
+      ],
+      "locations": [
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/plugins/provider-anthropic/provider_anthropic/provider.py:49-58,410-439",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/plugins/provider-gemini/provider_gemini/provider.py:49-58,396-424",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/plugins/provider-anthropic/plugin.json:30-40",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/plugins/provider-gemini/plugin.json:30-40",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/sdk/plotpilot_plugin_sdk/package.py:190-207"
+      ],
+      "contract": "plotpilot-package/v1、plotpilot-release/v1、Generation exact package_hash/release_id",
+      "evidence": "provider PACKAGE_HASH 只哈希自创域和 plugin ID，RELEASE_ID 使用非公共 plotpilot-provider-* 公式。两个 plugin.json 声明的 Wheel、requirements.lock、wheelhouse、migration manifest 均不存在，也没有 files.sha256；descriptor/receipt ID 与 public SDK 对实际文件的计算不一致。",
+      "impact": "源码变化不一定改变 provider package/release identity，descriptor 和 receipt 不能指认真实不可变字节，破坏 pin、Generation、rollback 和 provenance。",
+      "required_fix": "交付完整 provider package 文件集和 files.sha256，仅通过公共 SDK 计算 package_hash/release_id，并让 descriptor 及成功/失败 receipt 使用同一 identity。",
+      "acceptance_test": "对两个 provider 运行 verify_package_identity；manifest 全部路径必须存在；descriptor/receipt/package identity 必须相等；内存改变任意一个字节后 package、release、receipt 链必须改变或拒绝。"
+    },
+    {
+      "id": "NAP-B0-F-010",
+      "severity": "P1",
+      "status": "open",
+      "scope": [
+        "F",
+        "I"
+      ],
+      "locations": [
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/plugins/provider-anthropic/provider_anthropic/provider.py:20-39",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/plugins/provider-gemini/provider_gemini/provider.py:20-39",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/sdk/plotpilot_plugin_sdk/canonical.py:38-51",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/governance/frozen-design-v1/Novel-Agent功能插件化吸收正式设计-2026-08-27-v1.md:664-666"
+      ],
+      "contract": "RFC 8785 JCS 唯一 canonical/hash 权威",
+      "evidence": "SDK ImportError fallback 使用 json.dumps。0.0 被编码为 0.0 而非 0，1e-7 为 1e-07 而非 1e-7，-0.0 为 -0.0 而非 0；temperature=0.0 是正常 request 值。",
+      "impact": "相同 invocation 会因 SDK 是否可导入而获得不同 request、stream、checkpoint、Bundle 和 receipt identity，形成第二 canonical 权威。",
+      "required_fix": "SDK 不可用时明确 fail-closed，或直接复用完全相同的 RFC 8785 实现；删除近似 fallback。",
+      "acceptance_test": "分别在 SDK-present 和隔离 SDK-absent 环境运行完整 RFC 8785 数值/Unicode vector；必须字节完全相同，或 SDK-absent 明确拒绝启动。"
+    },
+    {
+      "id": "NAP-B0-F-011",
+      "severity": "P1",
+      "status": "open",
+      "scope": [
+        "G",
+        "H",
+        "I"
+      ],
+      "locations": [
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/tools/integration/validate_b0_delivery.py:53-83,86-109,112-139,142-202",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/tests/e2e/test_b0_end_to_end.py:15-24",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/coordination/NAP-00/b0-verification.md:20-25,34"
+      ],
+      "contract": "精确 source HEAD、clean tree、冻结写集/catalog/demo/provider owner/needs 的 no-ff 验证门",
+      "evidence": "expected-head、clean、require-changes 均可选，自测/E2E 只传 require-changes。内存探针证明删除 OpenAI duplicate_of、catalog+manifest 同步追加任意 need、删除 descriptor 的 schema/input/output/deterministic、缺少 Code demo manifest 均仍 failures=[]。",
+      "impact": "错误 HEAD、dirty tree 或被同步篡改/缺失的 catalog、demo、provider 合同仍可输出 status=ok，不能作为 no-ff merge eligibility 证据。",
+      "required_fix": "把固定 baseline、精确 source candidate HEAD、clean 和非空 diff 设为强制；验证 commit tree 而非 ambient evidence HEAD；逐路径验证三类 demo 与完整 package/receipt；对照冻结 catalog 验证完整 OpenAI disposition、provider owner/needs/descriptor。",
+      "acceptance_test": "在隔离临时 Git fixture 中逐一测试错误 HEAD、dirty allowed-path、缺 Code demo、错误 files.sha256、删除 duplicate_of、额外 need、descriptor 字段删除、provider owner 漂移；每项必须 nonzero，正确 source tree 才能通过。"
+    },
+    {
+      "id": "NAP-B0-F-012",
+      "severity": "P2",
+      "status": "open",
+      "scope": [
+        "I"
+      ],
+      "locations": [
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/tests/providers/test_provider_contracts.py:121-174,184-204,239-247",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/tests/providers/test_provider_contracts.py:140",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/tests/contracts/test_python_sdk.py:199-210",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/tests/contracts/test_catalog_demos.py:52-74",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/tests/contracts/test_typescript_parity.py:24-164",
+        "C:/Users/Administrator/Desktop/写作资料汇总/PlotPilot-NovelAgent-Plugins/tests/e2e/test_b0_end_to_end.py:15-24"
+      ],
+      "contract": "正负路径、跨语言边界、lifecycle、provider conditional/terminal 结果回归覆盖",
+      "evidence": "第 140 行条件表达式使 Gemini 分支只 assert 真值字符串；suite 未覆盖 Host reject/Core ID、endpoint、provider package identity、真实 tsc、closed TS schema、exact LKG drift、failed Candidate 或 Wheel validity。上述实现缺陷下仍 34 passed。",
+      "impact": "测试绿灯无法证明 B0 合同闭合，Gemini output_text 回归和多个 P0/P1 问题不会触发失败。",
+      "required_fix": "修复条件断言；补齐各 Finding 的负测与 differential corpus；E2E 使用全部强制 gate identity 参数并验证精确 source candidate。",
+      "acceptance_test": "分别注入错误 Gemini output_text、Host reject/mismatched ID、request endpoint、package byte mutation、invalid Wheel、TS unknown field、failed Candidate 和 LKG drift；每个 mutation 必须使对应测试失败。"
+    }
+  ]
+}
