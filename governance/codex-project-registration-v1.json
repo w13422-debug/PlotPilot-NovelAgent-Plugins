@@ -1,0 +1,109 @@
+{
+  "schema": "codex-project-registration/v1",
+  "verified_at": "2026-08-27T21:52:44.2440329+08:00",
+  "verification_source": "mcp__codex_app.list_projects",
+  "repository": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins",
+  "expected_count": 9,
+  "verified_count": 9,
+  "all_exact_paths": true,
+  "all_git_repositories": true,
+  "pre_registration_evidence_head": "b50c38d5f532981eeb5258a708611657fc93598c",
+  "projects": [
+    {
+      "id": "NAP-00",
+      "name": "Integration-Contracts",
+      "project_id": "4370e01a-f970-4818-95b7-c0abf4d6e082",
+      "label": "PlotPilot-NovelAgent-Plugins",
+      "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins",
+      "branch": "codex/nap-00-integration",
+      "is_git_repository": true
+    },
+    {
+      "id": "NAP-01",
+      "name": "Source-Import-Cleaning",
+      "project_id": "578ed478-4b1d-4517-b0f2-d8673ccaa567",
+      "label": "NAP-01",
+      "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-01",
+      "branch": "codex/nap-01-source",
+      "is_git_repository": true
+    },
+    {
+      "id": "NAP-02",
+      "name": "Donor-Evidence",
+      "project_id": "07ba023e-ba78-4741-973b-376ec645d3e3",
+      "label": "NAP-02",
+      "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-02",
+      "branch": "codex/nap-02-evidence",
+      "is_git_repository": true
+    },
+    {
+      "id": "NAP-03",
+      "name": "Narrative-Outline",
+      "project_id": "8841aeef-a25d-48d0-81d8-da8853eb1afb",
+      "label": "NAP-03",
+      "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-03",
+      "branch": "codex/nap-03-narrative",
+      "is_git_repository": true
+    },
+    {
+      "id": "NAP-04",
+      "name": "Character-Assets",
+      "project_id": "c0a6f8d1-dc1d-4dfe-9a34-44243d381d97",
+      "label": "NAP-04",
+      "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-04",
+      "branch": "codex/nap-04-character",
+      "is_git_repository": true
+    },
+    {
+      "id": "NAP-05",
+      "name": "Style-Suite",
+      "project_id": "44ddacac-08fc-4cd9-b0a1-f3b5248481d0",
+      "label": "NAP-05",
+      "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-05",
+      "branch": "codex/nap-05-style",
+      "is_git_repository": true
+    },
+    {
+      "id": "NAP-06",
+      "name": "Quality-Canon",
+      "project_id": "5691f7f6-5983-485b-b3ba-9f209ea57de8",
+      "label": "NAP-06",
+      "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-06",
+      "branch": "codex/nap-06-quality",
+      "is_git_repository": true
+    },
+    {
+      "id": "NAP-07",
+      "name": "Writing-Skills",
+      "project_id": "1f7aea6d-a74e-4334-8e36-147c8834107a",
+      "label": "NAP-07",
+      "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-07",
+      "branch": "codex/nap-07-writing",
+      "is_git_repository": true
+    },
+    {
+      "id": "NAP-08",
+      "name": "Exchange-Projection",
+      "project_id": "6bc93cb9-2443-4438-8cd6-e8be2dd9b77c",
+      "label": "NAP-08",
+      "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-08",
+      "branch": "codex/nap-08-exchange",
+      "is_git_repository": true
+    }
+  ],
+  "dispatch_policy": {
+    "current_batch": "B0",
+    "released_project": "NAP-00",
+    "stopped_projects": [
+      "NAP-01",
+      "NAP-02",
+      "NAP-03",
+      "NAP-04",
+      "NAP-05",
+      "NAP-06",
+      "NAP-07",
+      "NAP-08"
+    ],
+    "reason": "B0 must be accepted before downstream dependency gates can open."
+  }
+}
