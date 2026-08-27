@@ -2,7 +2,7 @@
 
 ## Delivery status
 
-实现与合同级自测已完成；source HEAD 在提交后填写。该候选只表示可送审，不表示 Sol PASS 或 merge eligibility。
+实现与合同级自测已完成；已提交 source candidate commit：`27a8320de05319745dbf7f87db5ea64a0b75dec3`。该候选只表示可送审，不表示 Sol PASS 或 merge eligibility。
 
 ## Delivered
 

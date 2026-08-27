@@ -4,6 +4,7 @@
 
 - 分支：`codex/nap-00-integration`
 - 施工基线：`c1b9519c7d25ce1fbef07984cdb548c89e7e1152`
+- 已提交 source candidate commit：`27a8320de05319745dbf7f87db5ea64a0b75dec3`
 - 允许写集：contracts / sdk / catalog / Anthropic + Gemini providers / integration tools / contract-provider-e2e tests / NAP-00 coordination / delivery docs
 - 未修改 PlotPilot Core、Novel-Agent donor、桌面/EXE/安装包或 `dist`
 - OpenAI-compatible provider 未实现；目录 disposition 保持 `not_planned_duplicate`
