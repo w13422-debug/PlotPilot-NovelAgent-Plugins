@@ -1,0 +1,72 @@
+{
+  "group_id": "84.13-07",
+  "title": "Concurrent install CAS, every durable crash point, rollback once, safe-mode exit and settings validator",
+  "assertions": [
+    "Concurrent install base CAS is enforced",
+    "Each install durable transition crash enters safe mode",
+    "Rollback is one-shot",
+    "Safe-mode exit requires reconciliation",
+    "Settings validator failure prevents activation"
+  ],
+  "negative": [
+    {
+      "case_id": "concurrent-install-base-changed",
+      "kind": "install_cas",
+      "expected_error_code": 1010
+    },
+    {
+      "case_id": "install-crash-before-prepare",
+      "kind": "install_crash_before_prepare",
+      "expected_error_code": 1010
+    },
+    {
+      "case_id": "install-crash-after-staging",
+      "kind": "install_crash_after_staging",
+      "expected_error_code": 1010
+    },
+    {
+      "case_id": "install-crash-after-activate",
+      "kind": "install_crash_after_activate",
+      "expected_error_code": 1010
+    },
+    {
+      "case_id": "install-crash-after-settings",
+      "kind": "install_crash_after_settings",
+      "expected_error_code": 1010
+    },
+    {
+      "case_id": "install-crash-after-projection",
+      "kind": "install_crash_after_projection",
+      "expected_error_code": 1010
+    },
+    {
+      "case_id": "rollback-second-attempt",
+      "kind": "rollback_once",
+      "expected_error_code": 1010
+    },
+    {
+      "case_id": "safe-mode-exit-without-reconciliation",
+      "kind": "safe_mode_exit",
+      "expected_error_code": 1010
+    },
+    {
+      "case_id": "safe-mode-exit-after-reconciliation",
+      "kind": "safe_mode_exit_positive"
+    },
+    {
+      "case_id": "invalid-settings-validator",
+      "kind": "settings_validator",
+      "expected_error_code": 1006
+    },
+    {
+      "case_id": "settings-binding-mismatch",
+      "kind": "settings_binding",
+      "expected_error_code": 1011
+    }
+  ],
+  "positive": [
+    "plugin-lifecycle-transition",
+    "settings-validation-receipt",
+    "settings-migration-manifest"
+  ]
+}

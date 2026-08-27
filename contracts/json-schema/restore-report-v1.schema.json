@@ -1,0 +1,144 @@
+{
+  "$id": "https://plotpilot.local/contracts/restore-report-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "backup_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "completed_at": {
+      "anyOf": [
+        {
+          "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "created_at": {
+      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+      "type": "string"
+    },
+    "errors": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "details_asset_id": {
+            "anyOf": [
+              {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "details_asset_id"
+        ],
+        "type": "object"
+      },
+      "minItems": 0,
+      "type": "array"
+    },
+    "missing_release_ids": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "projection_rebuild_required": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "plugin_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "reason": {
+            "const": "plugin_projection_rebuild_required"
+          },
+          "release_id": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "plugin_id",
+          "release_id",
+          "reason"
+        ],
+        "type": "object"
+      },
+      "minItems": 0,
+      "type": "array"
+    },
+    "restore_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "schema": {
+      "const": "restore-report/v1"
+    },
+    "source_root_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "state": {
+      "enum": [
+        "staging",
+        "verifying",
+        "restore_ready",
+        "switched",
+        "failed"
+      ]
+    },
+    "target_root_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "verified_files": {
+      "items": {
+        "maxLength": 240,
+        "minLength": 1,
+        "pattern": "^[^\\\\\\x00]+$",
+        "type": "string"
+      },
+      "minItems": 0,
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema",
+    "restore_id",
+    "backup_id",
+    "source_root_id",
+    "target_root_id",
+    "state",
+    "verified_files",
+    "missing_release_ids",
+    "projection_rebuild_required",
+    "errors",
+    "created_at",
+    "completed_at"
+  ],
+  "title": "PlotPilot restore-report-v1",
+  "type": "object"
+}

@@ -1,0 +1,9 @@
+{
+  "$id": "https://plotpilot.local/contracts/common-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {},
+  "title": "PlotPilot common-v1",
+  "type": "object",
+  "unevaluatedProperties": false
+}

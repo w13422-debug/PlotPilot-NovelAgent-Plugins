@@ -1,0 +1,85 @@
+{
+  "$id": "https://plotpilot.local/contracts/capability-provider-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "accepted_data_formats": {
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+        "type": "string"
+      },
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "capability_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "deterministic": {
+      "type": "boolean"
+    },
+    "input_schema": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "output_schema": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "provider": {
+      "additionalProperties": false,
+      "properties": {
+        "plugin_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "release_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "plugin_id",
+        "release_id"
+      ],
+      "type": "object"
+    },
+    "result_contract": {
+      "enum": [
+        "candidate-batch/v1",
+        "artifact-bundle/v1",
+        "diagnostic-bundle/v1"
+      ]
+    },
+    "schema": {
+      "const": "capability-provider/v1"
+    },
+    "supports": {
+      "items": {
+        "enum": [
+          "run",
+          "resume",
+          "cancel",
+          "validate"
+        ]
+      },
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "schema",
+    "capability_id",
+    "provider",
+    "input_schema",
+    "output_schema",
+    "result_contract",
+    "supports",
+    "deterministic",
+    "accepted_data_formats"
+  ],
+  "title": "PlotPilot capability-provider-v1",
+  "type": "object"
+}

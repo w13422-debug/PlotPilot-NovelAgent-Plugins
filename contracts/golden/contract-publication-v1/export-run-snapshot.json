@@ -1,0 +1,40 @@
+{
+  "asset_hashes": [
+    {
+      "asset_id": "asset-export-current-revisions",
+      "sha256": "ca4beac5511c2c5a1096f29be6eb6d6bffcda07ed5171abf4245481909bbe1e7"
+    }
+  ],
+  "core_contract_version": "1.2.0",
+  "created_at": "2026-08-27T00:00:00Z",
+  "data_bindings": [],
+  "input_revisions": [
+    {
+      "content_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "document_id": "doc-a",
+      "revision_id": "rev-a"
+    },
+    {
+      "content_hash": "2222222222222222222222222222222222222222222222222222222222222222",
+      "document_id": "doc-b",
+      "revision_id": "rev-b"
+    }
+  ],
+  "model_profile_revision_id": null,
+  "parameters_asset_id": "asset-export-current-revisions",
+  "plan_revision_id": "plan-export-r1",
+  "plugin_releases": [],
+  "plugin_settings_revisions": [],
+  "request_key": "574fd0022242b9f9b2c2efdf86289ebf88b3ba4cb6aa464488069152cd723e8b",
+  "run_intent_id": "export-intent-1",
+  "schema": "run-snapshot/v1",
+  "scope": {
+    "document_id": null,
+    "node_id": null,
+    "operation": "writing.export/v1"
+  },
+  "skill_releases": [],
+  "snapshot_hash": "56378981bfe4963dc21f0efb3ae0e7c416da2e5ef98fefb2fdf6b63c798b99d7",
+  "snapshot_id": "snapshot-export-1",
+  "workspace_id": "ws-1"
+}

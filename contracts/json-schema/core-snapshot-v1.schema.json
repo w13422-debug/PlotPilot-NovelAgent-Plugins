@@ -1,0 +1,123 @@
+{
+  "$id": "https://plotpilot.local/contracts/core-snapshot-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "core_event_high_water": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "core_snapshot_revision": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "coverage_complete": {
+      "const": true
+    },
+    "covered_aggregates": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "aggregate_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "aggregate_revision": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "aggregate_type": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "state_asset_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "state_hash": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "aggregate_type",
+          "aggregate_id",
+          "aggregate_revision",
+          "state_asset_id",
+          "state_hash"
+        ],
+        "type": "object"
+      },
+      "minItems": 0,
+      "type": "array"
+    },
+    "created_at": {
+      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+      "type": "string"
+    },
+    "schema": {
+      "const": "core-snapshot/v1"
+    },
+    "snapshot_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "subscription_scope": {
+      "additionalProperties": false,
+      "properties": {
+        "event_types": {
+          "items": {
+            "enum": [
+              "workspace.created",
+              "revision.published",
+              "candidate.staged",
+              "candidate.decided",
+              "job.state.changed",
+              "job.terminal",
+              "plugin.generation.changed",
+              "plugin.release.retiring",
+              "backup.completed",
+              "restore.completed"
+            ]
+          },
+          "minItems": 0,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "workspace_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "workspace_id",
+        "event_types"
+      ],
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema",
+    "snapshot_id",
+    "subscription_scope",
+    "core_snapshot_revision",
+    "core_event_high_water",
+    "coverage_complete",
+    "covered_aggregates",
+    "created_at",
+    "snapshot_hash"
+  ],
+  "title": "PlotPilot core-snapshot-v1",
+  "type": "object"
+}

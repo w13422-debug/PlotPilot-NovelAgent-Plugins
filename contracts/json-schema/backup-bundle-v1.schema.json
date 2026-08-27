@@ -1,0 +1,239 @@
+{
+  "$id": "https://plotpilot.local/contracts/backup-bundle-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "asset_closure_root": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "backup_epoch": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "backup_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "bundle_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "core_contract_version": {
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$",
+      "type": "string"
+    },
+    "core_snapshot_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "created_at": {
+      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+      "type": "string"
+    },
+    "current_generation_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "files": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "maxLength": 240,
+            "minLength": 1,
+            "pattern": "^[^\\\\\\x00]+$",
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "core_db",
+              "plugin_db",
+              "asset",
+              "package",
+              "metadata"
+            ]
+          },
+          "sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "size": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "size",
+          "sha256",
+          "role"
+        ],
+        "type": "object"
+      },
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "library_root_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "lkg_generation_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "mode": {
+      "enum": [
+        "full",
+        "data",
+        "workspace"
+      ]
+    },
+    "plugin_releases": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "package_hash": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "package_present": {
+            "type": "boolean"
+          },
+          "plugin_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "release_id": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "plugin_id",
+          "release_id",
+          "package_hash",
+          "package_present"
+        ],
+        "type": "object"
+      },
+      "minItems": 0,
+      "type": "array"
+    },
+    "projection_rebuild_required": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "plugin_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "reason": {
+            "const": "plugin_projection_rebuild_required"
+          },
+          "release_id": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "plugin_id",
+          "release_id",
+          "reason"
+        ],
+        "type": "object"
+      },
+      "minItems": 0,
+      "type": "array"
+    },
+    "schema": {
+      "const": "backup-bundle/v1"
+    },
+    "verification": {
+      "additionalProperties": false,
+      "properties": {
+        "assets_valid": {
+          "type": "boolean"
+        },
+        "compatible": {
+          "type": "boolean"
+        },
+        "databases_valid": {
+          "type": "boolean"
+        },
+        "files_valid": {
+          "type": "boolean"
+        },
+        "verified_at": {
+          "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "databases_valid",
+        "assets_valid",
+        "files_valid",
+        "compatible",
+        "verified_at"
+      ],
+      "type": "object"
+    },
+    "workspace_ids": {
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+        "type": "string"
+      },
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "workspace_snapshot_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "schema",
+    "backup_id",
+    "library_root_id",
+    "backup_epoch",
+    "mode",
+    "workspace_ids",
+    "core_contract_version",
+    "core_snapshot_hash",
+    "workspace_snapshot_hash",
+    "current_generation_id",
+    "lkg_generation_id",
+    "asset_closure_root",
+    "plugin_releases",
+    "projection_rebuild_required",
+    "files",
+    "created_at",
+    "verification",
+    "bundle_hash"
+  ],
+  "title": "PlotPilot backup-bundle-v1",
+  "type": "object"
+}

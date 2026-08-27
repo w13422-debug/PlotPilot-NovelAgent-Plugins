@@ -1,0 +1,118 @@
+{
+  "$id": "https://plotpilot.local/contracts/settings-revision-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "created_at": {
+      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+      "type": "string"
+    },
+    "migrated_from_revision_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "migration_receipt_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "parent_revision_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "payload_asset_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "payload_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "plugin_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "plugin_release_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "schema": {
+      "const": "settings-revision/v1"
+    },
+    "schema_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "settings_revision_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "state": {
+      "enum": [
+        "draft",
+        "validated",
+        "invalid"
+      ]
+    },
+    "validation_receipt_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "validation_receipt_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "schema",
+    "settings_revision_id",
+    "plugin_id",
+    "plugin_release_id",
+    "schema_hash",
+    "payload_asset_id",
+    "payload_hash",
+    "parent_revision_id",
+    "migrated_from_revision_id",
+    "migration_receipt_hash",
+    "validation_receipt_id",
+    "validation_receipt_hash",
+    "state",
+    "created_at"
+  ],
+  "title": "PlotPilot settings-revision-v1",
+  "type": "object"
+}

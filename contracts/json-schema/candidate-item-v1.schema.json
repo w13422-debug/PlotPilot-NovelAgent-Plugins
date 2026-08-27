@@ -1,0 +1,209 @@
+{
+  "$id": "https://plotpilot.local/contracts/candidate-item-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "base": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "revision_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "revision_id",
+        "content_hash"
+      ],
+      "type": "object"
+    },
+    "item_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "item_kind": {
+      "enum": [
+        "document",
+        "node_structure",
+        "relation_set",
+        "incomplete_stream"
+      ]
+    },
+    "mutation": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "enum": [
+            "replace",
+            "text_patch",
+            "structure_patch",
+            "relation_patch",
+            "append_text"
+          ]
+        },
+        "payload_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "payload_schema": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "mode",
+        "payload_schema",
+        "payload_hash"
+      ],
+      "type": "object"
+    },
+    "parent_candidate_ids": {
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+        "type": "string"
+      },
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "payload_asset_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "schema": {
+      "const": "candidate-item/v1"
+    },
+    "source_refs": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "revision_or_hash": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "source_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "source_type": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "workspace_id": {
+            "anyOf": [
+              {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "workspace_id",
+          "source_type",
+          "source_id",
+          "revision_or_hash"
+        ],
+        "type": "object"
+      },
+      "minItems": 0,
+      "type": "array"
+    },
+    "status": {
+      "enum": [
+        "complete",
+        "partial",
+        "failed",
+        "skipped"
+      ]
+    },
+    "target": {
+      "additionalProperties": false,
+      "properties": {
+        "entity_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "entity_kind": {
+          "enum": [
+            "document",
+            "node_structure",
+            "relation_set"
+          ]
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "entity_kind",
+        "entity_id"
+      ],
+      "type": "object"
+    },
+    "write_set": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "content_hash": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "entity_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "entity_kind": {
+            "enum": [
+              "document",
+              "node_structure",
+              "relation_set"
+            ]
+          },
+          "revision_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "workspace_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace_id",
+          "entity_kind",
+          "entity_id",
+          "revision_id",
+          "content_hash"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema",
+    "item_id",
+    "item_kind",
+    "target",
+    "mutation",
+    "payload_asset_id",
+    "base",
+    "write_set",
+    "parent_candidate_ids",
+    "source_refs",
+    "status"
+  ],
+  "title": "PlotPilot candidate-item-v1",
+  "type": "object"
+}

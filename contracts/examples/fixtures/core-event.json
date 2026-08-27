@@ -1,0 +1,19 @@
+{
+  "aggregate_id": "ws-1",
+  "aggregate_revision": 1,
+  "causation_id": null,
+  "core_event_seq": 1,
+  "correlation_id": "corr-1",
+  "event_id": "event-1",
+  "event_type": "workspace.created",
+  "occurred_at": "2026-08-26T00:00:00Z",
+  "payload_asset_id": null,
+  "payload_hash": null,
+  "producer": {
+    "producer_id": "core",
+    "producer_type": "core",
+    "release_id": null
+  },
+  "schema": "core-event/v1",
+  "workspace_id": "ws-1"
+}

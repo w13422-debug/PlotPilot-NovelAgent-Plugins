@@ -1,0 +1,17 @@
+{
+  "base_generation_id": null,
+  "base_lkg_generation_id": null,
+  "created_at": "2026-08-26T00:00:00Z",
+  "failure_code": null,
+  "install_operation_id": "install-1",
+  "package_store_status": "staged",
+  "qualification_id": null,
+  "rollback_attempt": 0,
+  "rollback_token": null,
+  "schema": "plugin-lifecycle-transition/v1",
+  "shadow_data_generation_id": null,
+  "state": "selected",
+  "target_generation_id": "generation-1",
+  "target_settings_revision_ids": [],
+  "updated_at": "2026-08-26T00:00:00Z"
+}

@@ -1,0 +1,15 @@
+{
+  "attempt_id": "attempt-1",
+  "event_id": "plugin-event-1",
+  "event_type": "plugin.com.plotpilot.fixture.code.started",
+  "job_event_seq": 1,
+  "job_id": "job-1",
+  "local_seq": 1,
+  "occurred_at": "2026-08-26T00:00:00Z",
+  "payload_asset_id": null,
+  "payload_hash": null,
+  "plugin_id": "com.plotpilot.fixture.code",
+  "release_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "schema": "plugin-job-event/v1",
+  "step_id": "step-1"
+}

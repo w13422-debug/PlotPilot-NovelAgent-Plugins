@@ -1,0 +1,126 @@
+{
+  "$id": "https://plotpilot.local/contracts/publication-command-result-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "oneOf": [
+    {
+      "additionalProperties": false,
+      "properties": {
+        "accepted_by": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "candidate_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "publication_operation_key": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "schema": {
+          "const": "publication-command/v1"
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "publication_operation_key",
+        "workspace_id",
+        "candidate_id",
+        "accepted_by"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "entity_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "entity_kind": {
+          "enum": [
+            "document",
+            "node_structure",
+            "relation_set"
+          ]
+        },
+        "idempotent": {
+          "type": "boolean"
+        },
+        "publication_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "resulting_revision": {
+          "additionalProperties": false,
+          "properties": {
+            "content_hash": {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "entity_id": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            "entity_kind": {
+              "enum": [
+                "document",
+                "node_structure",
+                "relation_set"
+              ]
+            },
+            "revision_id": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            "revision_number": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "workspace_id": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "revision_id",
+            "workspace_id",
+            "entity_kind",
+            "entity_id",
+            "content_hash",
+            "revision_number"
+          ],
+          "type": "object"
+        },
+        "schema": {
+          "const": "publication-result/v1"
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "publication_id",
+        "candidate_id",
+        "workspace_id",
+        "entity_kind",
+        "entity_id",
+        "resulting_revision",
+        "idempotent"
+      ],
+      "type": "object"
+    }
+  ],
+  "title": "PlotPilot publication-command-result-v1",
+  "unevaluatedProperties": false
+}

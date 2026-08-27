@@ -1,0 +1,51 @@
+{
+  "group_id": "84.13-05",
+  "title": "Attempt cancel/complete race, fresh resume, checkpoint monotonic/binding and shadow lease stale",
+  "assertions": [
+    "Cancel/complete race is fail-closed",
+    "Fresh resume creates a new attempt",
+    "Checkpoint sequence cannot move backwards",
+    "Checkpoint cannot cross Snapshot",
+    "Shadow lease stale is fenced before mutation"
+  ],
+  "negative": [
+    {
+      "case_id": "attempt-cancel-complete-race",
+      "kind": "attempt_cancel_complete_race",
+      "expected_error_code": 1010
+    },
+    {
+      "case_id": "fresh-resume",
+      "kind": "fresh_resume"
+    },
+    {
+      "case_id": "checkpoint-backward",
+      "kind": "checkpoint_backward",
+      "expected_error_code": 1014
+    },
+    {
+      "case_id": "checkpoint-different-snapshot",
+      "kind": "checkpoint_binding",
+      "expected_error_code": 1014
+    },
+    {
+      "case_id": "shadow-lease-stale",
+      "kind": "shadow_lease",
+      "expected_error_code": 1002
+    },
+    {
+      "case_id": "stale-attempt-lease",
+      "kind": "stale_attempt_lease",
+      "expected_error_code": 1002
+    },
+    {
+      "case_id": "terminal-attempt-resume",
+      "kind": "terminal_resume",
+      "expected_error_code": 1010
+    }
+  ],
+  "positive": [
+    "checkpoint",
+    "job-snapshot"
+  ]
+}

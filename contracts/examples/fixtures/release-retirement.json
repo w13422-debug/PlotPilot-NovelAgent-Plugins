@@ -1,0 +1,9 @@
+{
+  "completed_at": null,
+  "package_present": true,
+  "release_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "retire_epoch": 1,
+  "schema": "release-retirement/v1",
+  "started_at": null,
+  "state": "installed"
+}

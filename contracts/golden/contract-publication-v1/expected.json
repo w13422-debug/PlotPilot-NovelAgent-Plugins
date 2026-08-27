@@ -1,0 +1,13 @@
+{
+  "authority_payload_count": 35,
+  "context_identities": {
+    "attempt": "64301a0226c291d82cee4c8dfd00b73bab017d580004f2457df6b7343bbb3832",
+    "control": "849f0775996505dee909f7cfdc7210cdc3fca12517eaf138a71866916aaa3276",
+    "install": "88eb2fd5522841dd359150ce898d9f04462aaed8a59fa56e0447e3471c851e4b"
+  },
+  "export_asset_sha256": "ca4beac5511c2c5a1096f29be6eb6d6bffcda07ed5171abf4245481909bbe1e7",
+  "export_snapshot_hash": "56378981bfe4963dc21f0efb3ae0e7c416da2e5ef98fefb2fdf6b63c798b99d7",
+  "http_exchange_count": 31,
+  "http_failure_exchange_count": 5,
+  "ui_ingress_fixture_count": 4
+}

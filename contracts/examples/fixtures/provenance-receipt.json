@@ -1,0 +1,21 @@
+{
+  "attempt_id": "attempt-1",
+  "bundle_hash": null,
+  "bundle_id": null,
+  "capability_id": "fixture.echo/v1",
+  "created_at": "2026-08-26T00:00:00Z",
+  "job_id": "job-1",
+  "lease_epoch": 1,
+  "model_receipt_ids": [],
+  "package_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "parent_receipt_ids": [],
+  "plugin_id": "com.plotpilot.fixture.code",
+  "receipt_hash": "09fc8ad46816f3064fa166fd68360386d0020659e39b7b9645dbc95b998f6c69",
+  "receipt_id": "receipt-1",
+  "release_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "run_snapshot_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "schema": "provenance-receipt/v1",
+  "skill_chain_result_refs": [],
+  "staged_items": [],
+  "step_id": "step-1"
+}

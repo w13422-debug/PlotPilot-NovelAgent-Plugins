@@ -1,0 +1,1860 @@
+{
+  "$defs": {
+    "content_page": {
+      "additionalProperties": false,
+      "properties": {
+        "length": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "next_offset": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "revision_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "schema": {
+          "const": "core-revision-content-page/v1"
+        },
+        "text": {
+          "type": "string"
+        },
+        "total_length": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "schema",
+        "revision_id",
+        "offset",
+        "length",
+        "total_length",
+        "text",
+        "next_offset"
+      ],
+      "type": "object"
+    },
+    "content_query": {
+      "additionalProperties": false,
+      "properties": {
+        "length": {
+          "maximum": 65536,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "revision_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "schema": {
+          "const": "core-revision-content-query/v1"
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "workspace_id",
+        "revision_id",
+        "offset",
+        "length"
+      ],
+      "type": "object"
+    },
+    "delete_result": {
+      "additionalProperties": false,
+      "properties": {
+        "deleted": {
+          "const": true
+        },
+        "entity_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "entity_kind": {
+          "enum": [
+            "workspace",
+            "node",
+            "relation"
+          ]
+        },
+        "idempotent": {
+          "type": "boolean"
+        },
+        "operation_key": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "previous_revision": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "schema": {
+          "const": "core-delete-result/v1"
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "operation_key",
+        "workspace_id",
+        "entity_kind",
+        "entity_id",
+        "previous_revision",
+        "deleted",
+        "idempotent"
+      ],
+      "type": "object"
+    },
+    "document": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+          "type": "string"
+        },
+        "current_revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "document_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "document_type": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "schema": {
+          "const": "core-document/v1"
+        },
+        "title": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "updated_at": {
+          "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+          "type": "string"
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "document_id",
+        "workspace_id",
+        "document_type",
+        "title",
+        "current_revision_id",
+        "created_at",
+        "updated_at",
+        "revision"
+      ],
+      "type": "object"
+    },
+    "document_create": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "document_type": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "operation_key": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "schema": {
+          "const": "core-document-create-command/v1"
+        },
+        "title": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "operation_key",
+        "document_id",
+        "workspace_id",
+        "document_type",
+        "title"
+      ],
+      "type": "object"
+    },
+    "document_get_query": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "schema": {
+          "const": "core-document-get-query/v1"
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "workspace_id",
+        "document_id"
+      ],
+      "type": "object"
+    },
+    "document_page": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/document"
+          },
+          "minItems": 0,
+          "type": "array"
+        },
+        "limit": {
+          "maximum": 200,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "next_offset": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "schema": {
+          "const": "core-document-page/v1"
+        },
+        "total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "schema",
+        "items",
+        "offset",
+        "limit",
+        "total",
+        "next_offset"
+      ],
+      "type": "object"
+    },
+    "document_query": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "limit": {
+          "maximum": 200,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "schema": {
+          "const": "core-document-query/v1"
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "workspace_id",
+        "document_id",
+        "offset",
+        "limit"
+      ],
+      "type": "object"
+    },
+    "document_revision_create": {
+      "additionalProperties": false,
+      "properties": {
+        "base_revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "content": {
+          "maxLength": 8388608,
+          "type": "string"
+        },
+        "created_by": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "document_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "operation_key": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "payload_schema": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revision_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "schema": {
+          "const": "core-document-revision-create-command/v1"
+        },
+        "source_candidate_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "operation_key",
+        "revision_id",
+        "workspace_id",
+        "document_id",
+        "base_revision_id",
+        "content",
+        "created_by",
+        "source_candidate_id",
+        "payload_schema"
+      ],
+      "type": "object"
+    },
+    "document_revision_query": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "limit": {
+          "maximum": 200,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "schema": {
+          "const": "core-document-revision-query/v1"
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "workspace_id",
+        "document_id",
+        "revision_id",
+        "offset",
+        "limit"
+      ],
+      "type": "object"
+    },
+    "document_update": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "expected_revision": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "operation_key": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "schema": {
+          "const": "core-document-update-command/v1"
+        },
+        "title": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "operation_key",
+        "document_id",
+        "workspace_id",
+        "expected_revision",
+        "title"
+      ],
+      "type": "object"
+    },
+    "http_error": {
+      "additionalProperties": false,
+      "properties": {
+        "error_code": {
+          "enum": [
+            "unknown_reference",
+            "cross_workspace",
+            "stale_cas",
+            "operation_key_reuse",
+            "incomplete_publication"
+          ]
+        },
+        "message": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "retryable": {
+          "type": "boolean"
+        },
+        "schema": {
+          "const": "core-http-error/v1"
+        }
+      },
+      "required": [
+        "schema",
+        "error_code",
+        "message",
+        "retryable"
+      ],
+      "type": "object"
+    },
+    "node": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+          "type": "string"
+        },
+        "current_revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "document_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "node_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "node_type": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "parent_node_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "position": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "revision": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "schema": {
+          "const": "core-node/v1"
+        },
+        "title": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "updated_at": {
+          "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+          "type": "string"
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "node_id",
+        "workspace_id",
+        "document_id",
+        "node_type",
+        "title",
+        "parent_node_id",
+        "position",
+        "current_revision_id",
+        "created_at",
+        "updated_at",
+        "revision"
+      ],
+      "type": "object"
+    },
+    "node_create": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "node_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "node_type": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "operation_key": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "parent_node_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "position": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "schema": {
+          "const": "core-node-create-command/v1"
+        },
+        "title": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "operation_key",
+        "node_id",
+        "workspace_id",
+        "document_id",
+        "node_type",
+        "title",
+        "parent_node_id",
+        "position"
+      ],
+      "type": "object"
+    },
+    "node_delete": {
+      "additionalProperties": false,
+      "properties": {
+        "expected_revision": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "node_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "operation_key": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "schema": {
+          "const": "core-node-delete-command/v1"
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "operation_key",
+        "node_id",
+        "workspace_id",
+        "expected_revision"
+      ],
+      "type": "object"
+    },
+    "node_get_query": {
+      "additionalProperties": false,
+      "properties": {
+        "node_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "schema": {
+          "const": "core-node-get-query/v1"
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "workspace_id",
+        "node_id"
+      ],
+      "type": "object"
+    },
+    "node_page": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/node"
+          },
+          "minItems": 0,
+          "type": "array"
+        },
+        "limit": {
+          "maximum": 200,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "next_offset": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "schema": {
+          "const": "core-node-page/v1"
+        },
+        "total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "schema",
+        "items",
+        "offset",
+        "limit",
+        "total",
+        "next_offset"
+      ],
+      "type": "object"
+    },
+    "node_query": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "limit": {
+          "maximum": 200,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "node_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "parent_node_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "schema": {
+          "const": "core-node-query/v1"
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "workspace_id",
+        "node_id",
+        "document_id",
+        "parent_node_id",
+        "offset",
+        "limit"
+      ],
+      "type": "object"
+    },
+    "node_revision_create": {
+      "additionalProperties": false,
+      "properties": {
+        "base_revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "content": {
+          "maxLength": 8388608,
+          "type": "string"
+        },
+        "created_by": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "node_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "operation_key": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "payload_schema": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revision_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "schema": {
+          "const": "core-node-revision-create-command/v1"
+        },
+        "source_candidate_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "operation_key",
+        "revision_id",
+        "workspace_id",
+        "node_id",
+        "base_revision_id",
+        "content",
+        "created_by",
+        "source_candidate_id",
+        "payload_schema"
+      ],
+      "type": "object"
+    },
+    "node_revision_query": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "maximum": 200,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "node_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "schema": {
+          "const": "core-node-revision-query/v1"
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "workspace_id",
+        "node_id",
+        "revision_id",
+        "offset",
+        "limit"
+      ],
+      "type": "object"
+    },
+    "node_update": {
+      "additionalProperties": false,
+      "properties": {
+        "expected_revision": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "node_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "operation_key": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "parent_node_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "position": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "schema": {
+          "const": "core-node-update-command/v1"
+        },
+        "title": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "operation_key",
+        "node_id",
+        "workspace_id",
+        "expected_revision",
+        "title",
+        "parent_node_id",
+        "position"
+      ],
+      "type": "object"
+    },
+    "relation": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+          "type": "string"
+        },
+        "relation_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "relation_type": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "schema": {
+          "const": "core-relation/v1"
+        },
+        "source_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "target_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "relation_id",
+        "workspace_id",
+        "relation_type",
+        "source_id",
+        "target_id",
+        "revision_id",
+        "created_at"
+      ],
+      "type": "object"
+    },
+    "relation_create": {
+      "additionalProperties": false,
+      "properties": {
+        "operation_key": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "relation_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "relation_type": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "schema": {
+          "const": "core-relation-create-command/v1"
+        },
+        "source_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "target_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "operation_key",
+        "relation_id",
+        "workspace_id",
+        "relation_type",
+        "source_id",
+        "target_id",
+        "revision_id"
+      ],
+      "type": "object"
+    },
+    "relation_delete": {
+      "additionalProperties": false,
+      "properties": {
+        "expected_revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "operation_key": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "relation_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "schema": {
+          "const": "core-relation-delete-command/v1"
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "operation_key",
+        "relation_id",
+        "workspace_id",
+        "expected_revision_id"
+      ],
+      "type": "object"
+    },
+    "relation_page": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/relation"
+          },
+          "minItems": 0,
+          "type": "array"
+        },
+        "limit": {
+          "maximum": 200,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "next_offset": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "schema": {
+          "const": "core-relation-page/v1"
+        },
+        "total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "schema",
+        "items",
+        "offset",
+        "limit",
+        "total",
+        "next_offset"
+      ],
+      "type": "object"
+    },
+    "relation_query": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "maximum": 200,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "relation_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "relation_type": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "schema": {
+          "const": "core-relation-query/v1"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "target_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "workspace_id",
+        "relation_id",
+        "source_id",
+        "target_id",
+        "relation_type",
+        "offset",
+        "limit"
+      ],
+      "type": "object"
+    },
+    "revision": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "created_at": {
+          "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+          "type": "string"
+        },
+        "created_by": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "document_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "node_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "parent_revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "payload_schema": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revision_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "revision_number": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "schema": {
+          "const": "core-revision/v1"
+        },
+        "source_candidate_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "revision_id",
+        "workspace_id",
+        "document_id",
+        "node_id",
+        "parent_revision_id",
+        "content_hash",
+        "created_by",
+        "source_candidate_id",
+        "created_at",
+        "revision_number",
+        "payload_schema"
+      ],
+      "type": "object"
+    },
+    "revision_get_query": {
+      "additionalProperties": false,
+      "properties": {
+        "revision_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "schema": {
+          "const": "core-revision-get-query/v1"
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "workspace_id",
+        "revision_id"
+      ],
+      "type": "object"
+    },
+    "revision_page": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/revision"
+          },
+          "minItems": 0,
+          "type": "array"
+        },
+        "limit": {
+          "maximum": 200,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "next_offset": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "schema": {
+          "const": "core-revision-page/v1"
+        },
+        "total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "schema",
+        "items",
+        "offset",
+        "limit",
+        "total",
+        "next_offset"
+      ],
+      "type": "object"
+    },
+    "workspace": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+          "type": "string"
+        },
+        "current_plan_revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revision": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "schema": {
+          "const": "core-workspace/v1"
+        },
+        "status": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "title": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "updated_at": {
+          "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+          "type": "string"
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "workspace_kind": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "workspace_id",
+        "workspace_kind",
+        "title",
+        "status",
+        "current_plan_revision_id",
+        "created_at",
+        "updated_at",
+        "revision"
+      ],
+      "type": "object"
+    },
+    "workspace_create": {
+      "additionalProperties": false,
+      "properties": {
+        "operation_key": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "schema": {
+          "const": "core-workspace-create-command/v1"
+        },
+        "title": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "workspace_kind": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "operation_key",
+        "workspace_id",
+        "workspace_kind",
+        "title"
+      ],
+      "type": "object"
+    },
+    "workspace_delete": {
+      "additionalProperties": false,
+      "properties": {
+        "expected_revision": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "operation_key": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "schema": {
+          "const": "core-workspace-delete-command/v1"
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "operation_key",
+        "workspace_id",
+        "expected_revision"
+      ],
+      "type": "object"
+    },
+    "workspace_get_query": {
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "core-workspace-get-query/v1"
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "workspace_id"
+      ],
+      "type": "object"
+    },
+    "workspace_page": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/workspace"
+          },
+          "minItems": 0,
+          "type": "array"
+        },
+        "limit": {
+          "maximum": 200,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "next_offset": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "schema": {
+          "const": "core-workspace-page/v1"
+        },
+        "total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "schema",
+        "items",
+        "offset",
+        "limit",
+        "total",
+        "next_offset"
+      ],
+      "type": "object"
+    },
+    "workspace_query": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "maximum": 200,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "schema": {
+          "const": "core-workspace-query/v1"
+        },
+        "workspace_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schema",
+        "workspace_id",
+        "offset",
+        "limit"
+      ],
+      "type": "object"
+    },
+    "workspace_update": {
+      "additionalProperties": false,
+      "properties": {
+        "expected_revision": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "operation_key": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "schema": {
+          "const": "core-workspace-update-command/v1"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "operation_key",
+        "workspace_id",
+        "expected_revision",
+        "title",
+        "status"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://plotpilot.local/contracts/core-authority-command-query-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/workspace"
+    },
+    {
+      "$ref": "#/$defs/document"
+    },
+    {
+      "$ref": "#/$defs/node"
+    },
+    {
+      "$ref": "#/$defs/relation"
+    },
+    {
+      "$ref": "#/$defs/revision"
+    },
+    {
+      "$ref": "#/$defs/workspace_page"
+    },
+    {
+      "$ref": "#/$defs/document_page"
+    },
+    {
+      "$ref": "#/$defs/node_page"
+    },
+    {
+      "$ref": "#/$defs/relation_page"
+    },
+    {
+      "$ref": "#/$defs/revision_page"
+    },
+    {
+      "$ref": "#/$defs/workspace_query"
+    },
+    {
+      "$ref": "#/$defs/workspace_get_query"
+    },
+    {
+      "$ref": "#/$defs/document_query"
+    },
+    {
+      "$ref": "#/$defs/document_get_query"
+    },
+    {
+      "$ref": "#/$defs/node_query"
+    },
+    {
+      "$ref": "#/$defs/node_get_query"
+    },
+    {
+      "$ref": "#/$defs/relation_query"
+    },
+    {
+      "$ref": "#/$defs/document_revision_query"
+    },
+    {
+      "$ref": "#/$defs/node_revision_query"
+    },
+    {
+      "$ref": "#/$defs/revision_get_query"
+    },
+    {
+      "$ref": "#/$defs/content_query"
+    },
+    {
+      "$ref": "#/$defs/content_page"
+    },
+    {
+      "$ref": "#/$defs/workspace_create"
+    },
+    {
+      "$ref": "#/$defs/workspace_update"
+    },
+    {
+      "$ref": "#/$defs/workspace_delete"
+    },
+    {
+      "$ref": "#/$defs/document_create"
+    },
+    {
+      "$ref": "#/$defs/document_update"
+    },
+    {
+      "$ref": "#/$defs/node_create"
+    },
+    {
+      "$ref": "#/$defs/node_update"
+    },
+    {
+      "$ref": "#/$defs/node_delete"
+    },
+    {
+      "$ref": "#/$defs/relation_create"
+    },
+    {
+      "$ref": "#/$defs/relation_delete"
+    },
+    {
+      "$ref": "#/$defs/document_revision_create"
+    },
+    {
+      "$ref": "#/$defs/node_revision_create"
+    },
+    {
+      "$ref": "#/$defs/delete_result"
+    },
+    {
+      "$ref": "#/$defs/http_error"
+    }
+  ],
+  "title": "PlotPilot core-authority-command-query-v1",
+  "unevaluatedProperties": false
+}

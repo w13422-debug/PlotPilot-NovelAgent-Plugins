@@ -1,0 +1,40 @@
+{
+  "$id": "https://plotpilot.local/contracts/plugin-ui-error-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "code": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "details_asset_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "message": {
+      "type": "string"
+    },
+    "retryable": {
+      "type": "boolean"
+    },
+    "schema": {
+      "const": "plugin-ui-error/v1"
+    }
+  },
+  "required": [
+    "schema",
+    "code",
+    "message",
+    "details_asset_id",
+    "retryable"
+  ],
+  "title": "PlotPilot plugin-ui-error-v1",
+  "type": "object"
+}

@@ -1,0 +1,47 @@
+{
+  "group_id": "84.13-13",
+  "title": "Backup mode, manifest/hash, crash staging, restore to new root and projection rebuild",
+  "assertions": [
+    "Workspace backup cannot contain plugin package data",
+    "Backup manifest hash is exact",
+    "Crash staging is recoverable",
+    "Restore can target a new root",
+    "Projection rebuild is deterministic and complete"
+  ],
+  "negative": [
+    {
+      "case_id": "backup-mode-package",
+      "kind": "backup_mode",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "backup-manifest-tamper",
+      "kind": "backup_manifest",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "crash-staging",
+      "kind": "crash_staging",
+      "expected_error_code": 1010
+    },
+    {
+      "case_id": "restore-new-root",
+      "kind": "restore_new_root"
+    },
+    {
+      "case_id": "projection-rebuild",
+      "kind": "projection_rebuild"
+    },
+    {
+      "case_id": "restore-missing-projection",
+      "kind": "projection_missing",
+      "expected_error_code": 1011
+    }
+  ],
+  "positive": [
+    "backup-golden",
+    "restore-report",
+    "restore-new-root",
+    "projection-rebuild"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "render_seq": 1,
+  "root": {
+    "children": [],
+    "component": "button",
+    "event_ids": [
+      "click"
+    ],
+    "key": "run",
+    "props": {
+      "disabled": false,
+      "label": "Run",
+      "tone": "primary"
+    }
+  },
+  "schema": "plugin-ui-tree/v1",
+  "tree_id": "tree-1"
+}

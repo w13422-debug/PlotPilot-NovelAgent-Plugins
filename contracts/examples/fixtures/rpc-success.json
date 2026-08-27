@@ -1,0 +1,9 @@
+{
+  "id": "123e4567-e89b-12d3-a456-426614174000",
+  "jsonrpc": "2.0",
+  "result": {
+    "base64_chunk": "eA==",
+    "content_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "next_offset": null
+  }
+}

@@ -1,0 +1,245 @@
+{
+  "$id": "https://plotpilot.local/contracts/plugin-plan-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "bindings": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "binding_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "capability_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "order": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "parameters_asset_id": {
+            "anyOf": [
+              {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "plugin_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "propagate_cancel": {
+            "type": "boolean"
+          },
+          "release_requirement": {
+            "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$",
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "binding_id",
+          "capability_id",
+          "plugin_id",
+          "release_requirement",
+          "order",
+          "enabled",
+          "required",
+          "propagate_cancel",
+          "parameters_asset_id"
+        ],
+        "type": "object"
+      },
+      "minItems": 0,
+      "type": "array"
+    },
+    "data_bindings": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "data_binding_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "data_plugin_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "format_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "interpreter_binding_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "order": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "parameters_asset_id": {
+            "anyOf": [
+              {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "release_requirement": {
+            "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data_binding_id",
+          "data_plugin_id",
+          "release_requirement",
+          "format_id",
+          "interpreter_binding_id",
+          "order",
+          "enabled",
+          "parameters_asset_id"
+        ],
+        "type": "object"
+      },
+      "minItems": 0,
+      "type": "array"
+    },
+    "description": {
+      "type": "string"
+    },
+    "model_profile_revision_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "name": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "plan_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "result_mode": {
+      "enum": [
+        "separate",
+        "compare",
+        "synthesize"
+      ]
+    },
+    "revision": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "schema": {
+      "const": "plugin-plan/v1"
+    },
+    "skill_preset_revision_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "synthesizer": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "binding_id": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            "capability_id": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            "plugin_id": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            "release_requirement": {
+              "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "binding_id",
+            "capability_id",
+            "plugin_id",
+            "release_requirement"
+          ],
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "ui_defaults": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "expanded": {
+            "type": "boolean"
+          },
+          "slot": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "slot",
+          "expanded"
+        ],
+        "type": "object"
+      },
+      "minItems": 0,
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema",
+    "plan_id",
+    "revision",
+    "name",
+    "description",
+    "bindings",
+    "data_bindings",
+    "skill_preset_revision_id",
+    "result_mode",
+    "synthesizer",
+    "model_profile_revision_id",
+    "ui_defaults"
+  ],
+  "title": "PlotPilot plugin-plan-v1",
+  "type": "object"
+}

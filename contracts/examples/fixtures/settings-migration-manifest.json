@@ -1,0 +1,13 @@
+{
+  "from_schema_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "schema": "settings-migration-manifest/v1",
+  "steps": [
+    {
+      "from_pointer": "/old",
+      "operation": "rename",
+      "to_pointer": "/new",
+      "value_asset_id": null
+    }
+  ],
+  "to_schema_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+}

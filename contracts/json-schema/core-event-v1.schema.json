@@ -1,0 +1,142 @@
+{
+  "$id": "https://plotpilot.local/contracts/core-event-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "aggregate_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "aggregate_revision": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "causation_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "core_event_seq": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "correlation_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "event_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "event_type": {
+      "enum": [
+        "workspace.created",
+        "revision.published",
+        "candidate.staged",
+        "candidate.decided",
+        "job.state.changed",
+        "job.terminal",
+        "plugin.generation.changed",
+        "plugin.release.retiring",
+        "backup.completed",
+        "restore.completed"
+      ]
+    },
+    "occurred_at": {
+      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+      "type": "string"
+    },
+    "payload_asset_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "payload_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "producer": {
+      "additionalProperties": false,
+      "properties": {
+        "producer_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "producer_type": {
+          "enum": [
+            "core",
+            "plugin",
+            "user"
+          ]
+        },
+        "release_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "producer_type",
+        "producer_id",
+        "release_id"
+      ],
+      "type": "object"
+    },
+    "schema": {
+      "const": "core-event/v1"
+    },
+    "workspace_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "schema",
+    "event_id",
+    "core_event_seq",
+    "event_type",
+    "aggregate_id",
+    "aggregate_revision",
+    "workspace_id",
+    "occurred_at",
+    "producer",
+    "causation_id",
+    "correlation_id",
+    "payload_asset_id",
+    "payload_hash"
+  ],
+  "title": "PlotPilot core-event-v1",
+  "type": "object"
+}

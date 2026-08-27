@@ -1,0 +1,42 @@
+{
+  "group_id": "84.13-01",
+  "title": "JCS set/ordered permutation and independent Package/RunSnapshot/Skill goldens",
+  "assertions": [
+    "JCS set permutation does not change Snapshot hash",
+    "Skill order permutation changes Snapshot hash",
+    "Package golden is independently recomputed",
+    "RunSnapshot golden is independently recomputed",
+    "Skill golden is independently recomputed"
+  ],
+  "negative": [
+    {
+      "case_id": "snapshot-set-permutation",
+      "kind": "jcs_set_permutation"
+    },
+    {
+      "case_id": "skill-order-permutation",
+      "kind": "skill_order_permutation"
+    },
+    {
+      "case_id": "package-golden-self-check",
+      "kind": "package_golden_recompute"
+    },
+    {
+      "case_id": "run-snapshot-golden-self-check",
+      "kind": "run_snapshot_golden_recompute"
+    },
+    {
+      "case_id": "skill-golden-self-check",
+      "kind": "skill_golden_recompute"
+    },
+    {
+      "case_id": "package-crlf",
+      "kind": "package_bytes_change"
+    }
+  ],
+  "positive": [
+    "package-golden",
+    "skill-golden",
+    "run-snapshot-golden"
+  ]
+}

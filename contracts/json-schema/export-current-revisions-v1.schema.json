@@ -1,0 +1,87 @@
+{
+  "$id": "https://plotpilot.local/contracts/export-current-revisions-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "core_snapshot_revision": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "generated_at": {
+      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+      "type": "string"
+    },
+    "ordered_revisions": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "content_asset_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "content_hash": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "document_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "document_type": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "encoding": {
+            "const": "utf-8"
+          },
+          "mime": {
+            "const": "text/plain"
+          },
+          "ordinal": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "revision_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "title": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "ordinal",
+          "document_id",
+          "document_type",
+          "title",
+          "revision_id",
+          "content_asset_id",
+          "content_hash",
+          "mime",
+          "encoding"
+        ],
+        "type": "object"
+      },
+      "maxItems": 10000,
+      "minItems": 1,
+      "type": "array"
+    },
+    "schema": {
+      "const": "export-current-revisions/v1"
+    },
+    "workspace_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema",
+    "workspace_id",
+    "core_snapshot_revision",
+    "ordered_revisions",
+    "generated_at"
+  ],
+  "title": "PlotPilot export-current-revisions-v1",
+  "type": "object"
+}

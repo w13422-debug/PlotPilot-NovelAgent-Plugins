@@ -1,0 +1,61 @@
+{
+  "$id": "https://plotpilot.local/contracts/release-retirement-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "completed_at": {
+      "anyOf": [
+        {
+          "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "package_present": {
+      "type": "boolean"
+    },
+    "release_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "retire_epoch": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "schema": {
+      "const": "release-retirement/v1"
+    },
+    "started_at": {
+      "anyOf": [
+        {
+          "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "state": {
+      "enum": [
+        "installed",
+        "retiring",
+        "retired"
+      ]
+    }
+  },
+  "required": [
+    "schema",
+    "release_id",
+    "state",
+    "retire_epoch",
+    "package_present",
+    "started_at",
+    "completed_at"
+  ],
+  "title": "PlotPilot release-retirement-v1",
+  "type": "object"
+}

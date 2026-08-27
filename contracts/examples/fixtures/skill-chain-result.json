@@ -1,0 +1,20 @@
+{
+  "acked_prefix_hash": null,
+  "chain_hash": "8d0f23df559315c4e2ac69e81bdeb67a88536732bbaa11310415583eefaa15c5",
+  "chain_id": "skill-chain-1",
+  "chain_status": "succeeded",
+  "final_output_asset_id": "asset-output-1",
+  "final_output_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "input_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "receipt_hashes": [
+    "afdfd520f837e24c66c72863c0d65ba6400dd2f9b972c56a6a310c1a8c1b2ac4"
+  ],
+  "receipt_ids": [
+    "skill-receipt-1"
+  ],
+  "result_bundle_id": "bundle-golden",
+  "result_item_id": "candidate-item-1",
+  "run_snapshot_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "schema": "skill-chain-result/v1",
+  "stream_id": null
+}

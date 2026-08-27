@@ -1,0 +1,10 @@
+{
+  "actions": [
+    "rewrite"
+  ],
+  "display_name": "Fixture Skill",
+  "schema": "plotpilot-skill/v1",
+  "skill_id": "com.plotpilot.fixture.skill",
+  "stage": "draft",
+  "version": "1.0.0"
+}

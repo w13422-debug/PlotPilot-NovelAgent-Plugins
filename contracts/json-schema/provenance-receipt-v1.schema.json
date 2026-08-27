@@ -1,0 +1,223 @@
+{
+  "$id": "https://plotpilot.local/contracts/provenance-receipt-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "attempt_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "bundle_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "bundle_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "capability_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "created_at": {
+      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+      "type": "string"
+    },
+    "job_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "lease_epoch": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "model_receipt_ids": {
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+        "type": "string"
+      },
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "package_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "parent_receipt_ids": {
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+        "type": "string"
+      },
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "plugin_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "receipt_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "receipt_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "release_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "run_snapshot_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "schema": {
+      "const": "provenance-receipt/v1"
+    },
+    "skill_chain_result_refs": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "acked_prefix_hash": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "asset_hash": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "asset_id": {
+            "anyOf": [
+              {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "chain_result_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "result_bundle_id": {
+            "anyOf": [
+              {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "result_item_id": {
+            "anyOf": [
+              {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "schema": {
+            "const": "skill-chain-ref/v1"
+          },
+          "stream_id": {
+            "anyOf": [
+              {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "schema",
+          "chain_result_id",
+          "asset_id",
+          "asset_hash",
+          "result_bundle_id",
+          "result_item_id",
+          "stream_id",
+          "acked_prefix_hash"
+        ],
+        "type": "object"
+      },
+      "minItems": 0,
+      "type": "array"
+    },
+    "staged_items": {
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+        "type": "string"
+      },
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "step_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema",
+    "receipt_id",
+    "plugin_id",
+    "release_id",
+    "package_hash",
+    "capability_id",
+    "job_id",
+    "step_id",
+    "attempt_id",
+    "lease_epoch",
+    "run_snapshot_hash",
+    "bundle_id",
+    "bundle_hash",
+    "parent_receipt_ids",
+    "model_receipt_ids",
+    "skill_chain_result_refs",
+    "staged_items",
+    "created_at",
+    "receipt_hash"
+  ],
+  "title": "PlotPilot provenance-receipt-v1",
+  "type": "object"
+}

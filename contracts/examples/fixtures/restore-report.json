@@ -1,0 +1,16 @@
+{
+  "backup_id": "backup-golden",
+  "completed_at": "2026-08-26T00:00:00Z",
+  "created_at": "2026-08-26T00:00:00Z",
+  "errors": [],
+  "missing_release_ids": [],
+  "projection_rebuild_required": [],
+  "restore_id": "restore-1",
+  "schema": "restore-report/v1",
+  "source_root_id": "library-old",
+  "state": "restore_ready",
+  "target_root_id": "library-new",
+  "verified_files": [
+    "core/core.db"
+  ]
+}

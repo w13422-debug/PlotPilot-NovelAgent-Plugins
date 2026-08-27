@@ -1,0 +1,40 @@
+{
+  "backend": {
+    "entrypoint": "fixture_worker:main",
+    "max_concurrency": 1,
+    "requirements_lock": "backend/requirements.lock",
+    "wheel": "backend/fixture.whl",
+    "wheelhouse": "backend/wheels"
+  },
+  "capabilities": [
+    {
+      "capability_id": "fixture.echo/v1",
+      "operations": [
+        "run"
+      ],
+      "result_contract": "artifact-bundle/v1"
+    }
+  ],
+  "compatibility": {
+    "core_api": ">=1.0 <2.0",
+    "plugin_rpc": "1",
+    "python": "3.12.*",
+    "ui_host": "1"
+  },
+  "data": null,
+  "display_name": "Fixture Code",
+  "kind": "code",
+  "needs": [
+    "host.asset.read/v1"
+  ],
+  "plugin_id": "com.plotpilot.fixture.code",
+  "schema": "plotpilot-plugin/v1",
+  "settings": null,
+  "storage": {
+    "migration_manifest": "migrations/manifest.json",
+    "migration_policy": "transactional-shadow",
+    "schema_version": 1
+  },
+  "ui": null,
+  "version": "1.0.0"
+}

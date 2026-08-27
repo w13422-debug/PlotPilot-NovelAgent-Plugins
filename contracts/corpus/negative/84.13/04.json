@@ -1,0 +1,53 @@
+{
+  "group_id": "84.13-04",
+  "title": "Operation-key ACK-loss, first/middle/final upload retry, status recovery and same-key payload",
+  "assertions": [
+    "Operation-key retry returns the original response bytes",
+    "First chunk retry is idempotent",
+    "Middle chunk retry is idempotent",
+    "Final chunk retry is idempotent",
+    "Status recovery reports durable accepted bytes",
+    "Same key with a different payload is rejected"
+  ],
+  "negative": [
+    {
+      "case_id": "operation-ack-loss",
+      "kind": "operation_ack_loss"
+    },
+    {
+      "case_id": "same-key-different-payload",
+      "kind": "same_key_different_payload",
+      "expected_error_code": 1008
+    },
+    {
+      "case_id": "upload-first-retry",
+      "kind": "upload_first_retry"
+    },
+    {
+      "case_id": "upload-middle-retry",
+      "kind": "upload_middle_retry"
+    },
+    {
+      "case_id": "upload-final-retry",
+      "kind": "upload_final_retry"
+    },
+    {
+      "case_id": "upload-status-recovery",
+      "kind": "upload_status_recovery"
+    },
+    {
+      "case_id": "upload-offset-ahead",
+      "kind": "upload_offset_ahead",
+      "expected_error_code": 1005
+    },
+    {
+      "case_id": "upload-final-hash-mismatch",
+      "kind": "upload_final_hash_mismatch",
+      "expected_error_code": 1005
+    }
+  ],
+  "positive": [
+    "rpc-upload",
+    "rpc-success"
+  ]
+}

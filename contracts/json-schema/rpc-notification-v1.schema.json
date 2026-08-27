@@ -1,0 +1,100 @@
+{
+  "$id": "https://plotpilot.local/contracts/rpc-notification-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "jsonrpc": {
+      "const": "2.0"
+    },
+    "meta": {
+      "additionalProperties": false,
+      "properties": {
+        "attempt_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "context": {
+          "const": "attempt"
+        },
+        "deadline_at": {
+          "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+          "type": "string"
+        },
+        "generation_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "job_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "lease_epoch": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "operation_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "plugin_release_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "protocol_version": {
+          "const": "1"
+        },
+        "step_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "protocol_version",
+        "generation_id",
+        "plugin_release_id",
+        "deadline_at",
+        "context",
+        "operation_id",
+        "job_id",
+        "step_id",
+        "attempt_id",
+        "lease_epoch"
+      ],
+      "type": "object"
+    },
+    "method": {
+      "const": "runtime.heartbeat"
+    },
+    "params": {
+      "additionalProperties": false,
+      "properties": {
+        "local_seq": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "observed_at": {
+          "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+          "type": "string"
+        },
+        "worker_instance_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "worker_instance_id",
+        "observed_at",
+        "local_seq"
+      ],
+      "type": "object"
+    }
+  },
+  "required": [
+    "jsonrpc",
+    "method",
+    "meta",
+    "params"
+  ],
+  "title": "PlotPilot rpc-notification-v1",
+  "type": "object"
+}

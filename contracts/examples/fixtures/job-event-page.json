@@ -1,0 +1,8 @@
+{
+  "after_job_event_seq": 0,
+  "events": [],
+  "high_water_seq": 0,
+  "job_id": "job-1",
+  "next_job_event_seq": 1,
+  "schema": "job-event-page/v1"
+}

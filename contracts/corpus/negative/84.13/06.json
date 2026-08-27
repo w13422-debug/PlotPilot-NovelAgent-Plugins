@@ -1,0 +1,52 @@
+{
+  "group_id": "84.13-06",
+  "title": "Bundle producer/snapshot/lease/receipt/staging/outcome transaction boundaries",
+  "assertions": [
+    "Bundle producer is bound",
+    "Bundle Snapshot and lease are bound",
+    "Receipt anchors are bound",
+    "Incomplete staging is not published",
+    "Outcome transaction is atomic"
+  ],
+  "negative": [
+    {
+      "case_id": "bundle-producer-mismatch",
+      "kind": "bundle_producer",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "bundle-snapshot-mismatch",
+      "kind": "bundle_snapshot",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "bundle-lease-mismatch",
+      "kind": "bundle_lease",
+      "expected_error_code": 1002
+    },
+    {
+      "case_id": "bundle-receipt-mismatch",
+      "kind": "bundle_receipt",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "staging-incomplete",
+      "kind": "staging_incomplete",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "outcome-transaction-mismatch",
+      "kind": "outcome_transaction",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "complete-transaction-positive",
+      "kind": "complete_transaction"
+    }
+  ],
+  "positive": [
+    "result-bundle",
+    "provenance-receipt",
+    "settings-validation-receipt"
+  ]
+}

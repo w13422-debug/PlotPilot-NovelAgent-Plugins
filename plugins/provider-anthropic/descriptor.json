@@ -1,0 +1,14 @@
+{
+  "schema": "capability-provider/v1",
+  "capability_id": "model.provider.anthropic.invoke/v1",
+  "provider": {
+    "plugin_id": "com.plotpilot.novelagent.provider-anthropic",
+    "release_id": "d712fc4614246fa0ff4e168b1257486fbed04a0ec69c4ab48d266e0eb9f579a3"
+  },
+  "input_schema": "model.provider.anthropic.invoke-request/v1",
+  "output_schema": "model.provider.anthropic.invoke-result/v1",
+  "result_contract": "artifact-bundle/v1",
+  "supports": ["run", "cancel"],
+  "deterministic": false,
+  "accepted_data_formats": []
+}

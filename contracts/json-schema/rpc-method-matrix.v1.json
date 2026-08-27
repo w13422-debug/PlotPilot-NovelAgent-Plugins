@@ -1,0 +1,923 @@
+{
+  "error_codes": {
+    "1001": "incompatible_generation",
+    "1002": "stale_lease",
+    "1003": "cancelled",
+    "1004": "deadline_exceeded",
+    "1005": "asset_error",
+    "1006": "settings_invalid",
+    "1007": "migration_failed",
+    "1008": "duplicate_request",
+    "1009": "uncertain_external_effect",
+    "1010": "invalid_transition",
+    "1011": "result_contract_mismatch",
+    "1012": "data_interpreter_unavailable",
+    "1013": "release_retiring",
+    "1014": "checkpoint_invalid"
+  },
+  "host_methods": [
+    "host.asset.read/v1",
+    "host.asset.create/v1",
+    "host.asset.upload.status/v1",
+    "host.model.invoke/v1",
+    "host.capability.invoke/v1",
+    "host.capability.poll/v1",
+    "host.capability.cancel/v1",
+    "host.candidate.stage/v1",
+    "host.checkpoint.commit/v1",
+    "host.stream.commit/v1",
+    "host.job.event/v1",
+    "host.job.await_user/v1",
+    "host.job.complete/v1",
+    "host.log/v1",
+    "host.migration.lease.renew/v1",
+    "host.migration.lease.release/v1"
+  ],
+  "methods": {
+    "capability.describe": {
+      "meta_profile": "control",
+      "params": {
+        "fields": [
+          "capability_id"
+        ],
+        "required": [
+          "capability_id"
+        ]
+      },
+      "result": {
+        "fields": [
+          "descriptor"
+        ],
+        "required": [
+          "descriptor"
+        ]
+      }
+    },
+    "host.asset.create/v1": {
+      "meta_profile": "install/attempt",
+      "params": {
+        "fields": [
+          "operation_key",
+          "upload_id",
+          "offset",
+          "mime",
+          "total_size",
+          "expected_hash",
+          "chunk_hash",
+          "base64_chunk",
+          "final"
+        ],
+        "required": [
+          "operation_key",
+          "upload_id",
+          "offset",
+          "mime",
+          "total_size",
+          "expected_hash",
+          "chunk_hash",
+          "base64_chunk",
+          "final"
+        ]
+      },
+      "result": {
+        "fields": [
+          "upload_id",
+          "accepted_bytes",
+          "completed",
+          "asset_id"
+        ],
+        "required": [
+          "upload_id",
+          "accepted_bytes",
+          "completed",
+          "asset_id"
+        ]
+      }
+    },
+    "host.asset.read/v1": {
+      "meta_profile": "control/install/attempt",
+      "params": {
+        "fields": [
+          "asset_id",
+          "offset",
+          "length"
+        ],
+        "required": [
+          "asset_id",
+          "offset",
+          "length"
+        ]
+      },
+      "result": {
+        "fields": [
+          "base64_chunk",
+          "next_offset",
+          "content_hash"
+        ],
+        "required": [
+          "base64_chunk",
+          "next_offset",
+          "content_hash"
+        ]
+      }
+    },
+    "host.asset.upload.status/v1": {
+      "meta_profile": "install/attempt",
+      "params": {
+        "fields": [
+          "upload_id",
+          "expected_hash"
+        ],
+        "required": [
+          "upload_id",
+          "expected_hash"
+        ]
+      },
+      "result": {
+        "fields": [
+          "accepted_bytes",
+          "completed",
+          "asset_id"
+        ],
+        "required": [
+          "accepted_bytes",
+          "completed",
+          "asset_id"
+        ]
+      }
+    },
+    "host.candidate.stage/v1": {
+      "meta_profile": "attempt",
+      "params": {
+        "fields": [
+          "operation_key",
+          "result_bundle_asset_id",
+          "input_snapshot_hash"
+        ],
+        "required": [
+          "operation_key",
+          "result_bundle_asset_id",
+          "input_snapshot_hash"
+        ]
+      },
+      "result": {
+        "fields": [
+          "accepted",
+          "staged_items",
+          "job_event_seq"
+        ],
+        "required": [
+          "accepted",
+          "staged_items",
+          "job_event_seq"
+        ]
+      }
+    },
+    "host.capability.cancel/v1": {
+      "meta_profile": "attempt",
+      "params": {
+        "fields": [
+          "operation_key",
+          "child_job_id",
+          "reason"
+        ],
+        "required": [
+          "operation_key",
+          "child_job_id",
+          "reason"
+        ]
+      },
+      "result": {
+        "fields": [
+          "accepted",
+          "terminal_known",
+          "child_state",
+          "child_job_event_seq"
+        ],
+        "required": [
+          "accepted",
+          "terminal_known",
+          "child_state",
+          "child_job_event_seq"
+        ]
+      }
+    },
+    "host.capability.invoke/v1": {
+      "meta_profile": "attempt",
+      "params": {
+        "fields": [
+          "operation_key",
+          "binding_id",
+          "input_asset_id",
+          "parameters_asset_id",
+          "expected_result_contract",
+          "propagate_cancel"
+        ],
+        "required": [
+          "operation_key",
+          "binding_id",
+          "input_asset_id",
+          "parameters_asset_id",
+          "expected_result_contract",
+          "propagate_cancel"
+        ]
+      },
+      "result": {
+        "fields": [
+          "accepted",
+          "child_job_id",
+          "child_step_id",
+          "child_run_snapshot_asset_id",
+          "child_run_snapshot_hash",
+          "child_result_contract",
+          "child_job_event_seq"
+        ],
+        "required": [
+          "accepted",
+          "child_job_id",
+          "child_step_id",
+          "child_run_snapshot_asset_id",
+          "child_run_snapshot_hash",
+          "child_result_contract",
+          "child_job_event_seq"
+        ]
+      }
+    },
+    "host.capability.poll/v1": {
+      "meta_profile": "attempt",
+      "params": {
+        "fields": [
+          "child_job_id",
+          "after_job_event_seq"
+        ],
+        "required": [
+          "child_job_id",
+          "after_job_event_seq"
+        ]
+      },
+      "result": {
+        "fields": [
+          "job_snapshot_asset_id",
+          "job_event_page_asset_id",
+          "next_job_event_seq",
+          "terminal",
+          "result_bundle_asset_id",
+          "provenance_receipt_id"
+        ],
+        "required": [
+          "job_snapshot_asset_id",
+          "job_event_page_asset_id",
+          "next_job_event_seq",
+          "terminal",
+          "result_bundle_asset_id",
+          "provenance_receipt_id"
+        ]
+      }
+    },
+    "host.checkpoint.commit/v1": {
+      "meta_profile": "attempt",
+      "params": {
+        "fields": [
+          "operation_key",
+          "checkpoint_asset_id"
+        ],
+        "required": [
+          "operation_key",
+          "checkpoint_asset_id"
+        ]
+      },
+      "result": {
+        "fields": [
+          "accepted",
+          "checkpoint_id",
+          "completed_units",
+          "total_units",
+          "job_event_seq"
+        ],
+        "required": [
+          "accepted",
+          "checkpoint_id",
+          "completed_units",
+          "total_units",
+          "job_event_seq"
+        ]
+      }
+    },
+    "host.job.await_user/v1": {
+      "meta_profile": "attempt",
+      "params": {
+        "fields": [
+          "operation_key",
+          "worker_run_id",
+          "checkpoint_asset_id",
+          "prompt_asset_id",
+          "reason"
+        ],
+        "required": [
+          "operation_key",
+          "worker_run_id",
+          "checkpoint_asset_id",
+          "prompt_asset_id",
+          "reason"
+        ]
+      },
+      "result": {
+        "fields": [
+          "accepted",
+          "attempt_state",
+          "step_state",
+          "job_state",
+          "job_event_seq"
+        ],
+        "required": [
+          "accepted",
+          "attempt_state",
+          "step_state",
+          "job_state",
+          "job_event_seq"
+        ]
+      }
+    },
+    "host.job.complete/v1": {
+      "meta_profile": "attempt",
+      "params": {
+        "fields": [
+          "operation_key",
+          "worker_run_id",
+          "outcome",
+          "result_bundle_asset_id",
+          "candidate_stage_operation_key",
+          "terminal_detail_asset_id",
+          "local_seq"
+        ],
+        "required": [
+          "operation_key",
+          "worker_run_id",
+          "outcome",
+          "result_bundle_asset_id",
+          "candidate_stage_operation_key",
+          "terminal_detail_asset_id",
+          "local_seq"
+        ]
+      },
+      "result": {
+        "fields": [
+          "accepted",
+          "attempt_state",
+          "step_state",
+          "job_state",
+          "provenance_receipt_id",
+          "job_event_seq",
+          "core_event_high_water"
+        ],
+        "required": [
+          "accepted",
+          "attempt_state",
+          "step_state",
+          "job_state",
+          "provenance_receipt_id",
+          "job_event_seq",
+          "core_event_high_water"
+        ]
+      }
+    },
+    "host.job.event/v1": {
+      "meta_profile": "attempt",
+      "params": {
+        "fields": [
+          "operation_key",
+          "event_type",
+          "payload_asset_id",
+          "local_seq"
+        ],
+        "required": [
+          "operation_key",
+          "event_type",
+          "payload_asset_id",
+          "local_seq"
+        ]
+      },
+      "result": {
+        "fields": [
+          "accepted",
+          "job_event_seq"
+        ],
+        "required": [
+          "accepted",
+          "job_event_seq"
+        ]
+      }
+    },
+    "host.log/v1": {
+      "meta_profile": "control/install/attempt",
+      "params": {
+        "fields": [
+          "level",
+          "message",
+          "fields_asset_id",
+          "local_seq"
+        ],
+        "required": [
+          "level",
+          "message",
+          "fields_asset_id",
+          "local_seq"
+        ]
+      },
+      "result": {
+        "fields": [
+          "accepted",
+          "dropped"
+        ],
+        "required": [
+          "accepted",
+          "dropped"
+        ]
+      }
+    },
+    "host.migration.lease.release/v1": {
+      "meta_profile": "install",
+      "params": {
+        "fields": [
+          "operation_key",
+          "db_lease_id",
+          "db_lease_epoch",
+          "owner_instance_id",
+          "reason"
+        ],
+        "required": [
+          "operation_key",
+          "db_lease_id",
+          "db_lease_epoch",
+          "owner_instance_id",
+          "reason"
+        ]
+      },
+      "result": {
+        "fields": [
+          "accepted",
+          "state"
+        ],
+        "required": [
+          "accepted",
+          "state"
+        ]
+      }
+    },
+    "host.migration.lease.renew/v1": {
+      "meta_profile": "install",
+      "params": {
+        "fields": [
+          "operation_key",
+          "db_lease_id",
+          "db_lease_epoch",
+          "owner_instance_id",
+          "requested_expires_at"
+        ],
+        "required": [
+          "operation_key",
+          "db_lease_id",
+          "db_lease_epoch",
+          "owner_instance_id",
+          "requested_expires_at"
+        ]
+      },
+      "result": {
+        "fields": [
+          "accepted",
+          "db_lease_epoch",
+          "expires_at"
+        ],
+        "required": [
+          "accepted",
+          "db_lease_epoch",
+          "expires_at"
+        ]
+      }
+    },
+    "host.model.invoke/v1": {
+      "meta_profile": "attempt",
+      "params": {
+        "fields": [
+          "operation_key",
+          "invocation_id",
+          "invocation_key",
+          "model_profile_revision_id",
+          "request_asset_id",
+          "replay_policy"
+        ],
+        "required": [
+          "operation_key",
+          "invocation_id",
+          "invocation_key",
+          "model_profile_revision_id",
+          "request_asset_id",
+          "replay_policy"
+        ]
+      },
+      "result": {
+        "fields": [
+          "state",
+          "response_asset_id",
+          "receipt_id",
+          "uncertainty"
+        ],
+        "required": [
+          "state",
+          "response_asset_id",
+          "receipt_id",
+          "uncertainty"
+        ]
+      }
+    },
+    "host.stream.commit/v1": {
+      "meta_profile": "attempt",
+      "params": {
+        "fields": [
+          "operation_key",
+          "stream_prefix_asset_id"
+        ],
+        "required": [
+          "operation_key",
+          "stream_prefix_asset_id"
+        ]
+      },
+      "result": {
+        "fields": [
+          "accepted",
+          "stream_id",
+          "acked_prefix_seq",
+          "acked_bytes",
+          "acked_prefix_hash",
+          "job_event_seq"
+        ],
+        "required": [
+          "accepted",
+          "stream_id",
+          "acked_prefix_seq",
+          "acked_bytes",
+          "acked_prefix_hash",
+          "job_event_seq"
+        ]
+      }
+    },
+    "job.cancel": {
+      "meta_profile": "attempt",
+      "params": {
+        "fields": [
+          "worker_run_id",
+          "reason"
+        ],
+        "required": [
+          "worker_run_id",
+          "reason"
+        ]
+      },
+      "result": {
+        "fields": [
+          "accepted",
+          "terminal_known",
+          "attempt_state"
+        ],
+        "required": [
+          "accepted",
+          "terminal_known",
+          "attempt_state"
+        ]
+      }
+    },
+    "job.pause": {
+      "meta_profile": "attempt",
+      "params": {
+        "fields": [
+          "worker_run_id",
+          "reason"
+        ],
+        "required": [
+          "worker_run_id",
+          "reason"
+        ]
+      },
+      "result": {
+        "fields": [
+          "accepted",
+          "checkpoint_asset_id"
+        ],
+        "required": [
+          "accepted",
+          "checkpoint_asset_id"
+        ]
+      }
+    },
+    "job.resume": {
+      "meta_profile": "attempt",
+      "params": {
+        "fields": [
+          "capability_id",
+          "run_snapshot_asset_id",
+          "resume_of_attempt_id",
+          "checkpoint_asset_id",
+          "resume_intent_id",
+          "resume_reason",
+          "secrets"
+        ],
+        "required": [
+          "capability_id",
+          "run_snapshot_asset_id",
+          "resume_of_attempt_id",
+          "checkpoint_asset_id",
+          "resume_intent_id",
+          "resume_reason",
+          "secrets"
+        ]
+      },
+      "result": {
+        "fields": [
+          "accepted",
+          "worker_run_id",
+          "provenance_receipt_id",
+          "output_streams"
+        ],
+        "required": [
+          "accepted",
+          "worker_run_id",
+          "provenance_receipt_id",
+          "output_streams"
+        ]
+      }
+    },
+    "job.start": {
+      "meta_profile": "attempt",
+      "params": {
+        "fields": [
+          "capability_id",
+          "run_snapshot_asset_id",
+          "checkpoint_asset_id",
+          "secrets"
+        ],
+        "required": [
+          "capability_id",
+          "run_snapshot_asset_id",
+          "checkpoint_asset_id",
+          "secrets"
+        ]
+      },
+      "result": {
+        "fields": [
+          "accepted",
+          "worker_run_id",
+          "provenance_receipt_id",
+          "output_streams"
+        ],
+        "required": [
+          "accepted",
+          "worker_run_id",
+          "provenance_receipt_id",
+          "output_streams"
+        ]
+      }
+    },
+    "migration.apply": {
+      "meta_profile": "install",
+      "params": {
+        "fields": [
+          "plan_id",
+          "db_lease_id",
+          "db_lease_epoch",
+          "owner_instance_id"
+        ],
+        "required": [
+          "plan_id",
+          "db_lease_id",
+          "db_lease_epoch",
+          "owner_instance_id"
+        ]
+      },
+      "result": {
+        "fields": [
+          "applied_schema",
+          "receipt_hash"
+        ],
+        "required": [
+          "applied_schema",
+          "receipt_hash"
+        ]
+      }
+    },
+    "migration.plan": {
+      "meta_profile": "install",
+      "params": {
+        "fields": [
+          "from_schema",
+          "to_schema",
+          "migration_manifest_hash"
+        ],
+        "required": [
+          "from_schema",
+          "to_schema",
+          "migration_manifest_hash"
+        ]
+      },
+      "result": {
+        "fields": [
+          "plan_id",
+          "steps",
+          "backward_compatible",
+          "requires_verified_backup"
+        ],
+        "required": [
+          "plan_id",
+          "steps",
+          "backward_compatible",
+          "requires_verified_backup"
+        ]
+      }
+    },
+    "migration.verify": {
+      "meta_profile": "install",
+      "params": {
+        "fields": [
+          "db_lease_id",
+          "db_lease_epoch",
+          "owner_instance_id",
+          "expected_schema"
+        ],
+        "required": [
+          "db_lease_id",
+          "db_lease_epoch",
+          "owner_instance_id",
+          "expected_schema"
+        ]
+      },
+      "result": {
+        "fields": [
+          "valid",
+          "schema_hash",
+          "errors"
+        ],
+        "required": [
+          "valid",
+          "schema_hash",
+          "errors"
+        ]
+      }
+    },
+    "runtime.handshake": {
+      "meta_profile": "control/install",
+      "params": {
+        "fields": [
+          "host_protocol",
+          "generation_id",
+          "plugin_release_id",
+          "data_generation_id"
+        ],
+        "required": [
+          "host_protocol",
+          "generation_id",
+          "plugin_release_id",
+          "data_generation_id"
+        ]
+      },
+      "result": {
+        "fields": [
+          "plugin_protocol",
+          "plugin_id",
+          "release_id",
+          "capabilities",
+          "worker_instance_id"
+        ],
+        "required": [
+          "plugin_protocol",
+          "plugin_id",
+          "release_id",
+          "capabilities",
+          "worker_instance_id"
+        ]
+      }
+    },
+    "runtime.health": {
+      "meta_profile": "control/install",
+      "params": {
+        "fields": [
+          "probe_id",
+          "db_lease_id",
+          "db_lease_epoch",
+          "owner_instance_id"
+        ],
+        "required": [
+          "probe_id",
+          "db_lease_id",
+          "db_lease_epoch",
+          "owner_instance_id"
+        ]
+      },
+      "result": {
+        "fields": [
+          "status",
+          "details_asset_id",
+          "checked_at"
+        ],
+        "required": [
+          "status",
+          "details_asset_id",
+          "checked_at"
+        ]
+      }
+    },
+    "runtime.heartbeat": {
+      "meta_profile": "attempt",
+      "params": {
+        "fields": [
+          "worker_instance_id",
+          "observed_at",
+          "local_seq"
+        ],
+        "required": [
+          "worker_instance_id",
+          "observed_at",
+          "local_seq"
+        ]
+      },
+      "result": {
+        "fields": [],
+        "required": []
+      }
+    },
+    "runtime.shutdown": {
+      "meta_profile": "control/install/attempt",
+      "params": {
+        "fields": [
+          "reason",
+          "deadline_at"
+        ],
+        "required": [
+          "reason",
+          "deadline_at"
+        ]
+      },
+      "result": {
+        "fields": [
+          "accepted"
+        ],
+        "required": [
+          "accepted"
+        ]
+      }
+    },
+    "settings.validate": {
+      "meta_profile": "control/install",
+      "params": {
+        "fields": [
+          "settings_revision_id",
+          "plugin_release_id",
+          "schema_hash",
+          "payload_asset_id"
+        ],
+        "required": [
+          "settings_revision_id",
+          "plugin_release_id",
+          "schema_hash",
+          "payload_asset_id"
+        ]
+      },
+      "result": {
+        "fields": [
+          "valid",
+          "evaluated_payload_hash",
+          "details_asset_id",
+          "errors"
+        ],
+        "required": [
+          "valid",
+          "evaluated_payload_hash",
+          "details_asset_id",
+          "errors"
+        ]
+      }
+    }
+  },
+  "protocol": {
+    "batch": false,
+    "encoding": "utf-8",
+    "framing": "content-length-crlf",
+    "jsonrpc": "2.0",
+    "max_body_bytes": 8388608,
+    "max_header_bytes": 8192
+  },
+  "schema": "rpc-method-matrix/v1",
+  "worker_methods": [
+    "runtime.handshake",
+    "runtime.health",
+    "runtime.heartbeat",
+    "capability.describe",
+    "settings.validate",
+    "migration.plan",
+    "migration.apply",
+    "migration.verify",
+    "job.start",
+    "job.resume",
+    "job.pause",
+    "job.cancel",
+    "runtime.shutdown"
+  ]
+}

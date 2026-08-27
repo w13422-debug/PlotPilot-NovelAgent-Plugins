@@ -1,0 +1,44 @@
+{
+  "schema": "plotpilot-plugin/v1",
+  "plugin_id": "com.plotpilot.novelagent.provider-anthropic",
+  "version": "0.1.0",
+  "display_name": "Novel-Agent Anthropic Provider",
+  "compatibility": {
+    "core_api": ">=1.0 <2.0",
+    "plugin_rpc": "1",
+    "ui_host": "1",
+    "python": "3.12.*"
+  },
+  "capabilities": [
+    {
+      "capability_id": "model.provider.anthropic.invoke/v1",
+      "operations": ["run", "cancel"],
+      "result_contract": "artifact-bundle/v1"
+    }
+  ],
+  "settings": null,
+  "needs": [
+    "host.asset.read/v1",
+    "host.asset.create/v1",
+    "host.asset.upload.status/v1",
+    "host.job.event/v1",
+    "host.job.complete/v1",
+    "host.checkpoint.commit/v1",
+    "host.stream.commit/v1"
+  ],
+  "kind": "code",
+  "backend": {
+    "entrypoint": "provider_anthropic.provider:main",
+    "wheel": "backend/provider-anthropic.whl",
+    "requirements_lock": "backend/requirements.lock",
+    "wheelhouse": "backend/wheels",
+    "max_concurrency": 1
+  },
+  "storage": {
+    "schema_version": 1,
+    "migration_policy": "transactional-shadow",
+    "migration_manifest": "migrations/manifest.json"
+  },
+  "ui": null,
+  "data": null
+}

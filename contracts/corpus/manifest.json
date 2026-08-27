@@ -1,0 +1,29 @@
+{
+  "additional_negative_profiles": [
+    "contract-publication-v1/negative.json"
+  ],
+  "compatibility": [
+    "compatibility/valid.json",
+    "compatibility/invalid.json"
+  ],
+  "history": "history/v1-raw.json",
+  "negative_groups": [
+    "84.13-01",
+    "84.13-02",
+    "84.13-03",
+    "84.13-04",
+    "84.13-05",
+    "84.13-06",
+    "84.13-07",
+    "84.13-08",
+    "84.13-09",
+    "84.13-10",
+    "84.13-11",
+    "84.13-12",
+    "84.13-13",
+    "84.13-14"
+  ],
+  "path_corpus": "paths/windows-paths.json",
+  "required_group_count": 14,
+  "schema": "contract-corpus/v1"
+}

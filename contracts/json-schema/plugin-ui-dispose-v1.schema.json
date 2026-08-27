@@ -1,0 +1,35 @@
+{
+  "$id": "https://plotpilot.local/contracts/plugin-ui-dispose-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "deadline_at": {
+      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+      "type": "string"
+    },
+    "reason": {
+      "enum": [
+        "normal_shutdown",
+        "slot_unmounted",
+        "generation_changed",
+        "workspace_changed",
+        "watchdog"
+      ]
+    },
+    "schema": {
+      "const": "plugin-ui-dispose/v1"
+    },
+    "ui_session_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema",
+    "ui_session_id",
+    "reason",
+    "deadline_at"
+  ],
+  "title": "PlotPilot plugin-ui-dispose-v1",
+  "type": "object"
+}

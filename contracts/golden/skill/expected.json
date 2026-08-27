@@ -1,0 +1,9 @@
+{
+  "expected_from_design": {
+    "skill_package_hash": "5cf3df6acea3c792ee36fa3c0c5757f87c8219aba88cfc568bd4a67738983b7f",
+    "skill_release_id": "abe35d45644a2ebac3b3c914876c613342b8d5a3e2421334241a06ec887436b7"
+  },
+  "files_sha256": "240c9cc169ce9ea5b2b7802201b672812abb8f7cd2cfa3c3e2327b61b748e061  prompt.txt\n30f21bc4b70b1219d23f3fbf6dbbabc460ecddb6f373800f560d5441df8006c1  skill.json\n",
+  "skill_package_hash": "5cf3df6acea3c792ee36fa3c0c5757f87c8219aba88cfc568bd4a67738983b7f",
+  "skill_release_id": "abe35d45644a2ebac3b3c914876c613342b8d5a3e2421334241a06ec887436b7"
+}

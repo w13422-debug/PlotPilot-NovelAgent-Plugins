@@ -1,0 +1,21 @@
+{
+  "jsonrpc": "2.0",
+  "meta": {
+    "attempt_id": "attempt-1",
+    "context": "attempt",
+    "deadline_at": "2026-08-26T00:00:00Z",
+    "generation_id": "generation-1",
+    "job_id": "job-1",
+    "lease_epoch": 1,
+    "operation_id": "op-heartbeat",
+    "plugin_release_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "protocol_version": "1",
+    "step_id": "step-1"
+  },
+  "method": "runtime.heartbeat",
+  "params": {
+    "local_seq": 1,
+    "observed_at": "2026-08-26T00:00:00Z",
+    "worker_instance_id": "worker-1"
+  }
+}

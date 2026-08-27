@@ -1,0 +1,95 @@
+{
+  "$id": "https://plotpilot.local/contracts/broker-invocation-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "binding_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "expected_result_contract": {
+      "enum": [
+        "candidate-batch/v1",
+        "artifact-bundle/v1",
+        "diagnostic-bundle/v1"
+      ]
+    },
+    "input_asset_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "input_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "invocation_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "invoke_operation_key": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "parameters_asset_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "parameters_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "parent_attempt_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "parent_job_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "parent_step_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "propagate_cancel": {
+      "type": "boolean"
+    },
+    "required": {
+      "type": "boolean"
+    },
+    "schema": {
+      "const": "broker-invocation/v1"
+    }
+  },
+  "required": [
+    "schema",
+    "invocation_id",
+    "parent_job_id",
+    "parent_step_id",
+    "parent_attempt_id",
+    "invoke_operation_key",
+    "binding_id",
+    "input_asset_id",
+    "input_hash",
+    "parameters_asset_id",
+    "parameters_hash",
+    "expected_result_contract",
+    "required",
+    "propagate_cancel"
+  ],
+  "title": "PlotPilot broker-invocation-v1",
+  "type": "object"
+}

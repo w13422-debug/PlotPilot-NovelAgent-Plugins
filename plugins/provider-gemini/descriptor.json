@@ -1,0 +1,14 @@
+{
+  "schema": "capability-provider/v1",
+  "capability_id": "model.provider.gemini.invoke/v1",
+  "provider": {
+    "plugin_id": "com.plotpilot.novelagent.provider-gemini",
+    "release_id": "48758159c86dbb668c128177b538a74ef84e378e2236431d15bfaae05b71ee4a"
+  },
+  "input_schema": "model.provider.gemini.invoke-request/v1",
+  "output_schema": "model.provider.gemini.invoke-result/v1",
+  "result_contract": "artifact-bundle/v1",
+  "supports": ["run", "cancel"],
+  "deterministic": false,
+  "accepted_data_formats": []
+}

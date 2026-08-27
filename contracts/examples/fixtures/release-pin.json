@@ -1,0 +1,10 @@
+{
+  "created_at": "2026-08-26T00:00:00Z",
+  "owner_id": "generation-1",
+  "pin_id": "pin-1",
+  "pin_kind": "current_generation",
+  "release_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "released_at": null,
+  "retire_epoch": 1,
+  "schema": "release-pin/v1"
+}

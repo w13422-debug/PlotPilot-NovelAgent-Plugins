@@ -1,0 +1,60 @@
+{
+  "$id": "https://plotpilot.local/contracts/plugin-ui-ack-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "accepted": {
+      "type": "boolean"
+    },
+    "core_event_seq": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "error_code": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "intent_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "job_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "schema": {
+      "const": "plugin-ui-ack/v1"
+    }
+  },
+  "required": [
+    "schema",
+    "intent_id",
+    "accepted",
+    "error_code",
+    "core_event_seq",
+    "job_id"
+  ],
+  "title": "PlotPilot plugin-ui-ack-v1",
+  "type": "object"
+}

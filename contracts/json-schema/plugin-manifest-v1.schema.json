@@ -1,0 +1,525 @@
+{
+  "$id": "https://plotpilot.local/contracts/plugin-manifest-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "oneOf": [
+    {
+      "additionalProperties": false,
+      "properties": {
+        "backend": {
+          "additionalProperties": false,
+          "properties": {
+            "entrypoint": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "max_concurrency": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "requirements_lock": {
+              "maxLength": 240,
+              "minLength": 1,
+              "pattern": "^[^\\\\\\x00]+$",
+              "type": "string"
+            },
+            "wheel": {
+              "maxLength": 240,
+              "minLength": 1,
+              "pattern": "^[^\\\\\\x00]+$",
+              "type": "string"
+            },
+            "wheelhouse": {
+              "maxLength": 240,
+              "minLength": 1,
+              "pattern": "^[^\\\\\\x00]+$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "entrypoint",
+            "wheel",
+            "requirements_lock",
+            "wheelhouse",
+            "max_concurrency"
+          ],
+          "type": "object"
+        },
+        "capabilities": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "capability_id": {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                "type": "string"
+              },
+              "operations": {
+                "items": {
+                  "enum": [
+                    "run",
+                    "resume",
+                    "cancel",
+                    "validate"
+                  ]
+                },
+                "minItems": 1,
+                "type": "array",
+                "uniqueItems": true
+              },
+              "result_contract": {
+                "enum": [
+                  "candidate-batch/v1",
+                  "artifact-bundle/v1",
+                  "diagnostic-bundle/v1"
+                ]
+              }
+            },
+            "required": [
+              "capability_id",
+              "operations",
+              "result_contract"
+            ],
+            "type": "object"
+          },
+          "minItems": 0,
+          "type": "array"
+        },
+        "compatibility": {
+          "additionalProperties": false,
+          "properties": {
+            "core_api": {
+              "pattern": "^>=(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*) <(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$",
+              "type": "string"
+            },
+            "plugin_rpc": {
+              "pattern": "^(0|[1-9][0-9]*)$",
+              "type": "string"
+            },
+            "python": {
+              "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.\\*$",
+              "type": "string"
+            },
+            "ui_host": {
+              "pattern": "^(0|[1-9][0-9]*)$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "core_api",
+            "plugin_rpc",
+            "ui_host"
+          ],
+          "type": "object"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "additionalProperties": false,
+              "properties": {
+                "format": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "root": {
+                  "maxLength": 240,
+                  "minLength": 1,
+                  "pattern": "^[^\\\\\\x00]+$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "format",
+                "root"
+              ],
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "display_name": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "kind": {
+          "const": "code"
+        },
+        "needs": {
+          "items": {
+            "enum": [
+              "host.asset.read/v1",
+              "host.asset.create/v1",
+              "host.asset.upload.status/v1",
+              "host.model.invoke/v1",
+              "host.capability.invoke/v1",
+              "host.capability.poll/v1",
+              "host.capability.cancel/v1",
+              "host.candidate.stage/v1",
+              "host.checkpoint.commit/v1",
+              "host.stream.commit/v1",
+              "host.job.event/v1",
+              "host.job.await_user/v1",
+              "host.job.complete/v1",
+              "host.log/v1",
+              "host.migration.lease.renew/v1",
+              "host.migration.lease.release/v1"
+            ]
+          },
+          "minItems": 0,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "plugin_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "schema": {
+          "const": "plotpilot-plugin/v1"
+        },
+        "settings": {
+          "anyOf": [
+            {
+              "additionalProperties": false,
+              "properties": {
+                "defaults": {
+                  "maxLength": 240,
+                  "minLength": 1,
+                  "pattern": "^[^\\\\\\x00]+$",
+                  "type": "string"
+                },
+                "migration_manifest": {
+                  "anyOf": [
+                    {
+                      "maxLength": 240,
+                      "minLength": 1,
+                      "pattern": "^[^\\\\\\x00]+$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "namespace": {
+                  "pattern": "^plugin\\.[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "schema": {
+                  "maxLength": 240,
+                  "minLength": 1,
+                  "pattern": "^[^\\\\\\x00]+$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "namespace",
+                "schema",
+                "defaults",
+                "migration_manifest"
+              ],
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "storage": {
+          "additionalProperties": false,
+          "properties": {
+            "migration_manifest": {
+              "maxLength": 240,
+              "minLength": 1,
+              "pattern": "^[^\\\\\\x00]+$",
+              "type": "string"
+            },
+            "migration_policy": {
+              "const": "transactional-shadow"
+            },
+            "schema_version": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "schema_version",
+            "migration_policy",
+            "migration_manifest"
+          ],
+          "type": "object"
+        },
+        "ui": {
+          "anyOf": [
+            {
+              "additionalProperties": false,
+              "properties": {
+                "contributions": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "capability_id": {
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                        "type": "string"
+                      },
+                      "contribution_id": {
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                        "type": "string"
+                      },
+                      "slot": {
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "contribution_id",
+                      "slot",
+                      "capability_id"
+                    ],
+                    "type": "object"
+                  },
+                  "minItems": 0,
+                  "type": "array"
+                },
+                "entry": {
+                  "maxLength": 240,
+                  "minLength": 1,
+                  "pattern": "^[^\\\\\\x00]+$",
+                  "type": "string"
+                },
+                "runtime": {
+                  "const": "worker-ui/v1"
+                }
+              },
+              "required": [
+                "entry",
+                "runtime",
+                "contributions"
+              ],
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "version": {
+          "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "plugin_id",
+        "version",
+        "display_name",
+        "compatibility",
+        "capabilities",
+        "settings",
+        "needs",
+        "kind",
+        "backend",
+        "storage",
+        "ui",
+        "data"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "capabilities": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "capability_id": {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                "type": "string"
+              },
+              "operations": {
+                "items": {
+                  "enum": [
+                    "run",
+                    "resume",
+                    "cancel",
+                    "validate"
+                  ]
+                },
+                "minItems": 1,
+                "type": "array",
+                "uniqueItems": true
+              },
+              "result_contract": {
+                "enum": [
+                  "candidate-batch/v1",
+                  "artifact-bundle/v1",
+                  "diagnostic-bundle/v1"
+                ]
+              }
+            },
+            "required": [
+              "capability_id",
+              "operations",
+              "result_contract"
+            ],
+            "type": "object"
+          },
+          "minItems": 0,
+          "type": "array"
+        },
+        "compatibility": {
+          "additionalProperties": false,
+          "properties": {
+            "core_api": {
+              "pattern": "^>=(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*) <(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$",
+              "type": "string"
+            },
+            "plugin_rpc": {
+              "pattern": "^(0|[1-9][0-9]*)$",
+              "type": "string"
+            },
+            "python": {
+              "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.\\*$",
+              "type": "string"
+            },
+            "ui_host": {
+              "pattern": "^(0|[1-9][0-9]*)$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "core_api",
+            "plugin_rpc",
+            "ui_host"
+          ],
+          "type": "object"
+        },
+        "data": {
+          "additionalProperties": false,
+          "properties": {
+            "format": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            "root": {
+              "maxLength": 240,
+              "minLength": 1,
+              "pattern": "^[^\\\\\\x00]+$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "format",
+            "root"
+          ],
+          "type": "object"
+        },
+        "display_name": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "kind": {
+          "const": "data"
+        },
+        "needs": {
+          "items": {
+            "enum": [
+              "host.asset.read/v1",
+              "host.asset.create/v1",
+              "host.asset.upload.status/v1",
+              "host.model.invoke/v1",
+              "host.capability.invoke/v1",
+              "host.capability.poll/v1",
+              "host.capability.cancel/v1",
+              "host.candidate.stage/v1",
+              "host.checkpoint.commit/v1",
+              "host.stream.commit/v1",
+              "host.job.event/v1",
+              "host.job.await_user/v1",
+              "host.job.complete/v1",
+              "host.log/v1",
+              "host.migration.lease.renew/v1",
+              "host.migration.lease.release/v1"
+            ]
+          },
+          "minItems": 0,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "plugin_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "schema": {
+          "const": "plotpilot-plugin/v1"
+        },
+        "settings": {
+          "anyOf": [
+            {
+              "additionalProperties": false,
+              "properties": {
+                "defaults": {
+                  "maxLength": 240,
+                  "minLength": 1,
+                  "pattern": "^[^\\\\\\x00]+$",
+                  "type": "string"
+                },
+                "migration_manifest": {
+                  "anyOf": [
+                    {
+                      "maxLength": 240,
+                      "minLength": 1,
+                      "pattern": "^[^\\\\\\x00]+$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "namespace": {
+                  "pattern": "^plugin\\.[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "schema": {
+                  "maxLength": 240,
+                  "minLength": 1,
+                  "pattern": "^[^\\\\\\x00]+$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "namespace",
+                "schema",
+                "defaults",
+                "migration_manifest"
+              ],
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "version": {
+          "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "plugin_id",
+        "version",
+        "display_name",
+        "compatibility",
+        "capabilities",
+        "settings",
+        "needs",
+        "kind",
+        "data"
+      ],
+      "type": "object"
+    }
+  ],
+  "title": "PlotPilot plugin-manifest-v1",
+  "unevaluatedProperties": false
+}

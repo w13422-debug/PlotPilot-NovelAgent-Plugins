@@ -1,0 +1,41 @@
+{
+  "asset_closure_root": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "backup_epoch": 7,
+  "backup_id": "backup-golden",
+  "bundle_hash": "cb26bba0a85711962d2d6f44115b2c186bd9db0aa3514b58dcecc9c0083fbaf8",
+  "core_contract_version": "1.2.0",
+  "core_snapshot_hash": "5a7e60677a5ced4803c96f7b7db657409051ba8f3f5b18aa8ac28978e2b4a1d2",
+  "created_at": "2026-08-26T00:00:00Z",
+  "current_generation_id": "generation-1",
+  "files": [
+    {
+      "path": "core/core.db",
+      "role": "core_db",
+      "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "size": 128
+    }
+  ],
+  "library_root_id": "library-golden",
+  "lkg_generation_id": "generation-0",
+  "mode": "workspace",
+  "plugin_releases": [],
+  "projection_rebuild_required": [
+    {
+      "plugin_id": "com.plotpilot.demo",
+      "reason": "plugin_projection_rebuild_required",
+      "release_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    }
+  ],
+  "schema": "backup-bundle/v1",
+  "verification": {
+    "assets_valid": true,
+    "compatible": true,
+    "databases_valid": true,
+    "files_valid": true,
+    "verified_at": "2026-08-26T00:00:00Z"
+  },
+  "workspace_ids": [
+    "ws-1"
+  ],
+  "workspace_snapshot_hash": "5a7e60677a5ced4803c96f7b7db657409051ba8f3f5b18aa8ac28978e2b4a1d2"
+}

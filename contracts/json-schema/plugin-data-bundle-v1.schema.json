@@ -1,0 +1,93 @@
+{
+  "$id": "https://plotpilot.local/contracts/plugin-data-bundle-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "bundle_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "bundle_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "data_plugin_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "data_release_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "files": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "mime": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "path": {
+            "maxLength": 240,
+            "minLength": 1,
+            "pattern": "^[^\\\\\\x00]+$",
+            "type": "string"
+          },
+          "sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "size": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "asset_id",
+          "sha256",
+          "mime",
+          "size"
+        ],
+        "type": "object"
+      },
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "format_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "package_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "root_path": {
+      "maxLength": 240,
+      "minLength": 1,
+      "pattern": "^[^\\\\\\x00]+$",
+      "type": "string"
+    },
+    "schema": {
+      "const": "plugin-data-bundle/v1"
+    }
+  },
+  "required": [
+    "schema",
+    "bundle_id",
+    "data_plugin_id",
+    "data_release_id",
+    "package_hash",
+    "format_id",
+    "root_path",
+    "files",
+    "bundle_hash"
+  ],
+  "title": "PlotPilot plugin-data-bundle-v1",
+  "type": "object"
+}

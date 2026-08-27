@@ -1,0 +1,16 @@
+{
+  "accepted_data_formats": [],
+  "capability_id": "fixture.echo/v1",
+  "deterministic": true,
+  "input_schema": "fixture/input/v1",
+  "output_schema": "fixture/output/v1",
+  "provider": {
+    "plugin_id": "com.plotpilot.fixture.code",
+    "release_id": "rel-fixture"
+  },
+  "result_contract": "artifact-bundle/v1",
+  "schema": "capability-provider/v1",
+  "supports": [
+    "run"
+  ]
+}

@@ -1,0 +1,681 @@
+import { canonicalJson, hashJcs, sha256Hex, utf8 } from './canonical.ts'
+import unicodeCasefoldContractJson from '../../contracts/unicode-casefold-v1.json' with { type: 'json' }
+import rpcMethodMatrixJson from '../../contracts/json-schema/rpc-method-matrix.v1.json' with { type: 'json' }
+import type { BackupBundle, CandidateItem, EvidenceSpan, JsonObject, ResultBundle, RunSnapshot } from './types.ts'
+
+type ByteFiles = Record<string, Uint8Array>
+type CasefoldContract = {
+  schema: string
+  unicode_data_version: string
+  algorithm: string
+  mappings: Record<string, string>
+  nfc_decomposition: Record<string, number[]>
+  nfc_combining_class: Record<string, number>
+  nfc_composition: Record<string, number>
+  nfc_hangul: Record<string, number>
+}
+type RpcDefinition = { meta_profile: string; params: { fields: string[] }; result: { fields: string[] } }
+
+const unicodeCasefoldContract = unicodeCasefoldContractJson as unknown as CasefoldContract
+const rpcMethodMatrix = rpcMethodMatrixJson as unknown as {
+  methods: Record<string, RpcDefinition>
+  error_codes: Record<string, string>
+}
+const HASH = /^[0-9a-f]{64}$/
+const ID = /^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$/
+const UTC = /^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.(?!000)[0-9]{3}Z)$/
+const RESERVED = new Set([
+  'con', 'prn', 'aux', 'nul', 'clock$',
+  ...Array.from({ length: 9 }, (_, index) => `com${index + 1}`),
+  ...Array.from({ length: 9 }, (_, index) => `lpt${index + 1}`),
+])
+const HANGUL_PROFILE = { s_base: 0xAC00, l_base: 0x1100, v_base: 0x1161, t_base: 0x11A7, l_count: 19, v_count: 21, t_count: 28 }
+
+if (
+  unicodeCasefoldContract.schema !== 'unicode-casefold/v1' ||
+  unicodeCasefoldContract.unicode_data_version !== '15.0.0' ||
+  unicodeCasefoldContract.algorithm !== 'NFC followed by per-code-point full casefold mapping' ||
+  JSON.stringify(unicodeCasefoldContract.nfc_hangul) !== JSON.stringify(HANGUL_PROFILE)
+) throw new Error('invalid Unicode casefold contract version')
+
+function fail(message: string): never { throw new Error(message) }
+
+function objectOf(value: unknown, label: string): JsonObject {
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) return fail(`${label} must be an object`)
+  return value as JsonObject
+}
+
+function arrayOf(value: unknown, label: string): unknown[] {
+  if (!Array.isArray(value)) return fail(`${label} must be an array`)
+  return value
+}
+
+function assertExactKeys(value: JsonObject, fields: readonly string[], label: string): void {
+  const expected = new Set(fields)
+  const actual = Object.keys(value)
+  if (actual.length !== expected.size || actual.some(field => !expected.has(field))) {
+    const missing = fields.filter(field => !Object.prototype.hasOwnProperty.call(value, field))
+    const extra = actual.filter(field => !expected.has(field))
+    fail(`${label} fields are not closed: missing=${missing.join(',')}, extra=${extra.join(',')}`)
+  }
+}
+
+function assertUnique(values: Iterable<unknown>, label: string): void {
+  const list = [...values]
+  if (new Set(list).size !== list.length) fail(label)
+}
+
+function assertSchema(value: JsonObject, schema: string): void {
+  if (value.schema !== schema) fail(`${schema} schema mismatch`)
+}
+
+export function assertHash(value: unknown, label: string): asserts value is string {
+  if (typeof value !== 'string' || !HASH.test(value)) fail(`${label} must be lowercase SHA-256`)
+}
+
+function assertId(value: unknown, label: string): asserts value is string {
+  if (typeof value !== 'string' || !ID.test(value)) fail(`${label} must be a PlotPilot ID`)
+}
+
+function compareUtf8(left: string, right: string): number {
+  const a = utf8(left)
+  const b = utf8(right)
+  const length = Math.min(a.byteLength, b.byteLength)
+  for (let index = 0; index < length; index += 1) {
+    const leftByte = a[index] ?? 0
+    const rightByte = b[index] ?? 0
+    if (leftByte !== rightByte) return leftByte - rightByte
+  }
+  return a.byteLength - b.byteLength
+}
+
+function codepointKey(codepoint: number): string { return codepoint.toString(16).padStart(4, '0') }
+
+export function unicodeNfc(value: string): string {
+  const decomposed: number[] = []
+  const appendDecomposed = (codepoint: number): void => {
+    const parts = unicodeCasefoldContract.nfc_decomposition[codepointKey(codepoint)]
+    if (parts == null) { decomposed.push(codepoint); return }
+    for (const part of parts) appendDecomposed(part)
+  }
+  for (const character of value) appendDecomposed(character.codePointAt(0) as number)
+
+  const combiningClass = (codepoint: number): number => unicodeCasefoldContract.nfc_combining_class[codepointKey(codepoint)] ?? 0
+  const ordered: number[] = []
+  for (const codepoint of decomposed) {
+    const ccc = combiningClass(codepoint)
+    if (ccc === 0) { ordered.push(codepoint); continue }
+    let index = ordered.length
+    while (index > 0 && combiningClass(ordered[index - 1] as number) > ccc) index -= 1
+    ordered.splice(index, 0, codepoint)
+  }
+
+  const composed: number[] = []
+  let starterIndex = -1
+  let lastClass = 0
+  for (const codepoint of ordered) {
+    const ccc = combiningClass(codepoint)
+    let composite: number | undefined
+    if (starterIndex >= 0 && (lastClass === 0 || lastClass < ccc)) {
+      composite = unicodeCasefoldContract.nfc_composition[`${codepointKey(composed[starterIndex] as number)}+${codepointKey(codepoint)}`]
+    }
+    if (composite != null) composed[starterIndex] = composite
+    else {
+      if (ccc === 0) starterIndex = composed.length
+      composed.push(codepoint)
+      lastClass = ccc
+    }
+  }
+  return composed.map(codepoint => String.fromCodePoint(codepoint)).join('')
+}
+
+export function unicodeNfcCasefold(value: string): string {
+  if (typeof value !== 'string') return fail('casefold identity requires a string')
+  return [...unicodeNfc(value)].map(character => unicodeCasefoldContract.mappings[codepointKey(character.codePointAt(0) as number)] ?? character).join('')
+}
+
+export function normalizeWindowsPath(path: string): string {
+  if (typeof path !== 'string' || !path || path.includes('\\') || path.includes('\0') || path.startsWith('/') || /^[A-Za-z]:/.test(path)) return fail('invalid package path')
+  const normalized = unicodeNfc(path)
+  const parts = normalized.split('/')
+  if (parts.some(part => !part || part === '.' || part === '..' || /[<>"|?*:\u0000-\u001f]/.test(part) || /[. ]$/.test(part))) return fail('invalid Windows path segment')
+  if (parts.some(part => RESERVED.has(unicodeNfcCasefold(part.split('.', 1)[0] ?? '')))) return fail('reserved Windows path')
+  if ([...normalized].length > 240) return fail('path exceeds 240 Unicode scalar values')
+  return normalized
+}
+
+function normalizedFileMap(files: ByteFiles): Map<string, Uint8Array> {
+  const normalized = new Map<string, Uint8Array>()
+  const identities = new Set<string>()
+  for (const [rawPath, content] of Object.entries(files)) {
+    const path = normalizeWindowsPath(rawPath)
+    if (path === 'files.sha256') fail('files.sha256 is generated')
+    if (!(content instanceof Uint8Array)) fail('package content must be raw bytes')
+    const identity = unicodeNfcCasefold(path)
+    if (identities.has(identity)) fail('casefold path collision')
+    identities.add(identity)
+    normalized.set(path, content)
+  }
+  return normalized
+}
+
+export async function buildFilesSha256(files: ByteFiles): Promise<Uint8Array> {
+  const normalized = normalizedFileMap(files)
+  const rows: string[] = []
+  for (const path of [...normalized.keys()].sort(compareUtf8)) rows.push(`${await sha256Hex(normalized.get(path) as Uint8Array)}  ${path}\n`)
+  return utf8(rows.join(''))
+}
+
+function concatBytes(...parts: Uint8Array[]): Uint8Array {
+  const result = new Uint8Array(parts.reduce((total, part) => total + part.byteLength, 0))
+  let offset = 0
+  for (const part of parts) { result.set(part, offset); offset += part.byteLength }
+  return result
+}
+
+export async function packageDigest(files: ByteFiles, pluginId: string, version: string): Promise<{ filesSha256: Uint8Array; packageHash: string; releaseId: string }> {
+  const filesSha256 = await buildFilesSha256(files)
+  const packageHash = await sha256Hex(concatBytes(utf8('plotpilot-package/v1\n'), filesSha256))
+  const releaseId = await sha256Hex(utf8(`plotpilot-release/v1\n${pluginId}\n${version}\n${packageHash}\n`))
+  return { filesSha256, packageHash, releaseId }
+}
+
+export async function skillPackageDigest(files: ByteFiles, skillId: string, version: string): Promise<{ filesSha256: Uint8Array; skillPackageHash: string; skillReleaseId: string }> {
+  const filesSha256 = await buildFilesSha256(files)
+  const skillPackageHash = await sha256Hex(concatBytes(utf8('plotpilot-skill-package/v1\n'), filesSha256))
+  const skillReleaseId = await sha256Hex(utf8(`plotpilot-skill-release/v1\n${skillId}\n${version}\n${skillPackageHash}\n`))
+  return { filesSha256, skillPackageHash, skillReleaseId }
+}
+
+function normalizedSnapshot(snapshot: JsonObject): JsonObject {
+  const result = structuredClone(snapshot) as JsonObject
+  const sortBy = (field: string, key: (value: JsonObject) => string): void => {
+    const values = result[field]
+    if (Array.isArray(values)) result[field] = values.map(item => objectOf(item, field)).sort((a, b) => compareUtf8(key(a), key(b)))
+  }
+  sortBy('input_revisions', item => `${String(item.document_id ?? '')}\0${String(item.revision_id ?? '')}`)
+  sortBy('plugin_releases', item => String(item.plugin_id ?? ''))
+  sortBy('plugin_settings_revisions', item => `${String(item.plugin_id ?? '')}\0${String(item.scope ?? '')}\0${String(item.scope_id ?? '')}`)
+  sortBy('asset_hashes', item => String(item.asset_id ?? ''))
+  return result
+}
+
+export function requestKeyBytes(snapshot: RunSnapshot): Uint8Array {
+  const parametersHash = snapshot.parameters_asset_id == null ? '-' : snapshot.asset_hashes.find(asset => asset.asset_id === snapshot.parameters_asset_id)?.sha256 ?? '-'
+  const revisions = [...snapshot.input_revisions].sort((left, right) => compareUtf8(`${left.document_id}\0${left.revision_id}`, `${right.document_id}\0${right.revision_id}`))
+  const revisionLine = revisions.map(item => `${item.document_id}=${item.revision_id}=${item.content_hash}`).join(',')
+  return utf8([
+    'request-key/v1', snapshot.workspace_id, snapshot.scope.operation,
+    snapshot.scope.document_id ?? 'null', snapshot.scope.node_id ?? 'null',
+    revisionLine, snapshot.plan_revision_id, parametersHash, snapshot.run_intent_id, '',
+  ].join('\n'))
+}
+
+export async function requestKey(snapshot: RunSnapshot): Promise<string> { return sha256Hex(requestKeyBytes(snapshot)) }
+
+export async function verifySnapshot(snapshot: RunSnapshot, interpreterBindings?: Record<string, unknown>, catalog?: JsonObject): Promise<void> {
+  const value = objectOf(snapshot, 'RunSnapshot')
+  assertSchema(value, 'run-snapshot/v1')
+  assertHash(value.request_key, 'request_key')
+  assertHash(value.snapshot_hash, 'snapshot_hash')
+  const assets = arrayOf(value.asset_hashes, 'asset_hashes').map(item => objectOf(item, 'asset_hash'))
+  assertUnique(assets.map(item => item.asset_id), 'asset_hashes contains duplicate asset IDs')
+  const assetMap = new Map(assets.map(item => [String(item.asset_id), String(item.sha256)]))
+  for (const asset of assets) assertHash(asset.sha256, 'asset_hashes.sha256')
+  if (value.parameters_asset_id != null && !assetMap.has(String(value.parameters_asset_id))) fail('parameters_asset_id is absent from asset_hashes')
+  for (const [field, keys] of [['input_revisions', ['document_id', 'revision_id']], ['plugin_releases', ['plugin_id']], ['plugin_settings_revisions', ['plugin_id', 'scope', 'scope_id']], ['asset_hashes', ['asset_id']], ['data_bindings', ['order']], ['skill_releases', ['order']]] as [string, string[]][]) {
+    const values = arrayOf(value[field], field).map(item => objectOf(item, field))
+    const identities = values.map(item => keys.map(key => String(item[key] ?? '')).join('\0'))
+    assertUnique(identities, `${field} contains duplicate identity`)
+  }
+  for (const field of ['data_bindings', 'skill_releases']) {
+    const orders = arrayOf(value[field], field).map(item => Number(objectOf(item, field).order))
+    if (orders.some((order, index) => index > 0 && (orders[index - 1] as number) > order)) fail(`${field} order is not ascending`)
+  }
+  for (const item of arrayOf(value.data_bindings, 'data_bindings').map(item => objectOf(item, 'data_binding'))) {
+    if (assetMap.get(String(item.bundle_asset_id)) !== item.bundle_hash) fail('data binding bundle hash is not backed by asset_hashes')
+  }
+  for (const item of arrayOf(value.skill_releases, 'skill_releases').map(item => objectOf(item, 'skill_release'))) {
+    if (item.parameters_asset_id != null && !assetMap.has(String(item.parameters_asset_id))) fail('Skill parameter asset is absent from asset_hashes')
+  }
+  if (await requestKey(snapshot) !== value.request_key) fail('request_key mismatch')
+  const unsigned = { ...value }
+  delete unsigned.snapshot_hash
+  if (await hashJcs('run-snapshot/v1', normalizedSnapshot(unsigned)) !== value.snapshot_hash) fail('snapshot_hash mismatch')
+  if (interpreterBindings != null || catalog != null) {
+    if (interpreterBindings == null || catalog == null) fail('Data bindings require catalog and resolved interpreter bindings')
+    verifyCatalog(catalog)
+    for (const rawBinding of arrayOf(value.data_bindings, 'data_bindings')) {
+      const binding = objectOf(rawBinding, 'data binding')
+      const resolved = objectOf(interpreterBindings[String(binding.interpreter_binding_id)], 'resolved interpreter binding')
+      verifyDataInterpreterBinding(String(binding.format_id), String(resolved.plugin_id), String(resolved.capability_id), catalog)
+    }
+  }
+}
+
+function hashWithoutField(value: JsonObject, field: string, prefix: string): Promise<string> {
+  const unsigned = { ...value }
+  delete unsigned[field]
+  return hashJcs(prefix, unsigned)
+}
+
+export async function verifyManifest(manifest: JsonObject): Promise<void> {
+  assertSchema(manifest, 'plotpilot-plugin/v1')
+  const capabilities = arrayOf(manifest.capabilities, 'capabilities').map(item => objectOf(item, 'capability'))
+  assertUnique(capabilities.map(item => item.capability_id), 'manifest capability IDs must be unique')
+  for (const capability of capabilities) assertUnique(arrayOf(capability.operations, 'operations'), 'manifest capability operations must be unique')
+  const compatibility = objectOf(manifest.compatibility, 'compatibility')
+  if (compatibility.core_api !== '>=1.0 <2.0' || compatibility.plugin_rpc !== '1' || compatibility.ui_host !== '1') fail('manifest compatibility is outside the v1 matrix')
+  if (manifest.kind === 'data' && arrayOf(manifest.needs, 'needs').length !== 0) fail('data plugin needs must be empty')
+  if (manifest.kind === 'data' && ['backend', 'storage', 'ui'].some(key => Object.prototype.hasOwnProperty.call(manifest, key))) fail('data plugin cannot declare backend/storage/UI fields')
+  const ui = manifest.ui == null ? null : objectOf(manifest.ui, 'ui')
+  if (ui != null) {
+    const contributions = arrayOf(ui.contributions, 'ui.contributions').map(item => objectOf(item, 'ui contribution'))
+    assertUnique(contributions.map(item => `${String(item.contribution_id)}\0${String(item.slot)}\0${String(item.capability_id)}`), 'UI contribution triples must be unique')
+    const capabilityIds = new Set(capabilities.map(item => String(item.capability_id)))
+    for (const contribution of contributions) {
+      if (!capabilityIds.has(String(contribution.capability_id))) fail('UI contribution references an unknown capability')
+    }
+  }
+}
+
+function catalogInterpreterMap(catalog: JsonObject): Map<string, Set<string>> {
+  const result = new Map<string, Set<string>>()
+  for (const rawFormat of arrayOf(catalog.data_formats, 'catalog.data_formats')) {
+    const format = objectOf(rawFormat, 'data format')
+    const formatId = String(format.format_id)
+    if (result.has(formatId)) fail(`catalog contains duplicate data format: ${formatId}`)
+    const pairs = new Set<string>()
+    for (const rawInterpreter of arrayOf(format.interpreters, `interpreters for ${formatId}`)) {
+      const interpreter = objectOf(rawInterpreter, 'interpreter')
+      const pair = `${String(interpreter.plugin_id)}\0${String(interpreter.capability_id)}`
+      if (pairs.has(pair)) fail(`catalog repeats interpreter pair for ${formatId}`)
+      pairs.add(pair)
+    }
+    result.set(formatId, pairs)
+  }
+  return result
+}
+
+export function verifyDataInterpreterBinding(formatId: string, pluginId: string, capabilityId: string, catalog: JsonObject): void {
+  assertId(formatId, 'format_id')
+  assertId(pluginId, 'interpreter plugin_id')
+  assertId(capabilityId, 'interpreter capability_id')
+  const expected = catalogInterpreterMap(catalog).get(formatId)
+  if (expected == null) fail(`no interpreter for ${formatId}`)
+  if (!expected.has(`${pluginId}\0${capabilityId}`)) fail('interpreter capability does not accept the Data format')
+}
+
+export function verifyCatalog(catalog: JsonObject): void {
+  if (catalog.schema !== 'novel-agent-plugin-catalog/v1') fail('catalog schema mismatch')
+  const plugins = arrayOf(catalog.code_plugins, 'catalog.code_plugins').map(item => objectOf(item, 'code plugin'))
+  assertUnique(plugins.map(item => item.plugin_id), 'catalog plugin IDs must be unique')
+  const slots = new Set(arrayOf(catalog.ui_slots, 'catalog.ui_slots').map(item => String(objectOf(item, 'UI slot').slot_id)))
+  if (slots.size !== arrayOf(catalog.ui_slots, 'catalog.ui_slots').length) fail('catalog UI slot IDs must be unique')
+  const accepted = new Map<string, Set<string>>()
+  const contributions = new Set<string>()
+  const capabilityIds: string[] = []
+  let planned = 0; let conditional = 0; let duplicate = 0
+  for (const rawPlugin of plugins) {
+    const plugin = rawPlugin
+    const status = String(plugin.status)
+    if (!['planned', 'conditional', 'not_planned_duplicate'].includes(status)) fail(`unknown catalog plugin status: ${status}`)
+    if (status === 'planned') planned += 1
+    if (status === 'conditional') conditional += 1
+    if (status === 'not_planned_duplicate') duplicate += 1
+    const pluginCapabilities = arrayOf(plugin.capabilities, 'plugin capabilities').map(item => objectOf(item, 'capability'))
+    const pluginCapabilityIds = pluginCapabilities.map(item => String(item.capability_id))
+    assertUnique(pluginCapabilityIds, 'catalog capability IDs must be unique per plugin')
+    const pluginContributionSlots = new Set<string>()
+    for (const capability of pluginCapabilities) {
+      const pluginId = String(plugin.plugin_id)
+      const capabilityId = String(capability.capability_id)
+      capabilityIds.push(capabilityId)
+      const headless = capability.headless
+      if (typeof headless !== 'boolean') fail(`catalog capability headless flag is missing: ${capabilityId}`)
+      const rawContributions = arrayOf(capability.ui_contributions, 'ui_contributions').map(item => objectOf(item, 'UI contribution'))
+      if (headless && rawContributions.length !== 0) fail(`headless capability declares UI contributions: ${capabilityId}`)
+      if (!headless && rawContributions.length === 0) fail(`non-headless capability has no UI contribution: ${capabilityId}`)
+      for (const contribution of rawContributions) {
+        const slot = String(contribution.slot)
+        const triple = `${String(contribution.contribution_id)}\0${slot}\0${String(contribution.capability_id)}`
+        if (contributions.has(triple)) fail('duplicate UI contribution triple')
+        contributions.add(triple)
+        if (String(contribution.capability_id) !== capabilityId) fail('UI contribution capability binding is not its owner')
+        if (!slots.has(slot)) fail(`UI contribution uses an unknown slot: ${slot}`)
+        pluginContributionSlots.add(slot)
+      }
+      for (const format of arrayOf(capability.accepted_data_formats, 'accepted_data_formats')) {
+        const formatId = String(format)
+        const set = accepted.get(formatId) ?? new Set<string>()
+        set.add(`${pluginId}\0${capabilityId}`)
+        accepted.set(formatId, set)
+      }
+    }
+    const pluginSlots = new Set(arrayOf(plugin.ui_slots, 'plugin.ui_slots').map(item => String(item)))
+    if (pluginSlots.size !== pluginContributionSlots.size || [...pluginSlots].some(slot => !pluginContributionSlots.has(slot))) fail(`plugin UI slots do not match contributions: ${String(plugin.plugin_id)}`)
+  }
+  assertUnique(capabilityIds, 'catalog capability IDs must be globally unique')
+  if (catalog.code_plugin_count !== plugins.length || catalog.planned_code_plugin_count !== planned || catalog.conditional_code_plugin_count !== conditional || catalog.not_planned_duplicate_count !== duplicate || catalog.capability_count !== capabilityIds.length) fail('catalog count fields are incorrect')
+  const planRules = objectOf(catalog.plan_rules, 'catalog.plan_rules')
+  if (canonicalJson(planRules.result_modes) !== canonicalJson(['separate', 'synthesize']) || planRules.separate_requires_null_synthesizer !== true || planRules.synthesize_requires_non_null_synthesizer_resolving_enabled_binding !== true) fail('catalog plan rules are incomplete')
+  const resultRules = objectOf(catalog.result_contract_rules, 'catalog.result_contract_rules')
+  if (canonicalJson(resultRules.allowed) !== canonicalJson(['artifact-bundle/v1', 'candidate-batch/v1', 'diagnostic-bundle/v1']) || resultRules.failed_or_skipped_create_candidate !== false || canonicalJson(resultRules.failed_attempt_bundle) !== canonicalJson(['null', 'diagnostic-bundle/v1']) || resultRules.stream_is_host_behavior_not_result_contract !== true) fail('catalog result contract rules are incomplete')
+  const rebindRules = objectOf(catalog.evidence_rebind_rules, 'catalog.evidence_rebind_rules')
+  if (rebindRules.inspect_capability !== 'source.evidence.rebind.inspect/v1' || rebindRules.inspect_result !== 'diagnostic-bundle/v1' || rebindRules.propose_capability !== 'source.evidence.rebind.propose/v1' || rebindRules.propose_result !== 'candidate-batch/v1' || rebindRules.unchanged_scope !== 'same_revision_no_op_only' || canonicalJson(rebindRules.cross_revision_classes) !== canonicalJson(['rebound', 'needs_rerun', 'orphaned'])) fail('catalog evidence rebind rules are incomplete')
+  const declared = catalogInterpreterMap(catalog)
+  const keys = new Set([...accepted.keys(), ...declared.keys()])
+  for (const key of keys) {
+    const left = accepted.get(key) ?? new Set<string>(); const right = declared.get(key) ?? new Set<string>()
+    if (left.size !== right.size || [...left].some(pair => !right.has(pair))) fail(`Data interpreter mapping is not bidirectional for ${key}`)
+  }
+}
+
+export function verifyPlan(plan: JsonObject, interpreterBindings?: Record<string, unknown>, catalog?: JsonObject): void {
+  assertSchema(plan, 'plugin-plan/v1')
+  if (plan.result_mode !== 'separate' && plan.result_mode !== 'synthesize') fail('plugin-plan/v1 result_mode must be separate or synthesize')
+  const bindings = arrayOf(plan.bindings, 'bindings').map(item => objectOf(item, 'binding'))
+  const dataBindings = arrayOf(plan.data_bindings, 'data_bindings').map(item => objectOf(item, 'data binding'))
+  assertUnique(bindings.map(item => item.binding_id), 'binding IDs must be unique')
+  assertUnique(dataBindings.map(item => item.data_binding_id), 'data binding IDs must be unique')
+  for (const field of [bindings, dataBindings]) {
+    const orders = field.map(item => Number(item.order)); assertUnique(orders, 'plan orders must be unique')
+    if (orders.some((order, index) => index > 0 && (orders[index - 1] as number) > order)) fail('plan orders must be ascending')
+  }
+  const synthesizer = plan.synthesizer == null ? null : objectOf(plan.synthesizer, 'synthesizer')
+  if (plan.result_mode === 'synthesize') {
+    if (synthesizer == null) fail('synthesize plan requires a synthesizer')
+    const match = bindings.filter(item => item.binding_id === synthesizer.binding_id)
+    if (match.length !== 1 || match[0]?.enabled !== true) fail('synthesizer must resolve to an enabled binding')
+    for (const field of ['capability_id', 'plugin_id', 'release_requirement']) if (match[0]?.[field] !== synthesizer[field]) fail('synthesizer identity does not match its binding')
+  } else if (synthesizer != null) fail('separate plan must not declare a synthesizer')
+  if (dataBindings.length !== 0) {
+    if (catalog == null || interpreterBindings == null) fail('Data bindings require catalog and resolved interpreter bindings')
+    verifyCatalog(catalog)
+    for (const binding of dataBindings) {
+      const resolved = interpreterBindings[String(binding.interpreter_binding_id)]
+      const pair = objectOf(resolved, 'resolved interpreter binding')
+      verifyDataInterpreterBinding(String(binding.format_id), String(pair.plugin_id), String(pair.capability_id), catalog)
+    }
+  }
+}
+
+export function verifyGeneration(generation: JsonObject): void {
+  assertSchema(generation, 'plugin-generation/v1')
+  const members = arrayOf(generation.members, 'Generation members').map(item => objectOf(item, 'Generation member'))
+  assertUnique(members.map(item => item.plugin_id), 'Generation members must contain one release per plugin')
+  if (generation.parent_generation_id === generation.generation_id || generation.base_generation_id === generation.generation_id) fail('Generation cannot parent or base itself')
+}
+
+export function verifyGenerationUnchanged(previous: JsonObject, current: JsonObject): void {
+  verifyGeneration(previous); verifyGeneration(current)
+  if (previous.generation_id !== current.generation_id) fail('Generation identity changed')
+  if (canonicalJson(previous) !== canonicalJson(current)) fail('Generation is immutable; current/LKG state must not be written back')
+}
+
+const LIFECYCLE_EDGES: Record<string, Set<string>> = {
+  selected: new Set(['staged', 'failed', 'superseded']), staged: new Set(['package_published', 'failed', 'superseded']),
+  package_published: new Set(['env_prepared', 'failed', 'superseded']), env_prepared: new Set(['shadow_prepared', 'failed', 'superseded']),
+  shadow_prepared: new Set(['migrated', 'failed', 'superseded']), migrated: new Set(['settings_validated', 'failed', 'superseded']),
+  settings_validated: new Set(['qualified', 'failed', 'superseded']), qualified: new Set(['pending_apply', 'failed', 'superseded']),
+  pending_apply: new Set(['current_committed', 'failed', 'superseded']), current_committed: new Set(['lkg_pending', 'rollback_armed', 'failed']),
+  lkg_pending: new Set(['lkg_promoted', 'rollback_armed', 'failed']), lkg_promoted: new Set(), rollback_armed: new Set(['rolled_back', 'failed']),
+  rolled_back: new Set(['safe_mode']), safe_mode: new Set(), failed: new Set(), superseded: new Set(),
+}
+
+export function verifyLifecycleTransition(transition: JsonObject, previous?: JsonObject): void {
+  assertSchema(transition, 'plugin-lifecycle-transition/v1')
+  const state = String(transition.state)
+  if (state === 'failed' && transition.failure_code == null) fail('failed lifecycle transition requires failure_code')
+  if (state !== 'failed' && transition.failure_code != null) fail('non-failed lifecycle transition cannot carry failure_code')
+  if (['current_committed', 'lkg_pending', 'lkg_promoted', 'rollback_armed', 'rolled_back', 'safe_mode'].includes(state) && transition.target_generation_id == null) fail(`${state} requires target_generation_id`)
+  if (state === 'rollback_armed' && transition.rollback_token == null) fail('rollback_armed requires rollback_token')
+  if (state === 'rolled_back' && (transition.rollback_attempt !== 1 || transition.rollback_token == null)) fail('rolled_back requires one rollback attempt and a rollback token')
+  if (state === 'safe_mode' && transition.rollback_attempt !== 1) fail('safe_mode requires a completed rollback attempt')
+  if (previous != null) {
+    assertSchema(previous, 'plugin-lifecycle-transition/v1')
+    if (previous.install_operation_id !== transition.install_operation_id) fail('lifecycle transition changed install operation identity')
+    if (state !== String(previous.state) && !(LIFECYCLE_EDGES[String(previous.state)]?.has(state) ?? false)) fail(`illegal lifecycle transition ${String(previous.state)} -> ${state}`)
+    if (Number(transition.rollback_attempt) < Number(previous.rollback_attempt)) fail('rollback attempt moved backwards')
+  }
+}
+
+export function verifyReleaseRetirement(retirement: JsonObject, previous?: JsonObject): void {
+  assertSchema(retirement, 'release-retirement/v1')
+  const state = String(retirement.state)
+  if (state === 'installed' && (retirement.started_at != null || retirement.completed_at != null)) fail('installed release cannot have retirement timestamps')
+  if (state === 'retiring' && (retirement.started_at == null || retirement.completed_at != null || retirement.package_present !== true)) fail('retiring release must retain its package until pins drain')
+  if (state === 'retired' && (retirement.started_at == null || retirement.completed_at == null || retirement.package_present !== false)) fail('retired release must have completed retirement and no package')
+  if (previous != null) {
+    assertSchema(previous, 'release-retirement/v1')
+    if (previous.release_id !== retirement.release_id) fail('retirement release identity changed')
+    const allowed: Record<string, string[]> = { installed: ['retiring'], retiring: ['retired'], retired: [] }
+    if (state !== String(previous.state) && !(allowed[String(previous.state)] ?? []).includes(state)) fail('release retirement state moved backwards')
+    if (Number(retirement.retire_epoch) < Number(previous.retire_epoch)) fail('retire epoch moved backwards')
+    if (previous.state === 'installed' && state === 'retiring' && Number(retirement.retire_epoch) !== Number(previous.retire_epoch) + 1) fail('retiring must increment retire epoch exactly once')
+    if (previous.state === retirement.state && retirement.retire_epoch !== previous.retire_epoch) fail('retire epoch changed without a state transition')
+  }
+}
+
+export function verifyReleasePin(pin: JsonObject, retirement?: JsonObject): void {
+  assertSchema(pin, 'release-pin/v1')
+  if (retirement != null) {
+    verifyReleaseRetirement(retirement)
+    if (retirement.release_id !== pin.release_id) fail('pin targets another release')
+    if (retirement.state === 'retired' && pin.released_at == null) fail('retired release cannot retain an active pin')
+    if (retirement.state === 'retiring' && pin.released_at == null && Number(pin.retire_epoch) >= Number(retirement.retire_epoch)) fail('new executable pin cannot race a retiring release')
+  }
+}
+
+export async function verifyDataBundle(bundle: JsonObject): Promise<void> {
+  assertSchema(bundle, 'plugin-data-bundle/v1')
+  if (await hashWithoutField(bundle, 'bundle_hash', 'plugin-data-bundle/v1') !== bundle.bundle_hash) fail('bundle_hash mismatch')
+  const paths = arrayOf(bundle.files, 'files').map(item => normalizeWindowsPath(String(objectOf(item, 'file').path)))
+  if (paths.some((path, index) => index > 0 && compareUtf8(paths[index - 1] as string, path) > 0)) fail('data bundle files are not sorted by normalized UTF-8 path')
+  assertUnique(paths.map(path => unicodeNfcCasefold(path)), 'data bundle paths must be NFC/casefold-unique')
+  assertUnique(arrayOf(bundle.files, 'files').map(item => objectOf(item, 'file').asset_id), 'data bundle asset IDs must be unique')
+  if (!paths.includes(normalizeWindowsPath(String(bundle.root_path)))) fail('data bundle root_path is absent from files')
+}
+
+export async function verifyEvidenceSpan(span: EvidenceSpan, canonicalText?: string, nodeRange?: { start_codepoint: number; end_codepoint: number }, expectedCanonicalTextHash?: string): Promise<void> {
+  const value = objectOf(span, 'EvidenceSpan')
+  assertExactKeys(value, ['schema', 'workspace_id', 'document_id', 'revision_id', 'node_id', 'start_codepoint', 'end_codepoint', 'quote', 'quote_hash', 'canonical_text_hash'], 'EvidenceSpan')
+  assertSchema(value, 'evidence-span/v1')
+  for (const field of ['workspace_id', 'document_id', 'revision_id', 'node_id']) assertId(value[field], `EvidenceSpan.${field}`)
+  if (!Number.isInteger(value.start_codepoint) || !Number.isInteger(value.end_codepoint) || Number(value.start_codepoint) < 0 || Number(value.end_codepoint) < Number(value.start_codepoint)) fail('invalid EvidenceSpan range')
+  if (typeof value.quote !== 'string') fail('EvidenceSpan quote must be a string')
+  assertHash(value.quote_hash, 'quote_hash')
+  assertHash(value.canonical_text_hash, 'canonical_text_hash')
+  if (await sha256Hex(utf8(value.quote)) !== value.quote_hash) fail('EvidenceSpan quote_hash does not match quote UTF-8 bytes')
+  if (expectedCanonicalTextHash != null) {
+    assertHash(expectedCanonicalTextHash, 'expectedCanonicalTextHash')
+    if (value.canonical_text_hash !== expectedCanonicalTextHash) fail('EvidenceSpan canonical text hash does not match the Revision')
+  }
+  if (nodeRange != null && (value.start_codepoint < nodeRange.start_codepoint || value.end_codepoint > nodeRange.end_codepoint)) fail('EvidenceSpan is outside its Node range')
+  if (canonicalText != null) {
+    if (Number(value.end_codepoint) > [...canonicalText].length) fail('EvidenceSpan range exceeds canonical text scalar length')
+    const scalarSlice = [...canonicalText].slice(Number(value.start_codepoint), Number(value.end_codepoint)).join('')
+    if (scalarSlice !== value.quote) fail('EvidenceSpan quote is not the exact canonical scalar slice')
+    if (await sha256Hex(utf8(canonicalText)) !== value.canonical_text_hash) fail('EvidenceSpan canonical_text_hash does not match canonical text UTF-8 bytes')
+  }
+}
+
+const CLAIM_INPUT_FIELDS = ['schema', 'source_revision_id', 'ordered_atoms'] as const
+const CLAIM_INPUT_ATOM_FIELDS = ['ordinal', 'atom_id', 'payload_hash', 'acceptance_ordinal', 'evidence_spans'] as const
+
+export async function verifyClaimInput(claimInput: JsonObject, options: { expectedSourceRevisionId?: string; acceptedAtoms?: Record<string, JsonObject>; canonicalText?: string; expectedCanonicalTextHash?: string } = {}): Promise<void> {
+  assertExactKeys(claimInput, CLAIM_INPUT_FIELDS, 'claim-input/v1')
+  assertSchema(claimInput, 'claim-input/v1')
+  assertId(claimInput.source_revision_id, 'claim-input.source_revision_id')
+  if (options.expectedSourceRevisionId != null && claimInput.source_revision_id !== options.expectedSourceRevisionId) fail('claim-input source Revision does not match the run')
+  const atoms = arrayOf(claimInput.ordered_atoms, 'claim-input.ordered_atoms').map(item => objectOf(item, 'ordered Atom'))
+  if (atoms.length === 0) fail('claim-input ordered_atoms must be non-empty')
+  const atomIds: string[] = []
+  for (const [ordinal, atom] of atoms.entries()) {
+    assertExactKeys(atom, CLAIM_INPUT_ATOM_FIELDS, 'claim-input ordered Atom')
+    if (atom.ordinal !== ordinal) fail('claim-input Atom ordinals must be contiguous from zero')
+    assertId(atom.atom_id, 'claim-input.atom_id')
+    assertHash(atom.payload_hash, 'claim-input.payload_hash')
+    if (!Number.isInteger(atom.acceptance_ordinal) || Number(atom.acceptance_ordinal) < 1) fail('claim-input acceptance_ordinal must be a positive integer')
+    const spans = arrayOf(atom.evidence_spans, 'claim-input.evidence_spans').map(item => objectOf(item, 'EvidenceSpan'))
+    if (spans.length === 0) fail('accepted Atom must carry at least one EvidenceSpan')
+    for (const span of spans) {
+      if (String(span.revision_id) !== String(claimInput.source_revision_id)) fail('EvidenceSpan crosses the claim source Revision')
+      await verifyEvidenceSpan(span as unknown as EvidenceSpan, options.canonicalText, undefined, options.expectedCanonicalTextHash)
+    }
+    atomIds.push(String(atom.atom_id))
+    if (options.acceptedAtoms != null) {
+      const accepted = options.acceptedAtoms[String(atom.atom_id)]
+      if (accepted == null || accepted.current === false || accepted.accepted === false) fail('claim-input Atom is not an accepted current Atom')
+      if (accepted.payload_hash != null && accepted.payload_hash !== atom.payload_hash) fail('claim-input payload_hash drifted from the accepted Atom')
+      if (accepted.acceptance_ordinal != null && accepted.acceptance_ordinal !== atom.acceptance_ordinal) fail('claim-input acceptance_ordinal drifted from the accepted Atom')
+      if (accepted.revision_id != null && accepted.revision_id !== claimInput.source_revision_id) fail('accepted Atom belongs to another source Revision')
+    }
+  }
+  assertUnique(atomIds, 'claim-input Atom IDs must be unique')
+}
+
+export async function buildClaimInputAsset(sourceRevisionId: string, orderedAtoms: JsonObject[]): Promise<{ bytes: Uint8Array; assetHash: string }> {
+  const value: JsonObject = { schema: 'claim-input/v1', source_revision_id: sourceRevisionId, ordered_atoms: structuredClone(orderedAtoms) }
+  await verifyClaimInput(value)
+  const bytes = canonicalBytes(value)
+  return { bytes, assetHash: await sha256Hex(bytes) }
+}
+
+export async function verifyClaimInputAsset(rawAssetBytes: Uint8Array, snapshot: RunSnapshot, options: { assetId?: string; expectedSourceRevisionId?: string; acceptedAtoms?: Record<string, JsonObject>; canonicalText?: string; expectedCanonicalTextHash?: string } = {}): Promise<JsonObject> {
+  await verifySnapshot(snapshot)
+  const assetId = snapshot.parameters_asset_id
+  if (assetId == null) fail('RunSnapshot has no claim-input parameters Asset')
+  if (options.assetId != null && options.assetId !== assetId) fail('claim-input Asset is not RunSnapshot parameters_asset_id')
+  const asset = snapshot.asset_hashes.find(item => item.asset_id === assetId)
+  if (asset == null) fail('claim-input Asset hash is absent from RunSnapshot asset_hashes')
+  if (await sha256Hex(rawAssetBytes) !== asset.sha256) fail('claim-input Asset bytes do not match the RunSnapshot hash')
+  const decoded = new TextDecoder('utf-8', { fatal: true }).decode(rawAssetBytes)
+  const parsed = objectOf(JSON.parse(decoded), 'claim-input Asset')
+  if (canonicalBytes(parsed).some((byte, index) => byte !== (rawAssetBytes[index] ?? -1)) || canonicalBytes(parsed).byteLength !== rawAssetBytes.byteLength) fail('claim-input Asset must be exact RFC 8785 JCS bytes')
+  await verifyClaimInput(parsed, options)
+  return parsed
+}
+
+function verifyCandidate(item: CandidateItem, workspaceId: string): void {
+  const value = objectOf(item, 'candidate')
+  assertSchema(value, 'candidate-item/v1')
+  const target = objectOf(value.target, 'candidate target')
+  if (target.workspace_id !== workspaceId) fail('candidate target is outside the snapshot workspace')
+  const base = objectOf(value.base, 'candidate base')
+  const writes = arrayOf(value.write_set, 'candidate write_set').map(entry => objectOf(entry, 'write_set entry'))
+  assertUnique(writes.map(entry => `${entry.workspace_id}\0${entry.entity_kind}\0${entry.entity_id}`), 'candidate write_set contains duplicate target identity')
+  const targetEntry = writes.find(entry => `${entry.workspace_id}\0${entry.entity_kind}\0${entry.entity_id}` === `${target.workspace_id}\0${target.entity_kind}\0${target.entity_id}`)
+  if (targetEntry == null || targetEntry.revision_id !== base.revision_id || targetEntry.content_hash !== base.content_hash) fail('candidate base does not match target write_set entry')
+  if (value.status === 'failed' || value.status === 'skipped') fail('failed/skipped result item cannot create a Candidate')
+  if (value.item_kind === 'incomplete_stream' && (value.status !== 'partial' || target.entity_kind !== 'document' || objectOf(value.mutation, 'mutation').mode !== 'replace')) fail('invalid incomplete stream Candidate')
+}
+
+export function verifyResultProfile(bundle: ResultBundle, workspaceId: string): void {
+  const value = objectOf(bundle, 'result bundle')
+  assertSchema(value, 'result-bundle/v1')
+  const profile: Record<string, [string, string]> = {
+    'candidate-batch/v1': ['candidate_batch', 'candidate-item/v1'],
+    'artifact-bundle/v1': ['artifact', 'artifact-item/v1'],
+    'diagnostic-bundle/v1': ['diagnostic', 'diagnostic-item/v1'],
+  }
+  const expected = profile[String(value.contract_id)]
+  if (expected == null || value.bundle_type !== expected[0]) fail('result bundle profile mismatch')
+  const items = arrayOf(value.items, 'result items').map(item => objectOf(item, 'result item'))
+  assertUnique(items.map(item => item.item_id), 'result item IDs must be unique')
+  for (const item of items) {
+    if (item.schema !== expected[1]) fail('result bundle item profile does not match contract')
+    if (expected[1] === 'candidate-item/v1') verifyCandidate(item as unknown as CandidateItem, workspaceId)
+  }
+}
+
+export async function verifyBackup(bundle: BackupBundle): Promise<void> {
+  const value = objectOf(bundle, 'backup')
+  assertSchema(value, 'backup-bundle/v1')
+  if (await hashWithoutField(value, 'bundle_hash', 'plotpilot-backup/v1') !== value.bundle_hash) fail('backup bundle_hash mismatch')
+}
+
+export async function verifyPackageIdentity(files: ByteFiles, pluginId: string, version: string, expectedPackageHash: string, expectedReleaseId: string, expectedFilesSha256?: Uint8Array): Promise<void> {
+  const digest = await packageDigest(files, pluginId, version)
+  if (digest.packageHash !== expectedPackageHash || digest.releaseId !== expectedReleaseId) fail('package identity mismatch')
+  if (expectedFilesSha256 != null && canonicalJson([...digest.filesSha256]) !== canonicalJson([...expectedFilesSha256])) fail('files.sha256 mismatch')
+}
+
+export async function verifySkillIdentity(files: ByteFiles, skillId: string, version: string, expectedPackageHash: string, expectedReleaseId: string, expectedFilesSha256?: Uint8Array): Promise<void> {
+  const digest = await skillPackageDigest(files, skillId, version)
+  if (digest.skillPackageHash !== expectedPackageHash || digest.skillReleaseId !== expectedReleaseId) fail('Skill identity mismatch')
+  if (expectedFilesSha256 != null && canonicalJson([...digest.filesSha256]) !== canonicalJson([...expectedFilesSha256])) fail('Skill files.sha256 mismatch')
+}
+
+export const RPC_METHOD_MATRIX = rpcMethodMatrix.methods
+
+export function validateRpcRequest(request: JsonObject, expectedLeaseEpoch?: number): void {
+  const method = String(request.method ?? '')
+  const heartbeat = method === 'runtime.heartbeat' && !Object.prototype.hasOwnProperty.call(request, 'id')
+  const definition = RPC_METHOD_MATRIX[method]
+  if (definition == null || (!heartbeat && method === 'runtime.heartbeat')) fail('unknown or notification-only RPC method')
+  if (heartbeat) assertExactKeys(request, ['jsonrpc', 'method', 'meta', 'params'], 'heartbeat')
+  else assertExactKeys(request, ['jsonrpc', 'id', 'method', 'meta', 'params'], `${method} request`)
+  if (request.jsonrpc !== '2.0') fail('RPC jsonrpc must be 2.0')
+  const meta = objectOf(request.meta, 'RPC meta')
+  const context = String(meta.context ?? '')
+  if (!definition.meta_profile.split('/').includes(context)) fail(`${method} cannot use ${context} meta profile`)
+  assertExactKeys(objectOf(request.params, `${method} params`), definition.params.fields, `${method} params`)
+  if (expectedLeaseEpoch != null) {
+    const actual = context === 'install' ? meta.install_lease_epoch : meta.lease_epoch
+    if (actual !== expectedLeaseEpoch) fail('RPC lease epoch is stale')
+  }
+}
+
+export function validateRpcResult(method: string, result: JsonObject, request?: JsonObject): void {
+  const definition = RPC_METHOD_MATRIX[method]
+  if (definition == null || method === 'runtime.heartbeat') fail('unknown or notification-only RPC method')
+  if (request != null && request.method !== method) fail('RPC result method does not match its request')
+  assertExactKeys(result, definition.result.fields, `${method} result`)
+  const params = request == null ? {} : objectOf(request.params, `${method} params`)
+  if (method === 'runtime.handshake' && result.plugin_protocol !== '1') fail('handshake protocol mismatch')
+  if (method === 'runtime.handshake' && request != null && result.release_id !== objectOf(request.meta, 'RPC meta').plugin_release_id) fail('handshake release mismatch')
+  if (method === 'host.capability.invoke/v1' && params.expected_result_contract != null && result.child_result_contract !== params.expected_result_contract) fail('child result contract mismatch')
+  if (method === 'job.pause' && result.accepted === true && result.checkpoint_asset_id == null) fail('accepted job.pause must return a checkpoint Asset')
+}
+
+export function validateRpcResponse(response: JsonObject, method?: string, request?: JsonObject): void {
+  if (request != null) {
+    if (method == null) method = String(request.method)
+    else if (method !== request.method) fail('RPC response method does not match its request')
+  }
+  if (Object.prototype.hasOwnProperty.call(response, 'error')) {
+    const error = objectOf(response.error, 'RPC error')
+    if (!Object.prototype.hasOwnProperty.call(rpcMethodMatrix.error_codes, String(error.code))) fail('RPC error code is not in the v1 registry')
+  } else {
+    const result = objectOf(response.result, 'RPC result')
+    if (method != null) validateRpcResult(method, result, request)
+  }
+}
+
+const COMMON_META = new Set(['protocol_version', 'generation_id', 'plugin_release_id', 'deadline_at', 'context', 'operation_id'])
+
+export function operationContextIdentityProjection(meta: JsonObject, expectedLeaseEpoch?: number): JsonObject {
+  const context = String(meta.context ?? '')
+  const profileFields = context === 'control' ? [] : context === 'install' ? ['install_operation_id', 'install_lease_epoch'] : context === 'attempt' ? ['job_id', 'step_id', 'attempt_id', 'lease_epoch'] : null
+  if (profileFields == null) fail('unknown RPC context profile')
+  assertExactKeys(meta, [...COMMON_META, ...profileFields], `${context} RPC meta`)
+  if (meta.protocol_version !== '1' || typeof meta.generation_id !== 'string' || !ID.test(meta.generation_id as string) || typeof meta.plugin_release_id !== 'string' || !HASH.test(meta.plugin_release_id as string) || typeof meta.operation_id !== 'string' || !ID.test(meta.operation_id as string) || typeof meta.deadline_at !== 'string' || !UTC.test(meta.deadline_at as string)) fail('invalid operation context meta')
+  const projection: JsonObject = { schema: 'operation-context-identity/v1', protocol_version: '1', context, generation_id: meta.generation_id, plugin_release_id: meta.plugin_release_id }
+  if (context === 'install') {
+    projection.install_operation_id = meta.install_operation_id
+    if (!Number.isInteger(meta.install_lease_epoch) || Number(meta.install_lease_epoch) < 1 || expectedLeaseEpoch == null || meta.install_lease_epoch !== expectedLeaseEpoch) fail('install lease epoch is stale')
+  } else if (context === 'attempt') {
+    for (const field of ['job_id', 'step_id', 'attempt_id']) { if (typeof meta[field] !== 'string' || !ID.test(meta[field] as string)) fail(`invalid ${field}`); projection[field] = meta[field] }
+    if (!Number.isInteger(meta.lease_epoch) || Number(meta.lease_epoch) < 1 || expectedLeaseEpoch == null || meta.lease_epoch !== expectedLeaseEpoch) fail('attempt lease epoch is stale')
+  } else if (expectedLeaseEpoch != null) fail('control context has no lease epoch')
+  return projection
+}
+
+export async function deriveOperationContextIdentity(meta: JsonObject, expectedLeaseEpoch?: number): Promise<string> {
+  return hashJcs('plotpilot-operation-context/v1', operationContextIdentityProjection(meta, expectedLeaseEpoch))
+}
+
+export function canonicalBytes(value: unknown): Uint8Array { return utf8(canonicalJson(value)) }
+
+export { hashJcs, sha256Hex, utf8 }

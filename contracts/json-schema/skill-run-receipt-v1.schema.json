@@ -1,0 +1,283 @@
+{
+  "$id": "https://plotpilot.local/contracts/skill-run-receipt-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "acked_prefix_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "chain_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "chain_index": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "claim_evidence_asset_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "frozen": {
+      "type": "boolean"
+    },
+    "input_asset_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "input_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "model_claimed": {
+      "type": "boolean"
+    },
+    "output_asset_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "output_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "package_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "parameters_asset_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "participated": {
+      "type": "boolean"
+    },
+    "patches": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "after_hash": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "before_hash": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "end_codepoint": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "patch_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "replacement_asset_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "replacement_hash": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "start_codepoint": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "verified": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "patch_id",
+          "start_codepoint",
+          "end_codepoint",
+          "replacement_asset_id",
+          "replacement_hash",
+          "before_hash",
+          "after_hash",
+          "verified"
+        ],
+        "type": "object"
+      },
+      "minItems": 0,
+      "type": "array"
+    },
+    "previous_receipt_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "receipt_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "receipt_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "release_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "result_bundle_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "result_item_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "run_snapshot_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "schema": {
+      "const": "skill-run-receipt/v1"
+    },
+    "skill_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "step_state": {
+      "enum": [
+        "executed",
+        "failed",
+        "skipped"
+      ]
+    },
+    "stream_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "verified_patch": {
+      "type": "boolean"
+    },
+    "warnings": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "details_asset_id": {
+            "anyOf": [
+              {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "details_asset_id"
+        ],
+        "type": "object"
+      },
+      "minItems": 0,
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema",
+    "receipt_id",
+    "chain_id",
+    "chain_index",
+    "run_snapshot_hash",
+    "result_bundle_id",
+    "result_item_id",
+    "stream_id",
+    "acked_prefix_hash",
+    "skill_id",
+    "release_id",
+    "package_hash",
+    "parameters_asset_id",
+    "input_asset_id",
+    "input_hash",
+    "output_asset_id",
+    "output_hash",
+    "step_state",
+    "frozen",
+    "participated",
+    "model_claimed",
+    "verified_patch",
+    "claim_evidence_asset_id",
+    "patches",
+    "warnings",
+    "previous_receipt_hash",
+    "receipt_hash"
+  ],
+  "title": "PlotPilot skill-run-receipt-v1",
+  "type": "object"
+}

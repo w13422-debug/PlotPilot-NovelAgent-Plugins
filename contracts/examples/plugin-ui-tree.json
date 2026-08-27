@@ -1,0 +1,26 @@
+{
+  "render_seq": 1,
+  "root": {
+    "children": [
+      {
+        "children": [],
+        "component": "text",
+        "event_ids": [],
+        "key": "title",
+        "props": {
+          "text": "Golden",
+          "tone": "default"
+        }
+      }
+    ],
+    "component": "stack",
+    "event_ids": [],
+    "key": "root",
+    "props": {
+      "direction": "vertical",
+      "row_gap": 8
+    }
+  },
+  "schema": "plugin-ui-tree/v1",
+  "tree_id": "tree-1"
+}

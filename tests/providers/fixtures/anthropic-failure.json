@@ -1,0 +1,4 @@
+[
+  {"type": "message_start", "message": {"usage": {"input_tokens": 12, "output_tokens": 0}}},
+  {"type": "error", "error": {"type": "overloaded_error", "message": "fixture upstream failure"}}
+]

@@ -1,0 +1,109 @@
+{
+  "$id": "https://plotpilot.local/contracts/diagnostic-item-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "code": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "details_asset_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "details_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "item_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "schema": {
+      "const": "diagnostic-item/v1"
+    },
+    "severity": {
+      "enum": [
+        "info",
+        "warning",
+        "error"
+      ]
+    },
+    "source_refs": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "revision_or_hash": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "source_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "source_type": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "workspace_id": {
+            "anyOf": [
+              {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "workspace_id",
+          "source_type",
+          "source_id",
+          "revision_or_hash"
+        ],
+        "type": "object"
+      },
+      "minItems": 0,
+      "type": "array"
+    },
+    "status": {
+      "enum": [
+        "complete",
+        "failed",
+        "skipped"
+      ]
+    }
+  },
+  "required": [
+    "schema",
+    "item_id",
+    "severity",
+    "code",
+    "message",
+    "details_asset_id",
+    "details_hash",
+    "source_refs",
+    "status"
+  ],
+  "title": "PlotPilot diagnostic-item-v1",
+  "type": "object"
+}

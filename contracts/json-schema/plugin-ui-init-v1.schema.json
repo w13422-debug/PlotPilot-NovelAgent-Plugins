@@ -1,0 +1,42 @@
+{
+  "$id": "https://plotpilot.local/contracts/plugin-ui-init-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "contribution_config_asset_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "initial_intent_seq": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "initial_render_seq": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "schema": {
+      "const": "plugin-ui-init/v1"
+    },
+    "ui_session_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema",
+    "ui_session_id",
+    "initial_render_seq",
+    "initial_intent_seq",
+    "contribution_config_asset_id"
+  ],
+  "title": "PlotPilot plugin-ui-init-v1",
+  "type": "object"
+}

@@ -1,0 +1,113 @@
+{
+  "$id": "https://plotpilot.local/contracts/plugin-ui-event-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "action_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "event_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "event_seq": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "event_type": {
+      "enum": [
+        "change",
+        "click",
+        "select_row",
+        "change_tab",
+        "select_node",
+        "open_core_operation"
+      ]
+    },
+    "freshness": {
+      "additionalProperties": false,
+      "properties": {
+        "generation_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "plan_revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "plugin_release_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "workspace_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "workspace_revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "generation_id",
+        "plugin_release_id",
+        "workspace_id",
+        "workspace_revision_id",
+        "plan_revision_id"
+      ],
+      "type": "object"
+    },
+    "payload_asset_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "render_seq": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "schema": {
+      "const": "plugin-ui-event/v1"
+    }
+  },
+  "required": [
+    "schema",
+    "event_id",
+    "event_seq",
+    "render_seq",
+    "action_id",
+    "event_type",
+    "payload_asset_id",
+    "freshness"
+  ],
+  "title": "PlotPilot plugin-ui-event-v1",
+  "type": "object"
+}

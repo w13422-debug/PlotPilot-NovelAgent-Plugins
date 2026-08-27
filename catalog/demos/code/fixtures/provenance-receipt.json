@@ -1,0 +1,21 @@
+{
+  "attempt_id": "attempt-nap00-code",
+  "bundle_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "bundle_id": "nap00-demo-code-bundle",
+  "capability_id": "nap00.demo.code.echo/v1",
+  "created_at": "2026-08-27T00:00:00Z",
+  "job_id": "job-nap00-code",
+  "lease_epoch": 1,
+  "model_receipt_ids": [],
+  "package_hash": "9577ff6df8742c8f54b922e3ccdb2348f250336ca4246ca58153201aa4fb5590",
+  "parent_receipt_ids": [],
+  "plugin_id": "com.plotpilot.nap00.demo.code",
+  "receipt_hash": "f5b7e3f05e38e3812977311a7e7c6e883ebbe144a28e45c4975c51727a3997ef",
+  "receipt_id": "receipt-nap00-code",
+  "release_id": "07eae627043b6e283851d3f50de1f90d03554108d3d2f096ee1efa52d45e75ef",
+  "run_snapshot_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "schema": "provenance-receipt/v1",
+  "skill_chain_result_refs": [],
+  "staged_items": [],
+  "step_id": "step-nap00-code"
+}

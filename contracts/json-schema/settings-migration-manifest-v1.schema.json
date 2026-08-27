@@ -1,0 +1,83 @@
+{
+  "$id": "https://plotpilot.local/contracts/settings-migration-manifest-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "from_schema_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "schema": {
+      "const": "settings-migration-manifest/v1"
+    },
+    "steps": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "from_pointer": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "operation": {
+            "enum": [
+              "rename",
+              "copy",
+              "remove",
+              "set_default"
+            ]
+          },
+          "to_pointer": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "value_asset_id": {
+            "anyOf": [
+              {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "operation",
+          "from_pointer",
+          "to_pointer",
+          "value_asset_id"
+        ],
+        "type": "object"
+      },
+      "minItems": 0,
+      "type": "array"
+    },
+    "to_schema_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema",
+    "from_schema_hash",
+    "to_schema_hash",
+    "steps"
+  ],
+  "title": "PlotPilot settings-migration-manifest-v1",
+  "type": "object"
+}

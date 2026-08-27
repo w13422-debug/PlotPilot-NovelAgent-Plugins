@@ -1,0 +1,447 @@
+{
+  "cases": [
+    {
+      "case_id": "core-authority-extra-field",
+      "expected": "closed_schema_rejection",
+      "fixture": "core-http.json#/authority_payloads/0",
+      "mutation": {
+        "op": "set",
+        "path": [
+          "unexpected"
+        ],
+        "value": true
+      },
+      "validator": "core_authority"
+    },
+    {
+      "case_id": "core-workspace-update-noop",
+      "expected": "semantic_rejection",
+      "fixture": "core-http.json#/authority_payloads/23",
+      "mutation": {
+        "op": "set",
+        "path": [
+          "title"
+        ],
+        "value": null
+      },
+      "validator": "core_authority"
+    },
+    {
+      "case_id": "core-revision-two-targets",
+      "expected": "semantic_rejection",
+      "fixture": "core-http.json#/authority_payloads/4",
+      "mutation": {
+        "op": "set",
+        "path": [
+          "node_id"
+        ],
+        "value": "node-a"
+      },
+      "validator": "core_authority"
+    },
+    {
+      "case_id": "core-cross-workspace",
+      "expected": "workspace_rejection",
+      "fixture": "core-http.json#/authority_payloads/1",
+      "mutation": {
+        "op": "set",
+        "path": [
+          "workspace_id"
+        ],
+        "value": "ws-other"
+      },
+      "validator": "core_authority_expected_workspace"
+    },
+    {
+      "case_id": "publication-cross-workspace",
+      "expected": "workspace_rejection",
+      "fixture": "core-http.json#/publication/result",
+      "mutation": {
+        "op": "set",
+        "path": [
+          "workspace_id"
+        ],
+        "value": "ws-other"
+      },
+      "validator": "publication_expected_workspace"
+    },
+    {
+      "case_id": "publication-revision-target-mismatch",
+      "expected": "identity_rejection",
+      "fixture": "core-http.json#/publication/result",
+      "mutation": {
+        "op": "set",
+        "path": [
+          "resulting_revision",
+          "entity_id"
+        ],
+        "value": "doc-other"
+      },
+      "validator": "publication"
+    },
+    {
+      "case_id": "publication-command-result-candidate-mismatch",
+      "expected": "command_binding_rejection",
+      "fixture": "core-http.json#/publication/result",
+      "mutation": {
+        "op": "set",
+        "path": [
+          "candidate_id"
+        ],
+        "value": "candidate-other"
+      },
+      "validator": "publication_command_binding"
+    },
+    {
+      "case_id": "asset-range-self-hash-tamper",
+      "expected": "hash_rejection",
+      "fixture": "core-http.json#/assets/range",
+      "mutation": {
+        "op": "set",
+        "path": [
+          "content_hash"
+        ],
+        "value": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "validator": "asset"
+    },
+    {
+      "case_id": "asset-partial-range-self-hash-tamper",
+      "expected": "hash_rejection",
+      "fixture": "core-http.json#/assets/partial",
+      "mutation": {
+        "op": "set",
+        "path": [
+          "content_hash"
+        ],
+        "value": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "validator": "asset"
+    },
+    {
+      "case_id": "asset-range-next-offset-tamper",
+      "expected": "range_rejection",
+      "fixture": "core-http.json#/assets/range",
+      "mutation": {
+        "op": "set",
+        "path": [
+          "next_offset"
+        ],
+        "value": 5
+      },
+      "validator": "asset"
+    },
+    {
+      "case_id": "asset-metadata-range-identity-mismatch",
+      "expected": "asset_binding_rejection",
+      "fixture": "core-http.json#/assets/range",
+      "mutation": {
+        "op": "set",
+        "path": [
+          "asset_id"
+        ],
+        "value": "asset-other"
+      },
+      "validator": "asset_pair"
+    },
+    {
+      "case_id": "asset-metadata-range-hash-mismatch",
+      "expected": "asset_binding_rejection",
+      "fixture": "core-http.json#/assets/metadata",
+      "mutation": {
+        "op": "set",
+        "path": [
+          "sha256"
+        ],
+        "value": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "validator": "asset_pair_metadata"
+    },
+    {
+      "case_id": "core-http-stale-cas-request",
+      "expected": "frozen_request_rejection",
+      "fixture": "core-http.json#/exchanges/3/request",
+      "mutation": {
+        "op": "set",
+        "path": [
+          "expected_revision"
+        ],
+        "value": 999
+      },
+      "route_id": "workspace.update",
+      "validator": "http_fixture_request"
+    },
+    {
+      "case_id": "core-http-operation-key-payload-reuse",
+      "expected": "operation_key_payload_reuse_rejection",
+      "fixture": "core-http.json#/exchanges/3/request",
+      "mutation": {
+        "op": "set",
+        "path": [
+          "title"
+        ],
+        "value": "Unfrozen payload under the same operation key"
+      },
+      "route_id": "workspace.update",
+      "validator": "http_fixture_request"
+    },
+    {
+      "case_id": "core-relation-delete-cas-required",
+      "expected": "closed_schema_rejection",
+      "fixture": "core-http.json#/authority_payloads/31",
+      "mutation": {
+        "op": "delete",
+        "path": [
+          "expected_revision_id"
+        ]
+      },
+      "validator": "core_authority"
+    },
+    {
+      "case_id": "operation-context-projection-epoch",
+      "expected": "closed_schema_rejection",
+      "fixture": "context-identity.json#/vectors/2/projection",
+      "mutation": {
+        "op": "set",
+        "path": [
+          "lease_epoch"
+        ],
+        "value": 9
+      },
+      "validator": "context_projection_schema"
+    },
+    {
+      "case_id": "operation-context-stale-epoch",
+      "expected": "stale_lease",
+      "fixture": "context-identity.json#/vectors/2/meta",
+      "mutation": {
+        "op": "set",
+        "path": [
+          "lease_epoch"
+        ],
+        "value": 8
+      },
+      "validator": "context_stale_epoch"
+    },
+    {
+      "case_id": "operation-context-install-missing-current-epoch",
+      "expected": "missing_fencing_rejection",
+      "fixture": "context-identity.json#/vectors/1/meta",
+      "mutation": {
+        "op": "noop"
+      },
+      "validator": "context_missing_expected_epoch"
+    },
+    {
+      "case_id": "operation-context-attempt-missing-current-epoch",
+      "expected": "missing_fencing_rejection",
+      "fixture": "context-identity.json#/vectors/2/meta",
+      "mutation": {
+        "op": "noop"
+      },
+      "validator": "context_missing_expected_epoch"
+    },
+    {
+      "case_id": "operation-context-invalid-deadline",
+      "expected": "meta_rejection",
+      "fixture": "context-identity.json#/vectors/0/meta",
+      "mutation": {
+        "op": "set",
+        "path": [
+          "deadline_at"
+        ],
+        "value": "not-utc"
+      },
+      "validator": "context_identity"
+    },
+    {
+      "case_id": "export-noncontiguous-ordinal",
+      "expected": "ordering_rejection",
+      "fixture": "export-current-revisions.json#",
+      "mutation": {
+        "op": "set",
+        "path": [
+          "ordered_revisions",
+          1,
+          "ordinal"
+        ],
+        "value": 3
+      },
+      "validator": "export"
+    },
+    {
+      "case_id": "export-duplicate-document",
+      "expected": "identity_rejection",
+      "fixture": "export-current-revisions.json#",
+      "mutation": {
+        "op": "set",
+        "path": [
+          "ordered_revisions",
+          1,
+          "document_id"
+        ],
+        "value": "doc-a"
+      },
+      "validator": "export"
+    },
+    {
+      "case_id": "export-cross-workspace",
+      "expected": "workspace_rejection",
+      "fixture": "export-current-revisions.json#",
+      "mutation": {
+        "op": "set",
+        "path": [
+          "workspace_id"
+        ],
+        "value": "ws-other"
+      },
+      "validator": "export_expected_workspace"
+    },
+    {
+      "case_id": "export-revision-not-in-snapshot",
+      "expected": "snapshot_rejection",
+      "fixture": "export-current-revisions.json#",
+      "mutation": {
+        "op": "set",
+        "path": [
+          "ordered_revisions",
+          1,
+          "revision_id"
+        ],
+        "value": "rev-other"
+      },
+      "validator": "export_snapshot_binding"
+    },
+    {
+      "case_id": "export-title-tamper-raw-asset",
+      "expected": "asset_hash_rejection",
+      "fixture": "export-current-revisions.json#",
+      "mutation": {
+        "op": "set",
+        "path": [
+          "ordered_revisions",
+          0,
+          "title"
+        ],
+        "value": "Tampered title"
+      },
+      "validator": "export_raw_variant"
+    },
+    {
+      "case_id": "export-raw-bom",
+      "expected": "strict_raw_rejection",
+      "fixture": "export-current-revisions.json#",
+      "mutation": {
+        "op": "raw_variant",
+        "variant": "bom"
+      },
+      "validator": "export_raw_variant"
+    },
+    {
+      "case_id": "export-raw-whitespace",
+      "expected": "strict_raw_rejection",
+      "fixture": "export-current-revisions.json#",
+      "mutation": {
+        "op": "raw_variant",
+        "variant": "whitespace"
+      },
+      "validator": "export_raw_variant"
+    },
+    {
+      "case_id": "export-raw-duplicate-key",
+      "expected": "strict_raw_rejection",
+      "fixture": "export-current-revisions.json#",
+      "mutation": {
+        "op": "raw_variant",
+        "variant": "duplicate_key"
+      },
+      "validator": "export_raw_variant"
+    },
+    {
+      "case_id": "export-asset-hash-not-frozen",
+      "expected": "snapshot_asset_binding_rejection",
+      "fixture": "export-run-snapshot.json#",
+      "mutation": {
+        "op": "set",
+        "path": [
+          "asset_hashes",
+          0,
+          "sha256"
+        ],
+        "value": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "validator": "export_snapshot_record"
+    },
+    {
+      "case_id": "export-object-caller-hash-is-not-binding",
+      "expected": "object_binding_rejection",
+      "fixture": "export-current-revisions.json#",
+      "mutation": {
+        "op": "noop"
+      },
+      "validator": "export_object_caller_hash"
+    },
+    {
+      "case_id": "plugin-ui-tree-event-outside-component",
+      "expected": "event_allowlist_rejection",
+      "fixture": "contracts/examples/fixtures/plugin-ui-tree.json#",
+      "mutation": {
+        "op": "set",
+        "path": [
+          "root",
+          "event_ids"
+        ],
+        "value": [
+          "change"
+        ]
+      },
+      "validator": "typescript_plugin_ui_tree"
+    },
+    {
+      "case_id": "plugin-ui-intent-extra-field",
+      "expected": "closed_schema_rejection",
+      "fixture": "contracts/examples/fixtures/plugin-ui-intent.json#",
+      "mutation": {
+        "op": "set",
+        "path": [
+          "unexpected"
+        ],
+        "value": true
+      },
+      "validator": "typescript_plugin_ui_intent"
+    },
+    {
+      "case_id": "job-snapshot-extra-field",
+      "expected": "closed_schema_rejection",
+      "fixture": "contracts/examples/fixtures/job-snapshot.json#",
+      "mutation": {
+        "op": "set",
+        "path": [
+          "unexpected"
+        ],
+        "value": true
+      },
+      "validator": "typescript_job_snapshot"
+    },
+    {
+      "case_id": "typescript-prototype-backed-ingress",
+      "expected": "plain_object_rejection",
+      "fixture": null,
+      "mutation": {
+        "op": "prototype"
+      },
+      "validator": "typescript_runtime_probe"
+    },
+    {
+      "case_id": "typescript-getter-ingress",
+      "expected": "data_property_rejection",
+      "fixture": null,
+      "mutation": {
+        "op": "getter"
+      },
+      "validator": "typescript_runtime_probe"
+    }
+  ],
+  "positive_root": "contracts/golden/contract-publication-v1",
+  "schema": "contract-publication-negative-corpus/v1"
+}

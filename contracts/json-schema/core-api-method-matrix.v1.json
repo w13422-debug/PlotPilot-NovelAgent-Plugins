@@ -1,0 +1,749 @@
+{
+  "core_api_compatibility": ">=1.0 <2.0",
+  "plugin_rpc_unchanged": true,
+  "plugin_ui_bundle_direct_http": false,
+  "routes": [
+    {
+      "error_schema": "core-http-error/v1",
+      "failure_statuses": [
+        {
+          "error_codes": [
+            "unknown_reference",
+            "cross_workspace"
+          ],
+          "status": 404
+        }
+      ],
+      "method": "GET",
+      "path_entity_kind": null,
+      "path_identity": [],
+      "path_template": "/api/v1/core/workspaces",
+      "request_schema": "core-workspace-query/v1",
+      "result_entity_kind": "workspace",
+      "result_schema": "core-workspace-page/v1",
+      "route_id": "workspace.list",
+      "success_statuses": [
+        200
+      ]
+    },
+    {
+      "error_schema": "core-http-error/v1",
+      "failure_statuses": [
+        {
+          "error_codes": [
+            "unknown_reference",
+            "cross_workspace"
+          ],
+          "status": 404
+        }
+      ],
+      "method": "GET",
+      "path_entity_kind": "workspace",
+      "path_identity": [
+        "workspace_id"
+      ],
+      "path_template": "/api/v1/core/workspaces/{workspace_id}",
+      "request_schema": "core-workspace-get-query/v1",
+      "result_entity_kind": "workspace",
+      "result_schema": "core-workspace/v1",
+      "route_id": "workspace.get",
+      "success_statuses": [
+        200
+      ]
+    },
+    {
+      "error_schema": "core-http-error/v1",
+      "failure_statuses": [
+        {
+          "error_codes": [
+            "unknown_reference",
+            "cross_workspace"
+          ],
+          "status": 404
+        },
+        {
+          "error_codes": [
+            "stale_cas",
+            "operation_key_reuse"
+          ],
+          "status": 409
+        }
+      ],
+      "method": "POST",
+      "path_entity_kind": null,
+      "path_identity": [],
+      "path_template": "/api/v1/core/workspaces",
+      "request_schema": "core-workspace-create-command/v1",
+      "result_entity_kind": "workspace",
+      "result_schema": "core-workspace/v1",
+      "route_id": "workspace.create",
+      "success_statuses": [
+        201
+      ]
+    },
+    {
+      "error_schema": "core-http-error/v1",
+      "failure_statuses": [
+        {
+          "error_codes": [
+            "unknown_reference",
+            "cross_workspace"
+          ],
+          "status": 404
+        },
+        {
+          "error_codes": [
+            "stale_cas",
+            "operation_key_reuse"
+          ],
+          "status": 409
+        }
+      ],
+      "method": "PATCH",
+      "path_entity_kind": "workspace",
+      "path_identity": [
+        "workspace_id"
+      ],
+      "path_template": "/api/v1/core/workspaces/{workspace_id}",
+      "request_schema": "core-workspace-update-command/v1",
+      "result_entity_kind": "workspace",
+      "result_schema": "core-workspace/v1",
+      "route_id": "workspace.update",
+      "success_statuses": [
+        200
+      ]
+    },
+    {
+      "error_schema": "core-http-error/v1",
+      "failure_statuses": [
+        {
+          "error_codes": [
+            "unknown_reference",
+            "cross_workspace"
+          ],
+          "status": 404
+        },
+        {
+          "error_codes": [
+            "stale_cas",
+            "operation_key_reuse"
+          ],
+          "status": 409
+        }
+      ],
+      "method": "DELETE",
+      "path_entity_kind": "workspace",
+      "path_identity": [
+        "workspace_id"
+      ],
+      "path_template": "/api/v1/core/workspaces/{workspace_id}",
+      "request_schema": "core-workspace-delete-command/v1",
+      "result_entity_kind": "workspace",
+      "result_schema": "core-delete-result/v1",
+      "route_id": "workspace.delete",
+      "success_statuses": [
+        200
+      ]
+    },
+    {
+      "error_schema": "core-http-error/v1",
+      "failure_statuses": [
+        {
+          "error_codes": [
+            "unknown_reference",
+            "cross_workspace"
+          ],
+          "status": 404
+        }
+      ],
+      "method": "GET",
+      "path_entity_kind": "workspace",
+      "path_identity": [
+        "workspace_id"
+      ],
+      "path_template": "/api/v1/core/workspaces/{workspace_id}/documents",
+      "request_schema": "core-document-query/v1",
+      "result_entity_kind": "document",
+      "result_schema": "core-document-page/v1",
+      "route_id": "document.list",
+      "success_statuses": [
+        200
+      ]
+    },
+    {
+      "error_schema": "core-http-error/v1",
+      "failure_statuses": [
+        {
+          "error_codes": [
+            "unknown_reference",
+            "cross_workspace"
+          ],
+          "status": 404
+        }
+      ],
+      "method": "GET",
+      "path_entity_kind": "document",
+      "path_identity": [
+        "document_id"
+      ],
+      "path_template": "/api/v1/core/documents/{document_id}",
+      "request_schema": "core-document-get-query/v1",
+      "result_entity_kind": "document",
+      "result_schema": "core-document/v1",
+      "route_id": "document.get",
+      "success_statuses": [
+        200
+      ]
+    },
+    {
+      "error_schema": "core-http-error/v1",
+      "failure_statuses": [
+        {
+          "error_codes": [
+            "unknown_reference",
+            "cross_workspace"
+          ],
+          "status": 404
+        },
+        {
+          "error_codes": [
+            "stale_cas",
+            "operation_key_reuse"
+          ],
+          "status": 409
+        }
+      ],
+      "method": "POST",
+      "path_entity_kind": "workspace",
+      "path_identity": [
+        "workspace_id"
+      ],
+      "path_template": "/api/v1/core/workspaces/{workspace_id}/documents",
+      "request_schema": "core-document-create-command/v1",
+      "result_entity_kind": "document",
+      "result_schema": "core-document/v1",
+      "route_id": "document.create",
+      "success_statuses": [
+        201
+      ]
+    },
+    {
+      "error_schema": "core-http-error/v1",
+      "failure_statuses": [
+        {
+          "error_codes": [
+            "unknown_reference",
+            "cross_workspace"
+          ],
+          "status": 404
+        },
+        {
+          "error_codes": [
+            "stale_cas",
+            "operation_key_reuse"
+          ],
+          "status": 409
+        }
+      ],
+      "method": "PATCH",
+      "path_entity_kind": "document",
+      "path_identity": [
+        "document_id"
+      ],
+      "path_template": "/api/v1/core/documents/{document_id}",
+      "request_schema": "core-document-update-command/v1",
+      "result_entity_kind": "document",
+      "result_schema": "core-document/v1",
+      "route_id": "document.update",
+      "success_statuses": [
+        200
+      ]
+    },
+    {
+      "error_schema": "core-http-error/v1",
+      "failure_statuses": [
+        {
+          "error_codes": [
+            "unknown_reference",
+            "cross_workspace"
+          ],
+          "status": 404
+        }
+      ],
+      "method": "GET",
+      "path_entity_kind": "workspace",
+      "path_identity": [
+        "workspace_id"
+      ],
+      "path_template": "/api/v1/core/workspaces/{workspace_id}/nodes",
+      "request_schema": "core-node-query/v1",
+      "result_entity_kind": "node",
+      "result_schema": "core-node-page/v1",
+      "route_id": "node.list",
+      "success_statuses": [
+        200
+      ]
+    },
+    {
+      "error_schema": "core-http-error/v1",
+      "failure_statuses": [
+        {
+          "error_codes": [
+            "unknown_reference",
+            "cross_workspace"
+          ],
+          "status": 404
+        }
+      ],
+      "method": "GET",
+      "path_entity_kind": "node",
+      "path_identity": [
+        "node_id"
+      ],
+      "path_template": "/api/v1/core/nodes/{node_id}",
+      "request_schema": "core-node-get-query/v1",
+      "result_entity_kind": "node",
+      "result_schema": "core-node/v1",
+      "route_id": "node.get",
+      "success_statuses": [
+        200
+      ]
+    },
+    {
+      "error_schema": "core-http-error/v1",
+      "failure_statuses": [
+        {
+          "error_codes": [
+            "unknown_reference",
+            "cross_workspace"
+          ],
+          "status": 404
+        },
+        {
+          "error_codes": [
+            "stale_cas",
+            "operation_key_reuse"
+          ],
+          "status": 409
+        }
+      ],
+      "method": "POST",
+      "path_entity_kind": "workspace",
+      "path_identity": [
+        "workspace_id"
+      ],
+      "path_template": "/api/v1/core/workspaces/{workspace_id}/nodes",
+      "request_schema": "core-node-create-command/v1",
+      "result_entity_kind": "node",
+      "result_schema": "core-node/v1",
+      "route_id": "node.create",
+      "success_statuses": [
+        201
+      ]
+    },
+    {
+      "error_schema": "core-http-error/v1",
+      "failure_statuses": [
+        {
+          "error_codes": [
+            "unknown_reference",
+            "cross_workspace"
+          ],
+          "status": 404
+        },
+        {
+          "error_codes": [
+            "stale_cas",
+            "operation_key_reuse"
+          ],
+          "status": 409
+        }
+      ],
+      "method": "PATCH",
+      "path_entity_kind": "node",
+      "path_identity": [
+        "node_id"
+      ],
+      "path_template": "/api/v1/core/nodes/{node_id}",
+      "request_schema": "core-node-update-command/v1",
+      "result_entity_kind": "node",
+      "result_schema": "core-node/v1",
+      "route_id": "node.update",
+      "success_statuses": [
+        200
+      ]
+    },
+    {
+      "error_schema": "core-http-error/v1",
+      "failure_statuses": [
+        {
+          "error_codes": [
+            "unknown_reference",
+            "cross_workspace"
+          ],
+          "status": 404
+        },
+        {
+          "error_codes": [
+            "stale_cas",
+            "operation_key_reuse"
+          ],
+          "status": 409
+        }
+      ],
+      "method": "DELETE",
+      "path_entity_kind": "node",
+      "path_identity": [
+        "node_id"
+      ],
+      "path_template": "/api/v1/core/nodes/{node_id}",
+      "request_schema": "core-node-delete-command/v1",
+      "result_entity_kind": "node",
+      "result_schema": "core-delete-result/v1",
+      "route_id": "node.delete",
+      "success_statuses": [
+        200
+      ]
+    },
+    {
+      "error_schema": "core-http-error/v1",
+      "failure_statuses": [
+        {
+          "error_codes": [
+            "unknown_reference",
+            "cross_workspace"
+          ],
+          "status": 404
+        }
+      ],
+      "method": "GET",
+      "path_entity_kind": "workspace",
+      "path_identity": [
+        "workspace_id"
+      ],
+      "path_template": "/api/v1/core/workspaces/{workspace_id}/relations",
+      "request_schema": "core-relation-query/v1",
+      "result_entity_kind": "relation",
+      "result_schema": "core-relation-page/v1",
+      "route_id": "relation.list",
+      "success_statuses": [
+        200
+      ]
+    },
+    {
+      "error_schema": "core-http-error/v1",
+      "failure_statuses": [
+        {
+          "error_codes": [
+            "unknown_reference",
+            "cross_workspace"
+          ],
+          "status": 404
+        },
+        {
+          "error_codes": [
+            "stale_cas",
+            "operation_key_reuse"
+          ],
+          "status": 409
+        }
+      ],
+      "method": "POST",
+      "path_entity_kind": "workspace",
+      "path_identity": [
+        "workspace_id"
+      ],
+      "path_template": "/api/v1/core/workspaces/{workspace_id}/relations",
+      "request_schema": "core-relation-create-command/v1",
+      "result_entity_kind": "relation",
+      "result_schema": "core-relation/v1",
+      "route_id": "relation.create",
+      "success_statuses": [
+        201
+      ]
+    },
+    {
+      "error_schema": "core-http-error/v1",
+      "failure_statuses": [
+        {
+          "error_codes": [
+            "unknown_reference",
+            "cross_workspace"
+          ],
+          "status": 404
+        },
+        {
+          "error_codes": [
+            "stale_cas",
+            "operation_key_reuse"
+          ],
+          "status": 409
+        }
+      ],
+      "method": "DELETE",
+      "path_entity_kind": "relation",
+      "path_identity": [
+        "relation_id"
+      ],
+      "path_template": "/api/v1/core/relations/{relation_id}",
+      "request_schema": "core-relation-delete-command/v1",
+      "result_entity_kind": "relation",
+      "result_schema": "core-delete-result/v1",
+      "route_id": "relation.delete",
+      "success_statuses": [
+        200
+      ]
+    },
+    {
+      "error_schema": "core-http-error/v1",
+      "failure_statuses": [
+        {
+          "error_codes": [
+            "unknown_reference",
+            "cross_workspace"
+          ],
+          "status": 404
+        }
+      ],
+      "method": "GET",
+      "path_entity_kind": "document",
+      "path_identity": [
+        "document_id"
+      ],
+      "path_template": "/api/v1/core/documents/{document_id}/revisions",
+      "request_schema": "core-document-revision-query/v1",
+      "result_entity_kind": "revision",
+      "result_schema": "core-revision-page/v1",
+      "route_id": "document.revision.list",
+      "success_statuses": [
+        200
+      ]
+    },
+    {
+      "error_schema": "core-http-error/v1",
+      "failure_statuses": [
+        {
+          "error_codes": [
+            "unknown_reference",
+            "cross_workspace"
+          ],
+          "status": 404
+        }
+      ],
+      "method": "GET",
+      "path_entity_kind": "node",
+      "path_identity": [
+        "node_id"
+      ],
+      "path_template": "/api/v1/core/nodes/{node_id}/revisions",
+      "request_schema": "core-node-revision-query/v1",
+      "result_entity_kind": "revision",
+      "result_schema": "core-revision-page/v1",
+      "route_id": "node.revision.list",
+      "success_statuses": [
+        200
+      ]
+    },
+    {
+      "error_schema": "core-http-error/v1",
+      "failure_statuses": [
+        {
+          "error_codes": [
+            "unknown_reference",
+            "cross_workspace"
+          ],
+          "status": 404
+        }
+      ],
+      "method": "GET",
+      "path_entity_kind": "revision",
+      "path_identity": [
+        "revision_id"
+      ],
+      "path_template": "/api/v1/core/revisions/{revision_id}",
+      "request_schema": "core-revision-get-query/v1",
+      "result_entity_kind": "revision",
+      "result_schema": "core-revision/v1",
+      "route_id": "revision.get",
+      "success_statuses": [
+        200
+      ]
+    },
+    {
+      "error_schema": "core-http-error/v1",
+      "failure_statuses": [
+        {
+          "error_codes": [
+            "unknown_reference",
+            "cross_workspace"
+          ],
+          "status": 404
+        }
+      ],
+      "method": "GET",
+      "path_entity_kind": "revision",
+      "path_identity": [
+        "revision_id"
+      ],
+      "path_template": "/api/v1/core/revisions/{revision_id}/content",
+      "request_schema": "core-revision-content-query/v1",
+      "result_entity_kind": "revision",
+      "result_schema": "core-revision-content-page/v1",
+      "route_id": "revision.content",
+      "success_statuses": [
+        200
+      ]
+    },
+    {
+      "error_schema": "core-http-error/v1",
+      "failure_statuses": [
+        {
+          "error_codes": [
+            "unknown_reference",
+            "cross_workspace"
+          ],
+          "status": 404
+        },
+        {
+          "error_codes": [
+            "stale_cas",
+            "operation_key_reuse"
+          ],
+          "status": 409
+        }
+      ],
+      "method": "POST",
+      "path_entity_kind": "document",
+      "path_identity": [
+        "document_id"
+      ],
+      "path_template": "/api/v1/core/documents/{document_id}/revisions",
+      "request_schema": "core-document-revision-create-command/v1",
+      "result_entity_kind": "revision",
+      "result_schema": "core-revision/v1",
+      "route_id": "document.revision.create",
+      "success_statuses": [
+        201
+      ]
+    },
+    {
+      "error_schema": "core-http-error/v1",
+      "failure_statuses": [
+        {
+          "error_codes": [
+            "unknown_reference",
+            "cross_workspace"
+          ],
+          "status": 404
+        },
+        {
+          "error_codes": [
+            "stale_cas",
+            "operation_key_reuse"
+          ],
+          "status": 409
+        }
+      ],
+      "method": "POST",
+      "path_entity_kind": "node",
+      "path_identity": [
+        "node_id"
+      ],
+      "path_template": "/api/v1/core/nodes/{node_id}/revisions",
+      "request_schema": "core-node-revision-create-command/v1",
+      "result_entity_kind": "revision",
+      "result_schema": "core-revision/v1",
+      "route_id": "node.revision.create",
+      "success_statuses": [
+        201
+      ]
+    },
+    {
+      "error_schema": "core-http-error/v1",
+      "failure_statuses": [
+        {
+          "error_codes": [
+            "unknown_reference",
+            "cross_workspace"
+          ],
+          "status": 404
+        },
+        {
+          "error_codes": [
+            "stale_cas",
+            "operation_key_reuse"
+          ],
+          "status": 409
+        },
+        {
+          "error_codes": [
+            "incomplete_publication"
+          ],
+          "status": 422
+        }
+      ],
+      "method": "POST",
+      "path_entity_kind": null,
+      "path_identity": [],
+      "path_template": "/api/v1/core/publications/accept",
+      "request_schema": "publication-command/v1",
+      "result_entity_kind": null,
+      "result_schema": "publication-result/v1",
+      "route_id": "publication.accept",
+      "success_statuses": [
+        200
+      ]
+    },
+    {
+      "error_schema": "core-http-error/v1",
+      "failure_statuses": [
+        {
+          "error_codes": [
+            "unknown_reference",
+            "cross_workspace"
+          ],
+          "status": 404
+        }
+      ],
+      "method": "GET",
+      "path_entity_kind": "asset",
+      "path_identity": [
+        "asset_id"
+      ],
+      "path_template": "/api/v1/core/assets/{asset_id}",
+      "request_schema": "asset-query/v1",
+      "result_entity_kind": "asset",
+      "result_schema": "asset-metadata/v1",
+      "route_id": "asset.metadata",
+      "success_statuses": [
+        200
+      ]
+    },
+    {
+      "error_schema": "core-http-error/v1",
+      "failure_statuses": [
+        {
+          "error_codes": [
+            "unknown_reference",
+            "cross_workspace"
+          ],
+          "status": 404
+        }
+      ],
+      "method": "GET",
+      "path_entity_kind": "asset",
+      "path_identity": [
+        "asset_id"
+      ],
+      "path_template": "/api/v1/core/assets/{asset_id}/range",
+      "request_schema": "asset-read-range-query/v1",
+      "result_entity_kind": "asset",
+      "result_schema": "asset-read-range/v1",
+      "route_id": "asset.range",
+      "success_statuses": [
+        200
+      ]
+    }
+  ],
+  "schema": "core-api-method-matrix/v1"
+}

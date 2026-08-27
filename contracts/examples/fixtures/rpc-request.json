@@ -1,0 +1,28 @@
+{
+  "id": "123e4567-e89b-12d3-a456-426614174000",
+  "jsonrpc": "2.0",
+  "meta": {
+    "attempt_id": "attempt-1",
+    "context": "attempt",
+    "deadline_at": "2026-08-26T00:00:00Z",
+    "generation_id": "generation-1",
+    "job_id": "job-1",
+    "lease_epoch": 1,
+    "operation_id": "op-1",
+    "plugin_release_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "protocol_version": "1",
+    "step_id": "step-1"
+  },
+  "method": "host.asset.create/v1",
+  "params": {
+    "base64_chunk": "eA==",
+    "chunk_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "expected_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "final": false,
+    "mime": "application/json",
+    "offset": 0,
+    "operation_key": "upload-op-1",
+    "total_size": 2,
+    "upload_id": "upload-1"
+  }
+}

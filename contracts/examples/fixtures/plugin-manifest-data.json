@@ -1,0 +1,27 @@
+{
+  "capabilities": [
+    {
+      "capability_id": "fixture.rules/v1",
+      "operations": [
+        "validate"
+      ],
+      "result_contract": "diagnostic-bundle/v1"
+    }
+  ],
+  "compatibility": {
+    "core_api": ">=1.0 <2.0",
+    "plugin_rpc": "1",
+    "ui_host": "1"
+  },
+  "data": {
+    "format": "fixture-rules/v1",
+    "root": "data/rules.json"
+  },
+  "display_name": "Fixture Data",
+  "kind": "data",
+  "needs": [],
+  "plugin_id": "com.plotpilot.fixture.data",
+  "schema": "plotpilot-plugin/v1",
+  "settings": null,
+  "version": "1.0.0"
+}

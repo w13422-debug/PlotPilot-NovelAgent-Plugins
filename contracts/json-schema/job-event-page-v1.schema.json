@@ -1,0 +1,126 @@
+{
+  "$id": "https://plotpilot.local/contracts/job-event-page-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "after_job_event_seq": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "events": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "attempt_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "event_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "event_type": {
+            "pattern": "^plugin\\.[A-Za-z0-9._:/-]+\\.[A-Za-z0-9._:/-]+$",
+            "type": "string"
+          },
+          "job_event_seq": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "job_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "local_seq": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "occurred_at": {
+            "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+            "type": "string"
+          },
+          "payload_asset_id": {
+            "anyOf": [
+              {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "payload_hash": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "plugin_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "release_id": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "schema": {
+            "const": "plugin-job-event/v1"
+          },
+          "step_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "schema",
+          "event_id",
+          "job_id",
+          "step_id",
+          "attempt_id",
+          "job_event_seq",
+          "event_type",
+          "plugin_id",
+          "release_id",
+          "local_seq",
+          "payload_asset_id",
+          "payload_hash",
+          "occurred_at"
+        ],
+        "type": "object"
+      },
+      "minItems": 0,
+      "type": "array"
+    },
+    "high_water_seq": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "job_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "next_job_event_seq": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "schema": {
+      "const": "job-event-page/v1"
+    }
+  },
+  "required": [
+    "schema",
+    "job_id",
+    "after_job_event_seq",
+    "events",
+    "next_job_event_seq",
+    "high_water_seq"
+  ],
+  "title": "PlotPilot job-event-page-v1",
+  "type": "object"
+}

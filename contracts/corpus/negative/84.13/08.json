@@ -1,0 +1,36 @@
+{
+  "group_id": "84.13-08",
+  "title": "Retire/new-pin race, recoverable Attempt barrier and package deletion before Publication",
+  "assertions": [
+    "Retiring release cannot receive a new pin",
+    "Recoverable Attempt blocks retirement",
+    "Publication after package deletion requires retained provenance",
+    "Valid retained provenance permits Publication after package deletion"
+  ],
+  "negative": [
+    {
+      "case_id": "pin-while-retiring",
+      "kind": "retire_pin_race",
+      "expected_error_code": 1013
+    },
+    {
+      "case_id": "retire-with-recoverable-attempt",
+      "kind": "retire_attempt_barrier",
+      "expected_error_code": 1013
+    },
+    {
+      "case_id": "package-delete-publication",
+      "kind": "post_delete_publication",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "publication-after-package-delete-valid",
+      "kind": "post_delete_publication_positive"
+    }
+  ],
+  "positive": [
+    "release-retirement",
+    "release-pin",
+    "publication-after-package-delete"
+  ]
+}

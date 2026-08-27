@@ -1,0 +1,16 @@
+{
+  "action_id": "click",
+  "event_id": "ui-event-1",
+  "event_seq": 1,
+  "event_type": "click",
+  "freshness": {
+    "generation_id": "generation-1",
+    "plan_revision_id": null,
+    "plugin_release_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "workspace_id": "ws-1",
+    "workspace_revision_id": null
+  },
+  "payload_asset_id": null,
+  "render_seq": 1,
+  "schema": "plugin-ui-event/v1"
+}

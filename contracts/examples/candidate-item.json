@@ -1,0 +1,32 @@
+{
+  "base": {
+    "content_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+    "revision_id": "rev-a"
+  },
+  "item_id": "candidate-item-1",
+  "item_kind": "document",
+  "mutation": {
+    "mode": "replace",
+    "payload_hash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "payload_schema": "core/document-text/v1"
+  },
+  "parent_candidate_ids": [],
+  "payload_asset_id": "asset-candidate-payload",
+  "schema": "candidate-item/v1",
+  "source_refs": [],
+  "status": "complete",
+  "target": {
+    "entity_id": "doc-a",
+    "entity_kind": "document",
+    "workspace_id": "ws-1"
+  },
+  "write_set": [
+    {
+      "content_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "entity_id": "doc-a",
+      "entity_kind": "document",
+      "revision_id": "rev-a",
+      "workspace_id": "ws-1"
+    }
+  ]
+}

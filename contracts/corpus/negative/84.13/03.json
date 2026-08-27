@@ -1,0 +1,63 @@
+{
+  "group_id": "84.13-03",
+  "title": "Broker ACK-loss/child cancel/receipt propagation and Data format/interpreter/Plan/Snapshot mismatch",
+  "assertions": [
+    "Broker invoke retry after ACK-loss is byte-identical",
+    "Child cancel propagation is derived and idempotent",
+    "Receipt propagation anchor mismatch is rejected",
+    "Unknown data interpreter is rejected",
+    "Plan/Snapshot/Data bindings are rejected when mismatched"
+  ],
+  "negative": [
+    {
+      "case_id": "broker-ack-loss",
+      "kind": "broker_ack_loss"
+    },
+    {
+      "case_id": "broker-different-input-same-key",
+      "kind": "broker_payload_reuse",
+      "expected_error_code": 1008
+    },
+    {
+      "case_id": "child-cancel-propagation",
+      "kind": "child_cancel_propagation"
+    },
+    {
+      "case_id": "cancel-after-child-terminal",
+      "kind": "child_terminal_cancel",
+      "expected_error_code": 1010
+    },
+    {
+      "case_id": "receipt-propagation-mismatch",
+      "kind": "receipt_propagation",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "unsupported-data-format",
+      "kind": "data_interpreter",
+      "expected_error_code": 1012
+    },
+    {
+      "case_id": "snapshot-parameters-not-in-assets",
+      "kind": "snapshot_asset_binding",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "plan-snapshot-mismatch",
+      "kind": "plan_snapshot_binding",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "data-interpreter-mismatch",
+      "kind": "data_interpreter_binding",
+      "expected_error_code": 1011
+    }
+  ],
+  "positive": [
+    "broker-invocation",
+    "broker-child-record",
+    "run-snapshot",
+    "plugin-plan",
+    "provenance-receipt"
+  ]
+}

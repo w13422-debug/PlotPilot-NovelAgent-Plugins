@@ -1,0 +1,32 @@
+{
+  "bundle_id": "nap00-demo-code-bundle",
+  "bundle_type": "artifact",
+  "contract_id": "artifact-bundle/v1",
+  "input_snapshot_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "items": [
+    {
+      "artifact_kind": "nap00.demo.code.echo/v1",
+      "item_id": "nap00-demo-code-item",
+      "mime": "application/json",
+      "payload_asset_id": "asset-nap00-code-output",
+      "payload_hash": "4c822cdf095d4ebda785e70594c204312591c1674f683e1eb40c227568c1562c",
+      "schema": "artifact-item/v1",
+      "source_refs": [],
+      "status": "complete"
+    }
+  ],
+  "partial": false,
+  "producer": {
+    "attempt_id": "attempt-nap00-code",
+    "capability_id": "nap00.demo.code.echo/v1",
+    "job_id": "job-nap00-code",
+    "lease_epoch": 1,
+    "plugin_id": "com.plotpilot.nap00.demo.code",
+    "release_id": "07eae627043b6e283851d3f50de1f90d03554108d3d2f096ee1efa52d45e75ef",
+    "step_id": "step-nap00-code"
+  },
+  "provenance_receipt_id": "receipt-nap00-code",
+  "schema": "result-bundle/v1",
+  "skill_chain_result_refs": [],
+  "warnings": []
+}

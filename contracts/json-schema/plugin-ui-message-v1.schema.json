@@ -1,0 +1,2757 @@
+{
+  "$defs": {
+    "node": {
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "children": {
+              "items": {
+                "$ref": "#/$defs/node"
+              },
+              "minItems": 0,
+              "type": "array"
+            },
+            "component": {
+              "const": "stack"
+            },
+            "event_ids": {
+              "items": {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                "type": "string"
+              },
+              "minItems": 0,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "key": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            "props": {
+              "additionalProperties": false,
+              "properties": {
+                "direction": {
+                  "enum": [
+                    "horizontal",
+                    "vertical"
+                  ]
+                },
+                "row_gap": {
+                  "minimum": 0,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "direction",
+                "row_gap"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "component",
+            "key",
+            "props",
+            "children",
+            "event_ids"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "children": {
+              "items": {
+                "$ref": "#/$defs/node"
+              },
+              "minItems": 0,
+              "type": "array"
+            },
+            "component": {
+              "const": "text"
+            },
+            "event_ids": {
+              "items": {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                "type": "string"
+              },
+              "minItems": 0,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "key": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            "props": {
+              "additionalProperties": false,
+              "properties": {
+                "text": {
+                  "type": "string"
+                },
+                "tone": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "text",
+                "tone"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "component",
+            "key",
+            "props",
+            "children",
+            "event_ids"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "children": {
+              "items": {
+                "$ref": "#/$defs/node"
+              },
+              "minItems": 0,
+              "type": "array"
+            },
+            "component": {
+              "const": "input"
+            },
+            "event_ids": {
+              "items": {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                "type": "string"
+              },
+              "minItems": 0,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "key": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            "props": {
+              "additionalProperties": false,
+              "properties": {
+                "disabled": {
+                  "type": "boolean"
+                },
+                "label": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "placeholder": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "label",
+                "value",
+                "placeholder",
+                "disabled"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "component",
+            "key",
+            "props",
+            "children",
+            "event_ids"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "children": {
+              "items": {
+                "$ref": "#/$defs/node"
+              },
+              "minItems": 0,
+              "type": "array"
+            },
+            "component": {
+              "const": "textarea"
+            },
+            "event_ids": {
+              "items": {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                "type": "string"
+              },
+              "minItems": 0,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "key": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            "props": {
+              "additionalProperties": false,
+              "properties": {
+                "disabled": {
+                  "type": "boolean"
+                },
+                "label": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "rows": {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "label",
+                "value",
+                "rows",
+                "disabled"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "component",
+            "key",
+            "props",
+            "children",
+            "event_ids"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "children": {
+              "items": {
+                "$ref": "#/$defs/node"
+              },
+              "minItems": 0,
+              "type": "array"
+            },
+            "component": {
+              "const": "select"
+            },
+            "event_ids": {
+              "items": {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                "type": "string"
+              },
+              "minItems": 0,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "key": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            "props": {
+              "additionalProperties": false,
+              "properties": {
+                "disabled": {
+                  "type": "boolean"
+                },
+                "label": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "options_asset_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "label",
+                "value",
+                "options_asset_id",
+                "disabled"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "component",
+            "key",
+            "props",
+            "children",
+            "event_ids"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "children": {
+              "items": {
+                "$ref": "#/$defs/node"
+              },
+              "minItems": 0,
+              "type": "array"
+            },
+            "component": {
+              "const": "button"
+            },
+            "event_ids": {
+              "items": {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                "type": "string"
+              },
+              "minItems": 0,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "key": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            "props": {
+              "additionalProperties": false,
+              "properties": {
+                "disabled": {
+                  "type": "boolean"
+                },
+                "label": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "tone": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "label",
+                "tone",
+                "disabled"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "component",
+            "key",
+            "props",
+            "children",
+            "event_ids"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "children": {
+              "items": {
+                "$ref": "#/$defs/node"
+              },
+              "minItems": 0,
+              "type": "array"
+            },
+            "component": {
+              "const": "table"
+            },
+            "event_ids": {
+              "items": {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                "type": "string"
+              },
+              "minItems": 0,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "key": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            "props": {
+              "additionalProperties": false,
+              "properties": {
+                "columns_asset_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "empty_text": {
+                  "type": "string"
+                },
+                "rows_asset_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "columns_asset_id",
+                "rows_asset_id",
+                "empty_text"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "component",
+            "key",
+            "props",
+            "children",
+            "event_ids"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "children": {
+              "items": {
+                "$ref": "#/$defs/node"
+              },
+              "minItems": 0,
+              "type": "array"
+            },
+            "component": {
+              "const": "tabs"
+            },
+            "event_ids": {
+              "items": {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                "type": "string"
+              },
+              "minItems": 0,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "key": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            "props": {
+              "additionalProperties": false,
+              "properties": {
+                "active_tab": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "tabs_asset_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "active_tab",
+                "tabs_asset_id"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "component",
+            "key",
+            "props",
+            "children",
+            "event_ids"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "children": {
+              "items": {
+                "$ref": "#/$defs/node"
+              },
+              "minItems": 0,
+              "type": "array"
+            },
+            "component": {
+              "const": "diff"
+            },
+            "event_ids": {
+              "items": {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                "type": "string"
+              },
+              "minItems": 0,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "key": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            "props": {
+              "additionalProperties": false,
+              "properties": {
+                "after_asset_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "before_asset_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "language": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "before_asset_id",
+                "after_asset_id",
+                "language"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "component",
+            "key",
+            "props",
+            "children",
+            "event_ids"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "children": {
+              "items": {
+                "$ref": "#/$defs/node"
+              },
+              "minItems": 0,
+              "type": "array"
+            },
+            "component": {
+              "const": "tree"
+            },
+            "event_ids": {
+              "items": {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                "type": "string"
+              },
+              "minItems": 0,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "key": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            "props": {
+              "additionalProperties": false,
+              "properties": {
+                "nodes_asset_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "selected_id": {
+                  "anyOf": [
+                    {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "nodes_asset_id",
+                "selected_id"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "component",
+            "key",
+            "props",
+            "children",
+            "event_ids"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "children": {
+              "items": {
+                "$ref": "#/$defs/node"
+              },
+              "minItems": 0,
+              "type": "array"
+            },
+            "component": {
+              "const": "graph"
+            },
+            "event_ids": {
+              "items": {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                "type": "string"
+              },
+              "minItems": 0,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "key": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            "props": {
+              "additionalProperties": false,
+              "properties": {
+                "graph_asset_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "layout": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "graph_asset_id",
+                "layout"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "component",
+            "key",
+            "props",
+            "children",
+            "event_ids"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "children": {
+              "items": {
+                "$ref": "#/$defs/node"
+              },
+              "minItems": 0,
+              "type": "array"
+            },
+            "component": {
+              "const": "progress"
+            },
+            "event_ids": {
+              "items": {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                "type": "string"
+              },
+              "minItems": 0,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "key": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            "props": {
+              "additionalProperties": false,
+              "properties": {
+                "completed": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "label": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "state": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "total": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "label",
+                "completed",
+                "total",
+                "state"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "component",
+            "key",
+            "props",
+            "children",
+            "event_ids"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "children": {
+              "items": {
+                "$ref": "#/$defs/node"
+              },
+              "minItems": 0,
+              "type": "array"
+            },
+            "component": {
+              "const": "candidate_preview"
+            },
+            "event_ids": {
+              "items": {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                "type": "string"
+              },
+              "minItems": 0,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "key": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            "props": {
+              "additionalProperties": false,
+              "properties": {
+                "candidate_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "view_mode": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "candidate_id",
+                "view_mode"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "component",
+            "key",
+            "props",
+            "children",
+            "event_ids"
+          ],
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "$id": "https://plotpilot.local/contracts/plugin-ui-message-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "oneOf": [
+    {
+      "additionalProperties": false,
+      "properties": {
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "contribution_config_asset_id": {
+              "anyOf": [
+                {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "initial_intent_seq": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "initial_render_seq": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "schema": {
+              "const": "plugin-ui-init/v1"
+            },
+            "ui_session_id": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "schema",
+            "ui_session_id",
+            "initial_render_seq",
+            "initial_intent_seq",
+            "contribution_config_asset_id"
+          ],
+          "type": "object"
+        },
+        "contribution_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "direction": {
+          "const": "host_to_worker"
+        },
+        "generation_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "message_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "message_seq": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "message_type": {
+          "const": "init"
+        },
+        "plan_revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "plugin_release_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "schema": {
+          "const": "plugin-ui-message/v1"
+        },
+        "slot": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "worker_instance_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "workspace_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "workspace_revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schema",
+        "message_id",
+        "direction",
+        "message_seq",
+        "message_type",
+        "worker_instance_id",
+        "plugin_release_id",
+        "generation_id",
+        "contribution_id",
+        "slot",
+        "workspace_id",
+        "workspace_revision_id",
+        "plan_revision_id",
+        "body"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "action_id": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            "event_id": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            "event_seq": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "event_type": {
+              "enum": [
+                "change",
+                "click",
+                "select_row",
+                "change_tab",
+                "select_node",
+                "open_core_operation"
+              ]
+            },
+            "freshness": {
+              "additionalProperties": false,
+              "properties": {
+                "generation_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "plan_revision_id": {
+                  "anyOf": [
+                    {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "plugin_release_id": {
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "anyOf": [
+                    {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_revision_id": {
+                  "anyOf": [
+                    {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "generation_id",
+                "plugin_release_id",
+                "workspace_id",
+                "workspace_revision_id",
+                "plan_revision_id"
+              ],
+              "type": "object"
+            },
+            "payload_asset_id": {
+              "anyOf": [
+                {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "render_seq": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "schema": {
+              "const": "plugin-ui-event/v1"
+            }
+          },
+          "required": [
+            "schema",
+            "event_id",
+            "event_seq",
+            "render_seq",
+            "action_id",
+            "event_type",
+            "payload_asset_id",
+            "freshness"
+          ],
+          "type": "object"
+        },
+        "contribution_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "direction": {
+          "const": "host_to_worker"
+        },
+        "generation_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "message_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "message_seq": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "message_type": {
+          "const": "intent"
+        },
+        "plan_revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "plugin_release_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "schema": {
+          "const": "plugin-ui-message/v1"
+        },
+        "slot": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "worker_instance_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "workspace_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "workspace_revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schema",
+        "message_id",
+        "direction",
+        "message_seq",
+        "message_type",
+        "worker_instance_id",
+        "plugin_release_id",
+        "generation_id",
+        "contribution_id",
+        "slot",
+        "workspace_id",
+        "workspace_revision_id",
+        "plan_revision_id",
+        "body"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "accepted": {
+              "type": "boolean"
+            },
+            "core_event_seq": {
+              "anyOf": [
+                {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "error_code": {
+              "anyOf": [
+                {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "intent_id": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            "job_id": {
+              "anyOf": [
+                {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "schema": {
+              "const": "plugin-ui-ack/v1"
+            }
+          },
+          "required": [
+            "schema",
+            "intent_id",
+            "accepted",
+            "error_code",
+            "core_event_seq",
+            "job_id"
+          ],
+          "type": "object"
+        },
+        "contribution_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "direction": {
+          "const": "host_to_worker"
+        },
+        "generation_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "message_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "message_seq": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "message_type": {
+          "const": "ack"
+        },
+        "plan_revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "plugin_release_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "schema": {
+          "const": "plugin-ui-message/v1"
+        },
+        "slot": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "worker_instance_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "workspace_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "workspace_revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schema",
+        "message_id",
+        "direction",
+        "message_seq",
+        "message_type",
+        "worker_instance_id",
+        "plugin_release_id",
+        "generation_id",
+        "contribution_id",
+        "slot",
+        "workspace_id",
+        "workspace_revision_id",
+        "plan_revision_id",
+        "body"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "details_asset_id": {
+              "anyOf": [
+                {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "message": {
+              "type": "string"
+            },
+            "retryable": {
+              "type": "boolean"
+            },
+            "schema": {
+              "const": "plugin-ui-error/v1"
+            }
+          },
+          "required": [
+            "schema",
+            "code",
+            "message",
+            "details_asset_id",
+            "retryable"
+          ],
+          "type": "object"
+        },
+        "contribution_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "direction": {
+          "const": "host_to_worker"
+        },
+        "generation_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "message_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "message_seq": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "message_type": {
+          "const": "error"
+        },
+        "plan_revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "plugin_release_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "schema": {
+          "const": "plugin-ui-message/v1"
+        },
+        "slot": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "worker_instance_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "workspace_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "workspace_revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schema",
+        "message_id",
+        "direction",
+        "message_seq",
+        "message_type",
+        "worker_instance_id",
+        "plugin_release_id",
+        "generation_id",
+        "contribution_id",
+        "slot",
+        "workspace_id",
+        "workspace_revision_id",
+        "plan_revision_id",
+        "body"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "deadline_at": {
+              "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+              "type": "string"
+            },
+            "reason": {
+              "enum": [
+                "normal_shutdown",
+                "slot_unmounted",
+                "generation_changed",
+                "workspace_changed",
+                "watchdog"
+              ]
+            },
+            "schema": {
+              "const": "plugin-ui-dispose/v1"
+            },
+            "ui_session_id": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "schema",
+            "ui_session_id",
+            "reason",
+            "deadline_at"
+          ],
+          "type": "object"
+        },
+        "contribution_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "direction": {
+          "const": "host_to_worker"
+        },
+        "generation_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "message_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "message_seq": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "message_type": {
+          "const": "dispose"
+        },
+        "plan_revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "plugin_release_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "schema": {
+          "const": "plugin-ui-message/v1"
+        },
+        "slot": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "worker_instance_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "workspace_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "workspace_revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schema",
+        "message_id",
+        "direction",
+        "message_seq",
+        "message_type",
+        "worker_instance_id",
+        "plugin_release_id",
+        "generation_id",
+        "contribution_id",
+        "slot",
+        "workspace_id",
+        "workspace_revision_id",
+        "plan_revision_id",
+        "body"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "body": {
+          "$defs": {
+            "node": {
+              "oneOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "children": {
+                      "items": {
+                        "$ref": "#/$defs/node"
+                      },
+                      "minItems": 0,
+                      "type": "array"
+                    },
+                    "component": {
+                      "const": "stack"
+                    },
+                    "event_ids": {
+                      "items": {
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                        "type": "string"
+                      },
+                      "minItems": 0,
+                      "type": "array",
+                      "uniqueItems": true
+                    },
+                    "key": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "props": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "direction": {
+                          "enum": [
+                            "horizontal",
+                            "vertical"
+                          ]
+                        },
+                        "row_gap": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "direction",
+                        "row_gap"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "component",
+                    "key",
+                    "props",
+                    "children",
+                    "event_ids"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "children": {
+                      "items": {
+                        "$ref": "#/$defs/node"
+                      },
+                      "minItems": 0,
+                      "type": "array"
+                    },
+                    "component": {
+                      "const": "text"
+                    },
+                    "event_ids": {
+                      "items": {
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                        "type": "string"
+                      },
+                      "minItems": 0,
+                      "type": "array",
+                      "uniqueItems": true
+                    },
+                    "key": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "props": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "text": {
+                          "type": "string"
+                        },
+                        "tone": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "text",
+                        "tone"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "component",
+                    "key",
+                    "props",
+                    "children",
+                    "event_ids"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "children": {
+                      "items": {
+                        "$ref": "#/$defs/node"
+                      },
+                      "minItems": 0,
+                      "type": "array"
+                    },
+                    "component": {
+                      "const": "input"
+                    },
+                    "event_ids": {
+                      "items": {
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                        "type": "string"
+                      },
+                      "minItems": 0,
+                      "type": "array",
+                      "uniqueItems": true
+                    },
+                    "key": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "props": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "disabled": {
+                          "type": "boolean"
+                        },
+                        "label": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "placeholder": {
+                          "type": "string"
+                        },
+                        "value": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "label",
+                        "value",
+                        "placeholder",
+                        "disabled"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "component",
+                    "key",
+                    "props",
+                    "children",
+                    "event_ids"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "children": {
+                      "items": {
+                        "$ref": "#/$defs/node"
+                      },
+                      "minItems": 0,
+                      "type": "array"
+                    },
+                    "component": {
+                      "const": "textarea"
+                    },
+                    "event_ids": {
+                      "items": {
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                        "type": "string"
+                      },
+                      "minItems": 0,
+                      "type": "array",
+                      "uniqueItems": true
+                    },
+                    "key": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "props": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "disabled": {
+                          "type": "boolean"
+                        },
+                        "label": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "rows": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "value": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "label",
+                        "value",
+                        "rows",
+                        "disabled"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "component",
+                    "key",
+                    "props",
+                    "children",
+                    "event_ids"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "children": {
+                      "items": {
+                        "$ref": "#/$defs/node"
+                      },
+                      "minItems": 0,
+                      "type": "array"
+                    },
+                    "component": {
+                      "const": "select"
+                    },
+                    "event_ids": {
+                      "items": {
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                        "type": "string"
+                      },
+                      "minItems": 0,
+                      "type": "array",
+                      "uniqueItems": true
+                    },
+                    "key": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "props": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "disabled": {
+                          "type": "boolean"
+                        },
+                        "label": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "options_asset_id": {
+                          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                          "type": "string"
+                        },
+                        "value": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "label",
+                        "value",
+                        "options_asset_id",
+                        "disabled"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "component",
+                    "key",
+                    "props",
+                    "children",
+                    "event_ids"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "children": {
+                      "items": {
+                        "$ref": "#/$defs/node"
+                      },
+                      "minItems": 0,
+                      "type": "array"
+                    },
+                    "component": {
+                      "const": "button"
+                    },
+                    "event_ids": {
+                      "items": {
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                        "type": "string"
+                      },
+                      "minItems": 0,
+                      "type": "array",
+                      "uniqueItems": true
+                    },
+                    "key": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "props": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "disabled": {
+                          "type": "boolean"
+                        },
+                        "label": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "tone": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "label",
+                        "tone",
+                        "disabled"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "component",
+                    "key",
+                    "props",
+                    "children",
+                    "event_ids"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "children": {
+                      "items": {
+                        "$ref": "#/$defs/node"
+                      },
+                      "minItems": 0,
+                      "type": "array"
+                    },
+                    "component": {
+                      "const": "table"
+                    },
+                    "event_ids": {
+                      "items": {
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                        "type": "string"
+                      },
+                      "minItems": 0,
+                      "type": "array",
+                      "uniqueItems": true
+                    },
+                    "key": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "props": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "columns_asset_id": {
+                          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                          "type": "string"
+                        },
+                        "empty_text": {
+                          "type": "string"
+                        },
+                        "rows_asset_id": {
+                          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "columns_asset_id",
+                        "rows_asset_id",
+                        "empty_text"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "component",
+                    "key",
+                    "props",
+                    "children",
+                    "event_ids"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "children": {
+                      "items": {
+                        "$ref": "#/$defs/node"
+                      },
+                      "minItems": 0,
+                      "type": "array"
+                    },
+                    "component": {
+                      "const": "tabs"
+                    },
+                    "event_ids": {
+                      "items": {
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                        "type": "string"
+                      },
+                      "minItems": 0,
+                      "type": "array",
+                      "uniqueItems": true
+                    },
+                    "key": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "props": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "active_tab": {
+                          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                          "type": "string"
+                        },
+                        "tabs_asset_id": {
+                          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "active_tab",
+                        "tabs_asset_id"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "component",
+                    "key",
+                    "props",
+                    "children",
+                    "event_ids"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "children": {
+                      "items": {
+                        "$ref": "#/$defs/node"
+                      },
+                      "minItems": 0,
+                      "type": "array"
+                    },
+                    "component": {
+                      "const": "diff"
+                    },
+                    "event_ids": {
+                      "items": {
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                        "type": "string"
+                      },
+                      "minItems": 0,
+                      "type": "array",
+                      "uniqueItems": true
+                    },
+                    "key": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "props": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "after_asset_id": {
+                          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                          "type": "string"
+                        },
+                        "before_asset_id": {
+                          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                          "type": "string"
+                        },
+                        "language": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "before_asset_id",
+                        "after_asset_id",
+                        "language"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "component",
+                    "key",
+                    "props",
+                    "children",
+                    "event_ids"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "children": {
+                      "items": {
+                        "$ref": "#/$defs/node"
+                      },
+                      "minItems": 0,
+                      "type": "array"
+                    },
+                    "component": {
+                      "const": "tree"
+                    },
+                    "event_ids": {
+                      "items": {
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                        "type": "string"
+                      },
+                      "minItems": 0,
+                      "type": "array",
+                      "uniqueItems": true
+                    },
+                    "key": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "props": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "nodes_asset_id": {
+                          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                          "type": "string"
+                        },
+                        "selected_id": {
+                          "anyOf": [
+                            {
+                              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "nodes_asset_id",
+                        "selected_id"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "component",
+                    "key",
+                    "props",
+                    "children",
+                    "event_ids"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "children": {
+                      "items": {
+                        "$ref": "#/$defs/node"
+                      },
+                      "minItems": 0,
+                      "type": "array"
+                    },
+                    "component": {
+                      "const": "graph"
+                    },
+                    "event_ids": {
+                      "items": {
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                        "type": "string"
+                      },
+                      "minItems": 0,
+                      "type": "array",
+                      "uniqueItems": true
+                    },
+                    "key": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "props": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "graph_asset_id": {
+                          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                          "type": "string"
+                        },
+                        "layout": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "graph_asset_id",
+                        "layout"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "component",
+                    "key",
+                    "props",
+                    "children",
+                    "event_ids"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "children": {
+                      "items": {
+                        "$ref": "#/$defs/node"
+                      },
+                      "minItems": 0,
+                      "type": "array"
+                    },
+                    "component": {
+                      "const": "progress"
+                    },
+                    "event_ids": {
+                      "items": {
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                        "type": "string"
+                      },
+                      "minItems": 0,
+                      "type": "array",
+                      "uniqueItems": true
+                    },
+                    "key": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "props": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "completed": {
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        "label": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "state": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "total": {
+                          "anyOf": [
+                            {
+                              "minimum": 0,
+                              "type": "integer"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "label",
+                        "completed",
+                        "total",
+                        "state"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "component",
+                    "key",
+                    "props",
+                    "children",
+                    "event_ids"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "children": {
+                      "items": {
+                        "$ref": "#/$defs/node"
+                      },
+                      "minItems": 0,
+                      "type": "array"
+                    },
+                    "component": {
+                      "const": "candidate_preview"
+                    },
+                    "event_ids": {
+                      "items": {
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                        "type": "string"
+                      },
+                      "minItems": 0,
+                      "type": "array",
+                      "uniqueItems": true
+                    },
+                    "key": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "props": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "candidate_id": {
+                          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                          "type": "string"
+                        },
+                        "view_mode": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "candidate_id",
+                        "view_mode"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "component",
+                    "key",
+                    "props",
+                    "children",
+                    "event_ids"
+                  ],
+                  "type": "object"
+                }
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "properties": {
+            "render_seq": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "root": {
+              "$ref": "#/$defs/node"
+            },
+            "schema": {
+              "const": "plugin-ui-tree/v1"
+            },
+            "tree_id": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "schema",
+            "tree_id",
+            "render_seq",
+            "root"
+          ],
+          "type": "object"
+        },
+        "contribution_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "direction": {
+          "const": "worker_to_host"
+        },
+        "generation_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "message_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "message_seq": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "message_type": {
+          "const": "render"
+        },
+        "plan_revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "plugin_release_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "schema": {
+          "const": "plugin-ui-message/v1"
+        },
+        "slot": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "worker_instance_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "workspace_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "workspace_revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schema",
+        "message_id",
+        "direction",
+        "message_seq",
+        "message_type",
+        "worker_instance_id",
+        "plugin_release_id",
+        "generation_id",
+        "contribution_id",
+        "slot",
+        "workspace_id",
+        "workspace_revision_id",
+        "plan_revision_id",
+        "body"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "action_id": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            "capability_id": {
+              "anyOf": [
+                {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "event_type": {
+              "enum": [
+                "change",
+                "click",
+                "select_row",
+                "change_tab",
+                "select_node",
+                "open_core_operation"
+              ]
+            },
+            "freshness": {
+              "additionalProperties": false,
+              "properties": {
+                "generation_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "plan_revision_id": {
+                  "anyOf": [
+                    {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "plugin_release_id": {
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "anyOf": [
+                    {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_revision_id": {
+                  "anyOf": [
+                    {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "generation_id",
+                "plugin_release_id",
+                "workspace_id",
+                "workspace_revision_id",
+                "plan_revision_id"
+              ],
+              "type": "object"
+            },
+            "intent_id": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            "intent_kind": {
+              "enum": [
+                "invoke_capability",
+                "open_core_operation",
+                "request_candidate_preview",
+                "request_job_cancel",
+                "set_view_state"
+              ]
+            },
+            "intent_seq": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "operation_key": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            "payload_asset_id": {
+              "anyOf": [
+                {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "render_seq": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "schema": {
+              "const": "plugin-ui-intent/v1"
+            }
+          },
+          "required": [
+            "schema",
+            "intent_id",
+            "intent_seq",
+            "render_seq",
+            "action_id",
+            "event_type",
+            "intent_kind",
+            "capability_id",
+            "payload_asset_id",
+            "operation_key",
+            "freshness"
+          ],
+          "type": "object"
+        },
+        "contribution_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "direction": {
+          "const": "worker_to_host"
+        },
+        "generation_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "message_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "message_seq": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "message_type": {
+          "const": "intent"
+        },
+        "plan_revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "plugin_release_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "schema": {
+          "const": "plugin-ui-message/v1"
+        },
+        "slot": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "worker_instance_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "workspace_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "workspace_revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schema",
+        "message_id",
+        "direction",
+        "message_seq",
+        "message_type",
+        "worker_instance_id",
+        "plugin_release_id",
+        "generation_id",
+        "contribution_id",
+        "slot",
+        "workspace_id",
+        "workspace_revision_id",
+        "plan_revision_id",
+        "body"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "details_asset_id": {
+              "anyOf": [
+                {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "message": {
+              "type": "string"
+            },
+            "retryable": {
+              "type": "boolean"
+            },
+            "schema": {
+              "const": "plugin-ui-error/v1"
+            }
+          },
+          "required": [
+            "schema",
+            "code",
+            "message",
+            "details_asset_id",
+            "retryable"
+          ],
+          "type": "object"
+        },
+        "contribution_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "direction": {
+          "const": "worker_to_host"
+        },
+        "generation_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "message_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "message_seq": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "message_type": {
+          "const": "error"
+        },
+        "plan_revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "plugin_release_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "schema": {
+          "const": "plugin-ui-message/v1"
+        },
+        "slot": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "worker_instance_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "workspace_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "workspace_revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schema",
+        "message_id",
+        "direction",
+        "message_seq",
+        "message_type",
+        "worker_instance_id",
+        "plugin_release_id",
+        "generation_id",
+        "contribution_id",
+        "slot",
+        "workspace_id",
+        "workspace_revision_id",
+        "plan_revision_id",
+        "body"
+      ],
+      "type": "object"
+    }
+  ],
+  "title": "PlotPilot plugin-ui-message-v1",
+  "unevaluatedProperties": false
+}

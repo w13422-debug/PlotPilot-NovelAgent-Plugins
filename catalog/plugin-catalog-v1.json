@@ -1,0 +1,2472 @@
+{
+  "schema": "novel-agent-plugin-catalog/v1",
+  "created_at": "2026-08-27T18:40:00+08:00",
+  "target_manifest": "plotpilot-plugin/v1",
+  "target_skill_manifest": "plotpilot-skill/v1",
+  "code_plugins": [
+    {
+      "plugin_id": "com.plotpilot.novelagent.source-import",
+      "display_name": "Novel-Agent 原作导入",
+      "kind": "code",
+      "project": "NAP-01",
+      "status": "planned",
+      "capabilities": [
+        {
+          "capability_id": "source.import.inspect/v1",
+          "operations": [
+            "run",
+            "cancel"
+          ],
+          "result_contract": "artifact-bundle/v1",
+          "input_schema": "source.import.inspect-request/v1",
+          "output_schema": "source.import.inspect-result/v1",
+          "deterministic": true,
+          "accepted_data_formats": [],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-source-import-inspect-v1-donors-import-panel",
+              "slot": "donors.import.panel",
+              "capability_id": "source.import.inspect/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "source.import.parse/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "candidate-batch/v1",
+          "input_schema": "source.import.parse-request/v1",
+          "output_schema": "source.import.parse-result/v1",
+          "deterministic": true,
+          "accepted_data_formats": [],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-source-import-parse-v1-donors-import-panel",
+              "slot": "donors.import.panel",
+              "capability_id": "source.import.parse/v1"
+            },
+            {
+              "contribution_id": "nap-ui-source-import-parse-v1-job-drawer-detail",
+              "slot": "job.drawer.detail",
+              "capability_id": "source.import.parse/v1"
+            }
+          ],
+          "headless": false
+        }
+      ],
+      "ui_slots": [
+        "donors.import.panel",
+        "job.drawer.detail"
+      ],
+      "needs": [
+        "host.asset.read/v1",
+        "host.asset.create/v1",
+        "host.asset.upload.status/v1",
+        "host.job.event/v1",
+        "host.job.complete/v1",
+        "host.checkpoint.commit/v1",
+        "host.candidate.stage/v1"
+      ],
+      "authority": "May produce Bundles/Candidates only; Core owns Revision, Asset identity, Candidate decision and Publication."
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.source-cleaning-runtime",
+      "display_name": "Novel-Agent 原作清洗运行时",
+      "kind": "code",
+      "project": "NAP-01",
+      "status": "planned",
+      "capabilities": [
+        {
+          "capability_id": "source.clean.preview/v1",
+          "operations": [
+            "run",
+            "cancel"
+          ],
+          "result_contract": "artifact-bundle/v1",
+          "input_schema": "source.clean.preview-request/v1",
+          "output_schema": "source.clean.preview-result/v1",
+          "deterministic": true,
+          "accepted_data_formats": [
+            "source-cleaning-rules/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-source-clean-preview-v1-donors-import-panel",
+              "slot": "donors.import.panel",
+              "capability_id": "source.clean.preview/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "source.clean.apply/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "candidate-batch/v1",
+          "input_schema": "source.clean.apply-request/v1",
+          "output_schema": "source.clean.apply-result/v1",
+          "deterministic": true,
+          "accepted_data_formats": [
+            "source-cleaning-rules/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-source-clean-apply-v1-donors-import-panel",
+              "slot": "donors.import.panel",
+              "capability_id": "source.clean.apply/v1"
+            },
+            {
+              "contribution_id": "nap-ui-source-clean-apply-v1-job-drawer-detail",
+              "slot": "job.drawer.detail",
+              "capability_id": "source.clean.apply/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "source.clean.rules.merge/v1",
+          "operations": [
+            "run",
+            "validate"
+          ],
+          "result_contract": "artifact-bundle/v1",
+          "input_schema": "source.clean.rules.merge-request/v1",
+          "output_schema": "source.clean.rules.merge-result/v1",
+          "deterministic": true,
+          "accepted_data_formats": [
+            "source-cleaning-rules/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-source-clean-rules-merge-v1-donors-import-panel",
+              "slot": "donors.import.panel",
+              "capability_id": "source.clean.rules.merge/v1"
+            }
+          ],
+          "headless": false
+        }
+      ],
+      "ui_slots": [
+        "donors.import.panel",
+        "job.drawer.detail"
+      ],
+      "needs": [
+        "host.asset.read/v1",
+        "host.asset.create/v1",
+        "host.asset.upload.status/v1",
+        "host.job.event/v1",
+        "host.job.complete/v1",
+        "host.checkpoint.commit/v1",
+        "host.candidate.stage/v1"
+      ],
+      "authority": "May produce Bundles/Candidates only; Core owns Revision, Asset identity, Candidate decision and Publication."
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.source-structure",
+      "display_name": "Novel-Agent 原作结构与证据",
+      "kind": "code",
+      "project": "NAP-01",
+      "status": "planned",
+      "capabilities": [
+        {
+          "capability_id": "source.structure.revise/v1",
+          "operations": [
+            "run",
+            "validate"
+          ],
+          "result_contract": "candidate-batch/v1",
+          "input_schema": "source.structure.revise-request/v1",
+          "output_schema": "source.structure.revise-result/v1",
+          "deterministic": true,
+          "accepted_data_formats": [],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-source-structure-revise-v1-donors-structure-panel",
+              "slot": "donors.structure.panel",
+              "capability_id": "source.structure.revise/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "source.evidence.search/v1",
+          "operations": [
+            "run"
+          ],
+          "result_contract": "artifact-bundle/v1",
+          "input_schema": "source.evidence.search-request/v1",
+          "output_schema": "source.evidence.search-result/v1",
+          "deterministic": true,
+          "accepted_data_formats": [],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-source-evidence-search-v1-donors-evidence-inspector",
+              "slot": "donors.evidence.inspector",
+              "capability_id": "source.evidence.search/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "source.evidence.rebind.inspect/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "diagnostic-bundle/v1",
+          "input_schema": "source.evidence.rebind.inspect-request/v1",
+          "output_schema": "source.evidence.rebind.inspect-result/v1",
+          "deterministic": true,
+          "accepted_data_formats": [],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-source-evidence-rebind-inspect-v1-donors-evidence-inspector",
+              "slot": "donors.evidence.inspector",
+              "capability_id": "source.evidence.rebind.inspect/v1"
+            },
+            {
+              "contribution_id": "nap-ui-source-evidence-rebind-inspect-v1-job-drawer-detail",
+              "slot": "job.drawer.detail",
+              "capability_id": "source.evidence.rebind.inspect/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "source.evidence.rebind.propose/v1",
+          "operations": [
+            "run",
+            "validate"
+          ],
+          "result_contract": "candidate-batch/v1",
+          "input_schema": "source.evidence.rebind.propose-request/v1",
+          "output_schema": "source.evidence.rebind.propose-result/v1",
+          "deterministic": true,
+          "accepted_data_formats": [],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-source-evidence-rebind-propose-v1-donors-structure-panel",
+              "slot": "donors.structure.panel",
+              "capability_id": "source.evidence.rebind.propose/v1"
+            }
+          ],
+          "headless": false
+        }
+      ],
+      "ui_slots": [
+        "donors.structure.panel",
+        "donors.evidence.inspector",
+        "job.drawer.detail"
+      ],
+      "needs": [
+        "host.asset.read/v1",
+        "host.asset.create/v1",
+        "host.asset.upload.status/v1",
+        "host.job.event/v1",
+        "host.job.complete/v1",
+        "host.checkpoint.commit/v1",
+        "host.candidate.stage/v1"
+      ],
+      "authority": "May produce Bundles/Candidates only; Core owns Revision, Asset identity, Candidate decision and Publication."
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.donor-analysis",
+      "display_name": "Novel-Agent 原子拆书",
+      "kind": "code",
+      "project": "NAP-02",
+      "status": "planned",
+      "capabilities": [
+        {
+          "capability_id": "analysis.book.atom.extract/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "candidate-batch/v1",
+          "input_schema": "analysis.book.atom.extract-request/v1",
+          "output_schema": "analysis.book.atom.extract-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [
+            "book-analysis-taxonomy/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-analysis-book-atom-extract-v1-donors-analysis-configure",
+              "slot": "donors.analysis.configure",
+              "capability_id": "analysis.book.atom.extract/v1"
+            },
+            {
+              "contribution_id": "nap-ui-analysis-book-atom-extract-v1-job-drawer-detail",
+              "slot": "job.drawer.detail",
+              "capability_id": "analysis.book.atom.extract/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "analysis.book.atom.manual/v1",
+          "operations": [
+            "run",
+            "validate"
+          ],
+          "result_contract": "candidate-batch/v1",
+          "input_schema": "analysis.book.atom.manual-request/v1",
+          "output_schema": "analysis.book.atom.manual-result/v1",
+          "deterministic": true,
+          "accepted_data_formats": [
+            "book-analysis-taxonomy/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-analysis-book-atom-manual-v1-donors-analysis-review",
+              "slot": "donors.analysis.review",
+              "capability_id": "analysis.book.atom.manual/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "analysis.book.claim.generate/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "candidate-batch/v1",
+          "input_schema": "analysis.book.claim.generate-request/v1",
+          "output_schema": "analysis.book.claim.generate-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [
+            "book-analysis-taxonomy/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-analysis-book-claim-generate-v1-donors-analysis-review",
+              "slot": "donors.analysis.review",
+              "capability_id": "analysis.book.claim.generate/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "analysis.book.rereview/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "diagnostic-bundle/v1",
+          "input_schema": "analysis.book.rereview-request/v1",
+          "output_schema": "analysis.book.rereview-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [
+            "book-analysis-taxonomy/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-analysis-book-rereview-v1-donors-analysis-review",
+              "slot": "donors.analysis.review",
+              "capability_id": "analysis.book.rereview/v1"
+            },
+            {
+              "contribution_id": "nap-ui-analysis-book-rereview-v1-donors-evidence-inspector",
+              "slot": "donors.evidence.inspector",
+              "capability_id": "analysis.book.rereview/v1"
+            }
+          ],
+          "headless": false
+        }
+      ],
+      "ui_slots": [
+        "donors.analysis.configure",
+        "job.drawer.detail",
+        "donors.analysis.review",
+        "donors.evidence.inspector"
+      ],
+      "needs": [
+        "host.asset.read/v1",
+        "host.asset.create/v1",
+        "host.asset.upload.status/v1",
+        "host.job.event/v1",
+        "host.job.complete/v1",
+        "host.checkpoint.commit/v1",
+        "host.model.invoke/v1",
+        "host.candidate.stage/v1"
+      ],
+      "authority": "May produce Bundles/Candidates only; Core owns Revision, Asset identity, Candidate decision and Publication."
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.narrative-analysis",
+      "display_name": "Novel-Agent 剧情结构分析",
+      "kind": "code",
+      "project": "NAP-03",
+      "status": "planned",
+      "capabilities": [
+        {
+          "capability_id": "analysis.narrative.unit.extract/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "candidate-batch/v1",
+          "input_schema": "analysis.narrative.unit.extract-request/v1",
+          "output_schema": "analysis.narrative.unit.extract-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [
+            "book-analysis-taxonomy/v1",
+            "plot-structure-template/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-analysis-narrative-unit-extract-v1-donors-analysis-configure",
+              "slot": "donors.analysis.configure",
+              "capability_id": "analysis.narrative.unit.extract/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "analysis.narrative.plan.compile/v1",
+          "operations": [
+            "run",
+            "validate"
+          ],
+          "result_contract": "candidate-batch/v1",
+          "input_schema": "analysis.narrative.plan.compile-request/v1",
+          "output_schema": "analysis.narrative.plan.compile-result/v1",
+          "deterministic": true,
+          "accepted_data_formats": [
+            "plot-structure-template/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-analysis-narrative-plan-compile-v1-donors-analysis-configure",
+              "slot": "donors.analysis.configure",
+              "capability_id": "analysis.narrative.plan.compile/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "analysis.narrative.synthesize/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "candidate-batch/v1",
+          "input_schema": "analysis.narrative.synthesize-request/v1",
+          "output_schema": "analysis.narrative.synthesize-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [
+            "plot-structure-template/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-analysis-narrative-synthesize-v1-donors-analysis-review",
+              "slot": "donors.analysis.review",
+              "capability_id": "analysis.narrative.synthesize/v1"
+            },
+            {
+              "contribution_id": "nap-ui-analysis-narrative-synthesize-v1-outline-visualization-panel",
+              "slot": "outline.visualization.panel",
+              "capability_id": "analysis.narrative.synthesize/v1"
+            }
+          ],
+          "headless": false
+        }
+      ],
+      "ui_slots": [
+        "donors.analysis.configure",
+        "donors.analysis.review",
+        "outline.visualization.panel"
+      ],
+      "needs": [
+        "host.asset.read/v1",
+        "host.asset.create/v1",
+        "host.asset.upload.status/v1",
+        "host.job.event/v1",
+        "host.job.complete/v1",
+        "host.checkpoint.commit/v1",
+        "host.model.invoke/v1",
+        "host.candidate.stage/v1",
+        "host.capability.invoke/v1",
+        "host.capability.poll/v1",
+        "host.capability.cancel/v1"
+      ],
+      "authority": "May produce Bundles/Candidates only; Core owns Revision, Asset identity, Candidate decision and Publication."
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.character-distillation",
+      "display_name": "Novel-Agent 人物蒸馏",
+      "kind": "code",
+      "project": "NAP-04",
+      "status": "planned",
+      "capabilities": [
+        {
+          "capability_id": "analysis.character.atom.extract/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "candidate-batch/v1",
+          "input_schema": "analysis.character.atom.extract-request/v1",
+          "output_schema": "analysis.character.atom.extract-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [
+            "character-archetype/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-analysis-character-atom-extract-v1-donors-analysis-review",
+              "slot": "donors.analysis.review",
+              "capability_id": "analysis.character.atom.extract/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "analysis.character.card.generate/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "candidate-batch/v1",
+          "input_schema": "analysis.character.card.generate-request/v1",
+          "output_schema": "analysis.character.card.generate-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [
+            "character-archetype/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-analysis-character-card-generate-v1-donors-analysis-review",
+              "slot": "donors.analysis.review",
+              "capability_id": "analysis.character.card.generate/v1"
+            },
+            {
+              "contribution_id": "nap-ui-analysis-character-card-generate-v1-donors-asset-derivation",
+              "slot": "donors.asset.derivation",
+              "capability_id": "analysis.character.card.generate/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "analysis.character.conflict.review/v1",
+          "operations": [
+            "run"
+          ],
+          "result_contract": "diagnostic-bundle/v1",
+          "input_schema": "analysis.character.conflict.review-request/v1",
+          "output_schema": "analysis.character.conflict.review-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [
+            "character-archetype/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-analysis-character-conflict-review-v1-donors-analysis-review",
+              "slot": "donors.analysis.review",
+              "capability_id": "analysis.character.conflict.review/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "analysis.character.conflict.apply/v1",
+          "operations": [
+            "run",
+            "validate"
+          ],
+          "result_contract": "candidate-batch/v1",
+          "input_schema": "analysis.character.conflict.apply-request/v1",
+          "output_schema": "analysis.character.conflict.apply-result/v1",
+          "deterministic": true,
+          "accepted_data_formats": [
+            "character-archetype/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-analysis-character-conflict-apply-v1-donors-analysis-review",
+              "slot": "donors.analysis.review",
+              "capability_id": "analysis.character.conflict.apply/v1"
+            }
+          ],
+          "headless": false
+        }
+      ],
+      "ui_slots": [
+        "donors.analysis.review",
+        "donors.asset.derivation"
+      ],
+      "needs": [
+        "host.asset.read/v1",
+        "host.asset.create/v1",
+        "host.asset.upload.status/v1",
+        "host.job.event/v1",
+        "host.job.complete/v1",
+        "host.checkpoint.commit/v1",
+        "host.model.invoke/v1",
+        "host.candidate.stage/v1"
+      ],
+      "authority": "May produce Bundles/Candidates only; Core owns Revision, Asset identity, Candidate decision and Publication."
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.asset-derivation",
+      "display_name": "Novel-Agent 可复用资产派生",
+      "kind": "code",
+      "project": "NAP-04",
+      "status": "planned",
+      "capabilities": [
+        {
+          "capability_id": "asset.template.derive/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "candidate-batch/v1",
+          "input_schema": "asset.template.derive-request/v1",
+          "output_schema": "asset.template.derive-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [
+            "character-archetype/v1",
+            "world-rule-template/v1",
+            "plot-structure-template/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-asset-template-derive-v1-donors-asset-derivation",
+              "slot": "donors.asset.derivation",
+              "capability_id": "asset.template.derive/v1"
+            },
+            {
+              "contribution_id": "nap-ui-asset-template-derive-v1-workbench-reference-panel",
+              "slot": "workbench.reference.panel",
+              "capability_id": "asset.template.derive/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "asset.data-plugin.package/v1",
+          "operations": [
+            "run",
+            "validate"
+          ],
+          "result_contract": "artifact-bundle/v1",
+          "input_schema": "asset.data-plugin.package-request/v1",
+          "output_schema": "asset.data-plugin.package-result/v1",
+          "deterministic": true,
+          "accepted_data_formats": [],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-asset-data-plugin-package-v1-donors-asset-derivation",
+              "slot": "donors.asset.derivation",
+              "capability_id": "asset.data-plugin.package/v1"
+            }
+          ],
+          "headless": false
+        }
+      ],
+      "ui_slots": [
+        "donors.asset.derivation",
+        "workbench.reference.panel"
+      ],
+      "needs": [
+        "host.asset.read/v1",
+        "host.asset.create/v1",
+        "host.asset.upload.status/v1",
+        "host.job.event/v1",
+        "host.job.complete/v1",
+        "host.checkpoint.commit/v1",
+        "host.candidate.stage/v1"
+      ],
+      "authority": "May produce Bundles/Candidates only; Core owns Revision, Asset identity, Candidate decision and Publication."
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.style-manufacturing",
+      "display_name": "Novel-Agent 文风制造",
+      "kind": "code",
+      "project": "NAP-05",
+      "status": "planned",
+      "capabilities": [
+        {
+          "capability_id": "style.manufacture/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "candidate-batch/v1",
+          "input_schema": "style.manufacture-request/v1",
+          "output_schema": "style.manufacture-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [
+            "book-analysis-taxonomy/v1",
+            "lexicon/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-style-manufacture-v1-donors-analysis-configure",
+              "slot": "donors.analysis.configure",
+              "capability_id": "style.manufacture/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "style.qualify/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "diagnostic-bundle/v1",
+          "input_schema": "style.qualify-request/v1",
+          "output_schema": "style.qualify-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [
+            "quality-rubric/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-style-qualify-v1-donors-analysis-review",
+              "slot": "donors.analysis.review",
+              "capability_id": "style.qualify/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "style.data-plugin.package/v1",
+          "operations": [
+            "run",
+            "validate"
+          ],
+          "result_contract": "artifact-bundle/v1",
+          "input_schema": "style.data-plugin.package-request/v1",
+          "output_schema": "style.data-plugin.package-result/v1",
+          "deterministic": true,
+          "accepted_data_formats": [
+            "style-pack/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-style-data-plugin-package-v1-donors-asset-derivation",
+              "slot": "donors.asset.derivation",
+              "capability_id": "style.data-plugin.package/v1"
+            }
+          ],
+          "headless": false
+        }
+      ],
+      "ui_slots": [
+        "donors.analysis.configure",
+        "donors.analysis.review",
+        "donors.asset.derivation"
+      ],
+      "needs": [
+        "host.asset.read/v1",
+        "host.asset.create/v1",
+        "host.asset.upload.status/v1",
+        "host.job.event/v1",
+        "host.job.complete/v1",
+        "host.checkpoint.commit/v1",
+        "host.model.invoke/v1",
+        "host.candidate.stage/v1"
+      ],
+      "authority": "May produce Bundles/Candidates only; Core owns Revision, Asset identity, Candidate decision and Publication."
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.style-runtime",
+      "display_name": "Novel-Agent 文风应用",
+      "kind": "code",
+      "project": "NAP-05",
+      "status": "planned",
+      "capabilities": [
+        {
+          "capability_id": "style.apply/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "candidate-batch/v1",
+          "input_schema": "style.apply-request/v1",
+          "output_schema": "style.apply-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [
+            "style-pack/v1",
+            "lexicon/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-style-apply-v1-workbench-reference-panel",
+              "slot": "workbench.reference.panel",
+              "capability_id": "style.apply/v1"
+            },
+            {
+              "contribution_id": "nap-ui-style-apply-v1-workbench-generate-context",
+              "slot": "workbench.generate.context",
+              "capability_id": "style.apply/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "style.review/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "diagnostic-bundle/v1",
+          "input_schema": "style.review-request/v1",
+          "output_schema": "style.review-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [
+            "style-pack/v1",
+            "quality-rubric/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-style-review-v1-workbench-quality-panel",
+              "slot": "workbench.quality.panel",
+              "capability_id": "style.review/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "style.refine/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "candidate-batch/v1",
+          "input_schema": "style.refine-request/v1",
+          "output_schema": "style.refine-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [
+            "style-pack/v1",
+            "quality-rubric/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-style-refine-v1-workbench-quality-panel",
+              "slot": "workbench.quality.panel",
+              "capability_id": "style.refine/v1"
+            }
+          ],
+          "headless": false
+        }
+      ],
+      "ui_slots": [
+        "workbench.reference.panel",
+        "workbench.generate.context",
+        "workbench.quality.panel"
+      ],
+      "needs": [
+        "host.asset.read/v1",
+        "host.asset.create/v1",
+        "host.asset.upload.status/v1",
+        "host.job.event/v1",
+        "host.job.complete/v1",
+        "host.checkpoint.commit/v1",
+        "host.model.invoke/v1",
+        "host.candidate.stage/v1"
+      ],
+      "authority": "May produce Bundles/Candidates only; Core owns Revision, Asset identity, Candidate decision and Publication."
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.consistency-audit",
+      "display_name": "Novel-Agent 一致性审计",
+      "kind": "code",
+      "project": "NAP-06",
+      "status": "planned",
+      "capabilities": [
+        {
+          "capability_id": "quality.consistency.audit/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "diagnostic-bundle/v1",
+          "input_schema": "quality.consistency.audit-request/v1",
+          "output_schema": "quality.consistency.audit-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [
+            "quality-rubric/v1",
+            "world-rule-template/v1",
+            "lexicon/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-quality-consistency-audit-v1-workbench-quality-panel",
+              "slot": "workbench.quality.panel",
+              "capability_id": "quality.consistency.audit/v1"
+            },
+            {
+              "contribution_id": "nap-ui-quality-consistency-audit-v1-job-drawer-detail",
+              "slot": "job.drawer.detail",
+              "capability_id": "quality.consistency.audit/v1"
+            }
+          ],
+          "headless": false
+        }
+      ],
+      "ui_slots": [
+        "workbench.quality.panel",
+        "job.drawer.detail"
+      ],
+      "needs": [
+        "host.asset.read/v1",
+        "host.asset.create/v1",
+        "host.asset.upload.status/v1",
+        "host.job.event/v1",
+        "host.job.complete/v1",
+        "host.checkpoint.commit/v1",
+        "host.model.invoke/v1"
+      ],
+      "authority": "May produce Bundles/Candidates only; Core owns Revision, Asset identity, Candidate decision and Publication."
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.impact-repair",
+      "display_name": "Novel-Agent 影响分析与受控修复",
+      "kind": "code",
+      "project": "NAP-06",
+      "status": "planned",
+      "capabilities": [
+        {
+          "capability_id": "quality.impact.analyze/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "diagnostic-bundle/v1",
+          "input_schema": "quality.impact.analyze-request/v1",
+          "output_schema": "quality.impact.analyze-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [
+            "quality-rubric/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-quality-impact-analyze-v1-workbench-quality-panel",
+              "slot": "workbench.quality.panel",
+              "capability_id": "quality.impact.analyze/v1"
+            },
+            {
+              "contribution_id": "nap-ui-quality-impact-analyze-v1-job-drawer-detail",
+              "slot": "job.drawer.detail",
+              "capability_id": "quality.impact.analyze/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "quality.impact.repair/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "candidate-batch/v1",
+          "input_schema": "quality.impact.repair-request/v1",
+          "output_schema": "quality.impact.repair-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [
+            "quality-rubric/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-quality-impact-repair-v1-workbench-quality-panel",
+              "slot": "workbench.quality.panel",
+              "capability_id": "quality.impact.repair/v1"
+            },
+            {
+              "contribution_id": "nap-ui-quality-impact-repair-v1-job-drawer-detail",
+              "slot": "job.drawer.detail",
+              "capability_id": "quality.impact.repair/v1"
+            }
+          ],
+          "headless": false
+        }
+      ],
+      "ui_slots": [
+        "workbench.quality.panel",
+        "job.drawer.detail"
+      ],
+      "needs": [
+        "host.asset.read/v1",
+        "host.asset.create/v1",
+        "host.asset.upload.status/v1",
+        "host.job.event/v1",
+        "host.job.complete/v1",
+        "host.checkpoint.commit/v1",
+        "host.model.invoke/v1",
+        "host.candidate.stage/v1"
+      ],
+      "authority": "May produce Bundles/Candidates only; Core owns Revision, Asset identity, Candidate decision and Publication."
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.branch-canon",
+      "display_name": "Novel-Agent 分支 Canon 控制",
+      "kind": "code",
+      "project": "NAP-06",
+      "status": "planned",
+      "capabilities": [
+        {
+          "capability_id": "story.canon.preflight/v1",
+          "operations": [
+            "run",
+            "validate"
+          ],
+          "result_contract": "diagnostic-bundle/v1",
+          "input_schema": "story.canon.preflight-request/v1",
+          "output_schema": "story.canon.preflight-result/v1",
+          "deterministic": true,
+          "accepted_data_formats": [],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-story-canon-preflight-v1-workbench-quality-panel",
+              "slot": "workbench.quality.panel",
+              "capability_id": "story.canon.preflight/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "story.canon.propose/v1",
+          "operations": [
+            "run",
+            "validate"
+          ],
+          "result_contract": "candidate-batch/v1",
+          "input_schema": "story.canon.propose-request/v1",
+          "output_schema": "story.canon.propose-result/v1",
+          "deterministic": true,
+          "accepted_data_formats": [],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-story-canon-propose-v1-workbench-story-state-panel",
+              "slot": "workbench.story-state.panel",
+              "capability_id": "story.canon.propose/v1"
+            }
+          ],
+          "headless": false
+        }
+      ],
+      "ui_slots": [
+        "workbench.quality.panel",
+        "workbench.story-state.panel"
+      ],
+      "needs": [
+        "host.asset.read/v1",
+        "host.asset.create/v1",
+        "host.asset.upload.status/v1",
+        "host.job.event/v1",
+        "host.job.complete/v1",
+        "host.checkpoint.commit/v1",
+        "host.candidate.stage/v1"
+      ],
+      "authority": "May produce Bundles/Candidates only; Core owns Revision, Asset identity, Candidate decision and Publication."
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.story-state",
+      "display_name": "Novel-Agent 故事状态与章后结算",
+      "kind": "code",
+      "project": "NAP-06",
+      "status": "planned",
+      "capabilities": [
+        {
+          "capability_id": "story.chapter.settle/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "candidate-batch/v1",
+          "input_schema": "story.chapter.settle-request/v1",
+          "output_schema": "story.chapter.settle-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [
+            "world-rule-template/v1",
+            "quality-rubric/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-story-chapter-settle-v1-workbench-story-state-panel",
+              "slot": "workbench.story-state.panel",
+              "capability_id": "story.chapter.settle/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "story.foreshadow.check/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "diagnostic-bundle/v1",
+          "input_schema": "story.foreshadow.check-request/v1",
+          "output_schema": "story.foreshadow.check-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [
+            "quality-rubric/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-story-foreshadow-check-v1-workbench-quality-panel",
+              "slot": "workbench.quality.panel",
+              "capability_id": "story.foreshadow.check/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "story.state.derive/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "candidate-batch/v1",
+          "input_schema": "story.state.derive-request/v1",
+          "output_schema": "story.state.derive-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [
+            "world-rule-template/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-story-state-derive-v1-workbench-story-state-panel",
+              "slot": "workbench.story-state.panel",
+              "capability_id": "story.state.derive/v1"
+            }
+          ],
+          "headless": false
+        }
+      ],
+      "ui_slots": [
+        "workbench.story-state.panel",
+        "workbench.quality.panel"
+      ],
+      "needs": [
+        "host.asset.read/v1",
+        "host.asset.create/v1",
+        "host.asset.upload.status/v1",
+        "host.job.event/v1",
+        "host.job.complete/v1",
+        "host.checkpoint.commit/v1",
+        "host.model.invoke/v1",
+        "host.candidate.stage/v1"
+      ],
+      "authority": "May produce Bundles/Candidates only; Core owns Revision, Asset identity, Candidate decision and Publication."
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.writing-context",
+      "display_name": "Novel-Agent 写作上下文与配方",
+      "kind": "code",
+      "project": "NAP-07",
+      "status": "planned",
+      "capabilities": [
+        {
+          "capability_id": "writing.context.assemble/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "artifact-bundle/v1",
+          "input_schema": "writing.context.assemble-request/v1",
+          "output_schema": "writing.context.assemble-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [
+            "character-archetype/v1",
+            "world-rule-template/v1",
+            "plot-structure-template/v1",
+            "style-pack/v1",
+            "lexicon/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-writing-context-assemble-v1-workbench-generate-context",
+              "slot": "workbench.generate.context",
+              "capability_id": "writing.context.assemble/v1"
+            },
+            {
+              "contribution_id": "nap-ui-writing-context-assemble-v1-workbench-reference-panel",
+              "slot": "workbench.reference.panel",
+              "capability_id": "writing.context.assemble/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "writing.recipe.resolve/v1",
+          "operations": [
+            "run",
+            "validate"
+          ],
+          "result_contract": "artifact-bundle/v1",
+          "input_schema": "writing.recipe.resolve-request/v1",
+          "output_schema": "writing.recipe.resolve-result/v1",
+          "deterministic": true,
+          "accepted_data_formats": [],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-writing-recipe-resolve-v1-workbench-writing-assets-panel",
+              "slot": "workbench.writing-assets.panel",
+              "capability_id": "writing.recipe.resolve/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "writing.memory.retrieve/v1",
+          "operations": [
+            "run",
+            "cancel"
+          ],
+          "result_contract": "artifact-bundle/v1",
+          "input_schema": "writing.memory.retrieve-request/v1",
+          "output_schema": "writing.memory.retrieve-result/v1",
+          "deterministic": true,
+          "accepted_data_formats": [],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-writing-memory-retrieve-v1-workbench-reference-panel",
+              "slot": "workbench.reference.panel",
+              "capability_id": "writing.memory.retrieve/v1"
+            }
+          ],
+          "headless": false
+        }
+      ],
+      "ui_slots": [
+        "workbench.generate.context",
+        "workbench.reference.panel",
+        "workbench.writing-assets.panel"
+      ],
+      "needs": [
+        "host.asset.read/v1",
+        "host.asset.create/v1",
+        "host.asset.upload.status/v1",
+        "host.job.event/v1",
+        "host.job.complete/v1",
+        "host.checkpoint.commit/v1",
+        "host.capability.invoke/v1",
+        "host.capability.poll/v1",
+        "host.capability.cancel/v1"
+      ],
+      "authority": "May produce Bundles/Candidates only; Core owns Revision, Asset identity, Candidate decision and Publication."
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+      "display_name": "Novel-Agent 章节工作流",
+      "kind": "code",
+      "project": "NAP-07",
+      "status": "planned",
+      "capabilities": [
+        {
+          "capability_id": "writing.project.outline/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "candidate-batch/v1",
+          "input_schema": "writing.project.outline-request/v1",
+          "output_schema": "writing.project.outline-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [
+            "plot-structure-template/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-writing-project-outline-v1-outline-visualization-panel",
+              "slot": "outline.visualization.panel",
+              "capability_id": "writing.project.outline/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "writing.volume.outline/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "candidate-batch/v1",
+          "input_schema": "writing.volume.outline-request/v1",
+          "output_schema": "writing.volume.outline-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [
+            "plot-structure-template/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-writing-volume-outline-v1-outline-visualization-panel",
+              "slot": "outline.visualization.panel",
+              "capability_id": "writing.volume.outline/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "writing.chapter.outline/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "candidate-batch/v1",
+          "input_schema": "writing.chapter.outline-request/v1",
+          "output_schema": "writing.chapter.outline-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [
+            "plot-structure-template/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-writing-chapter-outline-v1-outline-visualization-panel",
+              "slot": "outline.visualization.panel",
+              "capability_id": "writing.chapter.outline/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "writing.chapter.draft/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "candidate-batch/v1",
+          "input_schema": "writing.chapter.draft-request/v1",
+          "output_schema": "writing.chapter.draft-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [
+            "style-pack/v1",
+            "character-archetype/v1",
+            "world-rule-template/v1",
+            "lexicon/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-writing-chapter-draft-v1-workbench-generate-context",
+              "slot": "workbench.generate.context",
+              "capability_id": "writing.chapter.draft/v1"
+            },
+            {
+              "contribution_id": "nap-ui-writing-chapter-draft-v1-workbench-writing-assets-panel",
+              "slot": "workbench.writing-assets.panel",
+              "capability_id": "writing.chapter.draft/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "writing.chapter.continue/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "candidate-batch/v1",
+          "input_schema": "writing.chapter.continue-request/v1",
+          "output_schema": "writing.chapter.continue-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [
+            "style-pack/v1",
+            "lexicon/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-writing-chapter-continue-v1-workbench-generate-context",
+              "slot": "workbench.generate.context",
+              "capability_id": "writing.chapter.continue/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "writing.chapter.refine/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "candidate-batch/v1",
+          "input_schema": "writing.chapter.refine-request/v1",
+          "output_schema": "writing.chapter.refine-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [
+            "style-pack/v1",
+            "quality-rubric/v1",
+            "lexicon/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-writing-chapter-refine-v1-workbench-generate-context",
+              "slot": "workbench.generate.context",
+              "capability_id": "writing.chapter.refine/v1"
+            },
+            {
+              "contribution_id": "nap-ui-writing-chapter-refine-v1-workbench-writing-assets-panel",
+              "slot": "workbench.writing-assets.panel",
+              "capability_id": "writing.chapter.refine/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "writing.selection.rewrite/v1",
+          "operations": [
+            "run",
+            "resume",
+            "cancel"
+          ],
+          "result_contract": "candidate-batch/v1",
+          "input_schema": "writing.selection.rewrite-request/v1",
+          "output_schema": "writing.selection.rewrite-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [
+            "style-pack/v1",
+            "lexicon/v1"
+          ],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-writing-selection-rewrite-v1-workbench-generate-context",
+              "slot": "workbench.generate.context",
+              "capability_id": "writing.selection.rewrite/v1"
+            }
+          ],
+          "headless": false
+        }
+      ],
+      "ui_slots": [
+        "outline.visualization.panel",
+        "workbench.generate.context",
+        "workbench.writing-assets.panel"
+      ],
+      "needs": [
+        "host.asset.read/v1",
+        "host.asset.create/v1",
+        "host.asset.upload.status/v1",
+        "host.job.event/v1",
+        "host.job.complete/v1",
+        "host.checkpoint.commit/v1",
+        "host.model.invoke/v1",
+        "host.candidate.stage/v1",
+        "host.stream.commit/v1",
+        "host.capability.invoke/v1",
+        "host.capability.poll/v1",
+        "host.capability.cancel/v1"
+      ],
+      "authority": "May produce Bundles/Candidates only; Core owns Revision, Asset identity, Candidate decision and Publication."
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.skill-recommender",
+      "display_name": "Novel-Agent Skill 推荐与归因",
+      "kind": "code",
+      "project": "NAP-07",
+      "status": "planned",
+      "capabilities": [
+        {
+          "capability_id": "writing.skill.recommend/v1",
+          "operations": [
+            "run",
+            "cancel"
+          ],
+          "result_contract": "artifact-bundle/v1",
+          "input_schema": "writing.skill.recommend-request/v1",
+          "output_schema": "writing.skill.recommend-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-writing-skill-recommend-v1-workbench-writing-assets-panel",
+              "slot": "workbench.writing-assets.panel",
+              "capability_id": "writing.skill.recommend/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "writing.skill.attribution.audit/v1",
+          "operations": [
+            "run",
+            "validate"
+          ],
+          "result_contract": "diagnostic-bundle/v1",
+          "input_schema": "writing.skill.attribution.audit-request/v1",
+          "output_schema": "writing.skill.attribution.audit-result/v1",
+          "deterministic": true,
+          "accepted_data_formats": [],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-writing-skill-attribution-audit-v1-workbench-quality-panel",
+              "slot": "workbench.quality.panel",
+              "capability_id": "writing.skill.attribution.audit/v1"
+            }
+          ],
+          "headless": false
+        }
+      ],
+      "ui_slots": [
+        "workbench.writing-assets.panel",
+        "workbench.quality.panel"
+      ],
+      "needs": [
+        "host.asset.read/v1",
+        "host.asset.create/v1",
+        "host.asset.upload.status/v1",
+        "host.job.event/v1",
+        "host.job.complete/v1",
+        "host.checkpoint.commit/v1",
+        "host.model.invoke/v1"
+      ],
+      "authority": "May produce Bundles/Candidates only; Core owns Revision, Asset identity, Candidate decision and Publication."
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.analysis-io",
+      "display_name": "Novel-Agent 分析交换",
+      "kind": "code",
+      "project": "NAP-08",
+      "status": "planned",
+      "capabilities": [
+        {
+          "capability_id": "analysis.exchange.export/v1",
+          "operations": [
+            "run",
+            "cancel"
+          ],
+          "result_contract": "artifact-bundle/v1",
+          "input_schema": "analysis.exchange.export-request/v1",
+          "output_schema": "analysis.exchange.export-result/v1",
+          "deterministic": true,
+          "accepted_data_formats": [],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-analysis-exchange-export-v1-donors-history-detail",
+              "slot": "donors.history.detail",
+              "capability_id": "analysis.exchange.export/v1"
+            }
+          ],
+          "headless": false
+        },
+        {
+          "capability_id": "analysis.exchange.import/v1",
+          "operations": [
+            "run",
+            "validate"
+          ],
+          "result_contract": "candidate-batch/v1",
+          "input_schema": "analysis.exchange.import-request/v1",
+          "output_schema": "analysis.exchange.import-result/v1",
+          "deterministic": true,
+          "accepted_data_formats": [],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-analysis-exchange-import-v1-donors-history-detail",
+              "slot": "donors.history.detail",
+              "capability_id": "analysis.exchange.import/v1"
+            },
+            {
+              "contribution_id": "nap-ui-analysis-exchange-import-v1-workbench-reference-panel",
+              "slot": "workbench.reference.panel",
+              "capability_id": "analysis.exchange.import/v1"
+            }
+          ],
+          "headless": false
+        }
+      ],
+      "ui_slots": [
+        "donors.history.detail",
+        "workbench.reference.panel"
+      ],
+      "needs": [
+        "host.asset.read/v1",
+        "host.asset.create/v1",
+        "host.asset.upload.status/v1",
+        "host.job.event/v1",
+        "host.job.complete/v1",
+        "host.checkpoint.commit/v1",
+        "host.candidate.stage/v1"
+      ],
+      "authority": "May produce Bundles/Candidates only; Core owns Revision, Asset identity, Candidate decision and Publication."
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.outline-projection",
+      "display_name": "Novel-Agent 大纲投影",
+      "kind": "code",
+      "project": "NAP-03",
+      "status": "planned",
+      "capabilities": [
+        {
+          "capability_id": "outline.projection.render/v1",
+          "operations": [
+            "run",
+            "cancel"
+          ],
+          "result_contract": "artifact-bundle/v1",
+          "input_schema": "outline.projection.render-request/v1",
+          "output_schema": "outline.projection.render-result/v1",
+          "deterministic": true,
+          "accepted_data_formats": [],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-outline-projection-render-v1-outline-visualization-panel",
+              "slot": "outline.visualization.panel",
+              "capability_id": "outline.projection.render/v1"
+            },
+            {
+              "contribution_id": "nap-ui-outline-projection-render-v1-donors-analysis-review",
+              "slot": "donors.analysis.review",
+              "capability_id": "outline.projection.render/v1"
+            }
+          ],
+          "headless": false
+        }
+      ],
+      "ui_slots": [
+        "outline.visualization.panel",
+        "donors.analysis.review"
+      ],
+      "needs": [
+        "host.asset.read/v1",
+        "host.asset.create/v1",
+        "host.asset.upload.status/v1",
+        "host.job.event/v1",
+        "host.job.complete/v1",
+        "host.checkpoint.commit/v1"
+      ],
+      "authority": "May produce Bundles/Candidates only; Core owns Revision, Asset identity, Candidate decision and Publication."
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.knowledge-projection",
+      "display_name": "Novel-Agent 知识投影",
+      "kind": "code",
+      "project": "NAP-08",
+      "status": "planned",
+      "capabilities": [
+        {
+          "capability_id": "knowledge.projection.render/v1",
+          "operations": [
+            "run",
+            "cancel"
+          ],
+          "result_contract": "artifact-bundle/v1",
+          "input_schema": "knowledge.projection.render-request/v1",
+          "output_schema": "knowledge.projection.render-result/v1",
+          "deterministic": true,
+          "accepted_data_formats": [],
+          "ui_contributions": [
+            {
+              "contribution_id": "nap-ui-knowledge-projection-render-v1-workbench-reference-panel",
+              "slot": "workbench.reference.panel",
+              "capability_id": "knowledge.projection.render/v1"
+            },
+            {
+              "contribution_id": "nap-ui-knowledge-projection-render-v1-donors-history-detail",
+              "slot": "donors.history.detail",
+              "capability_id": "knowledge.projection.render/v1"
+            }
+          ],
+          "headless": false
+        }
+      ],
+      "ui_slots": [
+        "workbench.reference.panel",
+        "donors.history.detail"
+      ],
+      "needs": [
+        "host.asset.read/v1",
+        "host.asset.create/v1",
+        "host.asset.upload.status/v1",
+        "host.job.event/v1",
+        "host.job.complete/v1",
+        "host.checkpoint.commit/v1"
+      ],
+      "authority": "May produce Bundles/Candidates only; Core owns Revision, Asset identity, Candidate decision and Publication."
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.provider-openai-compatible",
+      "display_name": "Novel-Agent OpenAI-compatible Provider 候选",
+      "kind": "code",
+      "project": null,
+      "status": "not_planned_duplicate",
+      "capabilities": [],
+      "ui_slots": [],
+      "needs": [],
+      "authority": "May produce Bundles/Candidates only; Core owns Revision, Asset identity, Candidate decision and Publication.",
+      "duplicate_of": "com.plotpilot.provider.openai-compatible",
+      "decision_reason": "Target v1.2 already freezes the first-party OpenAI-compatible provider; a second implementation would duplicate Model Broker authority."
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.provider-anthropic",
+      "display_name": "Novel-Agent Anthropic Provider 候选",
+      "kind": "code",
+      "project": "NAP-00",
+      "status": "planned",
+      "capabilities": [
+        {
+          "capability_id": "model.provider.anthropic.invoke/v1",
+          "operations": [
+            "run",
+            "cancel"
+          ],
+          "result_contract": "artifact-bundle/v1",
+          "input_schema": "model.provider.anthropic.invoke-request/v1",
+          "output_schema": "model.provider.anthropic.invoke-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [],
+          "ui_contributions": [],
+          "headless": true
+        }
+      ],
+      "ui_slots": [],
+      "needs": [
+        "host.asset.read/v1",
+        "host.asset.create/v1",
+        "host.asset.upload.status/v1",
+        "host.job.event/v1",
+        "host.job.complete/v1",
+        "host.checkpoint.commit/v1",
+        "host.stream.commit/v1"
+      ],
+      "authority": "Headless Model Provider. Streaming is committed only through host.stream.commit/v1; Core owns Job, Asset, stream identity and ModelReceipt.",
+      "provider_role": "model_provider",
+      "wire_protocol": "anthropic-messages",
+      "source_write_set": [
+        "plugins/provider-anthropic/**"
+      ]
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.provider-gemini",
+      "display_name": "Novel-Agent Gemini Provider 候选",
+      "kind": "code",
+      "project": "NAP-00",
+      "status": "planned",
+      "capabilities": [
+        {
+          "capability_id": "model.provider.gemini.invoke/v1",
+          "operations": [
+            "run",
+            "cancel"
+          ],
+          "result_contract": "artifact-bundle/v1",
+          "input_schema": "model.provider.gemini.invoke-request/v1",
+          "output_schema": "model.provider.gemini.invoke-result/v1",
+          "deterministic": false,
+          "accepted_data_formats": [],
+          "ui_contributions": [],
+          "headless": true
+        }
+      ],
+      "ui_slots": [],
+      "needs": [
+        "host.asset.read/v1",
+        "host.asset.create/v1",
+        "host.asset.upload.status/v1",
+        "host.job.event/v1",
+        "host.job.complete/v1",
+        "host.checkpoint.commit/v1",
+        "host.stream.commit/v1"
+      ],
+      "authority": "Headless Model Provider. Streaming is committed only through host.stream.commit/v1; Core owns Job, Asset, stream identity and ModelReceipt.",
+      "provider_role": "model_provider",
+      "wire_protocol": "google-generative-language",
+      "source_write_set": [
+        "plugins/provider-gemini/**"
+      ]
+    }
+  ],
+  "code_plugin_count": 22,
+  "planned_code_plugin_count": 21,
+  "conditional_code_plugin_count": 0,
+  "data_formats": [
+    {
+      "format_id": "source-cleaning-rules/v1",
+      "interpreters": [
+        {
+          "plugin_id": "com.plotpilot.novelagent.source-cleaning-runtime",
+          "capability_id": "source.clean.preview/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.source-cleaning-runtime",
+          "capability_id": "source.clean.apply/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.source-cleaning-runtime",
+          "capability_id": "source.clean.rules.merge/v1"
+        }
+      ],
+      "mergeable": true
+    },
+    {
+      "format_id": "book-analysis-taxonomy/v1",
+      "interpreters": [
+        {
+          "plugin_id": "com.plotpilot.novelagent.donor-analysis",
+          "capability_id": "analysis.book.atom.extract/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.donor-analysis",
+          "capability_id": "analysis.book.atom.manual/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.donor-analysis",
+          "capability_id": "analysis.book.claim.generate/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.donor-analysis",
+          "capability_id": "analysis.book.rereview/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.narrative-analysis",
+          "capability_id": "analysis.narrative.unit.extract/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.style-manufacturing",
+          "capability_id": "style.manufacture/v1"
+        }
+      ],
+      "mergeable": false
+    },
+    {
+      "format_id": "style-pack/v1",
+      "interpreters": [
+        {
+          "plugin_id": "com.plotpilot.novelagent.style-manufacturing",
+          "capability_id": "style.data-plugin.package/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.style-runtime",
+          "capability_id": "style.apply/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.style-runtime",
+          "capability_id": "style.review/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.style-runtime",
+          "capability_id": "style.refine/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.writing-context",
+          "capability_id": "writing.context.assemble/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+          "capability_id": "writing.chapter.draft/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+          "capability_id": "writing.chapter.continue/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+          "capability_id": "writing.chapter.refine/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+          "capability_id": "writing.selection.rewrite/v1"
+        }
+      ],
+      "mergeable": false
+    },
+    {
+      "format_id": "plot-structure-template/v1",
+      "interpreters": [
+        {
+          "plugin_id": "com.plotpilot.novelagent.narrative-analysis",
+          "capability_id": "analysis.narrative.unit.extract/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.narrative-analysis",
+          "capability_id": "analysis.narrative.plan.compile/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.narrative-analysis",
+          "capability_id": "analysis.narrative.synthesize/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.asset-derivation",
+          "capability_id": "asset.template.derive/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.writing-context",
+          "capability_id": "writing.context.assemble/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+          "capability_id": "writing.project.outline/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+          "capability_id": "writing.volume.outline/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+          "capability_id": "writing.chapter.outline/v1"
+        }
+      ],
+      "mergeable": false
+    },
+    {
+      "format_id": "character-archetype/v1",
+      "interpreters": [
+        {
+          "plugin_id": "com.plotpilot.novelagent.character-distillation",
+          "capability_id": "analysis.character.atom.extract/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.character-distillation",
+          "capability_id": "analysis.character.card.generate/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.character-distillation",
+          "capability_id": "analysis.character.conflict.review/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.character-distillation",
+          "capability_id": "analysis.character.conflict.apply/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.asset-derivation",
+          "capability_id": "asset.template.derive/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.writing-context",
+          "capability_id": "writing.context.assemble/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+          "capability_id": "writing.chapter.draft/v1"
+        }
+      ],
+      "mergeable": false
+    },
+    {
+      "format_id": "world-rule-template/v1",
+      "interpreters": [
+        {
+          "plugin_id": "com.plotpilot.novelagent.asset-derivation",
+          "capability_id": "asset.template.derive/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.consistency-audit",
+          "capability_id": "quality.consistency.audit/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.story-state",
+          "capability_id": "story.chapter.settle/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.story-state",
+          "capability_id": "story.state.derive/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.writing-context",
+          "capability_id": "writing.context.assemble/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+          "capability_id": "writing.chapter.draft/v1"
+        }
+      ],
+      "mergeable": false
+    },
+    {
+      "format_id": "quality-rubric/v1",
+      "interpreters": [
+        {
+          "plugin_id": "com.plotpilot.novelagent.style-manufacturing",
+          "capability_id": "style.qualify/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.style-runtime",
+          "capability_id": "style.review/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.style-runtime",
+          "capability_id": "style.refine/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.consistency-audit",
+          "capability_id": "quality.consistency.audit/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.impact-repair",
+          "capability_id": "quality.impact.analyze/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.impact-repair",
+          "capability_id": "quality.impact.repair/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.story-state",
+          "capability_id": "story.chapter.settle/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.story-state",
+          "capability_id": "story.foreshadow.check/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+          "capability_id": "writing.chapter.refine/v1"
+        }
+      ],
+      "mergeable": false
+    },
+    {
+      "format_id": "lexicon/v1",
+      "interpreters": [
+        {
+          "plugin_id": "com.plotpilot.novelagent.style-manufacturing",
+          "capability_id": "style.manufacture/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.style-runtime",
+          "capability_id": "style.apply/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.consistency-audit",
+          "capability_id": "quality.consistency.audit/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.writing-context",
+          "capability_id": "writing.context.assemble/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+          "capability_id": "writing.chapter.draft/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+          "capability_id": "writing.chapter.continue/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+          "capability_id": "writing.chapter.refine/v1"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+          "capability_id": "writing.selection.rewrite/v1"
+        }
+      ],
+      "mergeable": true
+    }
+  ],
+  "skills": [
+    {
+      "skill_id": "com.plotpilot.skill.donor.atomic-breakdown",
+      "stage": "analysis",
+      "actions": [
+        "extract",
+        "classify"
+      ],
+      "runtime_plugin": "com.plotpilot.prompt-skill-runtime",
+      "book_bound": false
+    },
+    {
+      "skill_id": "com.plotpilot.skill.donor.claim-synthesis",
+      "stage": "analysis",
+      "actions": [
+        "synthesize"
+      ],
+      "runtime_plugin": "com.plotpilot.prompt-skill-runtime",
+      "book_bound": false
+    },
+    {
+      "skill_id": "com.plotpilot.skill.donor.narrative-unit",
+      "stage": "analysis",
+      "actions": [
+        "extract"
+      ],
+      "runtime_plugin": "com.plotpilot.prompt-skill-runtime",
+      "book_bound": false
+    },
+    {
+      "skill_id": "com.plotpilot.skill.donor.character-line",
+      "stage": "analysis",
+      "actions": [
+        "extract",
+        "synthesize"
+      ],
+      "runtime_plugin": "com.plotpilot.prompt-skill-runtime",
+      "book_bound": false
+    },
+    {
+      "skill_id": "com.plotpilot.skill.donor.foreshadow-line",
+      "stage": "analysis",
+      "actions": [
+        "extract"
+      ],
+      "runtime_plugin": "com.plotpilot.prompt-skill-runtime",
+      "book_bound": false
+    },
+    {
+      "skill_id": "com.plotpilot.skill.donor.style-analysis",
+      "stage": "analysis",
+      "actions": [
+        "analyze"
+      ],
+      "runtime_plugin": "com.plotpilot.prompt-skill-runtime",
+      "book_bound": false
+    },
+    {
+      "skill_id": "com.plotpilot.skill.outline.book",
+      "stage": "outline",
+      "actions": [
+        "plan"
+      ],
+      "runtime_plugin": "com.plotpilot.prompt-skill-runtime",
+      "book_bound": false
+    },
+    {
+      "skill_id": "com.plotpilot.skill.outline.volume",
+      "stage": "outline",
+      "actions": [
+        "plan"
+      ],
+      "runtime_plugin": "com.plotpilot.prompt-skill-runtime",
+      "book_bound": false
+    },
+    {
+      "skill_id": "com.plotpilot.skill.outline.chapter",
+      "stage": "outline",
+      "actions": [
+        "plan"
+      ],
+      "runtime_plugin": "com.plotpilot.prompt-skill-runtime",
+      "book_bound": false
+    },
+    {
+      "skill_id": "com.plotpilot.skill.outline.plot-unit",
+      "stage": "outline",
+      "actions": [
+        "plan"
+      ],
+      "runtime_plugin": "com.plotpilot.prompt-skill-runtime",
+      "book_bound": false
+    },
+    {
+      "skill_id": "com.plotpilot.skill.writing.combat",
+      "stage": "draft",
+      "actions": [
+        "draft",
+        "rewrite"
+      ],
+      "runtime_plugin": "com.plotpilot.prompt-skill-runtime",
+      "book_bound": false
+    },
+    {
+      "skill_id": "com.plotpilot.skill.writing.psychology",
+      "stage": "draft",
+      "actions": [
+        "draft",
+        "rewrite"
+      ],
+      "runtime_plugin": "com.plotpilot.prompt-skill-runtime",
+      "book_bound": false
+    },
+    {
+      "skill_id": "com.plotpilot.skill.writing.dialogue",
+      "stage": "draft",
+      "actions": [
+        "draft",
+        "rewrite"
+      ],
+      "runtime_plugin": "com.plotpilot.prompt-skill-runtime",
+      "book_bound": false
+    },
+    {
+      "skill_id": "com.plotpilot.skill.writing.scenery",
+      "stage": "draft",
+      "actions": [
+        "draft",
+        "rewrite"
+      ],
+      "runtime_plugin": "com.plotpilot.prompt-skill-runtime",
+      "book_bound": false
+    },
+    {
+      "skill_id": "com.plotpilot.skill.writing.hook",
+      "stage": "draft",
+      "actions": [
+        "draft",
+        "rewrite"
+      ],
+      "runtime_plugin": "com.plotpilot.prompt-skill-runtime",
+      "book_bound": false
+    },
+    {
+      "skill_id": "com.plotpilot.skill.writing.pacing",
+      "stage": "draft",
+      "actions": [
+        "draft",
+        "refine"
+      ],
+      "runtime_plugin": "com.plotpilot.prompt-skill-runtime",
+      "book_bound": false
+    },
+    {
+      "skill_id": "com.plotpilot.skill.writing.refine",
+      "stage": "refine",
+      "actions": [
+        "refine"
+      ],
+      "runtime_plugin": "com.plotpilot.prompt-skill-runtime",
+      "book_bound": false
+    },
+    {
+      "skill_id": "com.plotpilot.skill.quality.consistency",
+      "stage": "review",
+      "actions": [
+        "check"
+      ],
+      "runtime_plugin": "com.plotpilot.prompt-skill-runtime",
+      "book_bound": false
+    },
+    {
+      "skill_id": "com.plotpilot.skill.style.apply",
+      "stage": "draft",
+      "actions": [
+        "draft",
+        "refine"
+      ],
+      "runtime_plugin": "com.plotpilot.prompt-skill-runtime",
+      "book_bound": false
+    }
+  ],
+  "ui_slots": [
+    {
+      "slot_id": "donors.import.panel",
+      "status": "requires_core_candidate",
+      "core_candidate": "CORE-CAND-004"
+    },
+    {
+      "slot_id": "donors.structure.panel",
+      "status": "requires_core_candidate",
+      "core_candidate": "CORE-CAND-004"
+    },
+    {
+      "slot_id": "donors.analysis.configure",
+      "status": "requires_core_candidate",
+      "core_candidate": "CORE-CAND-004"
+    },
+    {
+      "slot_id": "donors.analysis.review",
+      "status": "requires_core_candidate",
+      "core_candidate": "CORE-CAND-004"
+    },
+    {
+      "slot_id": "donors.evidence.inspector",
+      "status": "requires_core_candidate",
+      "core_candidate": "CORE-CAND-004"
+    },
+    {
+      "slot_id": "donors.asset.derivation",
+      "status": "requires_core_candidate",
+      "core_candidate": "CORE-CAND-004"
+    },
+    {
+      "slot_id": "donors.history.detail",
+      "status": "requires_core_candidate",
+      "core_candidate": "CORE-CAND-004"
+    },
+    {
+      "slot_id": "workbench.reference.panel",
+      "status": "existing_v1_2"
+    },
+    {
+      "slot_id": "workbench.writing-assets.panel",
+      "status": "existing_v1_2"
+    },
+    {
+      "slot_id": "workbench.generate.context",
+      "status": "existing_v1_2"
+    },
+    {
+      "slot_id": "workbench.story-state.panel",
+      "status": "existing_v1_2"
+    },
+    {
+      "slot_id": "workbench.quality.panel",
+      "status": "existing_v1_2"
+    },
+    {
+      "slot_id": "outline.visualization.panel",
+      "status": "existing_v1_2"
+    },
+    {
+      "slot_id": "job.drawer.detail",
+      "status": "existing_v1_2"
+    }
+  ],
+  "plan_rules": {
+    "schema": "plugin-plan/v1",
+    "closed_fields": [
+      "schema",
+      "plan_id",
+      "revision",
+      "name",
+      "description",
+      "bindings",
+      "data_bindings",
+      "skill_preset_revision_id",
+      "result_mode",
+      "synthesizer",
+      "model_profile_revision_id",
+      "ui_defaults"
+    ],
+    "binding_closed_fields": [
+      "binding_id",
+      "capability_id",
+      "plugin_id",
+      "release_requirement",
+      "order",
+      "enabled",
+      "required",
+      "propagate_cancel",
+      "parameters_asset_id"
+    ],
+    "data_binding_closed_fields": [
+      "data_binding_id",
+      "data_plugin_id",
+      "release_requirement",
+      "format_id",
+      "interpreter_binding_id",
+      "order",
+      "enabled",
+      "parameters_asset_id"
+    ],
+    "synthesizer_closed_fields": [
+      "binding_id",
+      "capability_id",
+      "plugin_id",
+      "release_requirement"
+    ],
+    "ui_default_closed_fields": [
+      "slot",
+      "expanded"
+    ],
+    "release_requirement": "exact_semver",
+    "binding_ids": "stable_unique_per_revision",
+    "orders": "unique",
+    "required_and_propagate_cancel": "required_boolean",
+    "data_interpreter": "exact_plugin_id_and_capability_id",
+    "selection": "user_only",
+    "ordering": "user_only",
+    "auto_recommend": false,
+    "auto_switch": false,
+    "result_modes": [
+      "separate",
+      "synthesize"
+    ],
+    "synthesize_requires_non_null_synthesizer_resolving_enabled_binding": true,
+    "separate_requires_null_synthesizer": true,
+    "ui_defaults_enter_request_key": false,
+    "all_other_runtime_fields_enter_snapshot": true,
+    "jcs_round_trip_required": true,
+    "one_release_per_plugin_id_per_generation": true
+  },
+  "generation_rules": {
+    "schema": "plugin-generation/v1",
+    "closed_fields": [
+      "schema",
+      "generation_id",
+      "core_api_version",
+      "members",
+      "created_reason",
+      "created_at",
+      "health_result_asset_id",
+      "parent_generation_id",
+      "base_generation_id"
+    ],
+    "member_closed_fields": [
+      "plugin_id",
+      "release_id",
+      "package_hash",
+      "data_generation_id",
+      "ui_bundle_hash",
+      "global_settings_revision_id",
+      "settings_schema_hash",
+      "data_bundle_asset_id"
+    ],
+    "immutable": true,
+    "current_lkg_qualification_not_written_back": true,
+    "rollback": "restore_exact_lkg_generation",
+    "plan_rollback_is_separate_user_action": true,
+    "retirement_states": [
+      "installed",
+      "retiring",
+      "retired"
+    ],
+    "atomic_pin_barrier": [
+      "current_generation",
+      "lkg_generation",
+      "pending_generation",
+      "plan_binding",
+      "job",
+      "attempt",
+      "worker",
+      "install",
+      "backup"
+    ]
+  },
+  "result_contract_rules": {
+    "allowed": [
+      "artifact-bundle/v1",
+      "candidate-batch/v1",
+      "diagnostic-bundle/v1"
+    ],
+    "failed_or_skipped_create_candidate": false,
+    "failed_attempt_bundle": [
+      "null",
+      "diagnostic-bundle/v1"
+    ],
+    "failed_transaction_staged_rows": "discarded_and_invisible",
+    "candidate_stage_need_requires_candidate_batch_capability": true,
+    "stream_is_host_behavior_not_result_contract": true
+  },
+  "evidence_rebind_rules": {
+    "inspect_capability": "source.evidence.rebind.inspect/v1",
+    "inspect_result": "diagnostic-bundle/v1",
+    "propose_capability": "source.evidence.rebind.propose/v1",
+    "propose_result": "candidate-batch/v1",
+    "unchanged_scope": "same_revision_no_op_only",
+    "cross_revision_classes": [
+      "rebound",
+      "needs_rerun",
+      "orphaned"
+    ]
+  },
+  "not_planned_duplicate_count": 1,
+  "capability_count": 54
+}

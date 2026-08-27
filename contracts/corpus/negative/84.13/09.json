@@ -1,0 +1,53 @@
+{
+  "group_id": "84.13-09",
+  "title": "Aggregate/Event crash, SSE gap/cursor ahead/snapshot convergence and Core/Job cursor domains",
+  "assertions": [
+    "Aggregate/Event crash does not publish a partial transaction",
+    "SSE cursor ahead is rejected",
+    "Gap requires a matching Snapshot",
+    "Core and Job cursor domains cannot be mixed",
+    "Recovery converges to the durable Snapshot"
+  ],
+  "negative": [
+    {
+      "case_id": "aggregate-event-crash",
+      "kind": "aggregate_event_crash",
+      "expected_error_code": 1010
+    },
+    {
+      "case_id": "event-crash-after-core-write",
+      "kind": "event_crash_after_write",
+      "expected_error_code": 1010
+    },
+    {
+      "case_id": "job-cursor-on-core-stream",
+      "kind": "cursor_domain",
+      "expected_error_code": 1010
+    },
+    {
+      "case_id": "cursor-ahead",
+      "kind": "cursor_ahead",
+      "expected_error_code": 1010
+    },
+    {
+      "case_id": "gap-without-snapshot",
+      "kind": "snapshot_pair",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "event-snapshot-convergence",
+      "kind": "snapshot_convergence"
+    },
+    {
+      "case_id": "core-job-cursor-mix",
+      "kind": "cursor_domain_mix",
+      "expected_error_code": 1010
+    }
+  ],
+  "positive": [
+    "core-event",
+    "plugin-job-event",
+    "sse-recovery",
+    "core-snapshot"
+  ]
+}

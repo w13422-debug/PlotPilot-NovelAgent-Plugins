@@ -1,0 +1,18 @@
+{
+  "bundle_hash": "f1821127fb376e374550a278a154559c0937dc421102eb9dbf18d0a71b19fa40",
+  "data_bundle_id": "nap00-demo-data-bundle",
+  "demo_kind": "data",
+  "files_sha256": "92560287b775073f48b614f25555b88d902e0297fd4dcf8da665b57d6fa14938  data/rules.json\n15182ea696454386d0e6e353f7b40ec58cf2f34c3c5a05f91abbb997b98840a9  plugin.json\n",
+  "fixture_hashes": {
+    "data/rules.json": "92560287b775073f48b614f25555b88d902e0297fd4dcf8da665b57d6fa14938"
+  },
+  "manifest_path": "plugin.json",
+  "package_files": [
+    "data/rules.json",
+    "plugin.json"
+  ],
+  "package_hash": "28f55a1a08e23bfd650ffab1c1c072559ef8237300566cba1ee00f03a4edfe6d",
+  "release_id": "9aea6ceb510f3922e0480a4c6e595a9767737b94483542040027a1624c83eea2",
+  "root_path": "data/rules.json",
+  "schema": "nap00-demo-expected/v1"
+}

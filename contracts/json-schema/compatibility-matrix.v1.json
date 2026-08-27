@@ -1,0 +1,8 @@
+{
+  "core_api": ">=1.0 <2.0",
+  "handshake_downgrade": false,
+  "plugin_rpc": "1",
+  "python": "3.12.*",
+  "schema": "compatibility-matrix/v1",
+  "ui_host": "1"
+}

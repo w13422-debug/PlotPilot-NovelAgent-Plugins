@@ -1,0 +1,154 @@
+{
+  "$id": "https://plotpilot.local/contracts/asset-metadata-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "oneOf": [
+    {
+      "additionalProperties": false,
+      "properties": {
+        "asset_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "schema": {
+          "const": "asset-query/v1"
+        }
+      },
+      "required": [
+        "schema",
+        "asset_id"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "asset_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "length": {
+          "maximum": 1048576,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "schema": {
+          "const": "asset-read-range-query/v1"
+        }
+      },
+      "required": [
+        "schema",
+        "asset_id",
+        "offset",
+        "length"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "asset_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "logical_role": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "mime": {
+          "pattern": "^[^\\s/]+/[^\\s/]+$",
+          "type": "string"
+        },
+        "provenance": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "rebuildable": {
+          "type": "boolean"
+        },
+        "schema": {
+          "const": "asset-metadata/v1"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "size": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "schema",
+        "asset_id",
+        "sha256",
+        "mime",
+        "size",
+        "logical_role",
+        "provenance",
+        "rebuildable"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "asset_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "base64_chunk": {
+          "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "length": {
+          "maximum": 1048576,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "next_offset": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "schema": {
+          "const": "asset-read-range/v1"
+        },
+        "total_size": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "schema",
+        "asset_id",
+        "offset",
+        "length",
+        "total_size",
+        "base64_chunk",
+        "next_offset",
+        "content_hash"
+      ],
+      "type": "object"
+    }
+  ],
+  "title": "PlotPilot asset-metadata-v1",
+  "unevaluatedProperties": false
+}

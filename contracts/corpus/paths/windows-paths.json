@@ -1,0 +1,23 @@
+{
+  "invalid": [
+    "",
+    "/absolute",
+    "C:/drive",
+    "a\\b",
+    "a//b",
+    "a/../b",
+    "CON.txt",
+    "foo.txt.",
+    "foo.txt ",
+    "a:b",
+    "a|b",
+    "a\u0000b",
+    "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  ],
+  "schema": "windows-path-corpus/v1",
+  "valid": [
+    "plugin.json",
+    "data/rules.json",
+    "目录/规则.json"
+  ]
+}

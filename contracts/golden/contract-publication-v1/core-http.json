@@ -1,0 +1,1187 @@
+{
+  "assets": {
+    "metadata": {
+      "asset_id": "asset-a",
+      "logical_role": "revision.content",
+      "mime": "text/plain",
+      "provenance": "core-revision:rev-a",
+      "rebuildable": false,
+      "schema": "asset-metadata/v1",
+      "sha256": "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824",
+      "size": 5
+    },
+    "partial": {
+      "asset_id": "asset-a",
+      "base64_chunk": "ZWw=",
+      "content_hash": "d65c3e892354b17a4c032593974d46bc8732c6c0b1ce56edf0c95511d1749cf5",
+      "length": 2,
+      "next_offset": 3,
+      "offset": 1,
+      "schema": "asset-read-range/v1",
+      "total_size": 5
+    },
+    "query": {
+      "asset_id": "asset-a",
+      "schema": "asset-query/v1"
+    },
+    "range": {
+      "asset_id": "asset-a",
+      "base64_chunk": "aGVsbG8=",
+      "content_hash": "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824",
+      "length": 5,
+      "next_offset": null,
+      "offset": 0,
+      "schema": "asset-read-range/v1",
+      "total_size": 5
+    },
+    "range_query": {
+      "asset_id": "asset-a",
+      "length": 5,
+      "offset": 0,
+      "schema": "asset-read-range-query/v1"
+    }
+  },
+  "authority_payloads": [
+    {
+      "created_at": "2026-08-27T00:00:00Z",
+      "current_plan_revision_id": null,
+      "revision": 0,
+      "schema": "core-workspace/v1",
+      "status": "active",
+      "title": "Golden Workspace",
+      "updated_at": "2026-08-27T00:00:00Z",
+      "workspace_id": "ws-1",
+      "workspace_kind": "WritingProject"
+    },
+    {
+      "created_at": "2026-08-27T00:00:00Z",
+      "current_revision_id": "rev-a",
+      "document_id": "doc-a",
+      "document_type": "core.chapter",
+      "revision": 1,
+      "schema": "core-document/v1",
+      "title": "Chapter A",
+      "updated_at": "2026-08-27T00:00:00Z",
+      "workspace_id": "ws-1"
+    },
+    {
+      "created_at": "2026-08-27T00:00:00Z",
+      "current_revision_id": null,
+      "document_id": "doc-a",
+      "node_id": "node-a",
+      "node_type": "section",
+      "parent_node_id": null,
+      "position": 0,
+      "revision": 0,
+      "schema": "core-node/v1",
+      "title": "Scene",
+      "updated_at": "2026-08-27T00:00:00Z",
+      "workspace_id": "ws-1"
+    },
+    {
+      "created_at": "2026-08-27T00:00:00Z",
+      "relation_id": "relation-a",
+      "relation_type": "plotpilot.outline.contains",
+      "revision_id": null,
+      "schema": "core-relation/v1",
+      "source_id": "doc-a",
+      "target_id": "node-a",
+      "workspace_id": "ws-1"
+    },
+    {
+      "content_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "created_at": "2026-08-27T00:00:00Z",
+      "created_by": "user-a",
+      "document_id": "doc-a",
+      "node_id": null,
+      "parent_revision_id": null,
+      "payload_schema": "core.document-text/v1",
+      "revision_id": "rev-a",
+      "revision_number": 1,
+      "schema": "core-revision/v1",
+      "source_candidate_id": null,
+      "workspace_id": "ws-1"
+    },
+    {
+      "items": [
+        {
+          "created_at": "2026-08-27T00:00:00Z",
+          "current_plan_revision_id": null,
+          "revision": 0,
+          "schema": "core-workspace/v1",
+          "status": "active",
+          "title": "Golden Workspace",
+          "updated_at": "2026-08-27T00:00:00Z",
+          "workspace_id": "ws-1",
+          "workspace_kind": "WritingProject"
+        }
+      ],
+      "limit": 100,
+      "next_offset": null,
+      "offset": 0,
+      "schema": "core-workspace-page/v1",
+      "total": 1
+    },
+    {
+      "items": [
+        {
+          "created_at": "2026-08-27T00:00:00Z",
+          "current_revision_id": "rev-a",
+          "document_id": "doc-a",
+          "document_type": "core.chapter",
+          "revision": 1,
+          "schema": "core-document/v1",
+          "title": "Chapter A",
+          "updated_at": "2026-08-27T00:00:00Z",
+          "workspace_id": "ws-1"
+        }
+      ],
+      "limit": 100,
+      "next_offset": null,
+      "offset": 0,
+      "schema": "core-document-page/v1",
+      "total": 1
+    },
+    {
+      "items": [
+        {
+          "created_at": "2026-08-27T00:00:00Z",
+          "current_revision_id": null,
+          "document_id": "doc-a",
+          "node_id": "node-a",
+          "node_type": "section",
+          "parent_node_id": null,
+          "position": 0,
+          "revision": 0,
+          "schema": "core-node/v1",
+          "title": "Scene",
+          "updated_at": "2026-08-27T00:00:00Z",
+          "workspace_id": "ws-1"
+        }
+      ],
+      "limit": 100,
+      "next_offset": null,
+      "offset": 0,
+      "schema": "core-node-page/v1",
+      "total": 1
+    },
+    {
+      "items": [
+        {
+          "created_at": "2026-08-27T00:00:00Z",
+          "relation_id": "relation-a",
+          "relation_type": "plotpilot.outline.contains",
+          "revision_id": null,
+          "schema": "core-relation/v1",
+          "source_id": "doc-a",
+          "target_id": "node-a",
+          "workspace_id": "ws-1"
+        }
+      ],
+      "limit": 100,
+      "next_offset": null,
+      "offset": 0,
+      "schema": "core-relation-page/v1",
+      "total": 1
+    },
+    {
+      "items": [
+        {
+          "content_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+          "created_at": "2026-08-27T00:00:00Z",
+          "created_by": "user-a",
+          "document_id": "doc-a",
+          "node_id": null,
+          "parent_revision_id": null,
+          "payload_schema": "core.document-text/v1",
+          "revision_id": "rev-a",
+          "revision_number": 1,
+          "schema": "core-revision/v1",
+          "source_candidate_id": null,
+          "workspace_id": "ws-1"
+        }
+      ],
+      "limit": 100,
+      "next_offset": null,
+      "offset": 0,
+      "schema": "core-revision-page/v1",
+      "total": 1
+    },
+    {
+      "limit": 100,
+      "offset": 0,
+      "schema": "core-workspace-query/v1",
+      "workspace_id": null
+    },
+    {
+      "document_id": null,
+      "limit": 100,
+      "offset": 0,
+      "schema": "core-document-query/v1",
+      "workspace_id": "ws-1"
+    },
+    {
+      "document_id": "doc-a",
+      "limit": 100,
+      "node_id": null,
+      "offset": 0,
+      "parent_node_id": null,
+      "schema": "core-node-query/v1",
+      "workspace_id": "ws-1"
+    },
+    {
+      "limit": 100,
+      "offset": 0,
+      "relation_id": null,
+      "relation_type": null,
+      "schema": "core-relation-query/v1",
+      "source_id": null,
+      "target_id": null,
+      "workspace_id": "ws-1"
+    },
+    {
+      "schema": "core-workspace-get-query/v1",
+      "workspace_id": "ws-1"
+    },
+    {
+      "document_id": "doc-a",
+      "schema": "core-document-get-query/v1",
+      "workspace_id": "ws-1"
+    },
+    {
+      "node_id": "node-a",
+      "schema": "core-node-get-query/v1",
+      "workspace_id": "ws-1"
+    },
+    {
+      "document_id": "doc-a",
+      "limit": 100,
+      "offset": 0,
+      "revision_id": null,
+      "schema": "core-document-revision-query/v1",
+      "workspace_id": "ws-1"
+    },
+    {
+      "limit": 100,
+      "node_id": "node-a",
+      "offset": 0,
+      "revision_id": null,
+      "schema": "core-node-revision-query/v1",
+      "workspace_id": "ws-1"
+    },
+    {
+      "revision_id": "rev-a",
+      "schema": "core-revision-get-query/v1",
+      "workspace_id": "ws-1"
+    },
+    {
+      "length": 5,
+      "offset": 0,
+      "revision_id": "rev-a",
+      "schema": "core-revision-content-query/v1",
+      "workspace_id": "ws-1"
+    },
+    {
+      "length": 5,
+      "next_offset": null,
+      "offset": 0,
+      "revision_id": "rev-a",
+      "schema": "core-revision-content-page/v1",
+      "text": "hello",
+      "total_length": 5
+    },
+    {
+      "operation_key": "op-workspace-create",
+      "schema": "core-workspace-create-command/v1",
+      "title": "Golden Workspace",
+      "workspace_id": "ws-1",
+      "workspace_kind": "WritingProject"
+    },
+    {
+      "expected_revision": 0,
+      "operation_key": "op-workspace-update",
+      "schema": "core-workspace-update-command/v1",
+      "status": null,
+      "title": "Golden Workspace 2",
+      "workspace_id": "ws-1"
+    },
+    {
+      "expected_revision": 1,
+      "operation_key": "op-workspace-delete",
+      "schema": "core-workspace-delete-command/v1",
+      "workspace_id": "ws-1"
+    },
+    {
+      "document_id": "doc-a",
+      "document_type": "core.chapter",
+      "operation_key": "op-document-create",
+      "schema": "core-document-create-command/v1",
+      "title": "Chapter A",
+      "workspace_id": "ws-1"
+    },
+    {
+      "document_id": "doc-a",
+      "expected_revision": 1,
+      "operation_key": "op-document-update",
+      "schema": "core-document-update-command/v1",
+      "title": "Chapter A2",
+      "workspace_id": "ws-1"
+    },
+    {
+      "document_id": "doc-a",
+      "node_id": "node-a",
+      "node_type": "section",
+      "operation_key": "op-node-create",
+      "parent_node_id": null,
+      "position": 0,
+      "schema": "core-node-create-command/v1",
+      "title": "Scene",
+      "workspace_id": "ws-1"
+    },
+    {
+      "expected_revision": 0,
+      "node_id": "node-a",
+      "operation_key": "op-node-update",
+      "parent_node_id": null,
+      "position": 1,
+      "schema": "core-node-update-command/v1",
+      "title": "Scene 2",
+      "workspace_id": "ws-1"
+    },
+    {
+      "expected_revision": 1,
+      "node_id": "node-a",
+      "operation_key": "op-node-delete",
+      "schema": "core-node-delete-command/v1",
+      "workspace_id": "ws-1"
+    },
+    {
+      "operation_key": "op-relation-create",
+      "relation_id": "relation-a",
+      "relation_type": "plotpilot.outline.contains",
+      "revision_id": null,
+      "schema": "core-relation-create-command/v1",
+      "source_id": "doc-a",
+      "target_id": "node-a",
+      "workspace_id": "ws-1"
+    },
+    {
+      "expected_revision_id": null,
+      "operation_key": "op-relation-delete",
+      "relation_id": "relation-a",
+      "schema": "core-relation-delete-command/v1",
+      "workspace_id": "ws-1"
+    },
+    {
+      "base_revision_id": null,
+      "content": "hello",
+      "created_by": "user-a",
+      "document_id": "doc-a",
+      "operation_key": "op-document-revision-create",
+      "payload_schema": "core.document-text/v1",
+      "revision_id": "rev-a",
+      "schema": "core-document-revision-create-command/v1",
+      "source_candidate_id": null,
+      "workspace_id": "ws-1"
+    },
+    {
+      "base_revision_id": null,
+      "content": "scene",
+      "created_by": "user-a",
+      "node_id": "node-a",
+      "operation_key": "op-node-revision-create",
+      "payload_schema": "core.node-text/v1",
+      "revision_id": "rev-node-a",
+      "schema": "core-node-revision-create-command/v1",
+      "source_candidate_id": null,
+      "workspace_id": "ws-1"
+    },
+    {
+      "deleted": true,
+      "entity_id": "node-a",
+      "entity_kind": "node",
+      "idempotent": false,
+      "operation_key": "op-node-delete",
+      "previous_revision": 1,
+      "schema": "core-delete-result/v1",
+      "workspace_id": "ws-1"
+    }
+  ],
+  "exchanges": [
+    {
+      "request": {
+        "limit": 100,
+        "offset": 0,
+        "schema": "core-workspace-query/v1",
+        "workspace_id": null
+      },
+      "response": {
+        "items": [
+          {
+            "created_at": "2026-08-27T00:00:00Z",
+            "current_plan_revision_id": null,
+            "revision": 0,
+            "schema": "core-workspace/v1",
+            "status": "active",
+            "title": "Golden Workspace",
+            "updated_at": "2026-08-27T00:00:00Z",
+            "workspace_id": "ws-1",
+            "workspace_kind": "WritingProject"
+          }
+        ],
+        "limit": 100,
+        "next_offset": null,
+        "offset": 0,
+        "schema": "core-workspace-page/v1",
+        "total": 1
+      },
+      "route_id": "workspace.list",
+      "status": 200
+    },
+    {
+      "request": {
+        "schema": "core-workspace-get-query/v1",
+        "workspace_id": "ws-1"
+      },
+      "response": {
+        "created_at": "2026-08-27T00:00:00Z",
+        "current_plan_revision_id": null,
+        "revision": 0,
+        "schema": "core-workspace/v1",
+        "status": "active",
+        "title": "Golden Workspace",
+        "updated_at": "2026-08-27T00:00:00Z",
+        "workspace_id": "ws-1",
+        "workspace_kind": "WritingProject"
+      },
+      "route_id": "workspace.get",
+      "status": 200
+    },
+    {
+      "request": {
+        "operation_key": "op-workspace-create",
+        "schema": "core-workspace-create-command/v1",
+        "title": "Golden Workspace",
+        "workspace_id": "ws-1",
+        "workspace_kind": "WritingProject"
+      },
+      "response": {
+        "created_at": "2026-08-27T00:00:00Z",
+        "current_plan_revision_id": null,
+        "revision": 0,
+        "schema": "core-workspace/v1",
+        "status": "active",
+        "title": "Golden Workspace",
+        "updated_at": "2026-08-27T00:00:00Z",
+        "workspace_id": "ws-1",
+        "workspace_kind": "WritingProject"
+      },
+      "route_id": "workspace.create",
+      "status": 201
+    },
+    {
+      "request": {
+        "expected_revision": 0,
+        "operation_key": "op-workspace-update",
+        "schema": "core-workspace-update-command/v1",
+        "status": null,
+        "title": "Golden Workspace 2",
+        "workspace_id": "ws-1"
+      },
+      "response": {
+        "created_at": "2026-08-27T00:00:00Z",
+        "current_plan_revision_id": null,
+        "revision": 1,
+        "schema": "core-workspace/v1",
+        "status": "active",
+        "title": "Golden Workspace 2",
+        "updated_at": "2026-08-27T00:00:00Z",
+        "workspace_id": "ws-1",
+        "workspace_kind": "WritingProject"
+      },
+      "route_id": "workspace.update",
+      "status": 200
+    },
+    {
+      "request": {
+        "expected_revision": 1,
+        "operation_key": "op-workspace-delete",
+        "schema": "core-workspace-delete-command/v1",
+        "workspace_id": "ws-1"
+      },
+      "response": {
+        "deleted": true,
+        "entity_id": "ws-1",
+        "entity_kind": "workspace",
+        "idempotent": false,
+        "operation_key": "op-workspace-delete",
+        "previous_revision": 1,
+        "schema": "core-delete-result/v1",
+        "workspace_id": "ws-1"
+      },
+      "route_id": "workspace.delete",
+      "status": 200
+    },
+    {
+      "request": {
+        "document_id": null,
+        "limit": 100,
+        "offset": 0,
+        "schema": "core-document-query/v1",
+        "workspace_id": "ws-1"
+      },
+      "response": {
+        "items": [
+          {
+            "created_at": "2026-08-27T00:00:00Z",
+            "current_revision_id": "rev-a",
+            "document_id": "doc-a",
+            "document_type": "core.chapter",
+            "revision": 1,
+            "schema": "core-document/v1",
+            "title": "Chapter A",
+            "updated_at": "2026-08-27T00:00:00Z",
+            "workspace_id": "ws-1"
+          }
+        ],
+        "limit": 100,
+        "next_offset": null,
+        "offset": 0,
+        "schema": "core-document-page/v1",
+        "total": 1
+      },
+      "route_id": "document.list",
+      "status": 200
+    },
+    {
+      "request": {
+        "document_id": "doc-a",
+        "schema": "core-document-get-query/v1",
+        "workspace_id": "ws-1"
+      },
+      "response": {
+        "created_at": "2026-08-27T00:00:00Z",
+        "current_revision_id": "rev-a",
+        "document_id": "doc-a",
+        "document_type": "core.chapter",
+        "revision": 1,
+        "schema": "core-document/v1",
+        "title": "Chapter A",
+        "updated_at": "2026-08-27T00:00:00Z",
+        "workspace_id": "ws-1"
+      },
+      "route_id": "document.get",
+      "status": 200
+    },
+    {
+      "request": {
+        "document_id": "doc-a",
+        "document_type": "core.chapter",
+        "operation_key": "op-document-create",
+        "schema": "core-document-create-command/v1",
+        "title": "Chapter A",
+        "workspace_id": "ws-1"
+      },
+      "response": {
+        "created_at": "2026-08-27T00:00:00Z",
+        "current_revision_id": "rev-a",
+        "document_id": "doc-a",
+        "document_type": "core.chapter",
+        "revision": 1,
+        "schema": "core-document/v1",
+        "title": "Chapter A",
+        "updated_at": "2026-08-27T00:00:00Z",
+        "workspace_id": "ws-1"
+      },
+      "route_id": "document.create",
+      "status": 201
+    },
+    {
+      "request": {
+        "document_id": "doc-a",
+        "expected_revision": 1,
+        "operation_key": "op-document-update",
+        "schema": "core-document-update-command/v1",
+        "title": "Chapter A2",
+        "workspace_id": "ws-1"
+      },
+      "response": {
+        "created_at": "2026-08-27T00:00:00Z",
+        "current_revision_id": "rev-a",
+        "document_id": "doc-a",
+        "document_type": "core.chapter",
+        "revision": 2,
+        "schema": "core-document/v1",
+        "title": "Chapter A2",
+        "updated_at": "2026-08-27T00:00:00Z",
+        "workspace_id": "ws-1"
+      },
+      "route_id": "document.update",
+      "status": 200
+    },
+    {
+      "request": {
+        "document_id": "doc-a",
+        "limit": 100,
+        "node_id": null,
+        "offset": 0,
+        "parent_node_id": null,
+        "schema": "core-node-query/v1",
+        "workspace_id": "ws-1"
+      },
+      "response": {
+        "items": [
+          {
+            "created_at": "2026-08-27T00:00:00Z",
+            "current_revision_id": null,
+            "document_id": "doc-a",
+            "node_id": "node-a",
+            "node_type": "section",
+            "parent_node_id": null,
+            "position": 0,
+            "revision": 0,
+            "schema": "core-node/v1",
+            "title": "Scene",
+            "updated_at": "2026-08-27T00:00:00Z",
+            "workspace_id": "ws-1"
+          }
+        ],
+        "limit": 100,
+        "next_offset": null,
+        "offset": 0,
+        "schema": "core-node-page/v1",
+        "total": 1
+      },
+      "route_id": "node.list",
+      "status": 200
+    },
+    {
+      "request": {
+        "node_id": "node-a",
+        "schema": "core-node-get-query/v1",
+        "workspace_id": "ws-1"
+      },
+      "response": {
+        "created_at": "2026-08-27T00:00:00Z",
+        "current_revision_id": null,
+        "document_id": "doc-a",
+        "node_id": "node-a",
+        "node_type": "section",
+        "parent_node_id": null,
+        "position": 0,
+        "revision": 0,
+        "schema": "core-node/v1",
+        "title": "Scene",
+        "updated_at": "2026-08-27T00:00:00Z",
+        "workspace_id": "ws-1"
+      },
+      "route_id": "node.get",
+      "status": 200
+    },
+    {
+      "request": {
+        "document_id": "doc-a",
+        "node_id": "node-a",
+        "node_type": "section",
+        "operation_key": "op-node-create",
+        "parent_node_id": null,
+        "position": 0,
+        "schema": "core-node-create-command/v1",
+        "title": "Scene",
+        "workspace_id": "ws-1"
+      },
+      "response": {
+        "created_at": "2026-08-27T00:00:00Z",
+        "current_revision_id": null,
+        "document_id": "doc-a",
+        "node_id": "node-a",
+        "node_type": "section",
+        "parent_node_id": null,
+        "position": 0,
+        "revision": 0,
+        "schema": "core-node/v1",
+        "title": "Scene",
+        "updated_at": "2026-08-27T00:00:00Z",
+        "workspace_id": "ws-1"
+      },
+      "route_id": "node.create",
+      "status": 201
+    },
+    {
+      "request": {
+        "expected_revision": 0,
+        "node_id": "node-a",
+        "operation_key": "op-node-update",
+        "parent_node_id": null,
+        "position": 1,
+        "schema": "core-node-update-command/v1",
+        "title": "Scene 2",
+        "workspace_id": "ws-1"
+      },
+      "response": {
+        "created_at": "2026-08-27T00:00:00Z",
+        "current_revision_id": null,
+        "document_id": "doc-a",
+        "node_id": "node-a",
+        "node_type": "section",
+        "parent_node_id": null,
+        "position": 1,
+        "revision": 1,
+        "schema": "core-node/v1",
+        "title": "Scene 2",
+        "updated_at": "2026-08-27T00:00:00Z",
+        "workspace_id": "ws-1"
+      },
+      "route_id": "node.update",
+      "status": 200
+    },
+    {
+      "request": {
+        "expected_revision": 1,
+        "node_id": "node-a",
+        "operation_key": "op-node-delete",
+        "schema": "core-node-delete-command/v1",
+        "workspace_id": "ws-1"
+      },
+      "response": {
+        "deleted": true,
+        "entity_id": "node-a",
+        "entity_kind": "node",
+        "idempotent": false,
+        "operation_key": "op-node-delete",
+        "previous_revision": 1,
+        "schema": "core-delete-result/v1",
+        "workspace_id": "ws-1"
+      },
+      "route_id": "node.delete",
+      "status": 200
+    },
+    {
+      "request": {
+        "limit": 100,
+        "offset": 0,
+        "relation_id": null,
+        "relation_type": null,
+        "schema": "core-relation-query/v1",
+        "source_id": null,
+        "target_id": null,
+        "workspace_id": "ws-1"
+      },
+      "response": {
+        "items": [
+          {
+            "created_at": "2026-08-27T00:00:00Z",
+            "relation_id": "relation-a",
+            "relation_type": "plotpilot.outline.contains",
+            "revision_id": null,
+            "schema": "core-relation/v1",
+            "source_id": "doc-a",
+            "target_id": "node-a",
+            "workspace_id": "ws-1"
+          }
+        ],
+        "limit": 100,
+        "next_offset": null,
+        "offset": 0,
+        "schema": "core-relation-page/v1",
+        "total": 1
+      },
+      "route_id": "relation.list",
+      "status": 200
+    },
+    {
+      "request": {
+        "operation_key": "op-relation-create",
+        "relation_id": "relation-a",
+        "relation_type": "plotpilot.outline.contains",
+        "revision_id": null,
+        "schema": "core-relation-create-command/v1",
+        "source_id": "doc-a",
+        "target_id": "node-a",
+        "workspace_id": "ws-1"
+      },
+      "response": {
+        "created_at": "2026-08-27T00:00:00Z",
+        "relation_id": "relation-a",
+        "relation_type": "plotpilot.outline.contains",
+        "revision_id": null,
+        "schema": "core-relation/v1",
+        "source_id": "doc-a",
+        "target_id": "node-a",
+        "workspace_id": "ws-1"
+      },
+      "route_id": "relation.create",
+      "status": 201
+    },
+    {
+      "request": {
+        "expected_revision_id": null,
+        "operation_key": "op-relation-delete",
+        "relation_id": "relation-a",
+        "schema": "core-relation-delete-command/v1",
+        "workspace_id": "ws-1"
+      },
+      "response": {
+        "deleted": true,
+        "entity_id": "relation-a",
+        "entity_kind": "relation",
+        "idempotent": false,
+        "operation_key": "op-relation-delete",
+        "previous_revision": null,
+        "schema": "core-delete-result/v1",
+        "workspace_id": "ws-1"
+      },
+      "route_id": "relation.delete",
+      "status": 200
+    },
+    {
+      "request": {
+        "document_id": "doc-a",
+        "limit": 100,
+        "offset": 0,
+        "revision_id": null,
+        "schema": "core-document-revision-query/v1",
+        "workspace_id": "ws-1"
+      },
+      "response": {
+        "items": [
+          {
+            "content_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "created_at": "2026-08-27T00:00:00Z",
+            "created_by": "user-a",
+            "document_id": "doc-a",
+            "node_id": null,
+            "parent_revision_id": null,
+            "payload_schema": "core.document-text/v1",
+            "revision_id": "rev-a",
+            "revision_number": 1,
+            "schema": "core-revision/v1",
+            "source_candidate_id": null,
+            "workspace_id": "ws-1"
+          }
+        ],
+        "limit": 100,
+        "next_offset": null,
+        "offset": 0,
+        "schema": "core-revision-page/v1",
+        "total": 1
+      },
+      "route_id": "document.revision.list",
+      "status": 200
+    },
+    {
+      "request": {
+        "limit": 100,
+        "node_id": "node-a",
+        "offset": 0,
+        "revision_id": null,
+        "schema": "core-node-revision-query/v1",
+        "workspace_id": "ws-1"
+      },
+      "response": {
+        "items": [
+          {
+            "content_hash": "2222222222222222222222222222222222222222222222222222222222222222",
+            "created_at": "2026-08-27T00:00:00Z",
+            "created_by": "user-a",
+            "document_id": null,
+            "node_id": "node-a",
+            "parent_revision_id": null,
+            "payload_schema": "core.node-text/v1",
+            "revision_id": "rev-node-a",
+            "revision_number": 1,
+            "schema": "core-revision/v1",
+            "source_candidate_id": null,
+            "workspace_id": "ws-1"
+          }
+        ],
+        "limit": 100,
+        "next_offset": null,
+        "offset": 0,
+        "schema": "core-revision-page/v1",
+        "total": 1
+      },
+      "route_id": "node.revision.list",
+      "status": 200
+    },
+    {
+      "request": {
+        "revision_id": "rev-a",
+        "schema": "core-revision-get-query/v1",
+        "workspace_id": "ws-1"
+      },
+      "response": {
+        "content_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+        "created_at": "2026-08-27T00:00:00Z",
+        "created_by": "user-a",
+        "document_id": "doc-a",
+        "node_id": null,
+        "parent_revision_id": null,
+        "payload_schema": "core.document-text/v1",
+        "revision_id": "rev-a",
+        "revision_number": 1,
+        "schema": "core-revision/v1",
+        "source_candidate_id": null,
+        "workspace_id": "ws-1"
+      },
+      "route_id": "revision.get",
+      "status": 200
+    },
+    {
+      "request": {
+        "length": 5,
+        "offset": 0,
+        "revision_id": "rev-a",
+        "schema": "core-revision-content-query/v1",
+        "workspace_id": "ws-1"
+      },
+      "response": {
+        "length": 5,
+        "next_offset": null,
+        "offset": 0,
+        "revision_id": "rev-a",
+        "schema": "core-revision-content-page/v1",
+        "text": "hello",
+        "total_length": 5
+      },
+      "route_id": "revision.content",
+      "status": 200
+    },
+    {
+      "request": {
+        "base_revision_id": null,
+        "content": "hello",
+        "created_by": "user-a",
+        "document_id": "doc-a",
+        "operation_key": "op-document-revision-create",
+        "payload_schema": "core.document-text/v1",
+        "revision_id": "rev-a",
+        "schema": "core-document-revision-create-command/v1",
+        "source_candidate_id": null,
+        "workspace_id": "ws-1"
+      },
+      "response": {
+        "content_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+        "created_at": "2026-08-27T00:00:00Z",
+        "created_by": "user-a",
+        "document_id": "doc-a",
+        "node_id": null,
+        "parent_revision_id": null,
+        "payload_schema": "core.document-text/v1",
+        "revision_id": "rev-a",
+        "revision_number": 1,
+        "schema": "core-revision/v1",
+        "source_candidate_id": null,
+        "workspace_id": "ws-1"
+      },
+      "route_id": "document.revision.create",
+      "status": 201
+    },
+    {
+      "request": {
+        "base_revision_id": null,
+        "content": "scene",
+        "created_by": "user-a",
+        "node_id": "node-a",
+        "operation_key": "op-node-revision-create",
+        "payload_schema": "core.node-text/v1",
+        "revision_id": "rev-node-a",
+        "schema": "core-node-revision-create-command/v1",
+        "source_candidate_id": null,
+        "workspace_id": "ws-1"
+      },
+      "response": {
+        "content_hash": "2222222222222222222222222222222222222222222222222222222222222222",
+        "created_at": "2026-08-27T00:00:00Z",
+        "created_by": "user-a",
+        "document_id": null,
+        "node_id": "node-a",
+        "parent_revision_id": null,
+        "payload_schema": "core.node-text/v1",
+        "revision_id": "rev-node-a",
+        "revision_number": 1,
+        "schema": "core-revision/v1",
+        "source_candidate_id": null,
+        "workspace_id": "ws-1"
+      },
+      "route_id": "node.revision.create",
+      "status": 201
+    },
+    {
+      "request": {
+        "accepted_by": "user-a",
+        "candidate_id": "candidate-1",
+        "publication_operation_key": "publication-op-1",
+        "schema": "publication-command/v1",
+        "workspace_id": "ws-1"
+      },
+      "response": {
+        "candidate_id": "candidate-1",
+        "entity_id": "doc-a",
+        "entity_kind": "document",
+        "idempotent": false,
+        "publication_id": "publication-1",
+        "resulting_revision": {
+          "content_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+          "entity_id": "doc-a",
+          "entity_kind": "document",
+          "revision_id": "rev-a",
+          "revision_number": 1,
+          "workspace_id": "ws-1"
+        },
+        "schema": "publication-result/v1",
+        "workspace_id": "ws-1"
+      },
+      "route_id": "publication.accept",
+      "status": 200
+    },
+    {
+      "request": {
+        "asset_id": "asset-a",
+        "schema": "asset-query/v1"
+      },
+      "response": {
+        "asset_id": "asset-a",
+        "logical_role": "revision.content",
+        "mime": "text/plain",
+        "provenance": "core-revision:rev-a",
+        "rebuildable": false,
+        "schema": "asset-metadata/v1",
+        "sha256": "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824",
+        "size": 5
+      },
+      "route_id": "asset.metadata",
+      "status": 200
+    },
+    {
+      "request": {
+        "asset_id": "asset-a",
+        "length": 5,
+        "offset": 0,
+        "schema": "asset-read-range-query/v1"
+      },
+      "response": {
+        "asset_id": "asset-a",
+        "base64_chunk": "aGVsbG8=",
+        "content_hash": "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824",
+        "length": 5,
+        "next_offset": null,
+        "offset": 0,
+        "schema": "asset-read-range/v1",
+        "total_size": 5
+      },
+      "route_id": "asset.range",
+      "status": 200
+    },
+    {
+      "request": {
+        "document_id": "doc-unknown",
+        "schema": "core-document-get-query/v1",
+        "workspace_id": "ws-1"
+      },
+      "response": {
+        "error_code": "unknown_reference",
+        "message": "document does not exist",
+        "retryable": false,
+        "schema": "core-http-error/v1"
+      },
+      "route_id": "document.get",
+      "status": 404
+    },
+    {
+      "request": {
+        "document_id": "doc-a",
+        "schema": "core-document-get-query/v1",
+        "workspace_id": "ws-other"
+      },
+      "response": {
+        "error_code": "cross_workspace",
+        "message": "document belongs to another workspace",
+        "retryable": false,
+        "schema": "core-http-error/v1"
+      },
+      "route_id": "document.get",
+      "status": 404
+    },
+    {
+      "request": {
+        "expected_revision": 99,
+        "operation_key": "op-workspace-update",
+        "schema": "core-workspace-update-command/v1",
+        "status": null,
+        "title": "Golden Workspace 2",
+        "workspace_id": "ws-1"
+      },
+      "response": {
+        "error_code": "stale_cas",
+        "message": "workspace revision is stale",
+        "retryable": false,
+        "schema": "core-http-error/v1"
+      },
+      "route_id": "workspace.update",
+      "status": 409
+    },
+    {
+      "request": {
+        "expected_revision": 0,
+        "operation_key": "op-workspace-update",
+        "schema": "core-workspace-update-command/v1",
+        "status": null,
+        "title": "Different payload under the same operation key",
+        "workspace_id": "ws-1"
+      },
+      "response": {
+        "error_code": "operation_key_reuse",
+        "message": "operation key was already used with another payload",
+        "retryable": false,
+        "schema": "core-http-error/v1"
+      },
+      "route_id": "workspace.update",
+      "status": 409
+    },
+    {
+      "request": {
+        "accepted_by": "user-a",
+        "candidate_id": "candidate-incomplete",
+        "publication_operation_key": "publication-op-1",
+        "schema": "publication-command/v1",
+        "workspace_id": "ws-1"
+      },
+      "response": {
+        "error_code": "incomplete_publication",
+        "message": "Candidate is not eligible for Publication",
+        "retryable": false,
+        "schema": "core-http-error/v1"
+      },
+      "route_id": "publication.accept",
+      "status": 422
+    }
+  ],
+  "publication": {
+    "command": {
+      "accepted_by": "user-a",
+      "candidate_id": "candidate-1",
+      "publication_operation_key": "publication-op-1",
+      "schema": "publication-command/v1",
+      "workspace_id": "ws-1"
+    },
+    "result": {
+      "candidate_id": "candidate-1",
+      "entity_id": "doc-a",
+      "entity_kind": "document",
+      "idempotent": false,
+      "publication_id": "publication-1",
+      "resulting_revision": {
+        "content_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+        "entity_id": "doc-a",
+        "entity_kind": "document",
+        "revision_id": "rev-a",
+        "revision_number": 1,
+        "workspace_id": "ws-1"
+      },
+      "schema": "publication-result/v1",
+      "workspace_id": "ws-1"
+    }
+  },
+  "schema": "core-http-fixtures/v1"
+}

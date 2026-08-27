@@ -1,0 +1,4 @@
+[
+  {"candidates": [{"content": {"parts": [{"text": "你好"}]}}], "usageMetadata": {"promptTokenCount": 10, "candidatesTokenCount": 2}},
+  {"candidates": [{"content": {"parts": [{"text": "，Gemini"}]}}], "usageMetadata": {"promptTokenCount": 10, "candidatesTokenCount": 4}}
+]

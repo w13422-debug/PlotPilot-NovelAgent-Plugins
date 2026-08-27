@@ -1,0 +1,23 @@
+{
+  "demo_kind": "code",
+  "files_sha256": "1ade6a67598650d8a6dd2b919823a318149c05cd9492b4d9e84864be06929ea6  backend/nap00_demo_code-1.0.0-py3-none-any.whl\n4508339cf14a430c9447cfb57a9eaefed7497d4fdc1641d361c994559e14f6df  backend/requirements.lock\n0c4769cc3c6b8537543bcf8035093d7668e51e933b8d8884a988a1e5443a7393  backend/wheels/nap00_demo_wheelhouse_placeholder-0.0.0-py3-none-any.whl\n4c822cdf095d4ebda785e70594c204312591c1674f683e1eb40c227568c1562c  fixtures/input.json\n5a3b3da94a59a8b7b7d1b471b8c224ee72246a0176e9518e339209d33f283964  migrations/manifest.json\ndd94180639130257f3c6c7a2efc4eff126c60dbd04bde51829e071cc7e75a654  plugin.json\n",
+  "fixture_hashes": {
+    "fixtures/input.json": "4c822cdf095d4ebda785e70594c204312591c1674f683e1eb40c227568c1562c"
+  },
+  "manifest_path": "plugin.json",
+  "package_files": [
+    "backend/nap00_demo_code-1.0.0-py3-none-any.whl",
+    "backend/requirements.lock",
+    "backend/wheels/nap00_demo_wheelhouse_placeholder-0.0.0-py3-none-any.whl",
+    "fixtures/input.json",
+    "migrations/manifest.json",
+    "plugin.json"
+  ],
+  "package_hash": "9577ff6df8742c8f54b922e3ccdb2348f250336ca4246ca58153201aa4fb5590",
+  "receipt_hash": "f5b7e3f05e38e3812977311a7e7c6e883ebbe144a28e45c4975c51727a3997ef",
+  "receipt_id": "receipt-nap00-code",
+  "release_id": "07eae627043b6e283851d3f50de1f90d03554108d3d2f096ee1efa52d45e75ef",
+  "result_bundle_id": "nap00-demo-code-bundle",
+  "result_item_id": "nap00-demo-code-item",
+  "schema": "nap00-demo-expected/v1"
+}

@@ -1,0 +1,9 @@
+{
+  "expected_from_design": {
+    "package_hash": "987e80013fe0cddd463eb8976fd75b62dbabef4f8e0e321ae6ad82a54f09b068",
+    "release_id": "00d365d816a45108cac08b5dc26eae015a44401c04aed0e9d512ed8fb24d88dd"
+  },
+  "files_sha256": "54bfa55d6557dcf1a11f3e845e6492e4fe34f35a0d6751f45e0e8ae77df36e78  data/rules.json\n5e3188bf60c1e12c38e25f6e39ca11376bd82d3dee285e99cdb981b8e7b4186c  plugin.json\n",
+  "package_hash": "987e80013fe0cddd463eb8976fd75b62dbabef4f8e0e321ae6ad82a54f09b068",
+  "release_id": "00d365d816a45108cac08b5dc26eae015a44401c04aed0e9d512ed8fb24d88dd"
+}

@@ -1,0 +1,63 @@
+{
+  "group_id": "84.13-12",
+  "title": "Immutable Worker URL/CSP, stale/duplicate intent, unknown component/prop/event and navigation watchdog",
+  "assertions": [
+    "Worker URL is immutable",
+    "Worker response CSP is strict",
+    "Stale intent is rejected",
+    "Duplicate intent payload is idempotency-bound",
+    "Unknown component/prop/event is rejected",
+    "Navigation watchdog remains responsive and bounds loops"
+  ],
+  "negative": [
+    {
+      "case_id": "immutable-worker-url",
+      "kind": "worker_url",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "worker-csp-tamper",
+      "kind": "worker_csp",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "stale-intent",
+      "kind": "ui_freshness",
+      "expected_error_code": 1010
+    },
+    {
+      "case_id": "duplicate-intent-different-payload",
+      "kind": "ui_idempotency",
+      "expected_error_code": 1008
+    },
+    {
+      "case_id": "unknown-component",
+      "kind": "ui_component",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "unknown-prop",
+      "kind": "ui_prop",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "unknown-event",
+      "kind": "ui_event",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "navigation-watchdog",
+      "kind": "navigation_watchdog"
+    },
+    {
+      "case_id": "navigation-watchdog-loop",
+      "kind": "navigation_watchdog_loop",
+      "expected_error_code": 1010
+    }
+  ],
+  "positive": [
+    "plugin-ui-tree",
+    "plugin-ui-intent",
+    "plugin-ui-message"
+  ]
+}

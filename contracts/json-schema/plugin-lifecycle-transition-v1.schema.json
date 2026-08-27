@@ -1,0 +1,175 @@
+{
+  "$id": "https://plotpilot.local/contracts/plugin-lifecycle-transition-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "base_generation_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "base_lkg_generation_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "created_at": {
+      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+      "type": "string"
+    },
+    "failure_code": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "install_operation_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "package_store_status": {
+      "enum": [
+        "absent",
+        "staged",
+        "published",
+        "orphan"
+      ]
+    },
+    "qualification_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "rollback_attempt": {
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "rollback_token": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "schema": {
+      "const": "plugin-lifecycle-transition/v1"
+    },
+    "shadow_data_generation_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "state": {
+      "enum": [
+        "selected",
+        "staged",
+        "package_published",
+        "env_prepared",
+        "shadow_prepared",
+        "migrated",
+        "settings_validated",
+        "qualified",
+        "pending_apply",
+        "current_committed",
+        "lkg_pending",
+        "lkg_promoted",
+        "failed",
+        "superseded",
+        "rollback_armed",
+        "rolled_back",
+        "safe_mode"
+      ]
+    },
+    "target_generation_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "target_settings_revision_ids": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "plugin_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "settings_revision_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "plugin_id",
+          "settings_revision_id"
+        ],
+        "type": "object"
+      },
+      "minItems": 0,
+      "type": "array"
+    },
+    "updated_at": {
+      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema",
+    "install_operation_id",
+    "base_generation_id",
+    "base_lkg_generation_id",
+    "target_generation_id",
+    "state",
+    "package_store_status",
+    "shadow_data_generation_id",
+    "target_settings_revision_ids",
+    "qualification_id",
+    "rollback_attempt",
+    "rollback_token",
+    "failure_code",
+    "created_at",
+    "updated_at"
+  ],
+  "title": "PlotPilot plugin-lifecycle-transition-v1",
+  "type": "object"
+}

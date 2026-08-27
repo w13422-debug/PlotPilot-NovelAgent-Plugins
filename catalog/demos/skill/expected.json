@@ -1,0 +1,20 @@
+{
+  "demo_kind": "skill",
+  "files_sha256": "098ba946639b134b44b7358610253dc39d78248a426d898877c9dba88ef72e48  prompt.txt\nb3ce0a06df05ad5df01e6e1c9b1ff40af0cb9576a5bc87e65811569647d1b2cd  skill.json\n",
+  "fixture_hashes": {
+    "input": "7d3f9b6284c6f36e77b425cac882e8fbbcc97a4727ec20790853076d0f463453",
+    "output": "9aff6ba4b042b9d09991a9fbf8c80ddbd2a9c433638339cd831bed955e39f106"
+  },
+  "manifest_path": "skill.json",
+  "package_files": [
+    "prompt.txt",
+    "skill.json"
+  ],
+  "package_hash": "69574c04055f92f3e94136b0ecbf3abe1e16f719e61c81a9a4af7e798f56394a",
+  "receipt_hash": "cea8afc6d836c5df58fe81bede4e6b8f4f1a8a2212de0e37185a1ab2b06eb1b4",
+  "receipt_id": "receipt-nap00-skill",
+  "release_id": "e50077aa49d0dddc5807b87544445dcd5d18250f8bf8f118e68e007841696b59",
+  "schema": "nap00-demo-expected/v1",
+  "skill_package_hash": "69574c04055f92f3e94136b0ecbf3abe1e16f719e61c81a9a4af7e798f56394a",
+  "skill_release_id": "e50077aa49d0dddc5807b87544445dcd5d18250f8bf8f118e68e007841696b59"
+}

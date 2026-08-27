@@ -1,0 +1,118 @@
+{
+  "$id": "https://plotpilot.local/contracts/operation-context-identity-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "oneOf": [
+    {
+      "additionalProperties": false,
+      "properties": {
+        "context": {
+          "const": "control"
+        },
+        "generation_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "plugin_release_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "protocol_version": {
+          "const": "1"
+        },
+        "schema": {
+          "const": "operation-context-identity/v1"
+        }
+      },
+      "required": [
+        "schema",
+        "protocol_version",
+        "context",
+        "generation_id",
+        "plugin_release_id"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "context": {
+          "const": "install"
+        },
+        "generation_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "install_operation_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "plugin_release_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "protocol_version": {
+          "const": "1"
+        },
+        "schema": {
+          "const": "operation-context-identity/v1"
+        }
+      },
+      "required": [
+        "schema",
+        "protocol_version",
+        "context",
+        "generation_id",
+        "plugin_release_id",
+        "install_operation_id"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "attempt_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "context": {
+          "const": "attempt"
+        },
+        "generation_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "job_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "plugin_release_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "protocol_version": {
+          "const": "1"
+        },
+        "schema": {
+          "const": "operation-context-identity/v1"
+        },
+        "step_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "protocol_version",
+        "context",
+        "generation_id",
+        "plugin_release_id",
+        "job_id",
+        "step_id",
+        "attempt_id"
+      ],
+      "type": "object"
+    }
+  ],
+  "title": "PlotPilot operation-context-identity-v1",
+  "unevaluatedProperties": false
+}

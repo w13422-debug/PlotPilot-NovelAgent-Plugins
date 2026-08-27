@@ -1,0 +1,13 @@
+{
+  "error": {
+    "code": 1005,
+    "data": {
+      "details_asset_id": null,
+      "error_id": "error-1",
+      "retryable": false
+    },
+    "message": "fixture asset error"
+  },
+  "id": "123e4567-e89b-12d3-a456-426614174000",
+  "jsonrpc": "2.0"
+}

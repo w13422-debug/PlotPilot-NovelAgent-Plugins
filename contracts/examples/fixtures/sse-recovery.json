@@ -1,0 +1,14 @@
+{
+  "aggregate_id": "job-1",
+  "durable_high_water_seq": 0,
+  "gap": false,
+  "replay_floor_seq": 0,
+  "requested_after_seq": 0,
+  "schema": "sse-recovery/v1",
+  "snapshot_asset_id": null,
+  "snapshot_hash": null,
+  "snapshot_required": false,
+  "snapshot_revision": null,
+  "snapshot_schema": null,
+  "stream_kind": "job_event"
+}

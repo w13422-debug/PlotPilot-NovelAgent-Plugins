@@ -1,0 +1,19 @@
+{
+  "attempt_id": "attempt-1",
+  "byte_length": 5,
+  "encoding": "utf-8",
+  "job_id": "job-1",
+  "lease_epoch": 1,
+  "output_role": "draft",
+  "prefix_asset_id": "asset-stream-1",
+  "prefix_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "prefix_seq": 1,
+  "schema": "stream-prefix/v1",
+  "step_id": "step-1",
+  "stream_id": "stream-1",
+  "target": {
+    "entity_id": "doc-a",
+    "entity_kind": "document",
+    "workspace_id": "ws-1"
+  }
+}

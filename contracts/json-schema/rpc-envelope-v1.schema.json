@@ -1,0 +1,4944 @@
+{
+  "$id": "https://plotpilot.local/contracts/rpc-envelope-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "oneOf": [
+    {
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "meta": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "context": {
+                      "const": "control"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "context": {
+                      "const": "install"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "install_lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "install_operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "install_operation_id",
+                    "install_lease_epoch"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "method": {
+              "const": "runtime.handshake"
+            },
+            "params": {
+              "additionalProperties": false,
+              "properties": {
+                "data_generation_id": {
+                  "anyOf": [
+                    {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "generation_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "host_protocol": {
+                  "type": "string"
+                },
+                "plugin_release_id": {
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "host_protocol",
+                "generation_id",
+                "plugin_release_id",
+                "data_generation_id"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "method",
+            "meta",
+            "params"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "meta": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "context": {
+                      "const": "control"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "context": {
+                      "const": "install"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "install_lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "install_operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "install_operation_id",
+                    "install_lease_epoch"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "method": {
+              "const": "runtime.health"
+            },
+            "params": {
+              "additionalProperties": false,
+              "properties": {
+                "db_lease_epoch": {
+                  "anyOf": [
+                    {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "db_lease_id": {
+                  "anyOf": [
+                    {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "owner_instance_id": {
+                  "anyOf": [
+                    {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "probe_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "probe_id",
+                "db_lease_id",
+                "db_lease_epoch",
+                "owner_instance_id"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "method",
+            "meta",
+            "params"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "meta": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "context": {
+                      "const": "control"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "method": {
+              "const": "capability.describe"
+            },
+            "params": {
+              "additionalProperties": false,
+              "properties": {
+                "capability_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "capability_id"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "method",
+            "meta",
+            "params"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "meta": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "context": {
+                      "const": "control"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "context": {
+                      "const": "install"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "install_lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "install_operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "install_operation_id",
+                    "install_lease_epoch"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "method": {
+              "const": "settings.validate"
+            },
+            "params": {
+              "additionalProperties": false,
+              "properties": {
+                "payload_asset_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "plugin_release_id": {
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "schema_hash": {
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "settings_revision_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "settings_revision_id",
+                "plugin_release_id",
+                "schema_hash",
+                "payload_asset_id"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "method",
+            "meta",
+            "params"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "meta": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "context": {
+                      "const": "install"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "install_lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "install_operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "install_operation_id",
+                    "install_lease_epoch"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "method": {
+              "const": "migration.plan"
+            },
+            "params": {
+              "additionalProperties": false,
+              "properties": {
+                "from_schema": {
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "migration_manifest_hash": {
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "to_schema": {
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "from_schema",
+                "to_schema",
+                "migration_manifest_hash"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "method",
+            "meta",
+            "params"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "meta": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "context": {
+                      "const": "install"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "install_lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "install_operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "install_operation_id",
+                    "install_lease_epoch"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "method": {
+              "const": "migration.apply"
+            },
+            "params": {
+              "additionalProperties": false,
+              "properties": {
+                "db_lease_epoch": {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "db_lease_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "owner_instance_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "plan_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "plan_id",
+                "db_lease_id",
+                "db_lease_epoch",
+                "owner_instance_id"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "method",
+            "meta",
+            "params"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "meta": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "context": {
+                      "const": "install"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "install_lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "install_operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "install_operation_id",
+                    "install_lease_epoch"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "method": {
+              "const": "migration.verify"
+            },
+            "params": {
+              "additionalProperties": false,
+              "properties": {
+                "db_lease_epoch": {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "db_lease_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "expected_schema": {
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "owner_instance_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "db_lease_id",
+                "db_lease_epoch",
+                "owner_instance_id",
+                "expected_schema"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "method",
+            "meta",
+            "params"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "meta": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "attempt_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "context": {
+                      "const": "attempt"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "job_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    },
+                    "step_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "job_id",
+                    "step_id",
+                    "attempt_id",
+                    "lease_epoch"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "method": {
+              "const": "job.start"
+            },
+            "params": {
+              "additionalProperties": false,
+              "properties": {
+                "capability_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "checkpoint_asset_id": {
+                  "anyOf": [
+                    {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "run_snapshot_asset_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "secrets": {
+                  "anyOf": [
+                    {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "secret_id": {
+                            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                            "type": "string"
+                          },
+                          "value": {
+                            "maxLength": 65536,
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "secret_id",
+                          "value"
+                        ],
+                        "type": "object"
+                      },
+                      "minItems": 0,
+                      "type": "array"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "capability_id",
+                "run_snapshot_asset_id",
+                "checkpoint_asset_id",
+                "secrets"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "method",
+            "meta",
+            "params"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "meta": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "attempt_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "context": {
+                      "const": "attempt"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "job_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    },
+                    "step_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "job_id",
+                    "step_id",
+                    "attempt_id",
+                    "lease_epoch"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "method": {
+              "const": "job.resume"
+            },
+            "params": {
+              "additionalProperties": false,
+              "properties": {
+                "capability_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "checkpoint_asset_id": {
+                  "anyOf": [
+                    {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "resume_intent_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "resume_of_attempt_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "resume_reason": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "run_snapshot_asset_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "secrets": {
+                  "anyOf": [
+                    {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "secret_id": {
+                            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                            "type": "string"
+                          },
+                          "value": {
+                            "maxLength": 65536,
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "secret_id",
+                          "value"
+                        ],
+                        "type": "object"
+                      },
+                      "minItems": 0,
+                      "type": "array"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "capability_id",
+                "run_snapshot_asset_id",
+                "resume_of_attempt_id",
+                "checkpoint_asset_id",
+                "resume_intent_id",
+                "resume_reason",
+                "secrets"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "method",
+            "meta",
+            "params"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "meta": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "attempt_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "context": {
+                      "const": "attempt"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "job_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    },
+                    "step_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "job_id",
+                    "step_id",
+                    "attempt_id",
+                    "lease_epoch"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "method": {
+              "const": "job.pause"
+            },
+            "params": {
+              "additionalProperties": false,
+              "properties": {
+                "reason": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "worker_run_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "worker_run_id",
+                "reason"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "method",
+            "meta",
+            "params"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "meta": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "attempt_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "context": {
+                      "const": "attempt"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "job_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    },
+                    "step_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "job_id",
+                    "step_id",
+                    "attempt_id",
+                    "lease_epoch"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "method": {
+              "const": "job.cancel"
+            },
+            "params": {
+              "additionalProperties": false,
+              "properties": {
+                "reason": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "worker_run_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "worker_run_id",
+                "reason"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "method",
+            "meta",
+            "params"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "meta": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "context": {
+                      "const": "control"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "context": {
+                      "const": "install"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "install_lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "install_operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "install_operation_id",
+                    "install_lease_epoch"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "attempt_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "context": {
+                      "const": "attempt"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "job_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    },
+                    "step_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "job_id",
+                    "step_id",
+                    "attempt_id",
+                    "lease_epoch"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "method": {
+              "const": "runtime.shutdown"
+            },
+            "params": {
+              "additionalProperties": false,
+              "properties": {
+                "deadline_at": {
+                  "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                  "type": "string"
+                },
+                "reason": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "reason",
+                "deadline_at"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "method",
+            "meta",
+            "params"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "meta": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "context": {
+                      "const": "control"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "context": {
+                      "const": "install"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "install_lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "install_operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "install_operation_id",
+                    "install_lease_epoch"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "attempt_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "context": {
+                      "const": "attempt"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "job_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    },
+                    "step_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "job_id",
+                    "step_id",
+                    "attempt_id",
+                    "lease_epoch"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "method": {
+              "const": "host.asset.read/v1"
+            },
+            "params": {
+              "additionalProperties": false,
+              "properties": {
+                "asset_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "length": {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "offset": {
+                  "minimum": 0,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "asset_id",
+                "offset",
+                "length"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "method",
+            "meta",
+            "params"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "meta": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "context": {
+                      "const": "install"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "install_lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "install_operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "install_operation_id",
+                    "install_lease_epoch"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "attempt_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "context": {
+                      "const": "attempt"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "job_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    },
+                    "step_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "job_id",
+                    "step_id",
+                    "attempt_id",
+                    "lease_epoch"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "method": {
+              "const": "host.asset.create/v1"
+            },
+            "params": {
+              "additionalProperties": false,
+              "properties": {
+                "base64_chunk": {
+                  "type": "string"
+                },
+                "chunk_hash": {
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "expected_hash": {
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "final": {
+                  "type": "boolean"
+                },
+                "mime": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "offset": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "operation_key": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "total_size": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "upload_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "operation_key",
+                "upload_id",
+                "offset",
+                "mime",
+                "total_size",
+                "expected_hash",
+                "chunk_hash",
+                "base64_chunk",
+                "final"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "method",
+            "meta",
+            "params"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "meta": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "context": {
+                      "const": "install"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "install_lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "install_operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "install_operation_id",
+                    "install_lease_epoch"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "attempt_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "context": {
+                      "const": "attempt"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "job_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    },
+                    "step_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "job_id",
+                    "step_id",
+                    "attempt_id",
+                    "lease_epoch"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "method": {
+              "const": "host.asset.upload.status/v1"
+            },
+            "params": {
+              "additionalProperties": false,
+              "properties": {
+                "expected_hash": {
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "upload_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "upload_id",
+                "expected_hash"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "method",
+            "meta",
+            "params"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "meta": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "attempt_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "context": {
+                      "const": "attempt"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "job_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    },
+                    "step_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "job_id",
+                    "step_id",
+                    "attempt_id",
+                    "lease_epoch"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "method": {
+              "const": "host.model.invoke/v1"
+            },
+            "params": {
+              "additionalProperties": false,
+              "properties": {
+                "invocation_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "invocation_key": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "model_profile_revision_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "operation_key": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "replay_policy": {
+                  "enum": [
+                    "idempotent_auto",
+                    "manual_if_unknown",
+                    "never_replay"
+                  ]
+                },
+                "request_asset_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "operation_key",
+                "invocation_id",
+                "invocation_key",
+                "model_profile_revision_id",
+                "request_asset_id",
+                "replay_policy"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "method",
+            "meta",
+            "params"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "meta": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "attempt_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "context": {
+                      "const": "attempt"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "job_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    },
+                    "step_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "job_id",
+                    "step_id",
+                    "attempt_id",
+                    "lease_epoch"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "method": {
+              "const": "host.capability.invoke/v1"
+            },
+            "params": {
+              "additionalProperties": false,
+              "properties": {
+                "binding_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "expected_result_contract": {
+                  "enum": [
+                    "candidate-batch/v1",
+                    "artifact-bundle/v1",
+                    "diagnostic-bundle/v1"
+                  ]
+                },
+                "input_asset_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "operation_key": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "parameters_asset_id": {
+                  "anyOf": [
+                    {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "propagate_cancel": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "operation_key",
+                "binding_id",
+                "input_asset_id",
+                "parameters_asset_id",
+                "expected_result_contract",
+                "propagate_cancel"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "method",
+            "meta",
+            "params"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "meta": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "attempt_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "context": {
+                      "const": "attempt"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "job_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    },
+                    "step_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "job_id",
+                    "step_id",
+                    "attempt_id",
+                    "lease_epoch"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "method": {
+              "const": "host.capability.poll/v1"
+            },
+            "params": {
+              "additionalProperties": false,
+              "properties": {
+                "after_job_event_seq": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "child_job_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "child_job_id",
+                "after_job_event_seq"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "method",
+            "meta",
+            "params"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "meta": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "attempt_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "context": {
+                      "const": "attempt"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "job_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    },
+                    "step_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "job_id",
+                    "step_id",
+                    "attempt_id",
+                    "lease_epoch"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "method": {
+              "const": "host.capability.cancel/v1"
+            },
+            "params": {
+              "additionalProperties": false,
+              "properties": {
+                "child_job_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "operation_key": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "reason": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "operation_key",
+                "child_job_id",
+                "reason"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "method",
+            "meta",
+            "params"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "meta": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "attempt_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "context": {
+                      "const": "attempt"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "job_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    },
+                    "step_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "job_id",
+                    "step_id",
+                    "attempt_id",
+                    "lease_epoch"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "method": {
+              "const": "host.candidate.stage/v1"
+            },
+            "params": {
+              "additionalProperties": false,
+              "properties": {
+                "input_snapshot_hash": {
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "operation_key": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "result_bundle_asset_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "operation_key",
+                "result_bundle_asset_id",
+                "input_snapshot_hash"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "method",
+            "meta",
+            "params"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "meta": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "attempt_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "context": {
+                      "const": "attempt"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "job_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    },
+                    "step_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "job_id",
+                    "step_id",
+                    "attempt_id",
+                    "lease_epoch"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "method": {
+              "const": "host.checkpoint.commit/v1"
+            },
+            "params": {
+              "additionalProperties": false,
+              "properties": {
+                "checkpoint_asset_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "operation_key": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "operation_key",
+                "checkpoint_asset_id"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "method",
+            "meta",
+            "params"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "meta": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "attempt_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "context": {
+                      "const": "attempt"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "job_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    },
+                    "step_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "job_id",
+                    "step_id",
+                    "attempt_id",
+                    "lease_epoch"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "method": {
+              "const": "host.stream.commit/v1"
+            },
+            "params": {
+              "additionalProperties": false,
+              "properties": {
+                "operation_key": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "stream_prefix_asset_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "operation_key",
+                "stream_prefix_asset_id"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "method",
+            "meta",
+            "params"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "meta": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "attempt_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "context": {
+                      "const": "attempt"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "job_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    },
+                    "step_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "job_id",
+                    "step_id",
+                    "attempt_id",
+                    "lease_epoch"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "method": {
+              "const": "host.job.event/v1"
+            },
+            "params": {
+              "additionalProperties": false,
+              "properties": {
+                "event_type": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "local_seq": {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "operation_key": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "payload_asset_id": {
+                  "anyOf": [
+                    {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "operation_key",
+                "event_type",
+                "payload_asset_id",
+                "local_seq"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "method",
+            "meta",
+            "params"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "meta": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "attempt_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "context": {
+                      "const": "attempt"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "job_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    },
+                    "step_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "job_id",
+                    "step_id",
+                    "attempt_id",
+                    "lease_epoch"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "method": {
+              "const": "host.job.await_user/v1"
+            },
+            "params": {
+              "additionalProperties": false,
+              "properties": {
+                "checkpoint_asset_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "operation_key": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "prompt_asset_id": {
+                  "anyOf": [
+                    {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "reason": {
+                  "enum": [
+                    "user_input",
+                    "external_confirmation"
+                  ]
+                },
+                "worker_run_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "operation_key",
+                "worker_run_id",
+                "checkpoint_asset_id",
+                "prompt_asset_id",
+                "reason"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "method",
+            "meta",
+            "params"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "meta": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "attempt_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "context": {
+                      "const": "attempt"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "job_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    },
+                    "step_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "job_id",
+                    "step_id",
+                    "attempt_id",
+                    "lease_epoch"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "method": {
+              "const": "host.job.complete/v1"
+            },
+            "params": {
+              "additionalProperties": false,
+              "properties": {
+                "candidate_stage_operation_key": {
+                  "anyOf": [
+                    {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "local_seq": {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "operation_key": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "outcome": {
+                  "enum": [
+                    "succeeded",
+                    "partial",
+                    "failed",
+                    "cancelled"
+                  ]
+                },
+                "result_bundle_asset_id": {
+                  "anyOf": [
+                    {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "terminal_detail_asset_id": {
+                  "anyOf": [
+                    {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "worker_run_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "operation_key",
+                "worker_run_id",
+                "outcome",
+                "result_bundle_asset_id",
+                "candidate_stage_operation_key",
+                "terminal_detail_asset_id",
+                "local_seq"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "method",
+            "meta",
+            "params"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "meta": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "context": {
+                      "const": "control"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "context": {
+                      "const": "install"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "install_lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "install_operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "install_operation_id",
+                    "install_lease_epoch"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "attempt_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "context": {
+                      "const": "attempt"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "job_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    },
+                    "step_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "job_id",
+                    "step_id",
+                    "attempt_id",
+                    "lease_epoch"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "method": {
+              "const": "host.log/v1"
+            },
+            "params": {
+              "additionalProperties": false,
+              "properties": {
+                "fields_asset_id": {
+                  "anyOf": [
+                    {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "level": {
+                  "enum": [
+                    "debug",
+                    "info",
+                    "warning",
+                    "error"
+                  ]
+                },
+                "local_seq": {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "level",
+                "message",
+                "fields_asset_id",
+                "local_seq"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "method",
+            "meta",
+            "params"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "meta": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "context": {
+                      "const": "install"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "install_lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "install_operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "install_operation_id",
+                    "install_lease_epoch"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "method": {
+              "const": "host.migration.lease.renew/v1"
+            },
+            "params": {
+              "additionalProperties": false,
+              "properties": {
+                "db_lease_epoch": {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "db_lease_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "operation_key": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "owner_instance_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "requested_expires_at": {
+                  "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "operation_key",
+                "db_lease_id",
+                "db_lease_epoch",
+                "owner_instance_id",
+                "requested_expires_at"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "method",
+            "meta",
+            "params"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "meta": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "context": {
+                      "const": "install"
+                    },
+                    "deadline_at": {
+                      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "install_lease_epoch": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "install_operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "operation_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "plugin_release_id": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "protocol_version": {
+                      "const": "1"
+                    }
+                  },
+                  "required": [
+                    "protocol_version",
+                    "generation_id",
+                    "plugin_release_id",
+                    "deadline_at",
+                    "context",
+                    "operation_id",
+                    "install_operation_id",
+                    "install_lease_epoch"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "method": {
+              "const": "host.migration.lease.release/v1"
+            },
+            "params": {
+              "additionalProperties": false,
+              "properties": {
+                "db_lease_epoch": {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "db_lease_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "operation_key": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "owner_instance_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "reason": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "operation_key",
+                "db_lease_id",
+                "db_lease_epoch",
+                "owner_instance_id",
+                "reason"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "method",
+            "meta",
+            "params"
+          ],
+          "type": "object"
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+          "type": "string"
+        },
+        "jsonrpc": {
+          "const": "2.0"
+        },
+        "result": {
+          "oneOf": [
+            {
+              "additionalProperties": false,
+              "properties": {
+                "capabilities": {
+                  "items": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                    "type": "string"
+                  },
+                  "minItems": 0,
+                  "type": "array"
+                },
+                "plugin_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "plugin_protocol": {
+                  "type": "string"
+                },
+                "release_id": {
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "worker_instance_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "plugin_protocol",
+                "plugin_id",
+                "release_id",
+                "capabilities",
+                "worker_instance_id"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "checked_at": {
+                  "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                  "type": "string"
+                },
+                "details_asset_id": {
+                  "anyOf": [
+                    {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "status": {
+                  "enum": [
+                    "ok",
+                    "degraded",
+                    "fail"
+                  ]
+                }
+              },
+              "required": [
+                "status",
+                "details_asset_id",
+                "checked_at"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "descriptor": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "accepted_data_formats": {
+                      "items": {
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                        "type": "string"
+                      },
+                      "minItems": 0,
+                      "type": "array"
+                    },
+                    "capability_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "deterministic": {
+                      "type": "boolean"
+                    },
+                    "input_schema": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "output_schema": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "provider": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "plugin_id": {
+                          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                          "type": "string"
+                        },
+                        "release_id": {
+                          "pattern": "^[0-9a-f]{64}$",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "plugin_id",
+                        "release_id"
+                      ],
+                      "type": "object"
+                    },
+                    "result_contract": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "schema": {
+                      "const": "capability-provider/v1"
+                    },
+                    "supports": {
+                      "items": {
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                        "type": "string"
+                      },
+                      "minItems": 0,
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "schema",
+                    "capability_id",
+                    "provider",
+                    "input_schema",
+                    "output_schema",
+                    "result_contract",
+                    "supports",
+                    "deterministic",
+                    "accepted_data_formats"
+                  ],
+                  "type": "object"
+                }
+              },
+              "required": [
+                "descriptor"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "details_asset_id": {
+                  "anyOf": [
+                    {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "errors": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "code": {
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "details_asset_id": {
+                        "anyOf": [
+                          {
+                            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "message": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "code",
+                      "message",
+                      "details_asset_id"
+                    ],
+                    "type": "object"
+                  },
+                  "minItems": 0,
+                  "type": "array"
+                },
+                "evaluated_payload_hash": {
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "valid": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "valid",
+                "evaluated_payload_hash",
+                "details_asset_id",
+                "errors"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "backward_compatible": {
+                  "type": "boolean"
+                },
+                "plan_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "requires_verified_backup": {
+                  "type": "boolean"
+                },
+                "steps": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "file": {
+                        "maxLength": 240,
+                        "minLength": 1,
+                        "pattern": "^[^\\\\\\x00]+$",
+                        "type": "string"
+                      },
+                      "from_schema": {
+                        "pattern": "^[0-9a-f]{64}$",
+                        "type": "string"
+                      },
+                      "sha256": {
+                        "pattern": "^[0-9a-f]{64}$",
+                        "type": "string"
+                      },
+                      "step_id": {
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                        "type": "string"
+                      },
+                      "to_schema": {
+                        "pattern": "^[0-9a-f]{64}$",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "step_id",
+                      "file",
+                      "sha256",
+                      "from_schema",
+                      "to_schema"
+                    ],
+                    "type": "object"
+                  },
+                  "minItems": 0,
+                  "type": "array"
+                }
+              },
+              "required": [
+                "plan_id",
+                "steps",
+                "backward_compatible",
+                "requires_verified_backup"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "applied_schema": {
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "receipt_hash": {
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "applied_schema",
+                "receipt_hash"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "errors": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "code": {
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "details_asset_id": {
+                        "anyOf": [
+                          {
+                            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "message": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "code",
+                      "message",
+                      "details_asset_id"
+                    ],
+                    "type": "object"
+                  },
+                  "minItems": 0,
+                  "type": "array"
+                },
+                "schema_hash": {
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "valid": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "valid",
+                "schema_hash",
+                "errors"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "accepted": {
+                  "type": "boolean"
+                },
+                "output_streams": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "job_id": {
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                        "type": "string"
+                      },
+                      "output_role": {
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                        "type": "string"
+                      },
+                      "step_id": {
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                        "type": "string"
+                      },
+                      "stream_id": {
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                        "type": "string"
+                      },
+                      "target": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "entity_id": {
+                            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                            "type": "string"
+                          },
+                          "entity_kind": {
+                            "enum": [
+                              "document",
+                              "node_structure",
+                              "relation_set"
+                            ]
+                          },
+                          "workspace_id": {
+                            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "workspace_id",
+                          "entity_kind",
+                          "entity_id"
+                        ],
+                        "type": "object"
+                      }
+                    },
+                    "required": [
+                      "stream_id",
+                      "job_id",
+                      "step_id",
+                      "output_role",
+                      "target"
+                    ],
+                    "type": "object"
+                  },
+                  "minItems": 0,
+                  "type": "array"
+                },
+                "provenance_receipt_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "worker_run_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "accepted",
+                "worker_run_id",
+                "provenance_receipt_id",
+                "output_streams"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "accepted": {
+                  "type": "boolean"
+                },
+                "output_streams": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "job_id": {
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                        "type": "string"
+                      },
+                      "output_role": {
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                        "type": "string"
+                      },
+                      "step_id": {
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                        "type": "string"
+                      },
+                      "stream_id": {
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                        "type": "string"
+                      },
+                      "target": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "entity_id": {
+                            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                            "type": "string"
+                          },
+                          "entity_kind": {
+                            "enum": [
+                              "document",
+                              "node_structure",
+                              "relation_set"
+                            ]
+                          },
+                          "workspace_id": {
+                            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "workspace_id",
+                          "entity_kind",
+                          "entity_id"
+                        ],
+                        "type": "object"
+                      }
+                    },
+                    "required": [
+                      "stream_id",
+                      "job_id",
+                      "step_id",
+                      "output_role",
+                      "target"
+                    ],
+                    "type": "object"
+                  },
+                  "minItems": 0,
+                  "type": "array"
+                },
+                "provenance_receipt_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "worker_run_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "accepted",
+                "worker_run_id",
+                "provenance_receipt_id",
+                "output_streams"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "accepted": {
+                  "type": "boolean"
+                },
+                "checkpoint_asset_id": {
+                  "anyOf": [
+                    {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "accepted",
+                "checkpoint_asset_id"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "accepted": {
+                  "type": "boolean"
+                },
+                "attempt_state": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "terminal_known": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "accepted",
+                "terminal_known",
+                "attempt_state"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "accepted": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "accepted"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "base64_chunk": {
+                  "type": "string"
+                },
+                "content_hash": {
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "next_offset": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "base64_chunk",
+                "next_offset",
+                "content_hash"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "accepted_bytes": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "asset_id": {
+                  "anyOf": [
+                    {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "completed": {
+                  "type": "boolean"
+                },
+                "upload_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "upload_id",
+                "accepted_bytes",
+                "completed",
+                "asset_id"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "accepted_bytes": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "asset_id": {
+                  "anyOf": [
+                    {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "completed": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "accepted_bytes",
+                "completed",
+                "asset_id"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "receipt_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "response_asset_id": {
+                  "anyOf": [
+                    {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "state": {
+                  "enum": [
+                    "received",
+                    "failed",
+                    "uncertain"
+                  ]
+                },
+                "uncertainty": {
+                  "anyOf": [
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "details_asset_id": {
+                          "anyOf": [
+                            {
+                              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "details_asset_id"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "state",
+                "response_asset_id",
+                "receipt_id",
+                "uncertainty"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "accepted": {
+                  "type": "boolean"
+                },
+                "child_job_event_seq": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "child_job_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "child_result_contract": {
+                  "enum": [
+                    "candidate-batch/v1",
+                    "artifact-bundle/v1",
+                    "diagnostic-bundle/v1"
+                  ]
+                },
+                "child_run_snapshot_asset_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "child_run_snapshot_hash": {
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "child_step_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "accepted",
+                "child_job_id",
+                "child_step_id",
+                "child_run_snapshot_asset_id",
+                "child_run_snapshot_hash",
+                "child_result_contract",
+                "child_job_event_seq"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "job_event_page_asset_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "job_snapshot_asset_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "next_job_event_seq": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "provenance_receipt_id": {
+                  "anyOf": [
+                    {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "result_bundle_asset_id": {
+                  "anyOf": [
+                    {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "terminal": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "job_snapshot_asset_id",
+                "job_event_page_asset_id",
+                "next_job_event_seq",
+                "terminal",
+                "result_bundle_asset_id",
+                "provenance_receipt_id"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "accepted": {
+                  "type": "boolean"
+                },
+                "child_job_event_seq": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "child_state": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "terminal_known": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "accepted",
+                "terminal_known",
+                "child_state",
+                "child_job_event_seq"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "accepted": {
+                  "type": "boolean"
+                },
+                "job_event_seq": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "staged_items": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "candidate_id": {
+                        "anyOf": [
+                          {
+                            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "item_id": {
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                        "type": "string"
+                      },
+                      "publication_eligibility": {
+                        "enum": [
+                          "eligible",
+                          "review_only",
+                          "none"
+                        ]
+                      },
+                      "stage_status": {
+                        "enum": [
+                          "created",
+                          "existing",
+                          "failed",
+                          "skipped",
+                          "rejected"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "item_id",
+                      "candidate_id",
+                      "stage_status",
+                      "publication_eligibility"
+                    ],
+                    "type": "object"
+                  },
+                  "minItems": 0,
+                  "type": "array"
+                }
+              },
+              "required": [
+                "accepted",
+                "staged_items",
+                "job_event_seq"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "accepted": {
+                  "type": "boolean"
+                },
+                "checkpoint_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "completed_units": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "job_event_seq": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "total_units": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "accepted",
+                "checkpoint_id",
+                "completed_units",
+                "total_units",
+                "job_event_seq"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "accepted": {
+                  "type": "boolean"
+                },
+                "acked_bytes": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "acked_prefix_hash": {
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "acked_prefix_seq": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "job_event_seq": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "stream_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "accepted",
+                "stream_id",
+                "acked_prefix_seq",
+                "acked_bytes",
+                "acked_prefix_hash",
+                "job_event_seq"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "accepted": {
+                  "type": "boolean"
+                },
+                "job_event_seq": {
+                  "minimum": 0,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "accepted",
+                "job_event_seq"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "accepted": {
+                  "type": "boolean"
+                },
+                "attempt_state": {
+                  "const": "suspended"
+                },
+                "job_event_seq": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "job_state": {
+                  "const": "waiting_user"
+                },
+                "step_state": {
+                  "const": "waiting_user"
+                }
+              },
+              "required": [
+                "accepted",
+                "attempt_state",
+                "step_state",
+                "job_state",
+                "job_event_seq"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "accepted": {
+                  "type": "boolean"
+                },
+                "attempt_state": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "core_event_high_water": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "job_event_seq": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "job_state": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "provenance_receipt_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "step_state": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "accepted",
+                "attempt_state",
+                "step_state",
+                "job_state",
+                "provenance_receipt_id",
+                "job_event_seq",
+                "core_event_high_water"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "accepted": {
+                  "type": "boolean"
+                },
+                "dropped": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "accepted",
+                "dropped"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "accepted": {
+                  "type": "boolean"
+                },
+                "db_lease_epoch": {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "expires_at": {
+                  "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "accepted",
+                "db_lease_epoch",
+                "expires_at"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "accepted": {
+                  "type": "boolean"
+                },
+                "state": {
+                  "enum": [
+                    "released",
+                    "expired",
+                    "revoked"
+                  ]
+                }
+              },
+              "required": [
+                "accepted",
+                "state"
+              ],
+              "type": "object"
+            }
+          ]
+        }
+      },
+      "required": [
+        "jsonrpc",
+        "id",
+        "result"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "error": {
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "data": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "details_asset_id": {
+                      "anyOf": [
+                        {
+                          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error_id": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    "retryable": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "error_id",
+                    "retryable",
+                    "details_asset_id"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message",
+            "data"
+          ],
+          "type": "object"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "jsonrpc": {
+          "const": "2.0"
+        }
+      },
+      "required": [
+        "jsonrpc",
+        "id",
+        "error"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "jsonrpc": {
+          "const": "2.0"
+        },
+        "meta": {
+          "additionalProperties": false,
+          "properties": {
+            "attempt_id": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            "context": {
+              "const": "attempt"
+            },
+            "deadline_at": {
+              "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+              "type": "string"
+            },
+            "generation_id": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            "job_id": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            "lease_epoch": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "operation_id": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            },
+            "plugin_release_id": {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "protocol_version": {
+              "const": "1"
+            },
+            "step_id": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "protocol_version",
+            "generation_id",
+            "plugin_release_id",
+            "deadline_at",
+            "context",
+            "operation_id",
+            "job_id",
+            "step_id",
+            "attempt_id",
+            "lease_epoch"
+          ],
+          "type": "object"
+        },
+        "method": {
+          "const": "runtime.heartbeat"
+        },
+        "params": {
+          "additionalProperties": false,
+          "properties": {
+            "local_seq": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "observed_at": {
+              "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+              "type": "string"
+            },
+            "worker_instance_id": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "worker_instance_id",
+            "observed_at",
+            "local_seq"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "jsonrpc",
+        "method",
+        "meta",
+        "params"
+      ],
+      "type": "object"
+    }
+  ],
+  "title": "PlotPilot rpc-envelope-v1",
+  "unevaluatedProperties": false
+}

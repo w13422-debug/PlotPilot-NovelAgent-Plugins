@@ -1,0 +1,52 @@
+{
+  "group_id": "84.13-11",
+  "title": "Skill executed/failed/skipped/model claim/verified patch combinations and patch tamper",
+  "assertions": [
+    "Executed receipt is valid",
+    "Bundleless failed receipt is valid",
+    "Skipped receipt cannot claim participation",
+    "Model claim requires evidence",
+    "Verified patch requires a verified replay",
+    "Patch tamper and inverted range are rejected"
+  ],
+  "negative": [
+    {
+      "case_id": "executed-receipt-positive",
+      "kind": "executed_receipt"
+    },
+    {
+      "case_id": "failed-bundleless-receipt",
+      "kind": "failed_bundleless_receipt"
+    },
+    {
+      "case_id": "skipped-participated",
+      "kind": "skipped_participated",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "model-claim-without-evidence",
+      "kind": "model_claim_without_evidence",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "verified-patch-without-proof",
+      "kind": "verified_patch_without_proof",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "tampered-patch",
+      "kind": "tampered_patch",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "patch-range-inverted",
+      "kind": "patch_range",
+      "expected_error_code": 1011
+    }
+  ],
+  "positive": [
+    "skill-run-receipt",
+    "skill-chain-result",
+    "failed-bundleless-receipt"
+  ]
+}

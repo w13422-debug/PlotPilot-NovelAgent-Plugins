@@ -1,0 +1,63 @@
+{
+  "group_id": "84.13-02",
+  "title": "Result profile/bundle/item and Candidate target/mutation/base/write-set/parent/cross-workspace mapping",
+  "assertions": [
+    "Result profile mismatch is rejected",
+    "Result bundle/item schema mismatch is rejected",
+    "Candidate target/mutation/base/write-set are bound",
+    "Candidate parent cycle is rejected",
+    "Candidate cross-workspace source is rejected",
+    "Candidate refs map to an existing result item"
+  ],
+  "negative": [
+    {
+      "case_id": "result-profile-mismatch",
+      "kind": "profile_mismatch",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "result-item-schema-mismatch",
+      "kind": "item_schema_mismatch",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "candidate-target-outside-write-set",
+      "kind": "candidate_target_write_set",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "candidate-mutation-mismatch",
+      "kind": "candidate_mutation",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "candidate-base-mismatch",
+      "kind": "candidate_base",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "candidate-cross-workspace-source",
+      "kind": "candidate_cross_workspace",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "candidate-parent-cycle",
+      "kind": "parent_cycle",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "candidate-item-mapping-mismatch",
+      "kind": "item_mapping",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "candidate-base-write-set-positive",
+      "kind": "candidate_base_write_set_positive"
+    }
+  ],
+  "positive": [
+    "result-bundle",
+    "candidate-item",
+    "provenance-receipt"
+  ]
+}

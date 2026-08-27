@@ -1,0 +1,13 @@
+{
+  "created_at": "2026-08-26T00:00:00Z",
+  "details_asset_id": null,
+  "payload_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "plugin_id": "com.plotpilot.fixture.code",
+  "plugin_release_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "receipt_hash": "d24a8460dbb36570bf80f100de98738a61ccefeaf53156fe0f921cf50ebf3c1c",
+  "receipt_id": "settings-receipt-1",
+  "schema": "settings-validation-receipt/v1",
+  "schema_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "settings_revision_id": "settings-1",
+  "valid": true
+}

@@ -1,0 +1,75 @@
+{
+  "schema": "operation-context-identity-golden/v1",
+  "vectors": [
+    {
+      "context_identity": "849f0775996505dee909f7cfdc7210cdc3fca12517eaf138a71866916aaa3276",
+      "expected_lease_epoch": null,
+      "meta": {
+        "context": "control",
+        "deadline_at": "2026-08-27T00:05:00Z",
+        "generation_id": "generation-1",
+        "operation_id": "request-control-1",
+        "plugin_release_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "protocol_version": "1"
+      },
+      "profile": "control",
+      "projection": {
+        "context": "control",
+        "generation_id": "generation-1",
+        "plugin_release_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "protocol_version": "1",
+        "schema": "operation-context-identity/v1"
+      }
+    },
+    {
+      "context_identity": "88eb2fd5522841dd359150ce898d9f04462aaed8a59fa56e0447e3471c851e4b",
+      "expected_lease_epoch": 7,
+      "meta": {
+        "context": "install",
+        "deadline_at": "2026-08-27T00:05:00Z",
+        "generation_id": "generation-1",
+        "install_lease_epoch": 7,
+        "install_operation_id": "install-1",
+        "operation_id": "request-install-1",
+        "plugin_release_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "protocol_version": "1"
+      },
+      "profile": "install",
+      "projection": {
+        "context": "install",
+        "generation_id": "generation-1",
+        "install_operation_id": "install-1",
+        "plugin_release_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "protocol_version": "1",
+        "schema": "operation-context-identity/v1"
+      }
+    },
+    {
+      "context_identity": "64301a0226c291d82cee4c8dfd00b73bab017d580004f2457df6b7343bbb3832",
+      "expected_lease_epoch": 9,
+      "meta": {
+        "attempt_id": "attempt-1",
+        "context": "attempt",
+        "deadline_at": "2026-08-27T00:05:00Z",
+        "generation_id": "generation-1",
+        "job_id": "job-1",
+        "lease_epoch": 9,
+        "operation_id": "request-attempt-1",
+        "plugin_release_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "protocol_version": "1",
+        "step_id": "step-1"
+      },
+      "profile": "attempt",
+      "projection": {
+        "attempt_id": "attempt-1",
+        "context": "attempt",
+        "generation_id": "generation-1",
+        "job_id": "job-1",
+        "plugin_release_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "protocol_version": "1",
+        "schema": "operation-context-identity/v1",
+        "step_id": "step-1"
+      }
+    }
+  ]
+}

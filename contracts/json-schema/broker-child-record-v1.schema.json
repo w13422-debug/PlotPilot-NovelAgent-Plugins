@@ -1,0 +1,106 @@
+{
+  "$id": "https://plotpilot.local/contracts/broker-child-record-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "binding_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "broker_invocation_asset_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "broker_invocation_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "child_job_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "child_run_snapshot_asset_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "child_run_snapshot_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "invoke_operation_key": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "parent_attempt_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "parent_job_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "parent_step_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "propagate_cancel": {
+      "type": "boolean"
+    },
+    "provenance_receipt_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "required": {
+      "type": "boolean"
+    },
+    "result_bundle_asset_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "result_contract": {
+      "enum": [
+        "candidate-batch/v1",
+        "artifact-bundle/v1",
+        "diagnostic-bundle/v1"
+      ]
+    },
+    "state": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "child_job_id",
+    "parent_job_id",
+    "parent_step_id",
+    "parent_attempt_id",
+    "invoke_operation_key",
+    "binding_id",
+    "broker_invocation_asset_id",
+    "broker_invocation_hash",
+    "child_run_snapshot_asset_id",
+    "child_run_snapshot_hash",
+    "result_contract",
+    "required",
+    "propagate_cancel",
+    "state",
+    "result_bundle_asset_id",
+    "provenance_receipt_id"
+  ],
+  "title": "PlotPilot broker-child-record-v1",
+  "type": "object"
+}

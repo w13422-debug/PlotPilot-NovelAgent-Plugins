@@ -1,0 +1,87 @@
+{
+  "ack": {
+    "accepted": true,
+    "core_event_seq": 1,
+    "error_code": null,
+    "intent_id": "intent-ingress-1",
+    "job_id": null,
+    "schema": "plugin-ui-ack/v1"
+  },
+  "intent": {
+    "action_id": "click",
+    "capability_id": null,
+    "event_type": "click",
+    "freshness": {
+      "generation_id": "generation-1",
+      "plan_revision_id": null,
+      "plugin_release_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "workspace_id": "ws-1",
+      "workspace_revision_id": null
+    },
+    "intent_id": "intent-ingress-1",
+    "intent_kind": "set_view_state",
+    "intent_seq": 1,
+    "operation_key": "operation-ui-1",
+    "payload_asset_id": null,
+    "render_seq": 1,
+    "schema": "plugin-ui-intent/v1"
+  },
+  "job_snapshot": {
+    "attempts": [
+      {
+        "attempt_id": "attempt-1",
+        "lease_epoch": 1,
+        "state": "created"
+      }
+    ],
+    "candidate_ids": [],
+    "core_event_high_water": 0,
+    "created_at": "2026-08-27T00:00:00Z",
+    "current_checkpoint_id": null,
+    "job_event_high_water": 0,
+    "job_id": "job-ingress-1",
+    "job_revision": 1,
+    "job_state": "queued",
+    "schema": "job-snapshot/v1",
+    "snapshot_hash": "430b2ef7939752d4bcef7a02a387756aadd92e91ca3b513b20807e0824b31d0c",
+    "steps": [
+      {
+        "revision": 1,
+        "state": "pending",
+        "step_id": "step-1"
+      }
+    ],
+    "stream_high_waters": [],
+    "workspace_id": "ws-1"
+  },
+  "schema": "plugin-ui-ingress-golden/v1",
+  "tree": {
+    "render_seq": 1,
+    "root": {
+      "children": [
+        {
+          "children": [],
+          "component": "button",
+          "event_ids": [
+            "click"
+          ],
+          "key": "run",
+          "props": {
+            "disabled": false,
+            "label": "Run",
+            "tone": "primary"
+          }
+        }
+      ],
+      "component": "stack",
+      "event_ids": [],
+      "key": "root",
+      "props": {
+        "direction": "vertical",
+        "row_gap": 8
+      }
+    },
+    "schema": "plugin-ui-tree/v1",
+    "tree_id": "tree-ingress-1"
+  }
+}

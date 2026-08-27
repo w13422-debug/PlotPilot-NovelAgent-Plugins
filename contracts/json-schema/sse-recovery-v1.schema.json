@@ -1,0 +1,105 @@
+{
+  "$id": "https://plotpilot.local/contracts/sse-recovery-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "aggregate_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "durable_high_water_seq": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "gap": {
+      "type": "boolean"
+    },
+    "replay_floor_seq": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "requested_after_seq": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "schema": {
+      "const": "sse-recovery/v1"
+    },
+    "snapshot_asset_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "snapshot_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "snapshot_required": {
+      "type": "boolean"
+    },
+    "snapshot_revision": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "snapshot_schema": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "stream_kind": {
+      "enum": [
+        "core_event",
+        "job_event"
+      ]
+    }
+  },
+  "required": [
+    "schema",
+    "stream_kind",
+    "aggregate_id",
+    "requested_after_seq",
+    "replay_floor_seq",
+    "durable_high_water_seq",
+    "gap",
+    "snapshot_required",
+    "snapshot_schema",
+    "snapshot_revision",
+    "snapshot_asset_id",
+    "snapshot_hash"
+  ],
+  "title": "PlotPilot sse-recovery-v1",
+  "type": "object"
+}

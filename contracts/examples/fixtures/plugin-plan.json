@@ -1,0 +1,26 @@
+{
+  "bindings": [
+    {
+      "binding_id": "binding-1",
+      "capability_id": "fixture.echo/v1",
+      "enabled": true,
+      "order": 10,
+      "parameters_asset_id": null,
+      "plugin_id": "com.plotpilot.fixture.code",
+      "propagate_cancel": true,
+      "release_requirement": "1.0.0",
+      "required": true
+    }
+  ],
+  "data_bindings": [],
+  "description": "A deterministic plan",
+  "model_profile_revision_id": null,
+  "name": "Fixture Plan",
+  "plan_id": "plan-1",
+  "result_mode": "separate",
+  "revision": 1,
+  "schema": "plugin-plan/v1",
+  "skill_preset_revision_id": null,
+  "synthesizer": null,
+  "ui_defaults": []
+}

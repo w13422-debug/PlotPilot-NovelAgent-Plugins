@@ -1,0 +1,96 @@
+{
+  "$id": "https://plotpilot.local/contracts/stream-prefix-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "attempt_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "byte_length": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "encoding": {
+      "const": "utf-8"
+    },
+    "job_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "lease_epoch": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "output_role": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "prefix_asset_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "prefix_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "prefix_seq": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "schema": {
+      "const": "stream-prefix/v1"
+    },
+    "step_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "stream_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "target": {
+      "additionalProperties": false,
+      "properties": {
+        "entity_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "entity_kind": {
+          "enum": [
+            "document",
+            "node_structure",
+            "relation_set"
+          ]
+        },
+        "workspace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "entity_kind",
+        "entity_id"
+      ],
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema",
+    "stream_id",
+    "job_id",
+    "step_id",
+    "output_role",
+    "target",
+    "attempt_id",
+    "lease_epoch",
+    "prefix_seq",
+    "prefix_asset_id",
+    "prefix_hash",
+    "byte_length",
+    "encoding"
+  ],
+  "title": "PlotPilot stream-prefix-v1",
+  "type": "object"
+}

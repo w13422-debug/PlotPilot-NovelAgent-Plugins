@@ -1,0 +1,67 @@
+{
+  "group_id": "84.13-14",
+  "title": "Compatibility valid/invalid, historical v1 raw bytes and complete Windows path corpus",
+  "assertions": [
+    "Compatibility valid and invalid profiles are distinguished",
+    "Historical v1 reader preserves raw bytes",
+    "Reserved names are rejected",
+    "ADS paths are rejected",
+    "Trailing dot/space is rejected",
+    "NFC/casefold collision pair is rejected"
+  ],
+  "negative": [
+    {
+      "case_id": "compatibility-valid",
+      "kind": "compatibility_valid"
+    },
+    {
+      "case_id": "compatibility-or",
+      "kind": "compatibility_or",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "compatibility-missing-python",
+      "kind": "compatibility_missing",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "history-raw-reader",
+      "kind": "history_raw_reader"
+    },
+    {
+      "case_id": "history-reserialized",
+      "kind": "history_reserialized",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "reserved-device-name",
+      "kind": "reserved_device",
+      "expected_error_code": 1005
+    },
+    {
+      "case_id": "ads-path",
+      "kind": "ads_path",
+      "expected_error_code": 1005
+    },
+    {
+      "case_id": "trailing-dot-space",
+      "kind": "trailing_dot_space",
+      "expected_error_code": 1005
+    },
+    {
+      "case_id": "unicode-casefold-collision",
+      "kind": "unicode_casefold_collision",
+      "expected_error_code": 1005
+    },
+    {
+      "case_id": "unicode-casefold-decomposed-collision",
+      "kind": "unicode_casefold_decomposed",
+      "expected_error_code": 1005
+    }
+  ],
+  "positive": [
+    "compatibility-valid",
+    "history-v1",
+    "windows-casefold-valid"
+  ]
+}

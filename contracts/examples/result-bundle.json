@@ -1,0 +1,54 @@
+{
+  "bundle_id": "bundle-golden",
+  "bundle_type": "candidate_batch",
+  "contract_id": "candidate-batch/v1",
+  "input_snapshot_hash": "5a7e60677a5ced4803c96f7b7db657409051ba8f3f5b18aa8ac28978e2b4a1d2",
+  "items": [
+    {
+      "base": {
+        "content_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+        "revision_id": "rev-a"
+      },
+      "item_id": "candidate-item-1",
+      "item_kind": "document",
+      "mutation": {
+        "mode": "replace",
+        "payload_hash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "payload_schema": "core/document-text/v1"
+      },
+      "parent_candidate_ids": [],
+      "payload_asset_id": "asset-candidate-payload",
+      "schema": "candidate-item/v1",
+      "source_refs": [],
+      "status": "complete",
+      "target": {
+        "entity_id": "doc-a",
+        "entity_kind": "document",
+        "workspace_id": "ws-1"
+      },
+      "write_set": [
+        {
+          "content_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+          "entity_id": "doc-a",
+          "entity_kind": "document",
+          "revision_id": "rev-a",
+          "workspace_id": "ws-1"
+        }
+      ]
+    }
+  ],
+  "partial": false,
+  "producer": {
+    "attempt_id": "attempt-1",
+    "capability_id": "writing.chapter.draft/v1",
+    "job_id": "job-1",
+    "lease_epoch": 1,
+    "plugin_id": "com.plotpilot.demo",
+    "release_id": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "step_id": "step-1"
+  },
+  "provenance_receipt_id": "receipt-1",
+  "schema": "result-bundle/v1",
+  "skill_chain_result_refs": [],
+  "warnings": []
+}

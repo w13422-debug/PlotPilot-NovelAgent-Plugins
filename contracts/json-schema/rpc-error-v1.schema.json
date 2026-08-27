@@ -1,0 +1,81 @@
+{
+  "$id": "https://plotpilot.local/contracts/rpc-error-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "error": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "additionalProperties": false,
+              "properties": {
+                "details_asset_id": {
+                  "anyOf": [
+                    {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "error_id": {
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                  "type": "string"
+                },
+                "retryable": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "error_id",
+                "retryable",
+                "details_asset_id"
+              ],
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "data"
+      ],
+      "type": "object"
+    },
+    "id": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "jsonrpc": {
+      "const": "2.0"
+    }
+  },
+  "required": [
+    "jsonrpc",
+    "id",
+    "error"
+  ],
+  "title": "PlotPilot rpc-error-v1",
+  "type": "object"
+}

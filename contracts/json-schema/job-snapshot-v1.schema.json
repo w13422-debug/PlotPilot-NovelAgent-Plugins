@@ -1,0 +1,213 @@
+{
+  "$id": "https://plotpilot.local/contracts/job-snapshot-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "attempts": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "attempt_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "lease_epoch": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "state": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "attempt_id",
+          "state",
+          "lease_epoch"
+        ],
+        "type": "object"
+      },
+      "minItems": 0,
+      "type": "array"
+    },
+    "candidate_ids": {
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+        "type": "string"
+      },
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "core_event_high_water": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "created_at": {
+      "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$",
+      "type": "string"
+    },
+    "current_checkpoint_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "job_event_high_water": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "job_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "job_revision": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "job_state": {
+      "enum": [
+        "queued",
+        "running",
+        "waiting_user",
+        "paused",
+        "cancelling",
+        "succeeded",
+        "partial",
+        "failed",
+        "cancelled",
+        "needs_attention"
+      ]
+    },
+    "schema": {
+      "const": "job-snapshot/v1"
+    },
+    "snapshot_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "steps": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "revision": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "state": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "step_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "step_id",
+          "state",
+          "revision"
+        ],
+        "type": "object"
+      },
+      "minItems": 0,
+      "type": "array"
+    },
+    "stream_high_waters": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "acked_bytes": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "acked_prefix_hash": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "acked_prefix_seq": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "output_role": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "step_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "stream_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "target": {
+            "additionalProperties": false,
+            "properties": {
+              "entity_id": {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                "type": "string"
+              },
+              "entity_kind": {
+                "enum": [
+                  "document",
+                  "node_structure",
+                  "relation_set"
+                ]
+              },
+              "workspace_id": {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+                "type": "string"
+              }
+            },
+            "required": [
+              "workspace_id",
+              "entity_kind",
+              "entity_id"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "stream_id",
+          "step_id",
+          "output_role",
+          "target",
+          "acked_prefix_seq",
+          "acked_bytes",
+          "acked_prefix_hash"
+        ],
+        "type": "object"
+      },
+      "minItems": 0,
+      "type": "array"
+    },
+    "workspace_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema",
+    "job_id",
+    "workspace_id",
+    "job_state",
+    "job_revision",
+    "steps",
+    "attempts",
+    "candidate_ids",
+    "current_checkpoint_id",
+    "stream_high_waters",
+    "core_event_high_water",
+    "job_event_high_water",
+    "created_at",
+    "snapshot_hash"
+  ],
+  "title": "PlotPilot job-snapshot-v1",
+  "type": "object"
+}

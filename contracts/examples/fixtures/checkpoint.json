@@ -1,0 +1,17 @@
+{
+  "checkpoint_hash": "47931765c6eeeec0ca654982964b76a2d1a367b0ac185c57c05c0cddef680981",
+  "checkpoint_id": "checkpoint-1",
+  "checkpoint_seq": 1,
+  "completed_units": 1,
+  "created_at": "2026-08-26T00:00:00Z",
+  "job_id": "job-1",
+  "lease_epoch": 1,
+  "replay_policy": "checkpoint_resume",
+  "run_snapshot_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "schema": "checkpoint/v1",
+  "source_attempt_id": "attempt-1",
+  "state_asset_id": "asset-checkpoint-1",
+  "step_id": "step-1",
+  "total_units": 2,
+  "unit_set_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+}

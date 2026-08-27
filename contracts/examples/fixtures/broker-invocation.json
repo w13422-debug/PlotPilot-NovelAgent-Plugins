@@ -1,0 +1,16 @@
+{
+  "binding_id": "binding-1",
+  "expected_result_contract": "candidate-batch/v1",
+  "input_asset_id": "asset-input-1",
+  "input_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "invocation_id": "invoke-1",
+  "invoke_operation_key": "op-invoke-1",
+  "parameters_asset_id": null,
+  "parameters_hash": null,
+  "parent_attempt_id": "attempt-1",
+  "parent_job_id": "job-1",
+  "parent_step_id": "step-1",
+  "propagate_cancel": true,
+  "required": true,
+  "schema": "broker-invocation/v1"
+}

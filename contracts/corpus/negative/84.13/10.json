@@ -1,0 +1,41 @@
+{
+  "group_id": "84.13-10",
+  "title": "Raw stream ACK boundary, cancel/crash race, unique incomplete Candidate and terminal hydration",
+  "assertions": [
+    "Raw stream cannot outrun its durable ACK prefix",
+    "Cancel/crash race is fail-closed",
+    "Only one incomplete Candidate exists per target",
+    "Terminal hydration reconstructs the durable terminal view"
+  ],
+  "negative": [
+    {
+      "case_id": "raw-stream-over-ack",
+      "kind": "stream_over_ack",
+      "expected_error_code": 1011
+    },
+    {
+      "case_id": "cancel-crash-race",
+      "kind": "cancel_crash_race",
+      "expected_error_code": 1010
+    },
+    {
+      "case_id": "duplicate-incomplete-candidate",
+      "kind": "candidate_uniqueness",
+      "expected_error_code": 1010
+    },
+    {
+      "case_id": "terminal-hydration",
+      "kind": "terminal_hydration"
+    },
+    {
+      "case_id": "terminal-hydration-missing",
+      "kind": "terminal_hydration_missing",
+      "expected_error_code": 1011
+    }
+  ],
+  "positive": [
+    "stream-prefix",
+    "job-snapshot",
+    "result-bundle"
+  ]
+}
