@@ -1,0 +1,52 @@
+{
+  "schema": "novel-agent-plugin-absorption-design-acceptance/v1",
+  "accepted_at": "2026-08-27T20:18:36+08:00",
+  "scope": "design_only",
+  "verdict": "PASS",
+  "all_findings_closed": true,
+  "design_merge_eligible": true,
+  "initial_review": {
+    "path": "sol-independent-review-v1.json",
+    "sha256": "56e271da1369044c0938ea3d128a335d63f33a8ae070ffad10ece0f0714554fe",
+    "verdict": "BLOCK",
+    "manifest_frozen": true
+  },
+  "targeted_rereview": {
+    "path": "sol-targeted-rereview-v1.json",
+    "sha256": "e6ef9381231428a4cc625d7bf991208db3e5b352fb5bae76a0fc55149b768045",
+    "reviewer_task_id": "01a042a5-250f-7ae0-8d8f-763ec87d8f6e",
+    "reviewer_turn_id": "01a04320-caf1-7f23-9a32-8cc6cea02549",
+    "verdict": "PASS"
+  },
+  "accepted_artifacts": {
+    "Novel-Agent功能插件化吸收正式设计-2026-08-27-v1.md": "8d3cfc66ea6f288049c2a9e1ef783d672d70e05e83eac83f3289404ea59c554c",
+    "capability-disposition-matrix-v1.json": "964c105c3baa07d77566d3aed54ef16bdd403a5e9943a37d9f095e5d67140afb",
+    "plugin-catalog-v1.json": "83f742b908c3bd406fff25038be741b006d5c73aed265bc0a747e76acc54ad7d",
+    "construction-plan-9-projects-v1.json": "e763d44678796c31a71704cf4191c8cd00b52a5cdc850e1665a54b930889e0a3",
+    "design-validation-v1.json": "49d76e0cd2ee2b058dcf6e7c7eae92a61ea58d2b57c7cd9856a7108713a6f251",
+    "source-evidence-matrix-v1.json": "906fb57489607898710450318a7588fe64cc59eaf8636f9da087dacfae4a2366",
+    "core-upgrade-candidates-v1.json": "bea04d23f6768170897e4dbe357850930da5f3e35217e0d987dffdaab5886ccb",
+    "sol-independent-review-v1.json": "56e271da1369044c0938ea3d128a335d63f33a8ae070ffad10ece0f0714554fe",
+    "review-baseline-v1/manifest.json": "2bf28cd1912b1fad69f1afebaae2a3c7980e936353e3ab962ce513c0f1377821",
+    "frozen_target_v1.2": "e70f450b75cfa753148cf620d13855d0073f7d61294e7599ea9cc98f3e612b7b"
+  },
+  "closed_finding_ids": [
+    "NA-DESIGN-F-001",
+    "NA-DESIGN-F-002",
+    "NA-DESIGN-F-003",
+    "NA-DESIGN-F-004",
+    "NA-DESIGN-F-005",
+    "NA-DESIGN-F-006",
+    "NA-DESIGN-F-007",
+    "NA-DESIGN-F-008",
+    "NA-DESIGN-F-009",
+    "NA-DESIGN-F-010",
+    "NA-DESIGN-F-011"
+  ],
+  "authorization_boundaries": {
+    "plotpilot_core_modification_authorized": false,
+    "nap_repository_or_nine_projects_authorized": false,
+    "plugin_implementation_authorized": false,
+    "core_upgrade_candidates_require_individual_user_decision": true
+  }
+}

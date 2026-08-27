@@ -1,0 +1,24 @@
+PlotPilot-Pluginized P0 integration baseline
+
+The existing PlotPilot product source and its original notices remain governed
+by LICENSE.  P0 adds contract, SDK, fixture, verification and integration
+evidence files; it does not copy third-party source code into this repository.
+
+Third-party dependency names, exact lock metadata, license identifiers,
+resolved URLs and integrity values are recorded in:
+
+  docs/deliveries/PPA-00/license-ledger.json
+
+The checked-in contracts/unicode-casefold-v1.json runtime table is generated
+from CPython unicodedata backed by the Unicode Character Database (UCD) 15.0.0
+and is distributed under the Unicode Data Files and Software License:
+
+  https://www.unicode.org/license.txt
+
+Its generator, source, version and artifact record are kept in
+docs/deliveries/PPA-00/license-ledger.json.
+
+The frontend dependency lock used for the M0 baseline is frontend/package-lock.json
+and the workspace lock is pnpm-lock.yaml.  Downstream projects must preserve
+the notices of any new dependency and update the ledger through a Dependency
+Delta before merge.

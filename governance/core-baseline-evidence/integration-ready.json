@@ -1,0 +1,150 @@
+{
+  "schema": "integration-ready/v1",
+  "status": "ready",
+  "submission_id": "PPA-M1-CONTRACT-PUBLICATION-01",
+  "project_id": "P0",
+  "source_branch": "codex/ppa-00-integration",
+  "base_sha": "63ee2b89b719734dd2f9d50bab12cbe0fe10e37e",
+  "head_sha": "c99937d64ad4b34b6b4e071a10eaf3484028f5fa",
+  "reviewed_implementation_head": "c99937d64ad4b34b6b4e071a10eaf3484028f5fa",
+  "reviewed_tree": "5a7052549d780d54d65d18aad4cdc58d51f1b8fd",
+  "contract_manifest_sha256": "cbe9d02fc42409332151cd7905e387a46537b330b039a2d3d6798f48cbfcc024",
+  "changed_paths": [
+    "backend/plotpilot_plugin_sdk/__init__.py",
+    "backend/plotpilot_plugin_sdk/context_identity.py",
+    "backend/plotpilot_plugin_sdk/core_api.py",
+    "contracts/.gitattributes",
+    "contracts/corpus/contract-publication-v1/negative.json",
+    "contracts/corpus/manifest.json",
+    "contracts/golden/contract-publication-v1/context-identity.json",
+    "contracts/golden/contract-publication-v1/core-http.json",
+    "contracts/golden/contract-publication-v1/expected.json",
+    "contracts/golden/contract-publication-v1/export-current-revisions.json",
+    "contracts/golden/contract-publication-v1/export-run-snapshot.json",
+    "contracts/golden/contract-publication-v1/ui-ingress.json",
+    "contracts/golden/package/data/rules.json",
+    "contracts/json-schema/asset-metadata-v1.schema.json",
+    "contracts/json-schema/core-api-method-matrix.v1.json",
+    "contracts/json-schema/core-authority-command-query-v1.schema.json",
+    "contracts/json-schema/export-current-revisions-v1.schema.json",
+    "contracts/json-schema/operation-context-identity-v1.schema.json",
+    "contracts/json-schema/publication-command-result-v1.schema.json",
+    "contracts/manifest-v1.json",
+    "coordination/PPA-00/contract-decision-P3-CD-CONTEXT-IDENTITY-001.json",
+    "coordination/PPA-00/contract-decision-P6-CD-EXPORT-CURRENT-REVISIONS-001.json",
+    "coordination/PPA-00/contract-decision-PPA-01-CD-001.json",
+    "coordination/PPA-00/contract-decision-PPA-04-CD-001.json",
+    "docs/contracts/README.md",
+    "docs/contracts/adr-041-core-api-contract-v1.md",
+    "docs/contracts/adr-042-post-m0-ingress-context-export-v1.md",
+    "docs/contracts/method-matrix.md",
+    "docs/contracts/schema-map.md",
+    "docs/contracts/surface.md",
+    "frontend/src/contracts/core-api.ts",
+    "frontend/src/contracts/ingress.ts",
+    "frontend/src/contracts/schema-ingress.ts",
+    "frontend/src/contracts/types.ts",
+    "frontend/src/contracts/verifier.ts",
+    "tests/contract/test_contract_publication.py",
+    "tests/contract/test_schema_meta.py",
+    "tools/integration/generate_contract_manifest.py",
+    "tools/integration/generate_contract_schemas.py",
+    "tools/integration/generate_corpus.py",
+    "tools/integration/generate_goldens.py",
+    "tools/integration/verify_contracts.mjs",
+    "tools/integration/verify_contracts.py"
+  ],
+  "write_set_proof": {
+    "matrix_path": "C:\\Users\\Administrator\\Desktop\\交接文档\\PlotPilot-Pluginized七项目任务书-2026-08-26\\project-matrix.json",
+    "project_id": "P0",
+    "project_write_set_match": true,
+    "out_of_set_paths": []
+  },
+  "contract_delta_ids": [
+    "PPA-01-CD-001",
+    "PPA-04-CD-001",
+    "P3-CD-CONTEXT-IDENTITY-001",
+    "P6-CD-EXPORT-CURRENT-REVISIONS-001"
+  ],
+  "dependency_delta_ids": [],
+  "validation": [
+    {
+      "command": "fresh checkout contract/golden gate (7 commands)",
+      "exit_code": 0,
+      "status": "passed",
+      "evidence": {
+        "path": "docs/deliveries/PPA-00/contract-publication-01/evidence/raw/fresh-verification-summary.json",
+        "sha256": "bd0b451ccba5cd00fa601bf021da7707df8a0b715d07b0386bd3c39dc2c539ce"
+      }
+    },
+    {
+      "command": "strict targeted TypeScript typecheck",
+      "exit_code": 0,
+      "status": "passed",
+      "evidence": {
+        "path": "docs/deliveries/PPA-00/contract-publication-01/evidence/raw/typescript-typecheck-summary.json",
+        "sha256": "2bf0fca2e35e460f05ec5d2026b94f69f2f38027f26b536e113d43b5c073d7d0"
+      }
+    },
+    {
+      "command": "same-reviewer Sol focused re-review",
+      "exit_code": 0,
+      "status": "passed",
+      "evidence": {
+        "path": "docs/deliveries/PPA-00/contract-publication-01/evidence/sol-focused-review-r2.json",
+        "sha256": "6b2ad769ec14c0e69ac7884f2d8942bfd79c570376faaaa487bb8121c8ebf2e5"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "contracts/manifest-v1.json",
+      "sha256": "cbe9d02fc42409332151cd7905e387a46537b330b039a2d3d6798f48cbfcc024"
+    },
+    {
+      "path": "docs/deliveries/PPA-00/contract-publication-01/evidence/finding-closure.json",
+      "sha256": "82d9f7732e8120ef53c62841bf875fdc5f2c83f6cdac4a3fcc0cacbbb61ef296"
+    },
+    {
+      "path": "docs/deliveries/PPA-00/contract-publication-01/evidence/contract-artifact-inventory.json",
+      "sha256": "ecaffac9479d3a8a50a5ea1428de5fa9d4e4250154a1c747cd8720485d16d03c"
+    }
+  ],
+  "review": {
+    "reviewer": "gpt-5.6-sol/max",
+    "finding_ids": [
+      "P0-CP-F-001",
+      "P0-CP-F-002",
+      "P0-CP-F-003",
+      "P0-CP-F-004",
+      "P0-CP-F-005"
+    ],
+    "closure_artifact": {
+      "path": "docs/deliveries/PPA-00/contract-publication-01/evidence/finding-closure.json",
+      "sha256": "82d9f7732e8120ef53c62841bf875fdc5f2c83f6cdac4a3fcc0cacbbb61ef296",
+      "exit_code": 0
+    }
+  },
+  "ready": true,
+  "resume_scope": {
+    "P1": [
+      "Core HTTP adapter",
+      "Core-native public Publication adapter",
+      "Asset metadata/range adapter"
+    ],
+    "P4": [
+      "P0-owned Plugin UI unknown ingress validators"
+    ],
+    "P3": [
+      "canonical operation context identity consumption"
+    ],
+    "P6": [
+      "export-current-revisions/v1 contract consumption only"
+    ]
+  },
+  "still_stopped": [
+    "P2 until its separate central Sol PASS",
+    "P6 Export runtime until real P1 Asset/current-pointer snapshot builder and P2/P3 framed runtime are integrated",
+    "all P2-P6 no-ff merges until separate exact-head gate"
+  ]
+}

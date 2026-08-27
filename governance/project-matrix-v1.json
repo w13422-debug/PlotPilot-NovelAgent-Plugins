@@ -1,0 +1,451 @@
+{
+  "schema": "nap-project-matrix/v1",
+  "source_plan_sha256": "e763d44678796c31a71704cf4191c8cd00b52a5cdc850e1665a54b930889e0a3",
+  "sole_integrator": "NAP-00",
+  "max_source_writers": 6,
+  "max_reviewers": 2,
+  "projects": [
+    {
+      "id": "NAP-00",
+      "name": "Integration-Contracts",
+      "branch": "codex/nap-00-integration",
+      "worktree": "PlotPilot-NovelAgent-Plugins",
+      "role": "sole_integrator",
+      "plugins": [
+        "com.plotpilot.novelagent.provider-anthropic",
+        "com.plotpilot.novelagent.provider-gemini"
+      ],
+      "write_set": [
+        "contracts/**",
+        "sdk/**",
+        "catalog/**",
+        "plugins/provider-anthropic/**",
+        "plugins/provider-gemini/**",
+        "tools/integration/**",
+        "tests/contracts/**",
+        "tests/providers/**",
+        "tests/e2e/**",
+        "docs/deliveries/**",
+        "coordination/NAP-00/**",
+        "coordination/integration/**"
+      ],
+      "dependencies": [
+        "CORE-CAND-001 Sol PASS"
+      ],
+      "acceptance": [
+        "public SDK compiles",
+        "package/Skill/Data golden parity",
+        "demo Code/Data/Skill packages",
+        "Anthropic/Gemini descriptor-result-needs and stream/receipt parity",
+        "all no-ff merge gates"
+      ],
+      "forbidden": [
+        "no PlotPilot Core source changes",
+        "no Novel-Agent donor mutation",
+        "no cross-project write set",
+        "no direct plugin-to-plugin import",
+        "no desktop/EXE/installer build",
+        "no review authority for Luna"
+      ],
+      "provider_decisions": [
+        {
+          "plugin_id": "com.plotpilot.novelagent.provider-openai-compatible",
+          "decision": "not_planned_duplicate",
+          "duplicate_of": "com.plotpilot.provider.openai-compatible",
+          "source_owner": null
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.provider-anthropic",
+          "decision": "planned",
+          "source_owner": "NAP-00",
+          "write_path": "plugins/provider-anthropic/**"
+        },
+        {
+          "plugin_id": "com.plotpilot.novelagent.provider-gemini",
+          "decision": "planned",
+          "source_owner": "NAP-00",
+          "write_path": "plugins/provider-gemini/**"
+        }
+      ]
+    },
+    {
+      "id": "NAP-01",
+      "name": "Source-Import-Cleaning",
+      "branch": "codex/nap-01-source",
+      "worktree": "PlotPilot-NovelAgent-Plugins-worktrees/NAP-01",
+      "role": "writer",
+      "plugins": [
+        "com.plotpilot.novelagent.source-import",
+        "com.plotpilot.novelagent.source-cleaning-runtime",
+        "com.plotpilot.novelagent.source-structure"
+      ],
+      "write_set": [
+        "plugins/source-import/**",
+        "plugins/source-cleaning-runtime/**",
+        "plugins/source-structure/**",
+        "data/source-cleaning/**",
+        "tests/source/**",
+        "coordination/NAP-01/**"
+      ],
+      "dependencies": [
+        "NAP-00 B0",
+        "CORE-CAND-002",
+        "CORE-CAND-003",
+        "CORE-CAND-005",
+        "CORE-CAND-006"
+      ],
+      "acceptance": [
+        "TXT/EPUB/paste",
+        "multi-rule preview/apply/merge",
+        "raw/canonical receipts",
+        "four-class rebind",
+        "99-percent recovery"
+      ],
+      "forbidden": [
+        "no PlotPilot Core source changes",
+        "no Novel-Agent donor mutation",
+        "no cross-project write set",
+        "no direct plugin-to-plugin import",
+        "no desktop/EXE/installer build",
+        "no review authority for Luna"
+      ]
+    },
+    {
+      "id": "NAP-02",
+      "name": "Donor-Evidence",
+      "branch": "codex/nap-02-evidence",
+      "worktree": "PlotPilot-NovelAgent-Plugins-worktrees/NAP-02",
+      "role": "writer",
+      "plugins": [
+        "com.plotpilot.novelagent.donor-analysis"
+      ],
+      "write_set": [
+        "plugins/donor-analysis/**",
+        "skills/donor-analysis/**",
+        "data/book-analysis-taxonomy/**",
+        "tests/donor-analysis/**",
+        "coordination/NAP-02/**"
+      ],
+      "dependencies": [
+        "NAP-00 B0",
+        "NAP-01 Source Publication",
+        "CORE-CAND-004",
+        "CORE-CAND-005",
+        "CORE-CAND-006"
+      ],
+      "acceptance": [
+        "Layer A exact evidence",
+        "manual Atom",
+        "idempotent accept/successor",
+        "Layer B only accepted current Atom",
+        "F5/F6 review and re-review",
+        "analysis import/export seam"
+      ],
+      "forbidden": [
+        "no PlotPilot Core source changes",
+        "no Novel-Agent donor mutation",
+        "no cross-project write set",
+        "no direct plugin-to-plugin import",
+        "no desktop/EXE/installer build",
+        "no review authority for Luna"
+      ]
+    },
+    {
+      "id": "NAP-03",
+      "name": "Narrative-Outline",
+      "branch": "codex/nap-03-narrative",
+      "worktree": "PlotPilot-NovelAgent-Plugins-worktrees/NAP-03",
+      "role": "writer",
+      "plugins": [
+        "com.plotpilot.novelagent.narrative-analysis",
+        "com.plotpilot.novelagent.outline-projection"
+      ],
+      "write_set": [
+        "plugins/narrative-analysis/**",
+        "plugins/outline-projection/**",
+        "skills/outline/**",
+        "data/plot-structure/**",
+        "tests/narrative/**",
+        "coordination/NAP-03/**"
+      ],
+      "dependencies": [
+        "NAP-00 B0",
+        "NAP-02 accepted Atom/Claim schemas"
+      ],
+      "acceptance": [
+        "narrative unit/plan/synthesis",
+        "book/volume/chapter outline Skills",
+        "tree/card/timeline/relation projections",
+        "source receipts preserved"
+      ],
+      "forbidden": [
+        "no PlotPilot Core source changes",
+        "no Novel-Agent donor mutation",
+        "no cross-project write set",
+        "no direct plugin-to-plugin import",
+        "no desktop/EXE/installer build",
+        "no review authority for Luna"
+      ]
+    },
+    {
+      "id": "NAP-04",
+      "name": "Character-Assets",
+      "branch": "codex/nap-04-character",
+      "worktree": "PlotPilot-NovelAgent-Plugins-worktrees/NAP-04",
+      "role": "writer",
+      "plugins": [
+        "com.plotpilot.novelagent.character-distillation",
+        "com.plotpilot.novelagent.asset-derivation"
+      ],
+      "write_set": [
+        "plugins/character-distillation/**",
+        "plugins/asset-derivation/**",
+        "skills/character/**",
+        "data/character/**",
+        "data/world/**",
+        "tests/character/**",
+        "coordination/NAP-04/**"
+      ],
+      "dependencies": [
+        "NAP-00 B0",
+        "NAP-02 accepted Atom/Claim schemas",
+        "CORE-CAND-006"
+      ],
+      "acceptance": [
+        "character Atom/Card",
+        "relations and arc",
+        "conflict diagnostics/ruling",
+        "reusable asset/Data package",
+        "runtime participation proof fixture"
+      ],
+      "forbidden": [
+        "no PlotPilot Core source changes",
+        "no Novel-Agent donor mutation",
+        "no cross-project write set",
+        "no direct plugin-to-plugin import",
+        "no desktop/EXE/installer build",
+        "no review authority for Luna"
+      ]
+    },
+    {
+      "id": "NAP-05",
+      "name": "Style-Suite",
+      "branch": "codex/nap-05-style",
+      "worktree": "PlotPilot-NovelAgent-Plugins-worktrees/NAP-05",
+      "role": "writer",
+      "plugins": [
+        "com.plotpilot.novelagent.style-manufacturing",
+        "com.plotpilot.novelagent.style-runtime"
+      ],
+      "write_set": [
+        "plugins/style-manufacturing/**",
+        "plugins/style-runtime/**",
+        "skills/style/**",
+        "data/style/**",
+        "data/lexicon/**",
+        "tests/style/**",
+        "coordination/NAP-05/**"
+      ],
+      "dependencies": [
+        "NAP-00 B0",
+        "NAP-02 source evidence schemas",
+        "CORE-CAND-006"
+      ],
+      "acceptance": [
+        "map/synthesis",
+        "independent qualification",
+        "style-pack package",
+        "apply/review/refine",
+        "Style/Data/Skill identities remain separate"
+      ],
+      "forbidden": [
+        "no PlotPilot Core source changes",
+        "no Novel-Agent donor mutation",
+        "no cross-project write set",
+        "no direct plugin-to-plugin import",
+        "no desktop/EXE/installer build",
+        "no review authority for Luna"
+      ]
+    },
+    {
+      "id": "NAP-06",
+      "name": "Quality-Canon",
+      "branch": "codex/nap-06-quality",
+      "worktree": "PlotPilot-NovelAgent-Plugins-worktrees/NAP-06",
+      "role": "writer",
+      "plugins": [
+        "com.plotpilot.novelagent.consistency-audit",
+        "com.plotpilot.novelagent.impact-repair",
+        "com.plotpilot.novelagent.branch-canon",
+        "com.plotpilot.novelagent.story-state"
+      ],
+      "write_set": [
+        "plugins/consistency-audit/**",
+        "plugins/impact-repair/**",
+        "plugins/branch-canon/**",
+        "plugins/story-state/**",
+        "skills/quality/**",
+        "data/quality/**",
+        "tests/quality/**",
+        "coordination/NAP-06/**"
+      ],
+      "dependencies": [
+        "NAP-00 B0",
+        "CORE-CAND-006",
+        "NAP-04 schema integration for character checks",
+        "NAP-05 schema integration for style checks"
+      ],
+      "acceptance": [
+        "diagnostic-only audit",
+        "bounded impacts",
+        "user-selected repair Candidates",
+        "partial repair semantics",
+        "canon preflight",
+        "settlement and foreshadow checks"
+      ],
+      "forbidden": [
+        "no PlotPilot Core source changes",
+        "no Novel-Agent donor mutation",
+        "no cross-project write set",
+        "no direct plugin-to-plugin import",
+        "no desktop/EXE/installer build",
+        "no review authority for Luna"
+      ]
+    },
+    {
+      "id": "NAP-07",
+      "name": "Writing-Skills",
+      "branch": "codex/nap-07-writing",
+      "worktree": "PlotPilot-NovelAgent-Plugins-worktrees/NAP-07",
+      "role": "writer",
+      "plugins": [
+        "com.plotpilot.novelagent.writing-context",
+        "com.plotpilot.novelagent.chapter-workflow",
+        "com.plotpilot.novelagent.skill-recommender"
+      ],
+      "write_set": [
+        "plugins/writing-context/**",
+        "plugins/chapter-workflow/**",
+        "plugins/skill-recommender/**",
+        "skills/writing/**",
+        "tests/writing/**",
+        "coordination/NAP-07/**"
+      ],
+      "dependencies": [
+        "NAP-00 B0",
+        "CORE-CAND-007",
+        "NAP-03 schemas",
+        "NAP-04 schemas",
+        "NAP-05 schemas"
+      ],
+      "acceptance": [
+        "A plot+B character+C style",
+        "Recipe and Plan round-trip",
+        "context/memory rebuildable index",
+        "draft/continue/refine/rewrite Candidates",
+        "stream/checkpoint",
+        "Skill recommendation is user-confirmed",
+        "four-level attribution"
+      ],
+      "forbidden": [
+        "no PlotPilot Core source changes",
+        "no Novel-Agent donor mutation",
+        "no cross-project write set",
+        "no direct plugin-to-plugin import",
+        "no desktop/EXE/installer build",
+        "no review authority for Luna"
+      ]
+    },
+    {
+      "id": "NAP-08",
+      "name": "Exchange-Projection",
+      "branch": "codex/nap-08-exchange",
+      "worktree": "PlotPilot-NovelAgent-Plugins-worktrees/NAP-08",
+      "role": "writer",
+      "plugins": [
+        "com.plotpilot.novelagent.analysis-io",
+        "com.plotpilot.novelagent.knowledge-projection"
+      ],
+      "write_set": [
+        "plugins/analysis-io/**",
+        "plugins/knowledge-projection/**",
+        "profiles/**",
+        "tests/exchange/**",
+        "coordination/NAP-08/**"
+      ],
+      "dependencies": [
+        "NAP-00 B0",
+        "NAP-02 through NAP-07 stable public artifact schemas"
+      ],
+      "acceptance": [
+        "analysis export/import",
+        "Markdown/ZIP fallback",
+        "optional root-bound projection only after approval",
+        "composition profile portability",
+        "no second authority"
+      ],
+      "forbidden": [
+        "no PlotPilot Core source changes",
+        "no Novel-Agent donor mutation",
+        "no cross-project write set",
+        "no direct plugin-to-plugin import",
+        "no desktop/EXE/installer build",
+        "no review authority for Luna"
+      ]
+    }
+  ],
+  "batches": [
+    {
+      "id": "B0",
+      "scope": "SDK, schemas, golden and demo packages",
+      "owners": [
+        "NAP-00"
+      ]
+    },
+    {
+      "id": "B1",
+      "scope": "Import -> cleaning -> Source Publication",
+      "owners": [
+        "NAP-01"
+      ]
+    },
+    {
+      "id": "B2",
+      "scope": "Atom -> accept -> Claim -> re-review",
+      "owners": [
+        "NAP-02"
+      ]
+    },
+    {
+      "id": "B3",
+      "scope": "Narrative, Character and Style in parallel",
+      "owners": [
+        "NAP-03",
+        "NAP-04",
+        "NAP-05"
+      ]
+    },
+    {
+      "id": "B4",
+      "scope": "Quality, Canon and Writing",
+      "owners": [
+        "NAP-06",
+        "NAP-07"
+      ]
+    },
+    {
+      "id": "B5",
+      "scope": "Exchange, projection and profiles",
+      "owners": [
+        "NAP-08"
+      ]
+    },
+    {
+      "id": "B6",
+      "scope": "browser E2E, recovery, performance and delivery",
+      "owners": [
+        "NAP-00"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,202 @@
+{
+  "schema": "novel-agent-plugin-absorption-sol-review/v1",
+  "reviewer": {
+    "task_id": "01a042a5-250f-7ae0-8d8f-763ec87d8f6e",
+    "name": "Aristotle",
+    "model": "gpt-5.6-sol",
+    "reasoning_effort": "max",
+    "turn_id": "01a0430d-2eec-79b2-a39a-2c77ea7dc9d8",
+    "mode": "independent_read_only"
+  },
+  "manifest_frozen": true,
+  "frozen_finding_ids": [
+    "NA-DESIGN-F-001",
+    "NA-DESIGN-F-002",
+    "NA-DESIGN-F-003",
+    "NA-DESIGN-F-004",
+    "NA-DESIGN-F-005",
+    "NA-DESIGN-F-006",
+    "NA-DESIGN-F-007",
+    "NA-DESIGN-F-008",
+    "NA-DESIGN-F-009",
+    "NA-DESIGN-F-010",
+    "NA-DESIGN-F-011"
+  ],
+  "result": {
+    "reviewer": "fresh-read-only-independent-sol-max",
+    "artifact_sha256": {
+      "Novel-Agent功能插件化吸收正式设计-2026-08-27-v1.md": "45f01cdd610c5b93164254fba20cdf36fee9275dd8704d258ebb0cea67a160e7",
+      "source-evidence-matrix-v1.json": "906fb57489607898710450318a7588fe64cc59eaf8636f9da087dacfae4a2366",
+      "capability-disposition-matrix-v1.json": "53ba54ad3a398649b547ca756d0391f38d4af5044e6efd5de666b458c5eb58ca",
+      "plugin-catalog-v1.json": "15b79b4287435e0cc519d6e4eb243fc1e2b2bf20c8ded99d647226c7f8b6d50f",
+      "core-upgrade-candidates-v1.json": "bea04d23f6768170897e4dbe357850930da5f3e35217e0d987dffdaab5886ccb",
+      "construction-plan-9-projects-v1.json": "ae9bab64fd8dc845cceac4b725df66b3c0e360c854413d22538deb5a2dc999b6",
+      "design-validation-v1.json": "97e76fafce7a67bb0930389bc44bf8d6cf74f1d20a951fb2ef887b7d6d4f98d7",
+      "PlotPilot-Pluginized正式设计规划-2026-08-25-v1.md": "e70f450b75cfa753148cf620d13855d0073f7d61294e7599ea9cc98f3e612b7b"
+    },
+    "verdict": "BLOCK",
+    "acceptance_A_J": {
+      "A": {
+        "verdict": "PASS",
+        "detail": "38个evidence ID全部被39条disposition使用，矩阵范围内能力和基础设施均有吸收、淘汰、延期或Core-only裁决。"
+      },
+      "B": {
+        "verdict": "PASS",
+        "detail": "Workspace/Document/Revision/Asset/Candidate/Publication/Job/Event均由Core唯一掌权，未引入第二事实源。"
+      },
+      "C": {
+        "verdict": "PASS",
+        "detail": "19 planned Code Plugin、3 conditional provider、8 Data format、19 Skill数量成立，Style Data/Skill/runtime分离正确。"
+      },
+      "D": {
+        "verdict": "BLOCK",
+        "detail": "Result、Data interpreter、UI contribution、Host needs、rebind及conditional provider合同未闭合。"
+      },
+      "E": {
+        "verdict": "BLOCK",
+        "detail": "EvidenceSpan、Claim ordered Atom Snapshot及四档rebind跨Revision语义未闭合。"
+      },
+      "F": {
+        "verdict": "PASS",
+        "detail": "10个Core candidate保持最小机制边界，业务算法未错误推入Core，全部core_modification_authorized=false。"
+      },
+      "G": {
+        "verdict": "BLOCK",
+        "detail": "NAP-00写集与八项目重叠；conditional provider需要施工时没有合法源码写集。"
+      },
+      "H": {
+        "verdict": "BLOCK",
+        "detail": "JSON语法、基础引用和数量通过，但主文与机器目录在Plan、lifecycle、result、Data、UI和provider语义上不一致。"
+      },
+      "I": {
+        "verdict": "PASS",
+        "detail": "continue、人物绑定执行、fork无merge、无成熟Canvas均诚实披露。"
+      },
+      "J": {
+        "verdict": "PASS",
+        "detail": "明确只设计；Core修改、建仓和九项目施工仍需另行授权。"
+      }
+    },
+    "finding_manifest": [
+      {
+        "id": "NA-DESIGN-F-001",
+        "severity": "P1",
+        "status": "OPEN",
+        "artifact": "Novel-Agent功能插件化吸收正式设计-2026-08-27-v1.md; plugin-catalog-v1.json",
+        "location": "主设计27-28; plan_rules 1555-1566",
+        "contract_evidence": "目标v1.2 §17.1-17.3、§21.3、§84.7要求stable binding ID、exact release、required、propagate_cancel、参数Asset、Data bundle/interpreter、Skill Preset、model profile、完整synthesizer binding和UI defaults。",
+        "impact": "缩减Plan不能round-trip，也不能确定Broker requiredness、取消传播或synthesize绑定。",
+        "minimum_revision": "完整继承plugin-plan/v1，并在主文和机器规则加入全部必需字段及synthesize与非空synthesizer的条件。"
+      },
+      {
+        "id": "NA-DESIGN-F-002",
+        "severity": "P1",
+        "status": "OPEN",
+        "artifact": "Novel-Agent功能插件化吸收正式设计-2026-08-27-v1.md",
+        "location": "117-119,259,713-718",
+        "contract_evidence": "目标v1.2 §15、§16.2、§84.7冻结完整Generation、LKG和原子retiring/pin barrier。",
+        "impact": "Generation被缩减为release组合，删除屏障不完整，LKG Generation rollback与Plan rollback混写，可能遗漏data/settings/UI bundle及活动pin。",
+        "minimum_revision": "使用v1.2完整Generation；删除统一服从原子pin barrier；明确LKG恢复exact Generation而Plan回退是独立用户动作。"
+      },
+      {
+        "id": "NA-DESIGN-F-003",
+        "severity": "P1",
+        "status": "OPEN",
+        "artifact": "Novel-Agent功能插件化吸收正式设计-2026-08-27-v1.md; plugin-catalog-v1.json",
+        "location": "主设计196,350; writing-context capabilities 834-876",
+        "contract_evidence": "目标v1.2 §8.7、§21.1、§22、§84.5规定failed/skipped item不创建Candidate，failed Attempt只能null或diagnostic Bundle。",
+        "impact": "主文称writing-context输出artifact/candidate而机器能力全为artifact；“失败Candidate”又暗示失败项可创建Candidate。",
+        "minimum_revision": "将writing-context更正为artifact-only；规定failed/skipped item不创建Candidate，事务失败的staged rows必须废弃且不可见。"
+      },
+      {
+        "id": "NA-DESIGN-F-004",
+        "severity": "P1",
+        "status": "OPEN",
+        "artifact": "plugin-catalog-v1.json",
+        "location": "accepted_data_formats; data_formats.interpreters 1238-1306",
+        "contract_evidence": "目标v1.2 §11.2、§17.3、§84.2要求Data binding解析到exact interpreter capability。",
+        "impact": "interpreters只记录plugin ID且漏掉12个已声明acceptor映射，不能确定同插件中的exact capability。",
+        "minimum_revision": "改为exact {plugin_id,capability_id}集合并与全部accepted_data_formats双向相等；不实际解释格式的capability删除对应accepted format。"
+      },
+      {
+        "id": "NA-DESIGN-F-005",
+        "severity": "P1",
+        "status": "OPEN",
+        "artifact": "plugin-catalog-v1.json; Novel-Agent功能插件化吸收正式设计-2026-08-27-v1.md",
+        "location": "catalog capability/ui_slots代表例13-43; 主设计530-544",
+        "contract_evidence": "目标v1.2 §13.2、§34.1、§84.2、§84.10要求contribution_id、slot、capability_id三元绑定。",
+        "impact": "51个capability均无exact UI contribution，无法生成合法manifest或确定Slot intent调用目标。",
+        "minimum_revision": "为每个有UI的capability增加唯一contribution三元组，headless能力明确为空并验证归属。"
+      },
+      {
+        "id": "NA-DESIGN-F-006",
+        "severity": "P2",
+        "status": "OPEN",
+        "artifact": "plugin-catalog-v1.json",
+        "location": "consistency-audit 617-653; skill-recommender 1039-1082",
+        "contract_evidence": "主设计§5.2要求只申请实际Host方法；目标v1.2 §22规定artifact/diagnostic不得建立Candidate staging。",
+        "impact": "两个插件没有candidate result capability却声明host.candidate.stage/v1。",
+        "minimum_revision": "从这两个插件删除该need，并验证只有存在candidate-batch capability的插件才能声明candidate.stage。"
+      },
+      {
+        "id": "NA-DESIGN-F-007",
+        "severity": "P1",
+        "status": "OPEN",
+        "artifact": "Novel-Agent功能插件化吸收正式设计-2026-08-27-v1.md",
+        "location": "evidence-span/v1 358-377",
+        "contract_evidence": "目标v1.2 §84.1要求closed、跨语言确定的字段与hash语义。",
+        "impact": "未说明offset坐标原点，也未冻结quote/hash编码公式及canonical hash对应关系。",
+        "minimum_revision": "冻结Document-global Unicode scalar offset、start inclusive/end exclusive、quote_hash=SHA256(UTF8(quote))、canonical_text_hash等于对应Revision内容hash，并验证node包含span。"
+      },
+      {
+        "id": "NA-DESIGN-F-008",
+        "severity": "P1",
+        "status": "OPEN",
+        "artifact": "Novel-Agent功能插件化吸收正式设计-2026-08-27-v1.md",
+        "location": "Claim合同404-413",
+        "contract_evidence": "目标v1.2 §84.4的closed RunSnapshot没有ordered Atom字段，业务参数只能通过parameters_asset_id及hash绑定。",
+        "impact": "要求Snapshot冻结Atom顺序却未定义Atom ID、payload hash、ordinal和EvidenceSpan的合法存放位置。",
+        "minimum_revision": "定义immutable claim-input/v1 parameters Asset，按序保存上述信息并进入RunSnapshot parameters_asset_id、asset_hashes和request key。"
+      },
+      {
+        "id": "NA-DESIGN-F-009",
+        "severity": "P1",
+        "status": "OPEN",
+        "artifact": "Novel-Agent功能插件化吸收正式设计-2026-08-27-v1.md; plugin-catalog-v1.json; source-evidence-matrix-v1.json",
+        "location": "主设计432-443; rebind capability 152-162; NA-EV-005 215-250",
+        "contract_evidence": "目标v1.2 §84.5冻结result profile唯一映射；供体blob 38b516f4f4153d19824734ec511d1de4efe7564a明确unchanged仅用于不跨generation的no-op。",
+        "impact": "重新导入创建新Revision却允许unchanged沿用旧证据；单一candidate-batch也不能正确承载needs_rerun/orphaned非mutation报告。",
+        "minimum_revision": "拆为rebind.inspect artifact/diagnostic报告和rebind.propose candidate-batch；unchanged仅限same-Revision/no-op，跨新Revision只能rebound、needs_rerun或orphaned，并更新能力数量。"
+      },
+      {
+        "id": "NA-DESIGN-F-010",
+        "severity": "P1",
+        "status": "OPEN",
+        "artifact": "construction-plan-9-projects-v1.json",
+        "location": "NAP-00 line54; NAP-01至08 lines91,130,172,210,250,293,335,377",
+        "contract_evidence": "主设计§13.2、各项目forbidden和验收G均要求写集互斥。",
+        "impact": "coordination/**包含八个项目各自coordination/NAP-xx/**，形成八组明确重叠。",
+        "minimum_revision": "将NAP-00缩窄为coordination/NAP-00/**或coordination/integration/**并增加prefix-based互斥校验。"
+      },
+      {
+        "id": "NA-DESIGN-F-011",
+        "severity": "P1",
+        "status": "OPEN",
+        "artifact": "Novel-Agent功能插件化吸收正式设计-2026-08-27-v1.md; plugin-catalog-v1.json; construction-plan-9-projects-v1.json; design-validation-v1.json",
+        "location": "主设计202-207; catalog1202-1232; construction43-55; validation63-70",
+        "contract_evidence": "目标v1.2 §21.1只允许三个result profile；Provider stream是模型行为而非第四种result contract；每个可能施工插件必须有唯一合法写集。",
+        "impact": "主文使用artifact/stream，三个provider capabilities/needs为空，NAP-00无provider源码路径；需要实现时施工图无法执行。",
+        "minimum_revision": "逐provider冻结二分裁决：重复则not_planned_duplicate；需要施工则冻结目标descriptor/result/needs并把exact plugins/<provider>/**交给NAP-00或另一现有独占owner，同时验证conditional分支。"
+      }
+    ],
+    "non_blocking_observations": [
+      "六个JSON均合法且无重复键。",
+      "基础数量成立：38 evidence、39 disposition、22 Code Plugin（19+3）、51 capability、8 Data format、19 Skill、10 Core candidate、9 Project。",
+      "Evidence、Core candidate、UI Slot基础引用均可解析；19个planned plugin都有唯一项目owner。",
+      "design-validation的PASS仅代表其现有浅层检查通过，draft_status=awaiting_sol_independent_review是诚实状态。",
+      "Core唯一权威、Style不等于Skill、Sol-only review/acceptance/merge eligibility、NAP-00唯一集成写者等原则本身正确。",
+      "未修改文件，未启动服务或浏览器，未触碰P0/P3B/P4B/P6B。"
+    ],
+    "design_merge_eligible": false
+  }
+}

@@ -1,0 +1,226 @@
+{
+  "schema": "novel-agent-absorption-design-validation/v1",
+  "validated_at": "2026-08-27T20:09:02+08:00",
+  "status": "PASS",
+  "draft_status": "bounded_revision_pending_same_sol_rereview",
+  "remediation": {
+    "reviewer_task_id": "01a042a5-250f-7ae0-8d8f-763ec87d8f6e",
+    "review_turn_id": "01a0430d-2eec-79b2-a39a-2c77ea7dc9d8",
+    "frozen_review_sha256": "56e271da1369044c0938ea3d128a335d63f33a8ae070ffad10ece0f0714554fe",
+    "finding_ids": [
+      "NA-DESIGN-F-001",
+      "NA-DESIGN-F-002",
+      "NA-DESIGN-F-003",
+      "NA-DESIGN-F-004",
+      "NA-DESIGN-F-005",
+      "NA-DESIGN-F-006",
+      "NA-DESIGN-F-007",
+      "NA-DESIGN-F-008",
+      "NA-DESIGN-F-009",
+      "NA-DESIGN-F-010",
+      "NA-DESIGN-F-011"
+    ],
+    "scope": "single_bounded_revision",
+    "new_findings_forbidden": true
+  },
+  "checks": [
+    {
+      "check": "JSON valid and duplicate-key free",
+      "status": "PASS",
+      "detail": "{'source-evidence-matrix-v1.json': [], 'capability-disposition-matrix-v1.json': [], 'plugin-catalog-v1.json': [], 'core-upgrade-candidates-v1.json': [], 'construction-plan-9-projects-v1.json': []}"
+    },
+    {
+      "check": "unique evidence ids",
+      "status": "PASS",
+      "detail": "38"
+    },
+    {
+      "check": "evidence references resolve",
+      "status": "PASS",
+      "detail": "[]"
+    },
+    {
+      "check": "unique core candidate ids",
+      "status": "PASS",
+      "detail": "10"
+    },
+    {
+      "check": "disposition core candidates resolve",
+      "status": "PASS",
+      "detail": "[]"
+    },
+    {
+      "check": "unique plugin ids",
+      "status": "PASS",
+      "detail": "22"
+    },
+    {
+      "check": "provider binary status counts",
+      "status": "PASS",
+      "detail": "{'planned': 21, 'not_planned_duplicate': 1}"
+    },
+    {
+      "check": "unique capability ids",
+      "status": "PASS",
+      "detail": "54"
+    },
+    {
+      "check": "result contracts valid",
+      "status": "PASS",
+      "detail": "['artifact-bundle/v1', 'candidate-batch/v1', 'diagnostic-bundle/v1']"
+    },
+    {
+      "check": "operations valid",
+      "status": "PASS",
+      "detail": "all non-empty and allowed"
+    },
+    {
+      "check": "data formats resolve",
+      "status": "PASS",
+      "detail": "[]"
+    },
+    {
+      "check": "Data exact interpreter bidirectional equality",
+      "status": "PASS",
+      "detail": "[]"
+    },
+    {
+      "check": "Host needs valid",
+      "status": "PASS",
+      "detail": "[]"
+    },
+    {
+      "check": "candidate.stage only for Candidate producers",
+      "status": "PASS",
+      "detail": "[]"
+    },
+    {
+      "check": "UI contribution triple and projection exact",
+      "status": "PASS",
+      "detail": "[]"
+    },
+    {
+      "check": "plugin-plan/v1 complete closed contract",
+      "status": "PASS",
+      "detail": "{'top': 12, 'binding': 9, 'data': 8}"
+    },
+    {
+      "check": "Generation and LKG semantics complete",
+      "status": "PASS",
+      "detail": "restore_exact_lkg_generation"
+    },
+    {
+      "check": "failed/skipped Candidate semantics closed",
+      "status": "PASS",
+      "detail": "{'allowed': ['artifact-bundle/v1', 'candidate-batch/v1', 'diagnostic-bundle/v1'], 'failed_or_skipped_create_candidate': False, 'failed_attempt_bundle': ['null', 'diagnostic-bundle/v1'], 'failed_transaction_staged_rows': 'discarded_and_invisible', 'candidate_stage_need_requires_candidate_batch_capability': True, 'stream_is_host_behavior_not_result_contract': True}"
+    },
+    {
+      "check": "EvidenceSpan cross-language formula closed",
+      "status": "PASS",
+      "detail": "['Document-global Unicode scalar value', 'quote_hash = SHA256(UTF8(quote))', 'canonical_text_hash', 'Node containment']"
+    },
+    {
+      "check": "Claim ordered Atom enters closed RunSnapshot by Asset",
+      "status": "PASS",
+      "detail": "['immutable `claim-input/v1` parameters Asset', '`parameters_asset_id`', '`asset_hashes`', 'request key', 'acceptance_ordinal']"
+    },
+    {
+      "check": "rebind inspect/propose split and same-Revision unchanged",
+      "status": "PASS",
+      "detail": "{'inspect_capability': 'source.evidence.rebind.inspect/v1', 'inspect_result': 'diagnostic-bundle/v1', 'propose_capability': 'source.evidence.rebind.propose/v1', 'propose_result': 'candidate-batch/v1', 'unchanged_scope': 'same_revision_no_op_only', 'cross_revision_classes': ['rebound', 'needs_rerun', 'orphaned']}"
+    },
+    {
+      "check": "writing-context artifact-only and failure profile closed",
+      "status": "PASS",
+      "detail": "artifact-only"
+    },
+    {
+      "check": "planned plugins assigned once",
+      "status": "PASS",
+      "detail": "{'missing': [], 'extra': [], 'multi': {}}"
+    },
+    {
+      "check": "nine project write sets prefix-disjoint",
+      "status": "PASS",
+      "detail": "[]"
+    },
+    {
+      "check": "provider binary decision, result, needs and source owner frozen",
+      "status": "PASS",
+      "detail": "{'com.plotpilot.novelagent.provider-openai-compatible': 'not_planned_duplicate:com.plotpilot.provider.openai-compatible', 'com.plotpilot.novelagent.provider-anthropic': 'planned:NAP-00:plugins/provider-anthropic/**', 'com.plotpilot.novelagent.provider-gemini': 'planned:NAP-00:plugins/provider-gemini/**'}"
+    },
+    {
+      "check": "Sol-only review",
+      "status": "PASS",
+      "detail": "gpt-5.6-sol/max"
+    },
+    {
+      "check": "Core changes unauthorized",
+      "status": "PASS",
+      "detail": "all false"
+    },
+    {
+      "check": "source evidence counts",
+      "status": "PASS",
+      "detail": "entries=38"
+    },
+    {
+      "check": "formal design substantial",
+      "status": "PASS",
+      "detail": "lines=770"
+    },
+    {
+      "check": "rebind and provider dispositions updated",
+      "status": "PASS",
+      "detail": "{'NA-CAP-005': 'com.plotpilot.novelagent.source-structure: source.evidence.rebind.inspect/v1 + source.evidence.rebind.propose/v1', 'NA-CAP-033': 'openai-compatible=not_planned_duplicate(com.plotpilot.provider.openai-compatible); anthropic=planned NAP-00; gemini=planned NAP-00'}"
+    }
+  ],
+  "check_count": 30,
+  "artifacts": [
+    {
+      "path": "Novel-Agent功能插件化吸收正式设计-2026-08-27-v1.md",
+      "bytes": 43407,
+      "sha256": "8d3cfc66ea6f288049c2a9e1ef783d672d70e05e83eac83f3289404ea59c554c"
+    },
+    {
+      "path": "source-evidence-matrix-v1.json",
+      "bytes": 56761,
+      "sha256": "906fb57489607898710450318a7588fe64cc59eaf8636f9da087dacfae4a2366"
+    },
+    {
+      "path": "capability-disposition-matrix-v1.json",
+      "bytes": 21820,
+      "sha256": "964c105c3baa07d77566d3aed54ef16bdd403a5e9943a37d9f095e5d67140afb"
+    },
+    {
+      "path": "plugin-catalog-v1.json",
+      "bytes": 84022,
+      "sha256": "83f742b908c3bd406fff25038be741b006d5c73aed265bc0a747e76acc54ad7d"
+    },
+    {
+      "path": "core-upgrade-candidates-v1.json",
+      "bytes": 10223,
+      "sha256": "bea04d23f6768170897e4dbe357850930da5f3e35217e0d987dffdaab5886ccb"
+    },
+    {
+      "path": "construction-plan-9-projects-v1.json",
+      "bytes": 15758,
+      "sha256": "e763d44678796c31a71704cf4191c8cd00b52a5cdc850e1665a54b930889e0a3"
+    },
+    {
+      "path": "source-freeze-v1.json",
+      "bytes": 1608,
+      "sha256": "2e98bae2aca35080c4486a4507ae4d75f656c704011fd7c2608b13a4060ef927"
+    },
+    {
+      "path": "sol-independent-review-v1.json",
+      "bytes": 12685,
+      "sha256": "56e271da1369044c0938ea3d128a335d63f33a8ae070ffad10ece0f0714554fe"
+    },
+    {
+      "path": "review-baseline-v1/manifest.json",
+      "bytes": 1402,
+      "sha256": "2bf28cd1912b1fad69f1afebaae2a3c7980e936353e3ab962ce513c0f1377821"
+    }
+  ]
+}

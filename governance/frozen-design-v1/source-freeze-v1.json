@@ -1,0 +1,46 @@
+{
+  "schema": "novel-agent-source-freeze/v1",
+  "created_at": "2026-08-27T18:06:00+08:00",
+  "root": "C:\\Users\\Administrator\\Desktop\\Novel-Agent- (2)\\novel-agent",
+  "branch": "codex/permanent-webui-f5-f6-integration",
+  "head": "a2666dd722331c576445f57d4687922b19fd737c",
+  "tracked_file_count": 986,
+  "tracked_manifest": "tracked-head-manifest.tsv",
+  "tracked_manifest_bytes": 102892,
+  "tracked_manifest_sha256": "38d3d888c11c41f6814cca4a8b6e36959ddc43d5e322ab594045517a95137301",
+  "product_source_file_count": 760,
+  "product_source_blob_manifest_sha256": "e3a3d61e33ad8867ef801e990908ee40ea98fb92cc3a83d2c6c2594f98ae1998",
+  "product_source_prefixes": [
+    "backend/",
+    "frontend/",
+    "scripts/",
+    "desktop/",
+    "engines/",
+    "models/",
+    "data/"
+  ],
+  "worktree_status": [
+    " D HANDOFF.md",
+    " M cases/plotpilot-pluginized-seven-project-construction-20260826/active-work.json",
+    " M cases/plotpilot-pluginized-seven-project-construction-20260826/state.json",
+    "?? .tmp/",
+    "?? .vite/",
+    "?? frontend/pnpm-lock.yaml",
+    "?? frontend/pnpm-workspace.yaml",
+    "?? frontend/test-results/"
+  ],
+  "protected_dirty": true,
+  "interpretation": {
+    "head_tree": "frozen donor source identity",
+    "worktree_status": "recorded but not mutated; untracked build/test/runtime files are not donor capabilities without source evidence",
+    "excluded_from_capability_truth": [
+      "cases/**",
+      "evidence/**",
+      "build/**",
+      "dist/**",
+      ".tmp/**",
+      ".vite/**",
+      "node_modules/**"
+    ]
+  }
+}

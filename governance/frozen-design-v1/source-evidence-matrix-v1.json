@@ -1,0 +1,1578 @@
+{
+  "schema": "novel-agent-source-evidence-matrix/v1",
+  "created_at": "2026-08-27T18:30:00+08:00",
+  "donor": {
+    "root": "C:\\Users\\Administrator\\Desktop\\Novel-Agent- (2)\\novel-agent",
+    "head": "a2666dd722331c576445f57d4687922b19fd737c",
+    "tracked_manifest_sha256": "38d3d888c11c41f6814cca4a8b6e36959ddc43d5e322ab594045517a95137301",
+    "product_source_blob_manifest_sha256": "e3a3d61e33ad8867ef801e990908ee40ea98fb92cc3a83d2c6c2594f98ae1998"
+  },
+  "evidence_rule": "Every listed path is a tracked blob at the frozen donor HEAD. Presence plus tests proves implementation surface, not target compatibility or final acceptance.",
+  "entries": [
+    {
+      "id": "NA-EV-001",
+      "capability": "TXT/EPUB/paste import and canonical source parsing",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/corpus/importer/pipeline.py",
+          "git_blob": "73da74cdef7b3f641bcbc5e8cca8d228d1ce2b8a"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/corpus/importer/adapters/txt.py",
+          "git_blob": "71014b694097c1f91cca65bb327acb813a30490b"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/corpus/importer/adapters/epub.py",
+          "git_blob": "5992759b5ef25cd51d796dd3b10f65487894ba57"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/corpus/importer/encoding.py",
+          "git_blob": "b2a0a0416ce4bb08330329cbf797294f241c681a"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/corpus/importer/structure.py",
+          "git_blob": "1336983783ecd6e304b85dad51d5f0158fe31a8c"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/corpus/test_import_pipeline.py",
+          "git_blob": "c9ceb82d06c164c011b3570b6f0a2a4a5e3aa0ae"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/corpus/test_epub_import.py",
+          "git_blob": "413b91e121b82fdbb25d6b52a2d4982823dc51f2"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/integration/test_source_import_session.py",
+          "git_blob": "a608e1a6d5e9b9e12ea225f7362008bbba5aa08a"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/SourceImportDialog.vue",
+          "git_blob": "4bf9a9185de10f2007514e53d91af5fbe6f653f1"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/tests/SourceImportDialog.spec.ts",
+          "git_blob": "506101c5473e6fdf89853ba5fd22ddf3b6bddfb0"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "NA-EV-002",
+      "capability": "Data-only source cleaner packages, merge and deletion lifecycle",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/source_cleaning_contracts.py",
+          "git_blob": "69eda2fdfcc6d5f0625de3a446920ec094f3eeef"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/source_cleaner_packages.py",
+          "git_blob": "c1ef9c5de1d0bdd9f7d9b8c9a47940c2f428e524"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/server/capability_api.py",
+          "git_blob": "19bd8ce0c21349011468ee35782843218f886512"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/core/test_source_cleaning_import_repo_is3.py",
+          "git_blob": "251d8aea66eb39b1346b2b7f943a8dc40c70ddef"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/server/test_capability_api.py",
+          "git_blob": "d6bd50a2f3945248a95cc779d0438060bbddb4ca"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/views/CapabilityCenterView.vue",
+          "git_blob": "484d2ad296cec5760557c597e789534acfbcd71e"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/tests/capability-center.spec.ts",
+          "git_blob": "97a54d64829c25f7b0f06fbfc541e98871497000"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "NA-EV-003",
+      "capability": "Cleaning runtime, preview, decisions, thresholds and confirmation",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/source_cleaning_engine.py",
+          "git_blob": "68563922f4c68ae3aa921d26ac1d75cc9d24c806"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/source_cleaning_repo.py",
+          "git_blob": "01acc6df526245dac992ac3e0d2460e3de1eb3e1"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/source_cleaning_run_repo.py",
+          "git_blob": "7efd5ec6ee0bc5972c0f83588a26b60fcd35c605"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/corpus/importer/source_cleaning_runtime.py",
+          "git_blob": "de3da1cffb7d2416a5ded66fe708ab585749f85b"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/core/test_source_cleaning_import_repo_is3.py",
+          "git_blob": "251d8aea66eb39b1346b2b7f943a8dc40c70ddef"
+        },
+        {
+          "role": "test",
+          "path": "frontend/src/tests/ImportCleaningPreviewPane.spec.ts",
+          "git_blob": "8f96000cef9955e74fa5c9baeef2857309a03d6b"
+        },
+        {
+          "role": "test",
+          "path": "frontend/src/tests/ImportCleaningWorkspace.spec.ts",
+          "git_blob": "f3a11d143699b8835038ceaa7399e555e695a532"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/capabilities/ImportCleaningWorkspace.vue",
+          "git_blob": "bced1a9cf1f39cbe48869be2e035d6354d2ebfa3"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/source/ImportCleaningPreviewPane.vue",
+          "git_blob": "6153b9ed035e8abeeb6546d74ef606fcc4c1529d"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "NA-EV-004",
+      "capability": "Source structure revision, publication and failure remediation",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/source_structure_revision_repo.py",
+          "git_blob": "38b516f4f4153d19824734ec511d1de4efe7564a"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/pipeline/source_structure_rerun_worker.py",
+          "git_blob": "35a47b87a821c9af45b77b71461f9ba05ab00211"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/integration/test_source_structure_revision_v2.py",
+          "git_blob": "5f847c00ded26cee8920102e39cce08eb528d377"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/integration/test_source_structure_failure_closure.py",
+          "git_blob": "91765e4194c9507c6ecd358b350d095f3ec93374"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/integration/test_source_structure_remediation.py",
+          "git_blob": "718d10dc46b31d7d68974a6df196c7b18314f9a4"
+        },
+        {
+          "role": "test",
+          "path": "frontend/tests/e2e/source-structure-revision.browser.spec.ts",
+          "git_blob": "62e60346ea3ee8dc50e4f8716f61c7095d79b535"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/views/SourceStructureRevisionView.vue",
+          "git_blob": "46c20bb27067d28c69262ee76b37b0f70f91d995"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/source/SourceStructureRevisionEditor.vue",
+          "git_blob": "59f45942a4729112d1cbe46c99ff3464e415e8f1"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "NA-EV-005",
+      "capability": "Four-class evidence rebind on source revision",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/source_asset_adapters.py",
+          "git_blob": "f6aafc292db3b6e8dd60e8d9009c98c352549c0e"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/source_structure_revision_repo.py",
+          "git_blob": "38b516f4f4153d19824734ec511d1de4efe7564a"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/integration/test_source_structure_revision_v2.py",
+          "git_blob": "5f847c00ded26cee8920102e39cce08eb528d377"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/integration/test_source_structure_remediation.py",
+          "git_blob": "718d10dc46b31d7d68974a6df196c7b18314f9a4"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/source/SourceStructurePreflightPane.vue",
+          "git_blob": "2ebb66ff9f42ebae80d8ccf467ef5220746cb3dc"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/source/SourceGenerationCleanupCenter.vue",
+          "git_blob": "c3d95065fd7973f066b6617a8a7ed31cf8260ef8"
+        }
+      ],
+      "notes": "Frozen classifications are unchanged, rebound, needs_rerun and orphaned."
+    },
+    {
+      "id": "NA-EV-006",
+      "capability": "Source search, span retrieval and evidence backlink",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/source_workbench_repo.py",
+          "git_blob": "277846e61dc4d721dc22783583d000cd4cdec5cb"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/book_analysis_repo.py",
+          "git_blob": "f7de3d0d079f8ee0529054af867d61c00358547e"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/server/test_book_analysis_review_workbench.py",
+          "git_blob": "41cad01cfe695933f503e651cefa0c22cfe41c6d"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/server/test_book_analysis_api.py",
+          "git_blob": "bdce45353ed0d1395245c4c5f0f81c2579efbb4d"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/analysis/BookEvidencePicker.vue",
+          "git_blob": "1726849aef32377900e32717c45f8ed54b197a96"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/EvidencePopover.vue",
+          "git_blob": "8ff16f9aeda876441ee01b395e2914aebf45e2bf"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/SourceAnchorPicker.vue",
+          "git_blob": "ff54900ce9c1552795d964dc65f8283bb8022f6c"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "NA-EV-007",
+      "capability": "Book Atom extraction, typed revision, acceptance ordinal and review",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/corpus/book_analysis.py",
+          "git_blob": "92a7e8b5f3f779f306d538e85364aab2403aa112"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/book_analysis_repo.py",
+          "git_blob": "f7de3d0d079f8ee0529054af867d61c00358547e"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/book_analysis_skill_contract.py",
+          "git_blob": "fab8aae8085f75c02bef3a58b7ade9dbf67b233f"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/corpus/test_book_analysis.py",
+          "git_blob": "33d9c1bffaedba50f8f154dd8a667fed98432faa"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/core/test_book_analysis_repo.py",
+          "git_blob": "15ae1a037acdf38a2bf4f24a2b5ad83e58e1428d"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/core/test_book_analysis_f6_contract.py",
+          "git_blob": "11aa26e4825021e276529e15be8b03c5e35d8673"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/pipeline/test_book_analysis_reliability.py",
+          "git_blob": "060787eabcf50e23682be3f4b354f9d2f8b456be"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/analysis/BookAnalysisPanel.vue",
+          "git_blob": "c9cdc2962b164429579d17ff1589b3b26785ba11"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/tests/book-analysis-f5-workbench.spec.ts",
+          "git_blob": "ffc74fbc7fb3ae477f2a6c95182ad34f2025df4b"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "NA-EV-008",
+      "capability": "Manual Atom creation and external analysis import/export",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/manual_analysis_repo.py",
+          "git_blob": "aa87b34ccf57e2b5979972bea5430a31df41394f"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/server/app.py",
+          "git_blob": "93a77e84e2ee57e36a642f67d71acc550d4e7e97"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/core/test_manual_analysis_repo.py",
+          "git_blob": "cb7d37147750c52af1c0071fda6195c5a69af346"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/server/test_manual_analysis_api.py",
+          "git_blob": "2adb86e4b27aca562f98c5030f0e43f1f27ce891"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/analysis/ManualAnalysisPanel.vue",
+          "git_blob": "e98fa88fce5842112f8aa71aa54d722e1b463c3d"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/source/ManualAtomDialog.vue",
+          "git_blob": "1a26c74ab441351a2b867147ea5958400f813847"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "NA-EV-009",
+      "capability": "Claim synthesis constrained to current accepted Atoms",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/book_analysis_repo.py",
+          "git_blob": "f7de3d0d079f8ee0529054af867d61c00358547e"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/corpus/book_analysis.py",
+          "git_blob": "92a7e8b5f3f779f306d538e85364aab2403aa112"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/core/test_book_analysis_repo.py",
+          "git_blob": "15ae1a037acdf38a2bf4f24a2b5ad83e58e1428d"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/server/test_book_analysis_f6_contract_api.py",
+          "git_blob": "40c21dd6cc788b15ee8fd22113735d2cb1978681"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/analysis/BookAnalysisPanel.vue",
+          "git_blob": "c9cdc2962b164429579d17ff1589b3b26785ba11"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/analysis/BookEvidencePicker.vue",
+          "git_blob": "1726849aef32377900e32717c45f8ed54b197a96"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "NA-EV-010",
+      "capability": "Book-analysis re-review and review workbench",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/book_analysis_repo.py",
+          "git_blob": "f7de3d0d079f8ee0529054af867d61c00358547e"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/server/analysis_presenter.py",
+          "git_blob": "bfd2b2d1c5950e2a6339ada9f2be1c3a8a238e50"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/server/test_book_analysis_review_workbench.py",
+          "git_blob": "41cad01cfe695933f503e651cefa0c22cfe41c6d"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/server/test_book_analysis_f6_contract_api.py",
+          "git_blob": "40c21dd6cc788b15ee8fd22113735d2cb1978681"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/tests/book-analysis-review-seam.spec.ts",
+          "git_blob": "34b68aff7eaf2ea46619ce50bcc739015cec943c"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/tests/BookAnalysisPanel.projection.spec.ts",
+          "git_blob": "ae3de292bc454a8ef2a6f74c9d9361123a902172"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "NA-EV-011",
+      "capability": "Narrative units",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/narrative_unit_repo.py",
+          "git_blob": "311ee3aa6c6e1b54da85310ea3735deefe75495a"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/corpus/extract/prompts/source_narrative_units.txt",
+          "git_blob": "351dd6ab8534983d88fcb9089f31cd4d2ff950e0"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/core/test_narrative_unit_repo.py",
+          "git_blob": "4e119a9412d4f985c25291ad2b67a02568d58e3f"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/server/test_narrative_unit_api.py",
+          "git_blob": "d23330e7e9b9d4c2d81e86cb0af4cc89f2fed0be"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/analysis/NarrativeUnitPanel.vue",
+          "git_blob": "6542f8f022a9a44eb5ab1fa88e652e1e3ccdb2f7"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/tests/NarrativeUnitPanel.spec.ts",
+          "git_blob": "36170c27306b2378be408b2b4203f8748798a389"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "NA-EV-012",
+      "capability": "Narrative plans",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/narrative_plan_repo.py",
+          "git_blob": "c1bdbdd3de8a39a6e147e4328b5e01cdf0adce4c"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/core/test_narrative_plan_repo.py",
+          "git_blob": "c1acf0d29b175a573fbe6205576214d6af8ce9a6"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/analysis/NarrativePlanPanel.vue",
+          "git_blob": "d32572851c09b9066769a80db01192b6b9d3efac"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/tests/NarrativePlanPanel.spec.ts",
+          "git_blob": "888a7b3e34e412b14c30e7824be56e9d88f10f9c"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "NA-EV-013",
+      "capability": "Narrative synthesis",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/narrative_synthesis_repo.py",
+          "git_blob": "9d21d6eec4d63dcae7307de8afeeef1d1975038a"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/corpus/extract/prompts/source_narrative_synthesis.txt",
+          "git_blob": "beb9bc635b950ac8e89438a8a288f083c2344a99"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/core/test_narrative_synthesis_repo.py",
+          "git_blob": "a815a66eefda8ebad33c20350d3505328c604807"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/analysis/NarrativeSynthesisPanel.vue",
+          "git_blob": "e2d101db1f4cb227ba55cefd86c51049f53e79a6"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/tests/NarrativeSynthesisPanel.spec.ts",
+          "git_blob": "ec672a0b6bfbadb679ddb70266b086951eee56bd"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "NA-EV-014",
+      "capability": "Character Atom/Card distillation and import bridge",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/corpus/character_distillation.py",
+          "git_blob": "f447862db2bb2ad3bc566ef4a3b419a958fc4ba2"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/character_distillation_repo.py",
+          "git_blob": "554d7d6f532bc54c467abcff59428f719b7614f6"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/character_asset_repo.py",
+          "git_blob": "9f024cc5e8524f9fb21763c3c1a9a25c3fa93eeb"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/core/test_character_distillation_repo.py",
+          "git_blob": "32434f1e7719ada0715a6ca97ed6b4fee6c25c9f"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/server/test_character_distillation_jobs_api.py",
+          "git_blob": "ead7a30a010880b14f4c9a9d14a52d4ac3ed3678"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/server/test_character_distillation_import_api.py",
+          "git_blob": "fee3e68207d8a094084c65fd3c1e6a385da0b0f0"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/analysis/CharacterDistillationPanel.vue",
+          "git_blob": "b33bc8768a4e34ae1f1346ac361174e4bcc2a274"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/analysis/CharacterAssetsPanel.vue",
+          "git_blob": "841195b9a4b11d464ddb877ca6a4cad9b3421444"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "NA-EV-015",
+      "capability": "Character conflict adjudication",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/character_distillation_repo.py",
+          "git_blob": "554d7d6f532bc54c467abcff59428f719b7614f6"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/migrations/0022_character_conflict_adjudication.sql",
+          "git_blob": "940abc5aefec68581985eaf071001a82305bfb35"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/server/test_character_distillation_api.py",
+          "git_blob": "b73e4dc24e60657746efc2d8d061a0f2d1fa63b7"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/analysis/CharacterDistillationPanel.vue",
+          "git_blob": "b33bc8768a4e34ae1f1346ac361174e4bcc2a274"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "NA-EV-016",
+      "capability": "Reusable global templates and archive-derived assets",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/archive_template_repo.py",
+          "git_blob": "7bb379e81ad4e6604bb2d7a299ae1735ffe16fd1"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/migrations/0030_global_templates.sql",
+          "git_blob": "223cd5a650cb4a4e6d407e1cd6afd22d1e72ae1a"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/core/test_archive_template_repo.py",
+          "git_blob": "97f9ed3510c33bc987544aa80c04d173fc4999a0"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/server/test_archive_template_api.py",
+          "git_blob": "5866e68322ffb42781688ae47a530b5e0122d86e"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/analysis/GlobalTemplateFamiliesPanel.vue",
+          "git_blob": "6620cbc01bc19fc77e7f8515c2b5847f1e975c20"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/analysis/TemplateDerivationWizard.vue",
+          "git_blob": "434349ce0b47a96084f8f957691e7cac999ae094"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "NA-EV-017",
+      "capability": "Author style manufacture and synthesis",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/corpus/author_style_manufacturing.py",
+          "git_blob": "dd8c63a0fa7408356bc4cc129b8ac92626da124b"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/author_style_manufacturing_repo.py",
+          "git_blob": "b6386f0019702e0def9ca895b1983af11cbd7e4b"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/author_style.py",
+          "git_blob": "c0fbb62215281d3e9804d7a81a34c15208199f46"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/pipeline/test_author_style_manufacturing_job.py",
+          "git_blob": "0c0797bdfd5690127dcfe2580155aa3a5420be23"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/core/test_author_style_manufacturing_repo.py",
+          "git_blob": "ee5624a36cf8d91b18e2379e8b99bc0c207c559c"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/server/test_author_style_manufacturing_api.py",
+          "git_blob": "8884c49881cdacee726d8e6e99d5cc9667b0a32a"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/analysis/AuthorStyleManufacturingPanel.vue",
+          "git_blob": "ac3969caeb0cd6699b34bb002396099772e6e58f"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/tests/AuthorStyleManufacturingPanel.spec.ts",
+          "git_blob": "58789c42fac29561ec5ce6c1fad4a5429c381d23"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "NA-EV-018",
+      "capability": "Independent style qualification and contradiction adjudication",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/migrations/0035_author_style_distillation_qualification.sql",
+          "git_blob": "413a47fda4ce2088dc7dc71cdae9d90531457694"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/corpus/author_style_prompts/contradiction_rubric.v1.txt",
+          "git_blob": "7bd5cb89cef2253c20b0ba01cd1dde1524fee495"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/core/test_author_style_qualification_repo.py",
+          "git_blob": "87b28bce956b2c7a56d97a7167b571cb303d275b"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/server/test_author_style_qualification_start_api.py",
+          "git_blob": "b485d015f5f6d7b72b984184a53c741c2dcf746c"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/server/test_author_style_qualification_decision_api.py",
+          "git_blob": "8b8d5862e49bd956d13f693ec76dcd4bc2762a4e"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/analysis/AuthorStylePayloadEditor.vue",
+          "git_blob": "6a47d63f2f397917314e87197fcef3cebe21658d"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/tests/AuthorStylePayloadEditor.spec.ts",
+          "git_blob": "83dd541392393aa4f413ae5aafbc73ab2133db44"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "NA-EV-019",
+      "capability": "Style capsule runtime, review and refinement",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/pipeline/style_runtime_worker.py",
+          "git_blob": "83e0a35a9a54f7490619cb23c60a802824b07996"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/pipeline/style_runtime_input.py",
+          "git_blob": "f380552d28bc51f38197a5c81256e44c6612897d"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/author_style_runtime_repo.py",
+          "git_blob": "6024af62963c1c896689fce9ed52cf0d6025acd8"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/style_review.py",
+          "git_blob": "f72f8a9c7160afdfbb550f4b088b8cca0479b69c"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/pipeline/test_style_runtime_worker.py",
+          "git_blob": "4e1c652177735b4c15986f34d7a25848125d7751"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/pipeline/test_style_runtime_input.py",
+          "git_blob": "344e051345e933963bdffe92d74b07718119eebe"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/server/test_style_runtime_lifecycle_api.py",
+          "git_blob": "1d96500e6963b17597e03f4a2a40ce4d93e1d391"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/creation/StyleRuntimeReviewPanel.vue",
+          "git_blob": "099d5f00fd5737d6dbaf59c71277e6a5c2e9dd95"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/tests/StyleRuntimeReviewPanel.spec.ts",
+          "git_blob": "8e324e21da8af57d62025feeebc016cfa12ec919"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "NA-EV-020",
+      "capability": "Independent consistency audit",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/pipeline/stages/consistency_audit.py",
+          "git_blob": "328a604525f3d2216d2785f5eed5b3f53353b44e"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/pipeline/prompts/system_consistency_audit.txt",
+          "git_blob": "6892d9a9714c1d33177369f4183901bf2b028aaa"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/server/test_na017_consistency_audit_api.py",
+          "git_blob": "ddf3d821ac3e33127b8a5e21d2b3d9e421776cbf"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/pipeline/test_settle_consistency.py",
+          "git_blob": "9dfafae16ab3cc22c6736896453285ca48bb4266"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/ChapterConsistencyAuditPanel.vue",
+          "git_blob": "f850cc0a67f254f1ac1a829a7ca887e653f0bb77"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/tests/ChapterConsistencyAuditPanel.spec.ts",
+          "git_blob": "5127d675f7e942da2c3512770b8ab44312730ea0"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "NA-EV-021",
+      "capability": "Bounded impact analysis",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/impact_repo.py",
+          "git_blob": "1bf5bf7c805f4b4fc815b27461d899c19dd6c378"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/core/test_bounded_impact_analysis.py",
+          "git_blob": "cc955cc3c2161a1edbc12cd8cfb18fa99bb3bbaf"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/server/test_bounded_impact_api.py",
+          "git_blob": "5ad4e869a58ff694586247cbfb5b2d4928c868f4"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/ChapterImpactPanel.vue",
+          "git_blob": "8890ef81fd7cc2deb74f13377e2c4a5c3d0d4c1f"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/ImpactEvidencePopover.vue",
+          "git_blob": "407161b8bc8495e51f7085288680cecfa7800413"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "NA-EV-022",
+      "capability": "Controlled impact repair",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/impact_repair_repo.py",
+          "git_blob": "e3dff524dfcb8b08d5d728d29209a8b721542257"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/pipeline/stages/impact_repair.py",
+          "git_blob": "f6022423ea32ca6388ca5dcba3697757b844781e"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/server/test_controlled_impact_repair_api.py",
+          "git_blob": "fe92ddb4a5526f02fb99ccc434b0a7e6a7d4183c"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/ImpactRepairPanel.vue",
+          "git_blob": "4c58f788e719b094bcc95e02ecd31113520f0613"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/tests/impact-repair-workflow.spec.ts",
+          "git_blob": "d3b79a6e695d3613db4d48f36b6f12fd0a28e940"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "NA-EV-023",
+      "capability": "Branch fork and branch canon control",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/branch_repo.py",
+          "git_blob": "d9eebc3c0c27ce0077c128aaa80958afe02d5087"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/branch_canon_control_repo.py",
+          "git_blob": "78b1985600f2a21d78fed671412b3c6c446afd64"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/core/test_story_branch_fork.py",
+          "git_blob": "b9cb0fdfe7eed4a667ff20e921f5bbf6d6b6db99"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/core/test_branch_canon_control_repo.py",
+          "git_blob": "2f31d1d8605b30f687151d12e81660b9e5f94228"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/server/test_branch_canon_control_api.py",
+          "git_blob": "9a8149c6733853606b1a06b3b1f72f03c521dc15"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/creation/BranchCanonControlPanel.vue",
+          "git_blob": "cd19848fe31b5fb8bced52dfd17b050b9369b40e"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/tests/BranchCanonControlPanel.spec.ts",
+          "git_blob": "7a6b05db6290372878c1ecb3a5dafc00a0c32ae8"
+        }
+      ],
+      "notes": "Fork is evidenced; no merge implementation is claimed."
+    },
+    {
+      "id": "NA-EV-024",
+      "capability": "Chapter settlement lifecycle",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/settlement_repo.py",
+          "git_blob": "e8bfd5284ac503766771a21ea4da404aa4ec9bef"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/pipeline/stages/settle.py",
+          "git_blob": "5dbae566e0bd34542771441c4e2267fb2a6291e2"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/core/test_settlement_lifecycle.py",
+          "git_blob": "5b9148acfcc100780b042f45b6b3ffcbdd218ad5"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/server/test_settlement_lifecycle_api.py",
+          "git_blob": "204a4dd9c7c4230f64d8d4c30d7c7a827af834dc"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/ChapterSettlementStatus.vue",
+          "git_blob": "a82acf04b2c76faccbc81f067e812997b85514ba"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/tests/ChapterSettlementStatus.spec.ts",
+          "git_blob": "5b3333e19abf4efe436969224900919b32f7e9f3"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "NA-EV-025",
+      "capability": "Foreshadow checks and story-state view",
+      "maturity": "implemented_partial",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/pipeline/checks/foreshadow.py",
+          "git_blob": "ebec4739264162f0e1dabe3f01b89f140c34b52b"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/story_repo.py",
+          "git_blob": "57defa802f28848bd11766fb92ae57126ade9d2e"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/pipeline/test_foreshadow_checks.py",
+          "git_blob": "1ce0e257720f5d402efd29ae7af67136bff96d6f"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/views/ForeshadowView.vue",
+          "git_blob": "18a1342d81840fc7f6c7bdf61a172ef9d18b1e94"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/tests/ForeshadowView.branch.spec.ts",
+          "git_blob": "5ad1ac91ad3f3af7d3288bd8d8b861592de1c62e"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "NA-EV-026",
+      "capability": "Creation workbench, source binding and chapter recipe",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/creation_workbench_repo.py",
+          "git_blob": "eff08d8f8d1244bd71494a976ddbc61d8d21da21"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/creation_recipe_validation.py",
+          "git_blob": "2193d267ce797c57b6b01aaff3c7146569276bcc"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/core/test_creation_workbench_repo.py",
+          "git_blob": "107d58a36575f9a81be9718b4d85dea497fa3ede"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/core/test_creation_recipe_matrix.py",
+          "git_blob": "48b11223b52c2b54e49726281cf54faa543bfaad"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/core/test_creation_source_binding_matrix.py",
+          "git_blob": "ba41ff888b74828ab958ec05d9cf4f527c271b03"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/server/test_creation_workbench_api.py",
+          "git_blob": "4b992506ed9b18ebe238ecf502e9fe22a60f1185"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/views/CreationWorkbenchView.vue",
+          "git_blob": "93803ad1d01288161aac965efba6099bc7836f8a"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/creation/ChapterRecipePanel.vue",
+          "git_blob": "450d7482efe8bff7d0179760052b0614f8c64ac0"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/creation/CreationSourceBindingPanel.vue",
+          "git_blob": "2730c1d584a7fc466424deb32464d8531b3587db"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "NA-EV-027",
+      "capability": "Outline, chapter outline, draft, refine and rewrite stages",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/pipeline/stages/outline.py",
+          "git_blob": "30b28e2a7d9c21b10225556dfc99cc3b3d6f2b46"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/pipeline/stages/chapter_outline.py",
+          "git_blob": "ff1343da2a7858a8bfc48e2445aa3afeaeec03ff"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/pipeline/stages/draft.py",
+          "git_blob": "34590d655294a366fa63112cd8e18da1a555cda0"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/pipeline/stages/refine.py",
+          "git_blob": "2045b1a3bc05a9e50a2803dc93cd8129a115fa23"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/pipeline/stages/rewrite.py",
+          "git_blob": "71bd911c2e265cafd881ca3044636d44fd2530d0"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/server/test_selection_rewrite_api.py",
+          "git_blob": "cd8e3c0dc1513726eca8de3205b9d1899cb87928"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/core/test_selection_rewrite.py",
+          "git_blob": "637313a8fca45c74a920088ffcd302fee2e2c5bd"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/ChapterEditor.vue",
+          "git_blob": "8510cc5dddbcad41124f52a37878d98c93e321bd"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/SelectionRewritePanel.vue",
+          "git_blob": "8a86eadac39fd7b7bdcf9d76955e0bfcba765b83"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "NA-EV-028",
+      "capability": "Explicit continue-generation flow",
+      "maturity": "not_proven",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/pipeline/stages/draft.py",
+          "git_blob": "34590d655294a366fa63112cd8e18da1a555cda0"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/pipeline/runner.py",
+          "git_blob": "f483e0bb4397fc4a48b50d4c309b54e73c3c03cc"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/TokenStream.vue",
+          "git_blob": "1a80a748073979361b614c629eb1569f61356f66"
+        }
+      ],
+      "notes": "No dedicated, end-to-end continue capability was proven by the bounded inventory."
+    },
+    {
+      "id": "NA-EV-029",
+      "capability": "Memory/context retrieval",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/memory_repo.py",
+          "git_blob": "41ddb271c9d0633da6a0947c25ae170a30e29b51"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/pipeline/context_builder.py",
+          "git_blob": "5bb351a801a1404865746281bfc8b924c58461c3"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/pipeline/retrieval.py",
+          "git_blob": "8a9fc98114203777bfac0e885aa0626b5dde275a"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/core/test_memory.py",
+          "git_blob": "e20effea952ca5b6a9621d4897f25ab024ab6ecd"
+        }
+      ],
+      "notes": "Persistence must be replaced by Core authority or rebuildable plugin index."
+    },
+    {
+      "id": "NA-EV-030",
+      "capability": "Skill install, runtime, recommendation and attribution",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/skill_repo.py",
+          "git_blob": "ec88b95c3357dea4805b41b3d7c79b1611dbc30c"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/pipeline/skill_runtime.py",
+          "git_blob": "2de5154aea86579deaed2fc1d987cd1b595c8a5c"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/skill_recommendation.py",
+          "git_blob": "a116bee36d11555cb67e942679c387a8b1b602e0"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/core/test_skill_repo.py",
+          "git_blob": "45209cbb6f0a7fc541183b896c1e83b93f9737df"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/pipeline/test_skill_runtime.py",
+          "git_blob": "116b3a505e68325ab131f3f09c51a143bba972a9"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/server/test_na015_skill_recommendation.py",
+          "git_blob": "7d39d93eb1b01a549a58bed98bf80315b8b7dcf1"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/server/test_na014_draft_skill_contract.py",
+          "git_blob": "54b3b0be06fc759469fee4366052cc0176a174e4"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/SkillSelector.vue",
+          "git_blob": "d21682b767570495ab2bc53f860d9f9745b3f93b"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/SkillRecommendationPanel.vue",
+          "git_blob": "445aa3b8f131ba249d4b16435bad6a57a4c4b875"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/SkillAttributionPanel.vue",
+          "git_blob": "7328e43fcbd092414b6d6a0b873a90ae94f0a2ea"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "NA-EV-031",
+      "capability": "Knowledge search and Obsidian projection lifecycle",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/integrations/knowledge/adapter.py",
+          "git_blob": "689178ff511eac982353e5f487a27f0f98569e79"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/integrations/knowledge/projection.py",
+          "git_blob": "310b455b1656461007f94995bc3b753d69192921"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/integrations/knowledge/vault.py",
+          "git_blob": "da2f470e979968f948b498ae16ae5dfc4e69ca59"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/integration/test_knowledge_catalog_core.py",
+          "git_blob": "58ec52cddd99a39ca48984e445f3e8dcb9c44183"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/server/test_na018_knowledge_adapter_api.py",
+          "git_blob": "f89e359077ca6fb4c278a9864e0eff423ae39caa"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/server/test_na019_obsidian_projection_api.py",
+          "git_blob": "f8ea34d050afe71df01236a243711dfbf952f996"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/obsidian/ObsidianProjectionCenter.vue",
+          "git_blob": "271fb05a19a0f63ad913faad75bcabb96e847c87"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/tests/ObsidianProjectionCenter.spec.ts",
+          "git_blob": "06d383aeb0ef2c0b78a5d2735ccc91b47fdfae60"
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "NA-EV-032",
+      "capability": "Provider adapters and model gateway",
+      "maturity": "implemented_tested",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/gateway/gateway.py",
+          "git_blob": "a2626d9eb115b989b7720a2f422534b0f39ba464"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/gateway/providers/openai_compat.py",
+          "git_blob": "32112f338a5f03cebb0717cdf930a3a6985caadd"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/gateway/providers/anthropic.py",
+          "git_blob": "70529af49d29e18380d560f4f500c5c9aae33535"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/gateway/providers/gemini.py",
+          "git_blob": "05983cfe59181d4166d9cff30474610bee1289ae"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/gateway/test_gateway_core.py",
+          "git_blob": "27ab5ba1267cb9f86d47889a3fac7e6de09ba24e"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/gateway/test_providers_stream.py",
+          "git_blob": "6afc52fea4dc819536ff011075e5931f860b2f95"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/gateway/test_reliability.py",
+          "git_blob": "573c739cd743722e1674cb70c3a0bcc53cb72d78"
+        }
+      ],
+      "notes": "Business plugins must use PlotPilot host.model.invoke; donor gateway is not a second authority."
+    },
+    {
+      "id": "NA-EV-033",
+      "capability": "Declarative capability package registry",
+      "maturity": "declarative_only",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/capability_registry.py",
+          "git_blob": "66996ce900422b97540d464542582ba91f64b62d"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/resources/capabilities/book-analysis.naplugin",
+          "git_blob": "0d5fb680218f427d6b7fc3b7a9460354334b5fe2"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/server/capability_api.py",
+          "git_blob": "19bd8ce0c21349011468ee35782843218f886512"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/core/test_capability_registry.py",
+          "git_blob": "547805b1df743fdb77f4cd1509148c11969bc021"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/server/test_capability_api.py",
+          "git_blob": "d6bd50a2f3945248a95cc779d0438060bbddb4ca"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/views/CapabilityCenterView.vue",
+          "git_blob": "484d2ad296cec5760557c597e789534acfbcd71e"
+        }
+      ],
+      "notes": "The package declares Core operations and projections; it is not an executable isolated worker platform."
+    },
+    {
+      "id": "NA-EV-034",
+      "capability": "Job/Event recovery infrastructure",
+      "maturity": "implemented_tested_target_core_only",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/ops_repo.py",
+          "git_blob": "9f3fb8088a67ec23196d837018e802978653de20"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/pipeline/runner.py",
+          "git_blob": "f483e0bb4397fc4a48b50d4c309b54e73c3c03cc"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/pipeline/events.py",
+          "git_blob": "eb2a1a9083ad141b15ce5f9763b42db74c6b5a56"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/pipeline/test_job_runner_sqlite_cas.py",
+          "git_blob": "97cc5b48ef52b7c28d926aabc52141d76af94406"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/server/test_job_event_stream.py",
+          "git_blob": "ac224b27323a5dd8228144e2238275036afbe288"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/JobProgress.vue",
+          "git_blob": "4183fdcba05cad4384b2a1bfc802a35861c81cbc"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/composables/useJobStream.ts",
+          "git_blob": "02982bfd8d88309d4dc01dcae09cd344e4a19970"
+        }
+      ],
+      "notes": "Reuse failure scenarios, not the authority or persistence implementation."
+    },
+    {
+      "id": "NA-EV-035",
+      "capability": "Candidate/current/backup infrastructure",
+      "maturity": "implemented_target_core_only",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/generation_current.py",
+          "git_blob": "938c7612d9c00101944187d1b012ed262f4e28ce"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/backup.py",
+          "git_blob": "f22eb3f00b4a509d8fe44753d5b63d1639070fc4"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/core/db.py",
+          "git_blob": "5387db4a0e310868b2f79f703daec85526649a3b"
+        },
+        {
+          "role": "test",
+          "path": "backend/tests/core/test_creation_canonical_hash.py",
+          "git_blob": "de8b5fe49582e8415ef084ffdd9e9bff8f37313b"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/components/CandidateCompare.vue",
+          "git_blob": "0e7534c9f248a2de6dddeb67185aa5784dfc99ce"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/views/CandidatesView.vue",
+          "git_blob": "35e8811e0b391c3971c2f00461e35f1963a39511"
+        }
+      ],
+      "notes": "PlotPilot Core remains the only Candidate/Publication/Revision/backup authority."
+    },
+    {
+      "id": "NA-EV-036",
+      "capability": "Permanent WebUI routes and workspaces",
+      "maturity": "implemented_tested_behavior_only",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "frontend/src/router.ts",
+          "git_blob": "a1fd1394f7d51f1f21499b7e2f5e803d73611d93"
+        },
+        {
+          "role": "source",
+          "path": "frontend/src/components/GlobalAppShell.vue",
+          "git_blob": "51366dd42250074da61904f293309dcfa381edc6"
+        },
+        {
+          "role": "test",
+          "path": "frontend/src/tests/router.workbench.spec.ts",
+          "git_blob": "7c1c0160f75d130bb1d15352639576bc3f0c3fe6"
+        },
+        {
+          "role": "test",
+          "path": "frontend/src/tests/canonicalWorkspaceLinks.spec.ts",
+          "git_blob": "7326788d35136b220d8c18aaae993eb7dc08e05e"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/views/DonorResearchView.vue",
+          "git_blob": "fea81f2077bcf6abd64e17131fabcd3fe3b1b6ef"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/views/StoryBibleWorkspaceView.vue",
+          "git_blob": "dd51da9e7b71a15a0c68328d7920e66738b38ce8"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/views/StructureWorkspaceView.vue",
+          "git_blob": "238acfa56f3cd644604f9621a61d8ff98974cbef"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/views/WritingWorkspaceView.vue",
+          "git_blob": "24e46a9ccb8a5edbb17de8c47bbadcb00f084c8f"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/views/ReviewWorkspaceView.vue",
+          "git_blob": "dfc3f2ad1e15ac026c70a7b5176afece5df20e28"
+        },
+        {
+          "role": "ui",
+          "path": "frontend/src/views/OutputWorkspaceView.vue",
+          "git_blob": "bf9a48850de682285be6ae60f98a964893c74426"
+        }
+      ],
+      "notes": "Preserve workflows and state semantics, not the UI code or route ownership."
+    },
+    {
+      "id": "NA-EV-037",
+      "capability": "Outline visualization",
+      "maturity": "implemented_partial",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "frontend/src/views/OutlineView.vue",
+          "git_blob": "6867e464219d60109b7bbe0d7edd8ac0f76da7ea"
+        },
+        {
+          "role": "source",
+          "path": "frontend/src/components/analysis/TimelineAnalysisPanel.vue",
+          "git_blob": "e6c424dd7623942ea3451fcac04ee89c5d3445c3"
+        },
+        {
+          "role": "source",
+          "path": "frontend/src/components/analysis/RelationAnalysisPanel.vue",
+          "git_blob": "bd3026921517b0b2bb2ecd4c573b303d9c41205d"
+        },
+        {
+          "role": "test",
+          "path": "frontend/src/tests/canonicalWorkspaceLinks.spec.ts",
+          "git_blob": "7326788d35136b220d8c18aaae993eb7dc08e05e"
+        }
+      ],
+      "notes": "Tree/table/timeline/relation projections exist; no mature free-form canvas editor was found."
+    },
+    {
+      "id": "NA-EV-038",
+      "capability": "Development scripts and desktop compatibility",
+      "maturity": "dev_only_or_drop",
+      "evidence": [
+        {
+          "role": "source",
+          "path": "scripts/dev.bat",
+          "git_blob": "3cabbd572a16e46cd6524a64061cd3ce6c39e13e"
+        },
+        {
+          "role": "source",
+          "path": "scripts/dev.sh",
+          "git_blob": "0ff50aadc39dacaa1dfce3ca7de8f7547a5a4af0"
+        },
+        {
+          "role": "source",
+          "path": "scripts/epub_to_txt.py",
+          "git_blob": "caddb6cf3e56a450872bb1dc51d33a9dd0ee9941"
+        },
+        {
+          "role": "source",
+          "path": "backend/novelagent/server/webui_launcher.py",
+          "git_blob": "658db8ced07108d411abb1143ebe6d1dc33ee5ea"
+        }
+      ],
+      "notes": "Not shipped as business plugins; only narrowly reusable test/build ideas may be adapted."
+    }
+  ],
+  "entry_count": 38
+}

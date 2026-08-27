@@ -1,0 +1,232 @@
+{
+  "schema": "novel-agent-core-upgrade-candidates/v1",
+  "created_at": "2026-08-27T18:45:00+08:00",
+  "policy": "Candidates are proposals only. No Core source may change until the user decides each item and P0 assigns an exact contract/write set.",
+  "blocker_ids": [
+    "CORE-CAND-001",
+    "CORE-CAND-002",
+    "CORE-CAND-003",
+    "CORE-CAND-004",
+    "CORE-CAND-005",
+    "CORE-CAND-006",
+    "CORE-CAND-007"
+  ],
+  "optional_ids": [
+    "CORE-CAND-008",
+    "CORE-CAND-009",
+    "CORE-CAND-010"
+  ],
+  "items": [
+    {
+      "id": "CORE-CAND-001",
+      "title": "Publish public Workspace/Document/Node/Revision/Relation/Asset/Candidate/Publication v1 contracts",
+      "priority": "BLOCKER",
+      "status": "p0_in_progress_sol_review",
+      "need": "Novel-Agent plugins cannot safely read or propose mutations against Core authority without public command/query/DTO/SDK contracts.",
+      "minimum_solution": "Complete the already accepted scoped public-contract publication in P0, freeze JSON Schema plus Python/TypeScript SDK and pass Sol review.",
+      "fallback": "No plugin construction; design remains gated.",
+      "acceptance": [
+        "P0 Sol PASS",
+        "golden parity",
+        "public contract methods callable by plugin host",
+        "no direct DB access"
+      ],
+      "donor_evidence_ids": [
+        "NA-EV-034",
+        "NA-EV-035"
+      ],
+      "core_modification_authorized": false
+    },
+    {
+      "id": "CORE-CAND-002",
+      "title": "Materialize SourceWorkspace and stable source document identity",
+      "priority": "BLOCKER",
+      "status": "awaiting_user_decision",
+      "need": "The v1.2 design mentions future SourceWorkspace but the donor workflow needs a stable original-work research authority.",
+      "minimum_solution": "Allow Core-created workspace_kind=source and stable Document/Node/Revision identities using the same generic authority and backup rules.",
+      "fallback": "Use an ordinary workspace tagged by Core configuration only if the public contract already supports it without semantic ambiguity.",
+      "acceptance": [
+        "one canonical current revision",
+        "raw Asset remains immutable",
+        "backup/restore preserves IDs",
+        "no second source database"
+      ],
+      "donor_evidence_ids": [
+        "NA-EV-001",
+        "NA-EV-004"
+      ],
+      "core_modification_authorized": false
+    },
+    {
+      "id": "CORE-CAND-003",
+      "title": "Browser-native file and paste Intake Broker",
+      "priority": "BLOCKER",
+      "status": "awaiting_user_decision",
+      "need": "Plugin UI Workers have no DOM, file picker, clipboard or arbitrary filesystem access.",
+      "minimum_solution": "Core renders TXT/EPUB chooser and paste control, enforces size/type limits, materializes an immutable raw Asset, then starts the selected import capability with that Asset.",
+      "fallback": "User manually creates/imports an Asset through an existing Core asset screen if one can preserve the exact MIME/source kind contract.",
+      "acceptance": [
+        "only TXT/EPUB/paste",
+        "raw bytes/hash receipt",
+        "cancel and retry",
+        "no path leakage to plugin",
+        "large file streaming"
+      ],
+      "donor_evidence_ids": [
+        "NA-EV-001"
+      ],
+      "core_modification_authorized": false
+    },
+    {
+      "id": "CORE-CAND-004",
+      "title": "Fixed /donors page and bounded Donor UI slots",
+      "priority": "BLOCKER",
+      "status": "awaiting_user_decision",
+      "need": "Import cleaning, structure revision, evidence review and multi-stage donor analysis cannot fit safely into the existing workbench side panel.",
+      "minimum_solution": "Core owns /donors and exactly seven bounded slots; plugins contribute worker-ui trees but cannot add routes.",
+      "fallback": "Temporary use of workbench.reference.panel is allowed only for a minimal proof, not full delivery.",
+      "acceptance": [
+        "route survives plugin crash",
+        "direct entry to any tab",
+        "single state track",
+        "Core-native accept/publication",
+        "project epoch rejects late responses"
+      ],
+      "donor_evidence_ids": [
+        "NA-EV-004",
+        "NA-EV-007",
+        "NA-EV-036"
+      ],
+      "core_modification_authorized": false
+    },
+    {
+      "id": "CORE-CAND-005",
+      "title": "Exact Revision source search and EvidenceSpan query contract",
+      "priority": "BLOCKER",
+      "status": "awaiting_user_decision",
+      "need": "Plugins require safe, bounded access to canonical source text, node ranges and exact Unicode coordinates without Core DB access.",
+      "minimum_solution": "Publish read-only query commands for revision metadata, node tree, paged search and code-point span; return content hashes and immutable Asset references.",
+      "fallback": "Pass the full canonical text as a RunSnapshot Asset for small books; this is not acceptable for large-book final delivery.",
+      "acceptance": [
+        "Unicode code-point parity",
+        "exclusive end",
+        "quote/hash verification",
+        "pagination and limits",
+        "stale revision fail-closed"
+      ],
+      "donor_evidence_ids": [
+        "NA-EV-005",
+        "NA-EV-006",
+        "NA-EV-007"
+      ],
+      "core_modification_authorized": false
+    },
+    {
+      "id": "CORE-CAND-006",
+      "title": "Register donor and derived mutation payload schemas",
+      "priority": "BLOCKER",
+      "status": "awaiting_user_decision",
+      "need": "candidate-item/v1 permits only Core-registered mutation schemas; Atom, Claim, narrative, character, style and repair payloads need explicit identities.",
+      "minimum_solution": "Add a bounded registry of closed payload schemas and target/entity compatibility without teaching Core literary algorithms.",
+      "fallback": "Store a generic opaque JSON document only if its schema identity, hash, target and validator are still fixed and independently verifiable.",
+      "acceptance": [
+        "unknown schema rejected",
+        "schema/release compatibility",
+        "payload hash verified",
+        "target/mutation pairing",
+        "historical v1 reader"
+      ],
+      "donor_evidence_ids": [
+        "NA-EV-007",
+        "NA-EV-011",
+        "NA-EV-014",
+        "NA-EV-017",
+        "NA-EV-022"
+      ],
+      "core_modification_authorized": false
+    },
+    {
+      "id": "CORE-CAND-007",
+      "title": "Cross-Workspace exact source reference picker",
+      "priority": "BLOCKER",
+      "status": "awaiting_user_decision",
+      "need": "A-book plot, B-book character and C-book style composition requires user selection of exact published source revisions and assets.",
+      "minimum_solution": "Core-native picker queries permitted SourceWorkspaces and creates a canonical immutable source-reference Asset for the RunSnapshot.",
+      "fallback": "User supplies IDs through advanced settings; unsuitable for normal final UX.",
+      "acceptance": [
+        "exact revision/hash",
+        "multi-source order preserved",
+        "missing/retired source explained",
+        "no automatic recommendation",
+        "receipt round-trip"
+      ],
+      "donor_evidence_ids": [
+        "NA-EV-016",
+        "NA-EV-026"
+      ],
+      "core_modification_authorized": false
+    },
+    {
+      "id": "CORE-CAND-008",
+      "title": "Workspace fork command",
+      "priority": "OPTIONAL",
+      "status": "awaiting_user_decision",
+      "need": "Novel-Agent has a tested branch fork and branch Canon workflow, but plugins cannot authoritatively mint a workspace or branch identity.",
+      "minimum_solution": "Publish idempotent workspace.fork/v1 that copies Core authority by reference/revision rules and returns a new workspace identity; no merge.",
+      "fallback": "Defer branch fork and run Canon checks only inside one workspace.",
+      "acceptance": [
+        "idempotent operation key",
+        "immutable base lineage",
+        "no shared mutable current pointer",
+        "backup/restore",
+        "no merge claim"
+      ],
+      "donor_evidence_ids": [
+        "NA-EV-023"
+      ],
+      "core_modification_authorized": false
+    },
+    {
+      "id": "CORE-CAND-009",
+      "title": "Root-bound external knowledge projection Broker",
+      "priority": "OPTIONAL",
+      "status": "awaiting_user_decision",
+      "need": "Direct Obsidian/Vault projection requires a user-selected external directory that a plugin must not access arbitrarily.",
+      "minimum_solution": "Core owns the root handle and accepts only generated Markdown Assets plus relative normalized paths; it enforces root binding and returns a receipt.",
+      "fallback": "knowledge-projection emits a ZIP/Markdown Asset for user download.",
+      "acceptance": [
+        "explicit root selection",
+        "relative path profile",
+        "no arbitrary read",
+        "atomic file replacement",
+        "projection receipt and delete preflight"
+      ],
+      "donor_evidence_ids": [
+        "NA-EV-031"
+      ],
+      "core_modification_authorized": false
+    },
+    {
+      "id": "CORE-CAND-010",
+      "title": "Install Data Plugin package directly from immutable Core Asset",
+      "priority": "OPTIONAL",
+      "status": "awaiting_user_decision",
+      "need": "Cleaning-rule merge and style/template derivation can generate a .ppplugin package Asset; a convenient install path avoids export and reselect.",
+      "minimum_solution": "Core plugin manager accepts an existing immutable Asset ID and runs the same package verification/install transaction as folder/ZIP selection.",
+      "fallback": "Export package then user chooses it in Settings -> Plugins.",
+      "acceptance": [
+        "same verifier and identity",
+        "no privileged producer shortcut",
+        "idempotent install",
+        "retirement/deletion parity"
+      ],
+      "donor_evidence_ids": [
+        "NA-EV-002",
+        "NA-EV-016",
+        "NA-EV-017"
+      ],
+      "core_modification_authorized": false
+    }
+  ],
+  "item_count": 10
+}

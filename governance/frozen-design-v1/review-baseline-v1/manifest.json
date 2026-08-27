@@ -1,0 +1,42 @@
+{
+  "schema": "novel-agent-plugin-absorption-review-baseline/v1",
+  "review_turn": "01a0430d-2eec-79b2-a39a-2c77ea7dc9d8",
+  "verdict": "BLOCK",
+  "artifacts": [
+    {
+      "path": "Novel-Agent功能插件化吸收正式设计-2026-08-27-v1.md",
+      "bytes": 36674,
+      "sha256": "45f01cdd610c5b93164254fba20cdf36fee9275dd8704d258ebb0cea67a160e7"
+    },
+    {
+      "path": "source-evidence-matrix-v1.json",
+      "bytes": 56761,
+      "sha256": "906fb57489607898710450318a7588fe64cc59eaf8636f9da087dacfae4a2366"
+    },
+    {
+      "path": "capability-disposition-matrix-v1.json",
+      "bytes": 21347,
+      "sha256": "53ba54ad3a398649b547ca756d0391f38d4af5044e6efd5de666b458c5eb58ca"
+    },
+    {
+      "path": "plugin-catalog-v1.json",
+      "bytes": 50159,
+      "sha256": "15b79b4287435e0cc519d6e4eb243fc1e2b2bf20c8ded99d647226c7f8b6d50f"
+    },
+    {
+      "path": "core-upgrade-candidates-v1.json",
+      "bytes": 10223,
+      "sha256": "bea04d23f6768170897e4dbe357850930da5f3e35217e0d987dffdaab5886ccb"
+    },
+    {
+      "path": "construction-plan-9-projects-v1.json",
+      "bytes": 14045,
+      "sha256": "ae9bab64fd8dc845cceac4b725df66b3c0e360c854413d22538deb5a2dc999b6"
+    },
+    {
+      "path": "design-validation-v1.json",
+      "bytes": 3508,
+      "sha256": "97e76fafce7a67bb0930389bc44bf8d6cf74f1d20a951fb2ef887b7d6d4f98d7"
+    }
+  ]
+}

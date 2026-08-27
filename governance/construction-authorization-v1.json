@@ -1,0 +1,28 @@
+{
+  "schema": "nap-construction-authorization/v1",
+  "received_text": "按推荐方案裁决 CORE-CAND-001～010；授权创建 PlotPilot-NovelAgent-Plugins 单仓库、九个 NAP Codex Project/Worktree，并按 B0～B6 开始施工。",
+  "received_at": "2026-08-27T21:26:48.0981388+08:00",
+  "accepted": true,
+  "decisions": {
+    "CORE-CAND-001": "approved",
+    "CORE-CAND-002": "approved",
+    "CORE-CAND-003": "approved",
+    "CORE-CAND-004": "approved",
+    "CORE-CAND-005": "approved",
+    "CORE-CAND-006": "approved",
+    "CORE-CAND-007": "approved",
+    "CORE-CAND-008": "deferred",
+    "CORE-CAND-009": "deferred",
+    "CORE-CAND-010": "deferred"
+  },
+  "repository_and_nine_projects_authorized": true,
+  "batch_order": [
+    "B0",
+    "B1",
+    "B2",
+    "B3",
+    "B4",
+    "B5",
+    "B6"
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "schema": "nap-frozen-design-copy/v1",
+  "source_directory": "C:\\Users\\Administrator\\Desktop\\Novel-Agent- (2)\\novel-agent\\cases\\plotpilot-pluginized-seven-project-construction-20260826\\parallel-design\\novel-agent-plugin-absorption",
+  "copied_at": "2026-08-27T21:26:48.1385706+08:00",
+  "files": [
+    {
+      "path": "governance/frozen-design-v1/capability-disposition-matrix-v1.json",
+      "bytes": 21820,
+      "sha256": "964c105c3baa07d77566d3aed54ef16bdd403a5e9943a37d9f095e5d67140afb"
+    },
+    {
+      "path": "governance/frozen-design-v1/construction-plan-9-projects-v1.json",
+      "bytes": 15758,
+      "sha256": "e763d44678796c31a71704cf4191c8cd00b52a5cdc850e1665a54b930889e0a3"
+    },
+    {
+      "path": "governance/frozen-design-v1/core-upgrade-candidates-v1.json",
+      "bytes": 10223,
+      "sha256": "bea04d23f6768170897e4dbe357850930da5f3e35217e0d987dffdaab5886ccb"
+    },
+    {
+      "path": "governance/frozen-design-v1/design-acceptance-v1.json",
+      "bytes": 2450,
+      "sha256": "1d191c84e08db9655bfe4f3444f15259f1faf95fb21a8f04da88965e43ec421d"
+    },
+    {
+      "path": "governance/frozen-design-v1/design-validation-v1.json",
+      "bytes": 7892,
+      "sha256": "49d76e0cd2ee2b058dcf6e7c7eae92a61ea58d2b57c7cd9856a7108713a6f251"
+    },
+    {
+      "path": "governance/frozen-design-v1/Novel-Agent功能插件化吸收正式设计-2026-08-27-v1.md",
+      "bytes": 43407,
+      "sha256": "8d3cfc66ea6f288049c2a9e1ef783d672d70e05e83eac83f3289404ea59c554c"
+    },
+    {
+      "path": "governance/frozen-design-v1/plugin-catalog-v1.json",
+      "bytes": 84022,
+      "sha256": "83f742b908c3bd406fff25038be741b006d5c73aed265bc0a747e76acc54ad7d"
+    },
+    {
+      "path": "governance/frozen-design-v1/review-baseline-v1/manifest.json",
+      "bytes": 1402,
+      "sha256": "2bf28cd1912b1fad69f1afebaae2a3c7980e936353e3ab962ce513c0f1377821"
+    },
+    {
+      "path": "governance/frozen-design-v1/sol-independent-review-v1.json",
+      "bytes": 12685,
+      "sha256": "56e271da1369044c0938ea3d128a335d63f33a8ae070ffad10ece0f0714554fe"
+    },
+    {
+      "path": "governance/frozen-design-v1/sol-targeted-rereview-v1.json",
+      "bytes": 5958,
+      "sha256": "e6ef9381231428a4cc625d7bf991208db3e5b352fb5bae76a0fc55149b768045"
+    },
+    {
+      "path": "governance/frozen-design-v1/source-evidence-matrix-v1.json",
+      "bytes": 56761,
+      "sha256": "906fb57489607898710450318a7588fe64cc59eaf8636f9da087dacfae4a2366"
+    },
+    {
+      "path": "governance/frozen-design-v1/source-freeze-v1.json",
+      "bytes": 1608,
+      "sha256": "2e98bae2aca35080c4486a4507ae4d75f656c704011fd7c2608b13a4060ef927"
+    },
+    {
+      "path": "governance/frozen-design-v1/tracked-head-manifest.tsv",
+      "bytes": 102892,
+      "sha256": "38d3d888c11c41f6814cca4a8b6e36959ddc43d5e322ab594045517a95137301"
+    }
+  ]
+}

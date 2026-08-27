@@ -1,0 +1,693 @@
+{
+  "schema": "novel-agent-capability-disposition/v1",
+  "created_at": "2026-08-27T18:35:00+08:00",
+  "donor_head": "a2666dd722331c576445f57d4687922b19fd737c",
+  "target_contract": "PlotPilot-Pluginized v1.2",
+  "decision_authority": "This matrix does not authorize Core changes or source implementation. Core candidates require user approval; implementation requires separate authorization.",
+  "entries": [
+    {
+      "id": "NA-CAP-001",
+      "name": "TXT/EPUB/paste intake and parsing",
+      "evidence_ids": [
+        "NA-EV-001"
+      ],
+      "disposition": "thin_adapt",
+      "target": "com.plotpilot.novelagent.source-import",
+      "priority": "P0",
+      "dependencies": [
+        "CORE-CAND-001",
+        "CORE-CAND-002",
+        "CORE-CAND-003",
+        "CORE-CAND-005",
+        "CORE-CAND-006"
+      ],
+      "risks": [
+        "browser input must be Core-owned",
+        "source hierarchy schema parity"
+      ],
+      "reason": "Reuse parsers/encoding/structure algorithms behind PlotPilot Asset and Candidate contracts."
+    },
+    {
+      "id": "NA-CAP-002",
+      "name": "Source cleaner data packages and package merge",
+      "evidence_ids": [
+        "NA-EV-002"
+      ],
+      "disposition": "convert_data_plus_thin_adapt",
+      "target": "source-cleaning-rules/v1 + source-cleaning-runtime",
+      "priority": "P0",
+      "dependencies": [
+        "CORE-CAND-001",
+        "CORE-CAND-010"
+      ],
+      "risks": [
+        "package format conversion",
+        "deletion reference barrier"
+      ],
+      "reason": "Convert data-only rules to Data Plugin; keep deterministic merge provenance in a Code capability."
+    },
+    {
+      "id": "NA-CAP-003",
+      "name": "Cleaning preview, thresholds, decisions and apply",
+      "evidence_ids": [
+        "NA-EV-003"
+      ],
+      "disposition": "thin_adapt",
+      "target": "com.plotpilot.novelagent.source-cleaning-runtime",
+      "priority": "P0",
+      "dependencies": [
+        "NA-CAP-001",
+        "NA-CAP-002"
+      ],
+      "risks": [
+        "Unicode coordinate parity",
+        "99-percent recovery"
+      ],
+      "reason": "Reuse delete-only engine, timeout and segment mapping; replace persistence and jobs."
+    },
+    {
+      "id": "NA-CAP-004",
+      "name": "Source structure revision and publication",
+      "evidence_ids": [
+        "NA-EV-004"
+      ],
+      "disposition": "semantic_port",
+      "target": "com.plotpilot.novelagent.source-structure",
+      "priority": "P0",
+      "dependencies": [
+        "NA-CAP-001",
+        "NA-CAP-003",
+        "CORE-CAND-002",
+        "CORE-CAND-006"
+      ],
+      "risks": [
+        "old repo cannot remain authority"
+      ],
+      "reason": "Preserve workflow and validation while Core owns Node/Revision/Publication."
+    },
+    {
+      "id": "NA-CAP-005",
+      "name": "Four-class evidence rebind",
+      "evidence_ids": [
+        "NA-EV-005"
+      ],
+      "disposition": "thin_adapt",
+      "target": "com.plotpilot.novelagent.source-structure: source.evidence.rebind.inspect/v1 + source.evidence.rebind.propose/v1",
+      "priority": "P0",
+      "dependencies": [
+        "NA-CAP-004",
+        "CORE-CAND-005"
+      ],
+      "risks": [
+        "must never silently migrate ambiguous spans",
+        "unchanged is legal only for same-Revision/no-op"
+      ],
+      "reason": "Preserve the four-class algorithm as a diagnostic inspect report; only deterministic rebound becomes a successor Candidate through a separate propose capability."
+    },
+    {
+      "id": "NA-CAP-006",
+      "name": "Source search, span and evidence backlinks",
+      "evidence_ids": [
+        "NA-EV-006"
+      ],
+      "disposition": "semantic_port",
+      "target": "source-structure + donor-analysis UI projections",
+      "priority": "P0",
+      "dependencies": [
+        "CORE-CAND-005"
+      ],
+      "risks": [
+        "plugin cannot query Core DB directly"
+      ],
+      "reason": "Keep search/evidence behavior; serve exact Core Revision spans through public query contracts."
+    },
+    {
+      "id": "NA-CAP-007",
+      "name": "Book Atom extraction and typed review",
+      "evidence_ids": [
+        "NA-EV-007"
+      ],
+      "disposition": "thin_adapt_plus_convert_skill",
+      "target": "com.plotpilot.novelagent.donor-analysis + donor.atomic-breakdown Skill",
+      "priority": "P0",
+      "dependencies": [
+        "NA-CAP-006",
+        "CORE-CAND-006"
+      ],
+      "risks": [
+        "F5/F6 acceptance idempotency",
+        "evidence exactness"
+      ],
+      "reason": "Reuse taxonomy/validation/prompt behavior; all outputs become target Candidate items."
+    },
+    {
+      "id": "NA-CAP-008",
+      "name": "Manual Atom and analysis exchange",
+      "evidence_ids": [
+        "NA-EV-008"
+      ],
+      "disposition": "semantic_port",
+      "target": "donor-analysis + analysis-io",
+      "priority": "P0",
+      "dependencies": [
+        "NA-CAP-006",
+        "CORE-CAND-004"
+      ],
+      "risks": [
+        "manual input must still produce provenance"
+      ],
+      "reason": "Preserve manual/external flows without retaining donor HTTP or DB authority."
+    },
+    {
+      "id": "NA-CAP-009",
+      "name": "Claim synthesis over accepted Atoms",
+      "evidence_ids": [
+        "NA-EV-009"
+      ],
+      "disposition": "thin_adapt_plus_convert_skill",
+      "target": "com.plotpilot.novelagent.donor-analysis + donor.claim-synthesis Skill",
+      "priority": "P0",
+      "dependencies": [
+        "NA-CAP-007"
+      ],
+      "risks": [
+        "stale or rebound atom lineage"
+      ],
+      "reason": "Keep accepted-Atom authority, payload hash and acceptance ordinal validation."
+    },
+    {
+      "id": "NA-CAP-010",
+      "name": "Book-analysis re-review",
+      "evidence_ids": [
+        "NA-EV-010"
+      ],
+      "disposition": "semantic_port",
+      "target": "com.plotpilot.novelagent.donor-analysis diagnostic capability",
+      "priority": "P0",
+      "dependencies": [
+        "NA-CAP-007",
+        "NA-CAP-009"
+      ],
+      "risks": [
+        "review cannot mutate current directly"
+      ],
+      "reason": "Preserve re-review lifecycle; Core controls Candidate decision and Publication."
+    },
+    {
+      "id": "NA-CAP-011",
+      "name": "Narrative unit extraction",
+      "evidence_ids": [
+        "NA-EV-011"
+      ],
+      "disposition": "thin_adapt_plus_convert_skill",
+      "target": "com.plotpilot.novelagent.narrative-analysis + donor.narrative-unit Skill",
+      "priority": "P1",
+      "dependencies": [
+        "NA-CAP-007",
+        "NA-CAP-009"
+      ],
+      "risks": [],
+      "reason": "Reuse business model and prompt with target receipts."
+    },
+    {
+      "id": "NA-CAP-012",
+      "name": "Narrative plan",
+      "evidence_ids": [
+        "NA-EV-012"
+      ],
+      "disposition": "semantic_port",
+      "target": "com.plotpilot.novelagent.narrative-analysis",
+      "priority": "P1",
+      "dependencies": [
+        "NA-CAP-011"
+      ],
+      "risks": [
+        "do not confuse business plan with Plugin Plan"
+      ],
+      "reason": "Map user-selected scope/order/config to immutable target parameter Assets and Plan."
+    },
+    {
+      "id": "NA-CAP-013",
+      "name": "Narrative synthesis",
+      "evidence_ids": [
+        "NA-EV-013"
+      ],
+      "disposition": "thin_adapt",
+      "target": "com.plotpilot.novelagent.narrative-analysis",
+      "priority": "P1",
+      "dependencies": [
+        "NA-CAP-011",
+        "NA-CAP-012"
+      ],
+      "risks": [
+        "synthesis must not erase sources"
+      ],
+      "reason": "Use Broker child receipts and preserve per-source attribution."
+    },
+    {
+      "id": "NA-CAP-014",
+      "name": "Character Atom/Card and asset import",
+      "evidence_ids": [
+        "NA-EV-014"
+      ],
+      "disposition": "thin_adapt_plus_convert_skill",
+      "target": "com.plotpilot.novelagent.character-distillation",
+      "priority": "P1",
+      "dependencies": [
+        "NA-CAP-007",
+        "NA-CAP-009",
+        "CORE-CAND-006"
+      ],
+      "risks": [
+        "stored binding does not prove runtime participation"
+      ],
+      "reason": "Reuse distillation model and validators; publish character documents/relations through Core."
+    },
+    {
+      "id": "NA-CAP-015",
+      "name": "Character conflict adjudication",
+      "evidence_ids": [
+        "NA-EV-015"
+      ],
+      "disposition": "semantic_port",
+      "target": "com.plotpilot.novelagent.character-distillation diagnostic/candidate capabilities",
+      "priority": "P1",
+      "dependencies": [
+        "NA-CAP-014"
+      ],
+      "risks": [],
+      "reason": "Keep conflict diagnostics and explicit user ruling; no automatic truth merge."
+    },
+    {
+      "id": "NA-CAP-016",
+      "name": "Global template families and reusable derived assets",
+      "evidence_ids": [
+        "NA-EV-016"
+      ],
+      "disposition": "semantic_port_plus_convert_data",
+      "target": "com.plotpilot.novelagent.asset-derivation + Data Plugins",
+      "priority": "P1",
+      "dependencies": [
+        "NA-CAP-011",
+        "NA-CAP-014"
+      ],
+      "risks": [
+        "generated package install may require CORE-CAND-010"
+      ],
+      "reason": "Turn reusable results into Core Assets/Documents or immutable Data releases."
+    },
+    {
+      "id": "NA-CAP-017",
+      "name": "Author style manufacture",
+      "evidence_ids": [
+        "NA-EV-017"
+      ],
+      "disposition": "thin_adapt_plus_convert_skill",
+      "target": "com.plotpilot.novelagent.style-manufacturing",
+      "priority": "P1",
+      "dependencies": [
+        "NA-CAP-006",
+        "NA-CAP-009"
+      ],
+      "risks": [
+        "large source corpus and model cost"
+      ],
+      "reason": "Reuse map/synthesis algorithms; style output is Data, method is Skill."
+    },
+    {
+      "id": "NA-CAP-018",
+      "name": "Independent style qualification",
+      "evidence_ids": [
+        "NA-EV-018"
+      ],
+      "disposition": "thin_adapt",
+      "target": "com.plotpilot.novelagent.style-manufacturing diagnostic capability",
+      "priority": "P1",
+      "dependencies": [
+        "NA-CAP-017"
+      ],
+      "risks": [
+        "same-path self-review must not auto-pass"
+      ],
+      "reason": "Retain independent qualification and contradiction adjudication before publishing a style pack."
+    },
+    {
+      "id": "NA-CAP-019",
+      "name": "Style runtime, review and refinement",
+      "evidence_ids": [
+        "NA-EV-019"
+      ],
+      "disposition": "thin_adapt_plus_convert_skill",
+      "target": "com.plotpilot.novelagent.style-runtime",
+      "priority": "P1",
+      "dependencies": [
+        "NA-CAP-017",
+        "NA-CAP-018"
+      ],
+      "risks": [
+        "style pack/Skill/runtime identities must remain separate"
+      ],
+      "reason": "Reuse capsule/input/review logic; output only Candidate or diagnostics."
+    },
+    {
+      "id": "NA-CAP-020",
+      "name": "Independent consistency audit",
+      "evidence_ids": [
+        "NA-EV-020"
+      ],
+      "disposition": "thin_adapt_plus_convert_skill",
+      "target": "com.plotpilot.novelagent.consistency-audit",
+      "priority": "P1",
+      "dependencies": [
+        "CORE-CAND-001",
+        "CORE-CAND-006"
+      ],
+      "risks": [
+        "must not directly repair"
+      ],
+      "reason": "Port as diagnostic-only capability with source evidence."
+    },
+    {
+      "id": "NA-CAP-021",
+      "name": "Bounded impact analysis",
+      "evidence_ids": [
+        "NA-EV-021"
+      ],
+      "disposition": "thin_adapt",
+      "target": "com.plotpilot.novelagent.impact-repair diagnostic capability",
+      "priority": "P1",
+      "dependencies": [
+        "NA-CAP-020"
+      ],
+      "risks": [],
+      "reason": "Reuse bounded graph/evidence behavior; read only exact Core revisions."
+    },
+    {
+      "id": "NA-CAP-022",
+      "name": "Controlled impact repair",
+      "evidence_ids": [
+        "NA-EV-022"
+      ],
+      "disposition": "thin_adapt",
+      "target": "com.plotpilot.novelagent.impact-repair candidate capability",
+      "priority": "P1",
+      "dependencies": [
+        "NA-CAP-021"
+      ],
+      "risks": [
+        "partial success and per-item publication"
+      ],
+      "reason": "Preserve per-item user choice and chapter-scoped repair Candidates."
+    },
+    {
+      "id": "NA-CAP-023",
+      "name": "Branch fork",
+      "evidence_ids": [
+        "NA-EV-023"
+      ],
+      "disposition": "core_candidate",
+      "target": "CORE-CAND-008 workspace.fork/v1",
+      "priority": "P2",
+      "dependencies": [
+        "CORE-CAND-008"
+      ],
+      "risks": [
+        "no merge capability is claimed"
+      ],
+      "reason": "A plugin cannot create authoritative workspace identity under the frozen target contract."
+    },
+    {
+      "id": "NA-CAP-024",
+      "name": "Branch Canon control",
+      "evidence_ids": [
+        "NA-EV-023"
+      ],
+      "disposition": "thin_adapt",
+      "target": "com.plotpilot.novelagent.branch-canon",
+      "priority": "P2",
+      "dependencies": [
+        "NA-CAP-023"
+      ],
+      "risks": [],
+      "reason": "Port preflight and candidate generation after Core supplies branch/workspace identity."
+    },
+    {
+      "id": "NA-CAP-025",
+      "name": "Chapter settlement lifecycle",
+      "evidence_ids": [
+        "NA-EV-024"
+      ],
+      "disposition": "semantic_port",
+      "target": "com.plotpilot.novelagent.story-state",
+      "priority": "P2",
+      "dependencies": [
+        "CORE-CAND-001",
+        "CORE-CAND-006"
+      ],
+      "risks": [
+        "facts/foreshadows remain Core publications"
+      ],
+      "reason": "Preserve reversible calculation and manual resolution, replace donor persistence."
+    },
+    {
+      "id": "NA-CAP-026",
+      "name": "Foreshadow and story-state checks",
+      "evidence_ids": [
+        "NA-EV-025"
+      ],
+      "disposition": "semantic_port",
+      "target": "com.plotpilot.novelagent.story-state",
+      "priority": "P2",
+      "dependencies": [
+        "NA-CAP-025"
+      ],
+      "risks": [
+        "maturity is partial relative to broader story bible"
+      ],
+      "reason": "Keep checks and UI behavior; formal facts/foreshadows remain Core authority."
+    },
+    {
+      "id": "NA-CAP-027",
+      "name": "Creation workbench source binding and Recipe",
+      "evidence_ids": [
+        "NA-EV-026"
+      ],
+      "disposition": "semantic_port",
+      "target": "com.plotpilot.novelagent.writing-context",
+      "priority": "P1",
+      "dependencies": [
+        "CORE-CAND-007",
+        "NA-CAP-011",
+        "NA-CAP-014",
+        "NA-CAP-019"
+      ],
+      "risks": [
+        "recipe and Plugin Plan semantics must stay distinct"
+      ],
+      "reason": "Map workflow to target Plugin Plan, source refs and parameter Assets; do not copy UI."
+    },
+    {
+      "id": "NA-CAP-028",
+      "name": "Outline/chapter outline/draft/refine/rewrite",
+      "evidence_ids": [
+        "NA-EV-027"
+      ],
+      "disposition": "thin_adapt_plus_convert_skill",
+      "target": "com.plotpilot.novelagent.chapter-workflow",
+      "priority": "P2",
+      "dependencies": [
+        "NA-CAP-027"
+      ],
+      "risks": [
+        "writer fencing and streaming"
+      ],
+      "reason": "Offer donor algorithms as alternative plugins/Skills without replacing current PlotPilot paths automatically."
+    },
+    {
+      "id": "NA-CAP-029",
+      "name": "Continue generation",
+      "evidence_ids": [
+        "NA-EV-028"
+      ],
+      "disposition": "defer_new_capability",
+      "target": "writing.chapter.continue/v1 in chapter-workflow",
+      "priority": "P2",
+      "dependencies": [
+        "NA-CAP-028"
+      ],
+      "risks": [
+        "must not claim direct reuse"
+      ],
+      "reason": "No complete donor vertical slice was proven; define anew over Core stream high-water/exact base."
+    },
+    {
+      "id": "NA-CAP-030",
+      "name": "Memory and context retrieval",
+      "evidence_ids": [
+        "NA-EV-029"
+      ],
+      "disposition": "thin_adapt_rebuildable_index",
+      "target": "com.plotpilot.novelagent.writing-context",
+      "priority": "P1",
+      "dependencies": [
+        "NA-CAP-027"
+      ],
+      "risks": [
+        "plugin private DB cannot be formal memory truth"
+      ],
+      "reason": "Reuse retrieval/context algorithms; private index must be rebuildable from Core."
+    },
+    {
+      "id": "NA-CAP-031",
+      "name": "Skill install, execution, recommendation and attribution",
+      "evidence_ids": [
+        "NA-EV-030"
+      ],
+      "disposition": "semantic_port_plus_convert_skill",
+      "target": "target prompt-skill-runtime + com.plotpilot.novelagent.skill-recommender",
+      "priority": "P1",
+      "dependencies": [
+        "CORE-CAND-001"
+      ],
+      "risks": [
+        "four-level attribution must be Core-verifiable"
+      ],
+      "reason": "Convert packages and behavior to target Skill identity/receipt contracts."
+    },
+    {
+      "id": "NA-CAP-032",
+      "name": "Knowledge search and Obsidian projection",
+      "evidence_ids": [
+        "NA-EV-031"
+      ],
+      "disposition": "thin_adapt_with_degraded_mode",
+      "target": "com.plotpilot.novelagent.knowledge-projection",
+      "priority": "P2",
+      "dependencies": [
+        "CORE-CAND-009"
+      ],
+      "risks": [
+        "external path handle forbidden to plugin"
+      ],
+      "reason": "Generate Markdown Assets now; direct Vault projection waits for Core root-bound broker."
+    },
+    {
+      "id": "NA-CAP-033",
+      "name": "OpenAI/Anthropic/Gemini providers",
+      "evidence_ids": [
+        "NA-EV-032"
+      ],
+      "disposition": "split_binary_decision",
+      "target": "openai-compatible=not_planned_duplicate(com.plotpilot.provider.openai-compatible); anthropic=planned NAP-00; gemini=planned NAP-00",
+      "priority": "P2",
+      "dependencies": [
+        "CORE-CAND-001",
+        "NAP-00 B0"
+      ],
+      "risks": [
+        "provider stream must remain Host behavior, not a fourth result contract",
+        "provider source paths must remain exclusive to NAP-00"
+      ],
+      "reason": "Target v1.2 already owns OpenAI-compatible; native Anthropic and Gemini adapters remain distinct planned headless providers with frozen artifact result, Host needs and source owner."
+    },
+    {
+      "id": "NA-CAP-034",
+      "name": "Declarative capability packages",
+      "evidence_ids": [
+        "NA-EV-033"
+      ],
+      "disposition": "manifest_translation_only",
+      "target": "plotpilot-plugin/v1 manifest + fixed UI contributions",
+      "priority": "P0",
+      "dependencies": [
+        "CORE-CAND-001",
+        "CORE-CAND-004"
+      ],
+      "risks": [
+        "contract shapes are incompatible"
+      ],
+      "reason": "Translate useful descriptors; do not copy donor registry or treat .naplugin as executable."
+    },
+    {
+      "id": "NA-CAP-035",
+      "name": "Job/Event/recovery infrastructure",
+      "evidence_ids": [
+        "NA-EV-034"
+      ],
+      "disposition": "target_core_only",
+      "target": "PlotPilot Core Job/Step/Attempt/Event",
+      "priority": "CORE",
+      "dependencies": [
+        "CORE-CAND-001"
+      ],
+      "risks": [],
+      "reason": "Reuse scenarios and fixtures only; a second job authority is forbidden."
+    },
+    {
+      "id": "NA-CAP-036",
+      "name": "Candidate/current/backup infrastructure",
+      "evidence_ids": [
+        "NA-EV-035"
+      ],
+      "disposition": "target_core_only",
+      "target": "PlotPilot Core Revision/Candidate/Publication/Backup",
+      "priority": "CORE",
+      "dependencies": [
+        "CORE-CAND-001"
+      ],
+      "risks": [],
+      "reason": "Do not port donor DB or backup implementation."
+    },
+    {
+      "id": "NA-CAP-037",
+      "name": "WebUI routes and workspace pages",
+      "evidence_ids": [
+        "NA-EV-036"
+      ],
+      "disposition": "behavior_only_reimplementation",
+      "target": "PlotPilot fixed pages and slots",
+      "priority": "P0",
+      "dependencies": [
+        "CORE-CAND-004"
+      ],
+      "risks": [
+        "dual UI/dual state forbidden"
+      ],
+      "reason": "Preserve user flows, epoch isolation and failure recovery; discard donor visual implementation."
+    },
+    {
+      "id": "NA-CAP-038",
+      "name": "Outline visualization",
+      "evidence_ids": [
+        "NA-EV-037"
+      ],
+      "disposition": "thin_adapt_projection_only",
+      "target": "com.plotpilot.novelagent.outline-projection",
+      "priority": "P2",
+      "dependencies": [
+        "NA-CAP-011",
+        "NA-CAP-014"
+      ],
+      "risks": [],
+      "reason": "Port tree/card/timeline/relation projection data; free-form canvas is not claimed."
+    },
+    {
+      "id": "NA-CAP-039",
+      "name": "Development scripts, legacy compatibility and debug tools",
+      "evidence_ids": [
+        "NA-EV-038"
+      ],
+      "disposition": "drop_or_dev_only",
+      "target": "tests/devtools only",
+      "priority": "NONE",
+      "dependencies": [
+        "NA-CAP-001"
+      ],
+      "risks": [
+        "epub_to_txt script must not become alternate import path"
+      ],
+      "reason": "No user plugin; adapt only narrowly useful validation fixtures."
+    }
+  ],
+  "entry_count": 39
+}

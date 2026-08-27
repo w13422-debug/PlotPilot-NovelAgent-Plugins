@@ -1,0 +1,368 @@
+{
+  "schema": "p0-contract-publication-sol-review/v1",
+  "review_round": 2,
+  "reviewer_model": "gpt-5.6-sol/max",
+  "review_mode": "fresh_read_only_focused_re_review",
+  "baseline_head": "63ee2b89b719734dd2f9d50bab12cbe0fe10e37e",
+  "staged_tree": "5a7052549d780d54d65d18aad4cdc58d51f1b8fd",
+  "manifest_sha256": "cbe9d02fc42409332151cd7905e387a46537b330b039a2d3d6798f48cbfcc024",
+  "contract_manifest_sha256": "cbe9d02fc42409332151cd7905e387a46537b330b039a2d3d6798f48cbfcc024",
+  "verdict": "PASS",
+  "all_frozen_findings_closed": true,
+  "review_scope": {
+    "frozen_finding_ids": [
+      "P0-CP-F-001",
+      "P0-CP-F-002",
+      "P0-CP-F-003",
+      "P0-CP-F-004",
+      "P0-CP-F-005"
+    ],
+    "scope_expanded": false,
+    "downstream_merge_eligibility_granted": []
+  },
+  "prior_review": {
+    "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-Pluginized\\docs\\deliveries\\PPA-00\\contract-publication-01\\evidence\\sol-focused-review-r1.json",
+    "sha256": "bece37010bc2aa4d7d504405248056f45999b165580ce534f965001b71867689",
+    "verdict": "BLOCK"
+  },
+  "findings": [
+    {
+      "id": "P0-CP-F-001",
+      "original_severity": "BLOCKER",
+      "verdict": "PASS",
+      "closure_evidence": {
+        "implementation": [
+          {
+            "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-Pluginized\\contracts\\json-schema\\core-api-method-matrix.v1.json",
+            "json_pointers": [
+              "/routes/16",
+              "/routes/17",
+              "/routes/18",
+              "/routes/21",
+              "/routes/22"
+            ],
+            "detail": "矩阵现有 exactly 26 routes；分别发布 Document/Node revision GET/POST，path_identity 与模板占位符一致，Relation delete 使用独立 closed command。"
+          },
+          {
+            "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-Pluginized\\contracts\\json-schema\\core-authority-command-query-v1.schema.json",
+            "json_pointers": [
+              "/$defs/document_revision_query",
+              "/$defs/node_revision_query",
+              "/$defs/document_revision_create",
+              "/$defs/node_revision_create",
+              "/$defs/relation_delete/properties/expected_revision_id",
+              "/$defs/relation_delete/required"
+            ],
+            "detail": "Revision DTO 均绑定具体 document_id/node_id；Relation delete 明确要求 expected_revision_id，null 表示显式 expect-no-current-revision CAS，而非省略 CAS。"
+          },
+          {
+            "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-Pluginized\\backend\\plotpilot_plugin_sdk\\core_api.py",
+            "lines": "430-442",
+            "detail": "Python fake 验证模板占位符、path_identity、request schema 和非空 path identity。"
+          },
+          {
+            "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-Pluginized\\frontend\\src\\contracts\\core-api.ts",
+            "lines": "609-619",
+            "detail": "真实 TypeScript fake 执行相同 fail-closed path identity 检查。"
+          }
+        ],
+        "positive": "Python 与 TypeScript 独立 probe 均确认 routes=26、exchanges=31、四条独立 revision route 全部匹配；显式 null Relation CAS positive 通过。",
+        "negative": [
+          "contracts/corpus/contract-publication-v1/negative.json#/cases/14 删除 expected_revision_id 后，Python ContractValidationError、TypeScript SchemaIngressError。",
+          "document.get 的空 document_id 在两端均被 path identity gate 拒绝。"
+        ]
+      },
+      "required_action": "none"
+    },
+    {
+      "id": "P0-CP-F-002",
+      "original_severity": "BLOCKER",
+      "verdict": "PASS",
+      "closure_evidence": {
+        "implementation": [
+          {
+            "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-Pluginized\\contracts\\json-schema\\core-authority-command-query-v1.schema.json",
+            "json_pointer": "/$defs/http_error",
+            "detail": "core-http-error/v1 为 additionalProperties=false 的 closed DTO，冻结五种 error_code。"
+          },
+          {
+            "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-Pluginized\\contracts\\json-schema\\core-api-method-matrix.v1.json",
+            "json_pointer": "/routes",
+            "detail": "26 条 route 均显式绑定 error_schema、failure_statuses 和每个 status 可接受的 error_codes。"
+          },
+          {
+            "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-Pluginized\\backend\\plotpilot_plugin_sdk\\core_api.py",
+            "lines": "470-489",
+            "detail": "Python fake 按 route/status/code 解析 typed failure。"
+          },
+          {
+            "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-Pluginized\\frontend\\src\\contracts\\core-api.ts",
+            "lines": "644-659",
+            "detail": "真实 TypeScript fake 执行同一 route-specific failure gate。"
+          }
+        ],
+        "positive": {
+          "golden": "contracts/golden/contract-publication-v1/core-http.json#/exchanges/26..30",
+          "result": "31 exchanges，其中 5 个 typed negative exchanges 分别覆盖 unknown_reference、cross_workspace、stale_cas、operation_key_reuse、incomplete_publication；Python/TypeScript 均返回冻结 status/body。"
+        },
+        "negative": {
+          "python": [
+            "document.get/404 携带 stale_cas：拒绝，Core HTTP error code is not allowed for this route/status",
+            "document.get/409：拒绝，status is not declared by the route",
+            "core-http-error/v1 增加 extra：closed-schema 拒绝"
+          ],
+          "typescript": [
+            "wrong route code：拒绝",
+            "wrong route status：拒绝",
+            "error extra field：SchemaIngressError"
+          ]
+        }
+      },
+      "required_action": "none"
+    },
+    {
+      "id": "P0-CP-F-003",
+      "original_severity": "BLOCKER",
+      "verdict": "PASS",
+      "closure_evidence": {
+        "implementation": [
+          {
+            "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-Pluginized\\backend\\plotpilot_plugin_sdk\\core_api.py",
+            "lines": "288-304",
+            "detail": "Python 对每个 full/partial range 的 decoded current chunk bytes 计算 SHA-256。"
+          },
+          {
+            "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-Pluginized\\frontend\\src\\contracts\\core-api.ts",
+            "lines": "421-432",
+            "detail": "TypeScript 同样无条件绑定当前 chunk bytes 与 content_hash。"
+          }
+        ],
+        "positive": {
+          "fixture": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-Pluginized\\contracts\\golden\\contract-publication-v1\\core-http.json#/assets/partial",
+          "chunk_length": 2,
+          "chunk_sha256": "d65c3e892354b17a4c032593974d46bc8732c6c0b1ce56edf0c95511d1749cf5",
+          "python": "accepted",
+          "typescript": "accepted"
+        },
+        "negative": {
+          "corpus": "contracts/corpus/contract-publication-v1/negative.json#/cases/8",
+          "python": "rejected: Asset range content_hash mismatch",
+          "typescript": "rejected: range content_hash does not match the returned bytes"
+        }
+      },
+      "required_action": "none"
+    },
+    {
+      "id": "P0-CP-F-004",
+      "original_severity": "BLOCKER",
+      "verdict": "PASS",
+      "closure_evidence": {
+        "normative_binding": {
+          "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-Pluginized\\coordination\\PPA-00\\contract-decision-P3-CD-CONTEXT-IDENTITY-001.json",
+          "json_pointer": "/decision/fencing_order",
+          "value": "validate current install/attempt epoch before deriving identity or reading OperationLedger"
+        },
+        "implementation": [
+          {
+            "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-Pluginized\\backend\\plotpilot_plugin_sdk\\context_identity.py",
+            "lines": "84-114",
+            "detail": "install/attempt 缺 current expected epoch 必拒；stale epoch 返回 1002；control 保持 epochless。"
+          },
+          {
+            "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-Pluginized\\frontend\\src\\contracts\\verifier.ts",
+            "lines": "677-691",
+            "detail": "TypeScript 在构造 projection/hash 前执行同一 missing/stale fencing。"
+          }
+        ],
+        "positive": {
+          "fixture": "contracts/golden/contract-publication-v1/context-identity.json#/vectors",
+          "result": "control/install/attempt 三个 identity 均精确匹配黄金向量；install/attempt 使用当前 expected epoch。"
+        },
+        "negative": {
+          "corpus": [
+            "contracts/corpus/contract-publication-v1/negative.json#/cases/16",
+            "contracts/corpus/contract-publication-v1/negative.json#/cases/17",
+            "contracts/corpus/contract-publication-v1/negative.json#/cases/18"
+          ],
+          "python": "install/attempt missing expected epoch 均拒绝；两种 stale epoch 均返回 1002；control 传 epoch 拒绝。",
+          "typescript": "install/attempt missing/stale 均拒绝；control 传 epoch 拒绝。"
+        }
+      },
+      "required_action": "none"
+    },
+    {
+      "id": "P0-CP-F-005",
+      "original_severity": "BLOCKER",
+      "verdict": "PASS",
+      "closure_evidence": {
+        "normative_binding": {
+          "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-Pluginized\\coordination\\PPA-00\\contract-decision-P6-CD-EXPORT-CURRENT-REVISIONS-001.json",
+          "json_pointers": [
+            "/decision/transport",
+            "/decision/content_read_method",
+            "/decision/authority"
+          ]
+        },
+        "implementation": [
+          {
+            "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-Pluginized\\backend\\plotpilot_plugin_sdk\\core_api.py",
+            "lines": "357-403",
+            "detail": "顺序为 verify RunSnapshot → 取 parameters_asset_id/asset_hashes → 哈希 immutable raw bytes → strict JSON/JCS → closed Export 与 input_revisions 语义。"
+          },
+          {
+            "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-Pluginized\\backend\\plotpilot_plugin_sdk\\core_api.py",
+            "lines": "322-332",
+            "detail": "object-only parser 明确拒绝 caller-supplied asset_id/hash shortcut。"
+          },
+          {
+            "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-Pluginized\\frontend\\src\\contracts\\core-api.ts",
+            "lines": "564-586",
+            "detail": "真实 TypeScript verifier 先验证 raw bytes SHA，再 strict UTF-8/duplicate/JCS/closed semantics。"
+          }
+        ],
+        "positive": {
+          "run_snapshot_pointer": "contracts/golden/contract-publication-v1/export-run-snapshot.json#/parameters_asset_id",
+          "asset_id": "asset-export-current-revisions",
+          "raw_bytes": 683,
+          "raw_sha256": "ca4beac5511c2c5a1096f29be6eb6d6bffcda07ed5171abf4245481909bbe1e7",
+          "items": 2,
+          "python": "accepted",
+          "typescript": "accepted"
+        },
+        "negative": {
+          "corpus": "contracts/corpus/contract-publication-v1/negative.json#/cases/24..29",
+          "covered": [
+            "title-tampered raw Asset",
+            "BOM",
+            "whitespace/non-JCS",
+            "duplicate JSON key",
+            "Asset hash absent/not frozen in RunSnapshot",
+            "caller-supplied object hash shortcut"
+          ],
+          "python": "all rejected",
+          "typescript": "all rejected"
+        }
+      },
+      "required_action": "none"
+    }
+  ],
+  "commands": [
+    {
+      "id": "C-R2-01",
+      "command": "git identity/index-tree/manifest/donor/tag audit",
+      "exit_code": 0,
+      "raw_result": "HEAD=63ee2b89b719734dd2f9d50bab12cbe0fe10e37e; branch=codex/ppa-00-integration; index tree=5a7052549d780d54d65d18aad4cdc58d51f1b8fd; index manifest SHA-256=cbe9d02fc42409332151cd7905e387a46537b330b039a2d3d6798f48cbfcc024; donor push=DISABLED"
+    },
+    {
+      "id": "C-R2-02",
+      "command": "read-only byte/hash verification of raw-test-summary.json and all referenced raw evidence",
+      "exit_code": 0,
+      "raw_result": "22/22 byte/hash bindings matched; seven fresh commands status=passed/exit=0; recorded temporary worktree removed=true, remove_exit_code=0, path no longer exists"
+    },
+    {
+      "id": "C-R2-03",
+      "command": "python -B tools/integration/generate_contract_schemas.py --check",
+      "exit_code": 0,
+      "raw_result": "generated artifacts are deterministic (56 files)"
+    },
+    {
+      "id": "C-R2-04",
+      "command": "python -B tools/integration/generate_contract_manifest.py --check",
+      "exit_code": 0,
+      "raw_result": "contract manifest is deterministic (137 files)"
+    },
+    {
+      "id": "C-R2-05",
+      "command": "python -B -m pytest -q -p no:cacheprovider tests/contract/test_contract_publication.py tests/contract/test_schema_meta.py",
+      "exit_code": 0,
+      "raw_result": "collected 6 items; 6 passed in 1.93s"
+    },
+    {
+      "id": "C-R2-06",
+      "command": "python -B tools/integration/verify_contracts.py --all --json",
+      "exit_code": 0,
+      "raw_result": "53 schemas; M0 14 groups/105 cases; Core HTTP 26 routes/31 exchanges; Python publication negatives=30; real TypeScript status=ok, negatives=35; contexts=attempt,control,install; plugin_publication_callable=false"
+    },
+    {
+      "id": "C-R2-07",
+      "command": "PowerShell UTF-8 here-string | python -B - (independent focused probes for P0-CP-F-001..005)",
+      "exit_code": 0,
+      "raw_result": "status=ok; routes=26/exchanges=31; missing Relation CAS and empty path rejected; wrong HTTP code/status/open shape rejected; partial chunk tamper rejected; install/attempt missing+stale and control-with-epoch rejected; raw Export title tamper/caller-hash shortcut/non-JCS rejected"
+    },
+    {
+      "id": "C-R2-08",
+      "command": "PowerShell UTF-8 here-string | node --experimental-strip-types --input-type=module - (independent real TypeScript probes)",
+      "exit_code": 0,
+      "raw_result": "status=ok; TypeScript produced the same positive values and fail-closed outcomes as C-R2-07"
+    },
+    {
+      "id": "C-R2-09",
+      "command": "project-matrix P0 write-set and baseline preservation audit",
+      "exit_code": 0,
+      "raw_result": "project-matrix SHA-256=076541384c643d879e8552737f94a9ce2ed9134dba3e0d448f2c4a0b58297656; staged paths=43; out_of_set=[]; P1-P6 coordination paths=[]; M0 §84.13 changed=false; plugin ports/RPC matrix unchanged=true"
+    },
+    {
+      "id": "C-R2-10",
+      "command": "final git status/index/tag audit",
+      "exit_code": 0,
+      "raw_result": "tracked unstaged=0; staged paths=43; untracked=26 and all under docs/deliveries/PPA-00/contract-publication-01/; index still matches staged tree; old annotated tag objects and peeled commits unchanged"
+    }
+  ],
+  "evidence_integrity": {
+    "raw_test_summary": {
+      "sha256": "ec3275c82f75c8f20599f245799d979fff019312aa36fc3e4480abab095f10cd"
+    },
+    "contract_artifact_inventory": {
+      "sha256": "ecaffac9479d3a8a50a5ea1428de5fa9d4e4250154a1c747cd8720485d16d03c"
+    },
+    "p0_write_set_audit": {
+      "sha256": "eaa9b2887746fd6ef603524caa2c1cd10c5ba1e9a8e0531f8989c85d05c9e932"
+    },
+    "fresh_verification_summary": {
+      "sha256": "bd0b451ccba5cd00fa601bf021da7707df8a0b715d07b0386bd3c39dc2c539ce"
+    },
+    "typescript_typecheck_summary": {
+      "sha256": "2bf0fca2e35e460f05ec5d2026b94f69f2f38027f26b536e113d43b5c073d7d0",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout_bytes": 0,
+      "stderr_bytes": 0
+    },
+    "manifest_inventory": {
+      "schemas": 53,
+      "files": 137,
+      "families": 20
+    }
+  },
+  "preserved_invariants": {
+    "m0_84_13_groups": 14,
+    "m0_84_13_cases": 105,
+    "m0_84_13_changed_from_baseline": false,
+    "plugin_ports_and_rpc_matrix_changed": false,
+    "direct_plugin_publication_callable": false,
+    "p0_changed_path_count": 43,
+    "p0_out_of_write_set_paths": [],
+    "donor_push_url": "DISABLED",
+    "old_tags": {
+      "M0-OPEN": {
+        "tag_object": "0a527454a2e9d20e353c41391d53d734a6dd62dc",
+        "peeled_commit": "786986a02219973a69a0d1c1114191149924d7f7"
+      },
+      "M0-OPEN-R2": {
+        "tag_object": "2b375224ec4762b9b25bca10cb80035f715b0b6f",
+        "peeled_commit": "36ca847d8b328e3f4f7791c836e0530e8a5ea5b3"
+      },
+      "M0-OPEN-R3": {
+        "tag_object": "9c7dbb76b0ce63c55b922e7ee629f25d229b9269",
+        "peeled_commit": "b6e20df15de9eb4b25de1acfe4e8a8f9e7080bde"
+      },
+      "M0-OPEN-R4": {
+        "tag_object": "385bc499032910195081e83a270b59c539f33539",
+        "peeled_commit": "42123d1a5126bb2bef31304b0498e2e7def9183e"
+      }
+    }
+  },
+  "remaining_findings": [],
+  "non_blocking_observations": [],
+  "reviewer_agent_id": "01a04231-3411-7c33-a83d-3522f61d9261"
+}

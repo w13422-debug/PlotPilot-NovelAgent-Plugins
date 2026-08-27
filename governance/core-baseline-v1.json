@@ -1,0 +1,25 @@
+{
+  "schema": "nap-core-baseline/v1",
+  "source_repository": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-Pluginized",
+  "accepted_integration_head": "1b352be671e70a2ce443b10499060982e93d64b7",
+  "source_status_clean": true,
+  "core_contract_implementation_head": "c99937d64ad4b34b6b4e071a10eaf3484028f5fa",
+  "contract_manifest_sha256": "cbe9d02fc42409332151cd7905e387a46537b330b039a2d3d6798f48cbfcc024",
+  "contract_sol_review": "PASS",
+  "contract_findings": [
+    "P0-CP-F-001",
+    "P0-CP-F-002",
+    "P0-CP-F-003",
+    "P0-CP-F-004",
+    "P0-CP-F-005"
+  ],
+  "all_contract_findings_closed": true,
+  "final_integration_acceptance": {
+    "reviewer_task_id": "01a042c7-4da4-7391-ae54-e036ea7c661e",
+    "finding_id": "P2P6-SOL-FINAL-001",
+    "verdict": "PASS",
+    "merge_eligible": true
+  },
+  "mutable_core_source_copied": false,
+  "recorded_at": "2026-08-27T21:26:48.1135591+08:00"
+}

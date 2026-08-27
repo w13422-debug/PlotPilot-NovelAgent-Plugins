@@ -1,0 +1,42 @@
+{
+  "schema": "p0-contract-publication-receipt/v1",
+  "batch_id": "PPA-M1-CONTRACT-PUBLICATION-01",
+  "status": "published",
+  "base_sha": "63ee2b89b719734dd2f9d50bab12cbe0fe10e37e",
+  "reviewed_implementation_commit": "c99937d64ad4b34b6b4e071a10eaf3484028f5fa",
+  "reviewed_tree": "5a7052549d780d54d65d18aad4cdc58d51f1b8fd",
+  "contract_manifest_sha256": "cbe9d02fc42409332151cd7905e387a46537b330b039a2d3d6798f48cbfcc024",
+  "sol_review": {
+    "path": "docs/deliveries/PPA-00/contract-publication-01/evidence/sol-focused-review-r2.json",
+    "sha256": "6b2ad769ec14c0e69ac7884f2d8942bfd79c570376faaaa487bb8121c8ebf2e5",
+    "verdict": "PASS",
+    "all_frozen_findings_closed": true
+  },
+  "publication_decisions": [
+    {
+      "path": "coordination/PPA-00/contract-decision-P3-CD-CONTEXT-IDENTITY-001.json",
+      "bytes": 3432,
+      "sha256": "364defe621455f50a27b9c1041178ad5cfe30b2319061241c4d64890c7ad6b40"
+    },
+    {
+      "path": "coordination/PPA-00/contract-decision-P6-CD-EXPORT-CURRENT-REVISIONS-001.json",
+      "bytes": 3081,
+      "sha256": "8364f7fb03ff00f8c96f225ba8d735251fa19bb3edb753f521881453228e0c54"
+    },
+    {
+      "path": "coordination/PPA-00/contract-decision-PPA-01-CD-001.json",
+      "bytes": 14951,
+      "sha256": "cb6bca8bb7f83763ed84c7fd4b379692f7aa8de993158861eeece899b9e1bdc2"
+    },
+    {
+      "path": "coordination/PPA-00/contract-decision-PPA-04-CD-001.json",
+      "bytes": 2900,
+      "sha256": "030cfc598545d9017bc2b20baf5658aaa3c829f807c47d211022a8fba851c97a"
+    }
+  ],
+  "immutability": {
+    "donor_push_url": "DISABLED",
+    "m0_tags_unchanged": true
+  },
+  "downstream_merge_eligibility_granted": []
+}
