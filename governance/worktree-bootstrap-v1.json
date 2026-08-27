@@ -1,0 +1,250 @@
+{
+  "schema": "nap-worktree-bootstrap/v1",
+  "status": "worktrees_ready_project_registration_pending",
+  "initial_repository_head": "c25e4d9eaf963fae33b07597c0f288ff6b98e38c",
+  "repository": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins",
+  "worktree_root": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees",
+  "project_count": 9,
+  "all_worktrees_validated": true,
+  "core_baseline": {
+    "accepted_integration_head": "1b352be671e70a2ce443b10499060982e93d64b7",
+    "contract_manifest_sha256": "cbe9d02fc42409332151cd7905e387a46537b330b039a2d3d6798f48cbfcc024",
+    "sol_pass": true
+  },
+  "projects": [
+    {
+      "id": "NAP-00",
+      "name": "Integration-Contracts",
+      "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins",
+      "branch": "codex/nap-00-integration",
+      "head": "c25e4d9eaf963fae33b07597c0f288ff6b98e38c",
+      "status_porcelain": "",
+      "gate": "B0_ready_after_project_registration",
+      "write_set": [
+        "contracts/**",
+        "sdk/**",
+        "catalog/**",
+        "plugins/provider-anthropic/**",
+        "plugins/provider-gemini/**",
+        "tools/integration/**",
+        "tests/contracts/**",
+        "tests/providers/**",
+        "tests/e2e/**",
+        "docs/deliveries/**",
+        "coordination/NAP-00/**",
+        "coordination/integration/**"
+      ],
+      "dependencies": [
+        "CORE-CAND-001 Sol PASS"
+      ],
+      "validated": true
+    },
+    {
+      "id": "NAP-01",
+      "name": "Source-Import-Cleaning",
+      "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-01",
+      "branch": "codex/nap-01-source",
+      "head": "c25e4d9eaf963fae33b07597c0f288ff6b98e38c",
+      "status_porcelain": "",
+      "gate": "waiting_dependency_gate",
+      "write_set": [
+        "plugins/source-import/**",
+        "plugins/source-cleaning-runtime/**",
+        "plugins/source-structure/**",
+        "data/source-cleaning/**",
+        "tests/source/**",
+        "coordination/NAP-01/**"
+      ],
+      "dependencies": [
+        "NAP-00 B0",
+        "CORE-CAND-002",
+        "CORE-CAND-003",
+        "CORE-CAND-005",
+        "CORE-CAND-006"
+      ],
+      "validated": true
+    },
+    {
+      "id": "NAP-02",
+      "name": "Donor-Evidence",
+      "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-02",
+      "branch": "codex/nap-02-evidence",
+      "head": "c25e4d9eaf963fae33b07597c0f288ff6b98e38c",
+      "status_porcelain": "",
+      "gate": "waiting_dependency_gate",
+      "write_set": [
+        "plugins/donor-analysis/**",
+        "skills/donor-analysis/**",
+        "data/book-analysis-taxonomy/**",
+        "tests/donor-analysis/**",
+        "coordination/NAP-02/**"
+      ],
+      "dependencies": [
+        "NAP-00 B0",
+        "NAP-01 Source Publication",
+        "CORE-CAND-004",
+        "CORE-CAND-005",
+        "CORE-CAND-006"
+      ],
+      "validated": true
+    },
+    {
+      "id": "NAP-03",
+      "name": "Narrative-Outline",
+      "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-03",
+      "branch": "codex/nap-03-narrative",
+      "head": "c25e4d9eaf963fae33b07597c0f288ff6b98e38c",
+      "status_porcelain": "",
+      "gate": "waiting_dependency_gate",
+      "write_set": [
+        "plugins/narrative-analysis/**",
+        "plugins/outline-projection/**",
+        "skills/outline/**",
+        "data/plot-structure/**",
+        "tests/narrative/**",
+        "coordination/NAP-03/**"
+      ],
+      "dependencies": [
+        "NAP-00 B0",
+        "NAP-02 accepted Atom/Claim schemas"
+      ],
+      "validated": true
+    },
+    {
+      "id": "NAP-04",
+      "name": "Character-Assets",
+      "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-04",
+      "branch": "codex/nap-04-character",
+      "head": "c25e4d9eaf963fae33b07597c0f288ff6b98e38c",
+      "status_porcelain": "",
+      "gate": "waiting_dependency_gate",
+      "write_set": [
+        "plugins/character-distillation/**",
+        "plugins/asset-derivation/**",
+        "skills/character/**",
+        "data/character/**",
+        "data/world/**",
+        "tests/character/**",
+        "coordination/NAP-04/**"
+      ],
+      "dependencies": [
+        "NAP-00 B0",
+        "NAP-02 accepted Atom/Claim schemas",
+        "CORE-CAND-006"
+      ],
+      "validated": true
+    },
+    {
+      "id": "NAP-05",
+      "name": "Style-Suite",
+      "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-05",
+      "branch": "codex/nap-05-style",
+      "head": "c25e4d9eaf963fae33b07597c0f288ff6b98e38c",
+      "status_porcelain": "",
+      "gate": "waiting_dependency_gate",
+      "write_set": [
+        "plugins/style-manufacturing/**",
+        "plugins/style-runtime/**",
+        "skills/style/**",
+        "data/style/**",
+        "data/lexicon/**",
+        "tests/style/**",
+        "coordination/NAP-05/**"
+      ],
+      "dependencies": [
+        "NAP-00 B0",
+        "NAP-02 source evidence schemas",
+        "CORE-CAND-006"
+      ],
+      "validated": true
+    },
+    {
+      "id": "NAP-06",
+      "name": "Quality-Canon",
+      "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-06",
+      "branch": "codex/nap-06-quality",
+      "head": "c25e4d9eaf963fae33b07597c0f288ff6b98e38c",
+      "status_porcelain": "",
+      "gate": "waiting_dependency_gate",
+      "write_set": [
+        "plugins/consistency-audit/**",
+        "plugins/impact-repair/**",
+        "plugins/branch-canon/**",
+        "plugins/story-state/**",
+        "skills/quality/**",
+        "data/quality/**",
+        "tests/quality/**",
+        "coordination/NAP-06/**"
+      ],
+      "dependencies": [
+        "NAP-00 B0",
+        "CORE-CAND-006",
+        "NAP-04 schema integration for character checks",
+        "NAP-05 schema integration for style checks"
+      ],
+      "validated": true
+    },
+    {
+      "id": "NAP-07",
+      "name": "Writing-Skills",
+      "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-07",
+      "branch": "codex/nap-07-writing",
+      "head": "c25e4d9eaf963fae33b07597c0f288ff6b98e38c",
+      "status_porcelain": "",
+      "gate": "waiting_dependency_gate",
+      "write_set": [
+        "plugins/writing-context/**",
+        "plugins/chapter-workflow/**",
+        "plugins/skill-recommender/**",
+        "skills/writing/**",
+        "tests/writing/**",
+        "coordination/NAP-07/**"
+      ],
+      "dependencies": [
+        "NAP-00 B0",
+        "CORE-CAND-007",
+        "NAP-03 schemas",
+        "NAP-04 schemas",
+        "NAP-05 schemas"
+      ],
+      "validated": true
+    },
+    {
+      "id": "NAP-08",
+      "name": "Exchange-Projection",
+      "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-08",
+      "branch": "codex/nap-08-exchange",
+      "head": "c25e4d9eaf963fae33b07597c0f288ff6b98e38c",
+      "status_porcelain": "",
+      "gate": "waiting_dependency_gate",
+      "write_set": [
+        "plugins/analysis-io/**",
+        "plugins/knowledge-projection/**",
+        "profiles/**",
+        "tests/exchange/**",
+        "coordination/NAP-08/**"
+      ],
+      "dependencies": [
+        "NAP-00 B0",
+        "NAP-02 through NAP-07 stable public artifact schemas"
+      ],
+      "validated": true
+    }
+  ],
+  "codex_registration": {
+    "status": "waiting_user_ui_registration",
+    "reason": "No callable create-project tool is exposed; Computer Use forbids automating the Codex desktop UI; codex app <path> did not create a saved project.",
+    "required_paths": [
+      "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins",
+      "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-01",
+      "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-02",
+      "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-03",
+      "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-04",
+      "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-05",
+      "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-06",
+      "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-07",
+      "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-08"
+    ]
+  },
+  "created_at": "2026-08-27T21:40:59.8642701+08:00"
+}
