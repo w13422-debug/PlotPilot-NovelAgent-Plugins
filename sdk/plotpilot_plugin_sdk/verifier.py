@@ -1613,7 +1613,7 @@ def verify_provenance_receipt(receipt: Mapping[str, Any]) -> None:
     assert_valid("provenance-receipt/v1", receipt)
     if (receipt["bundle_id"] is None) != (receipt["bundle_hash"] is None):
         raise ContractValidationError("provenance Bundle ID/hash must be all-null or all-present")
-    _assert_unique((item["item_id"] for item in receipt["staged_items"]), "provenance staged item IDs must be unique")
+    _assert_unique(receipt["staged_items"], "provenance staged item IDs must be unique")
     for ref in receipt["skill_chain_result_refs"]:
         _verify_chain_ref(ref, bundle_id=receipt["bundle_id"], allow_bundleless=True)
     _assert_hash(hash_without_field(receipt, "receipt_hash", "provenance-receipt/v1"), receipt["receipt_hash"], "receipt_hash")
