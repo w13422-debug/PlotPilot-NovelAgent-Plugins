@@ -1,0 +1,23 @@
+{
+  "$id": "evidence-span/v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema","workspace_id","document_id","revision_id","node_id","start_codepoint","end_codepoint","quote","quote_hash","canonical_text_hash"],
+  "properties": {
+    "schema": {"const": "evidence-span/v1"},
+    "workspace_id": {"$ref": "#/$defs/id"},
+    "document_id": {"$ref": "#/$defs/id"},
+    "revision_id": {"$ref": "#/$defs/id"},
+    "node_id": {"$ref": "#/$defs/id"},
+    "start_codepoint": {"type": "integer","minimum": 0},
+    "end_codepoint": {"type": "integer","minimum": 0},
+    "quote": {"type": "string","minLength": 1},
+    "quote_hash": {"$ref": "#/$defs/hash"},
+    "canonical_text_hash": {"$ref": "#/$defs/hash"}
+  },
+  "$defs": {
+    "id": {"type":"string","pattern":"^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"},
+    "hash": {"type":"string","pattern":"^[0-9a-f]{64}$"}
+  }
+}

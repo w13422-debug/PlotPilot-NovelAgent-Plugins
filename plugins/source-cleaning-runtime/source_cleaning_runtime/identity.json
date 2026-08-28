@@ -1,0 +1,7 @@
+{
+  "schema": "source-plugin-package-identity/v1",
+  "plugin_id": "com.plotpilot.novelagent.source-cleaning-runtime",
+  "version": "0.1.0",
+  "package_hash": "1a142edaf589c048dfde0d0fcfa83c0c52c3abe0c47741a3b1c322b75ad627b5",
+  "release_id": "3769203e651e8bc2169a00a5c7a01d82928ad3f2521aaf0b829f26f63d30eb78"
+}

@@ -1,0 +1,17 @@
+{
+  "schema": "provider-schema-index/v1",
+  "plugin_id": "com.plotpilot.novelagent.source-cleaning-runtime",
+  "capability_id": "source.clean.preview/v1",
+  "schemas": [
+    {
+      "schema_id": "source.clean.preview-request/v1",
+      "path": "schemas/preview-request.schema.json",
+      "sha256": "63da39e8b766521ac18aa380eac06b9351e1b84ca8f1780df4902b5d0cc7d123"
+    },
+    {
+      "schema_id": "source.clean.preview-result/v1",
+      "path": "schemas/preview-result.schema.json",
+      "sha256": "90c20bb7c2227addb3845993fd3b7b06ae69a95a24d7c4851c6fe15413ecf2ab"
+    }
+  ]
+}

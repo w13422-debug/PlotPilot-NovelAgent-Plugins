@@ -1,0 +1,19 @@
+{
+  "schema": "plugin-data-bundle/v1",
+  "bundle_id": "source-cleaning-rules-webnovel-ads-bundle",
+  "data_plugin_id": "com.plotpilot.novelagent.source-cleaning-rules.webnovel-ads",
+  "data_release_id": "bfaf1a733099c28234b6898bc3b523a84e7e5b11639e132dcb11a9240e7b72b1",
+  "package_hash": "4fec46812e638b838298aa0cb41f72b6b47b1f2b4ecf75c1336be5aee35cf510",
+  "format_id": "source-cleaning-rules/v1",
+  "root_path": "data/rules.json",
+  "files": [
+    {
+      "path": "data/rules.json",
+      "asset_id": "asset-source-cleaning-rules-webnovel-ads",
+      "sha256": "fcd91d5b24670d0a4c705daffbaddaaf96be26c8ac5f204fbefc435bff7d4b0d",
+      "mime": "application/json",
+      "size": 919
+    }
+  ],
+  "bundle_hash": "6a84b5d804b385611939bb01aa0bf1bb0daa291256091d50730a35c4a6ed18fc"
+}

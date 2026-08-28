@@ -1,0 +1,7 @@
+{
+  "schema": "source-import-package-identity/v1",
+  "plugin_id": "com.plotpilot.novelagent.source-import",
+  "version": "0.1.0",
+  "package_hash": "c9bf87f728c3cff62aa0d251335d08fdc0000b4a05b2ad82623ac9a161699f16",
+  "release_id": "1516d73072736a07f05ef854360eb86cedf5f9742dce4551d40689c116a2c73e"
+}

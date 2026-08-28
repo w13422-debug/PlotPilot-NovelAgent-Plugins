@@ -1,0 +1,18 @@
+{
+  "schema": "source-cleaning-rules-expected/v1",
+  "data_kind": "data",
+  "data_bundle_id": "source-cleaning-rules-webnovel-ads-bundle",
+  "manifest_path": "plugin.json",
+  "root_path": "data/rules.json",
+  "package_files": [
+    "data/rules.json",
+    "plugin.json"
+  ],
+  "files_sha256": "fcd91d5b24670d0a4c705daffbaddaaf96be26c8ac5f204fbefc435bff7d4b0d  data/rules.json\n562f03257472f1735169a68cad1675bfada397f6ce73b938187bae10fb79b687  plugin.json\n",
+  "fixture_hashes": {
+    "data/rules.json": "fcd91d5b24670d0a4c705daffbaddaaf96be26c8ac5f204fbefc435bff7d4b0d"
+  },
+  "package_hash": "4fec46812e638b838298aa0cb41f72b6b47b1f2b4ecf75c1336be5aee35cf510",
+  "release_id": "bfaf1a733099c28234b6898bc3b523a84e7e5b11639e132dcb11a9240e7b72b1",
+  "bundle_hash": "6a84b5d804b385611939bb01aa0bf1bb0daa291256091d50730a35c4a6ed18fc"
+}

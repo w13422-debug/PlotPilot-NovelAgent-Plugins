@@ -1,0 +1,21 @@
+{
+  "$id": "source-structure-node/v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema","node_id","node_kind","title","start_codepoint","end_codepoint","body_start_codepoint","body_end_codepoint","parent_node_id","ordinal","removed"],
+  "properties": {
+    "schema": {"const":"source-structure-node/v1"},
+    "node_id": {"$ref":"#/$defs/id"},
+    "node_kind": {"type":"string","minLength":1},
+    "title": {"type":"string"},
+    "start_codepoint": {"type":"integer","minimum":0},
+    "end_codepoint": {"type":"integer","minimum":0},
+    "body_start_codepoint": {"type":"integer","minimum":0},
+    "body_end_codepoint": {"type":"integer","minimum":0},
+    "parent_node_id": {"anyOf":[{"$ref":"#/$defs/id"},{"type":"null"}]},
+    "ordinal": {"type":"integer","minimum":0},
+    "removed": {"type":"boolean"}
+  },
+  "$defs": {"id":{"type":"string","pattern":"^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"}}
+}

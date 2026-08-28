@@ -1,0 +1,14 @@
+{
+  "$id":"source-structure-operation/v1",
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "oneOf":[
+    {"type":"object","additionalProperties":false,"required":["schema","operation_id","type","node_id","title"],"properties":{"schema":{"const":"source-structure-operation/v1"},"operation_id":{"$ref":"#/$defs/id"},"type":{"const":"rename"},"node_id":{"$ref":"#/$defs/id"},"title":{"type":"string","minLength":1}}},
+    {"type":"object","additionalProperties":false,"required":["schema","operation_id","type","node_id","removed"],"properties":{"schema":{"const":"source-structure-operation/v1"},"operation_id":{"$ref":"#/$defs/id"},"type":{"const":"set_removed"},"node_id":{"$ref":"#/$defs/id"},"removed":{"type":"boolean"}}},
+    {"type":"object","additionalProperties":false,"required":["schema","operation_id","type","node_id","node_kind"],"properties":{"schema":{"const":"source-structure-operation/v1"},"operation_id":{"$ref":"#/$defs/id"},"type":{"const":"set_type"},"node_id":{"$ref":"#/$defs/id"},"node_kind":{"type":"string","minLength":1}}},
+    {"type":"object","additionalProperties":false,"required":["schema","operation_id","type","node_id","parent_node_id","ordinal"],"properties":{"schema":{"const":"source-structure-operation/v1"},"operation_id":{"$ref":"#/$defs/id"},"type":{"const":"move"},"node_id":{"$ref":"#/$defs/id"},"parent_node_id":{"anyOf":[{"$ref":"#/$defs/id"},{"type":"null"}]},"ordinal":{"type":"integer","minimum":0}}},
+    {"type":"object","additionalProperties":false,"required":["schema","operation_id","type","node_id","ordinal"],"properties":{"schema":{"const":"source-structure-operation/v1"},"operation_id":{"$ref":"#/$defs/id"},"type":{"const":"reorder"},"node_id":{"$ref":"#/$defs/id"},"ordinal":{"type":"integer","minimum":0}}},
+    {"type":"object","additionalProperties":false,"required":["schema","operation_id","type","node_id","boundaries"],"properties":{"schema":{"const":"source-structure-operation/v1"},"operation_id":{"$ref":"#/$defs/id"},"type":{"const":"split"},"node_id":{"$ref":"#/$defs/id"},"boundaries":{"type":"array","minItems":1,"items":{"type":"integer","minimum":0}},"titles":{"type":"array","items":{"type":"string","minLength":1}}}},
+    {"type":"object","additionalProperties":false,"required":["schema","operation_id","type","node_ids"],"properties":{"schema":{"const":"source-structure-operation/v1"},"operation_id":{"$ref":"#/$defs/id"},"type":{"const":"merge"},"node_ids":{"type":"array","minItems":2,"uniqueItems":true,"items":{"$ref":"#/$defs/id"}},"title":{"type":"string","minLength":1}}}
+  ],
+  "$defs":{"id":{"type":"string","pattern":"^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"}}
+}

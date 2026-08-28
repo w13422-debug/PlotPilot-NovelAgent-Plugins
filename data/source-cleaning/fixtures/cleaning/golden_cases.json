@@ -1,0 +1,47 @@
+{
+  "schema": "source-cleaning-golden-corpus/v1",
+  "rules": [
+    {
+      "id": "remove-site-ad-line",
+      "pattern": "^请牢记最新网址：https?://[^\\s]+$",
+      "flags": ["multiline"]
+    },
+    {
+      "id": "remove-next-page-line",
+      "pattern": "^本章未完，请点击下一页$",
+      "flags": ["multiline"]
+    }
+  ],
+  "cases": [
+    {
+      "id": "txt-gb18030",
+      "input_kind": "txt",
+      "storage_source_format": "txt",
+      "encoding": "gb18030",
+      "source_text": "第一章\n请牢记最新网址：https://example.invalid\n她在研究“广告”二字，不是推广。\n",
+      "expected_cleaned_text": "第一章\n\n她在研究“广告”二字，不是推广。\n",
+      "expected_removed": ["请牢记最新网址：https://example.invalid"],
+      "expected_preserved": ["她在研究“广告”二字，不是推广。"]
+    },
+    {
+      "id": "paste-utf8",
+      "input_kind": "paste",
+      "storage_source_format": "plain_text",
+      "encoding": "utf-8",
+      "source_text": "第二章\n本章未完，请点击下一页\n人物说：“下一页并不是广告。”\n",
+      "expected_cleaned_text": "第二章\n\n人物说：“下一页并不是广告。”\n",
+      "expected_removed": ["本章未完，请点击下一页"],
+      "expected_preserved": ["人物说：“下一页并不是广告。”"]
+    },
+    {
+      "id": "epub-utf8",
+      "input_kind": "epub",
+      "storage_source_format": "epub",
+      "encoding": "utf-8",
+      "source_text": "第三章\n请牢记最新网址：https://example.invalid\n“网址也可能出现在剧情里：https://story.invalid。”\n本章未完，请点击下一页\n角色笑道：“本章未完，是我写的台词。”\n",
+      "expected_cleaned_text": "第三章\n\n“网址也可能出现在剧情里：https://story.invalid。”\n\n角色笑道：“本章未完，是我写的台词。”\n",
+      "expected_removed": ["请牢记最新网址：https://example.invalid", "本章未完，请点击下一页"],
+      "expected_preserved": ["“网址也可能出现在剧情里：https://story.invalid。”", "角色笑道：“本章未完，是我写的台词。”"]
+    }
+  ]
+}

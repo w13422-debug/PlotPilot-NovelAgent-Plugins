@@ -1,0 +1,11 @@
+[build-system]
+requires = []
+build-backend = "source_import.build_backend"
+backend-path = ["."]
+
+[project]
+name = "plotpilot-source-import"
+version = "0.1.0"
+description = "Deterministic Core-owned TXT, EPUB and paste source importer"
+requires-python = ">=3.12,<3.13"
+dependencies = []

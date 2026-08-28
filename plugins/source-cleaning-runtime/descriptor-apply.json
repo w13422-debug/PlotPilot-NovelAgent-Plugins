@@ -1,0 +1,20 @@
+{
+  "schema": "capability-provider/v1",
+  "capability_id": "source.clean.apply/v1",
+  "provider": {
+    "plugin_id": "com.plotpilot.novelagent.source-cleaning-runtime",
+    "release_id": "3769203e651e8bc2169a00a5c7a01d82928ad3f2521aaf0b829f26f63d30eb78"
+  },
+  "input_schema": "source.clean.apply-request/v1",
+  "output_schema": "source.clean.apply-result/v1",
+  "result_contract": "candidate-batch/v1",
+  "supports": [
+    "run",
+    "resume",
+    "cancel"
+  ],
+  "deterministic": true,
+  "accepted_data_formats": [
+    "source-cleaning-rules/v1"
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "$id": "source.clean.apply-request/v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema", "operation_key", "operation", "job_id", "step_id", "attempt_id", "worker_run_id", "lease_epoch",
+    "checkpoint_ids", "provenance_receipt_id", "created_at", "total_units",
+    "run_snapshot_hash", "workspace_id", "document_id", "revision_id", "base_content_hash",
+    "source_asset_id", "source_asset_hash", "storage_source_format", "input_kind",
+    "rules", "rules_release_id", "rules_package_hash", "profile", "limits", "body_ranges", "title_ranges", "review_context"
+  ],
+  "properties": {
+    "schema": { "const": "source.clean.apply-request/v1" }, "operation_key": { "const": "source.clean.apply/v1" }, "operation": { "enum": ["run", "resume", "cancel"] },
+    "job_id": { "$ref": "#/$defs/id" }, "step_id": { "$ref": "#/$defs/id" }, "attempt_id": { "$ref": "#/$defs/id" }, "worker_run_id": { "$ref": "#/$defs/id" }, "lease_epoch": { "type": "integer", "minimum": 1 },
+    "checkpoint_ids": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/id" } }, "provenance_receipt_id": { "$ref": "#/$defs/id" },
+    "created_at": { "type": "string", "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.(?!000)[0-9]{3}Z)$" }, "total_units": { "type": "integer", "minimum": 0 },
+    "run_snapshot_hash": { "$ref": "#/$defs/hash" }, "workspace_id": { "$ref": "#/$defs/id" }, "document_id": { "$ref": "#/$defs/id" }, "revision_id": { "$ref": "#/$defs/id" }, "base_content_hash": { "$ref": "#/$defs/hash" },
+    "source_asset_id": { "$ref": "#/$defs/id" }, "source_asset_hash": { "$ref": "#/$defs/hash" },
+    "resume_checkpoint_asset_id": { "$ref": "#/$defs/id" }, "resume_checkpoint_asset_hash": { "$ref": "#/$defs/hash" },
+    "resume_state_asset_id": { "$ref": "#/$defs/id" }, "resume_state_asset_hash": { "$ref": "#/$defs/hash" },
+    "storage_source_format": { "enum": ["txt", "plain_text", "epub", "paste"] }, "input_kind": { "enum": ["txt", "epub", "paste"] },
+    "rules": { "$ref": "#/$defs/rules" }, "rules_release_id": { "$ref": "#/$defs/hash" }, "rules_package_hash": { "$ref": "#/$defs/hash" }, "profile": { "$ref": "#/$defs/profile" }, "limits": { "$ref": "#/$defs/limits" },
+    "body_ranges": { "type": "array", "items": { "$ref": "#/$defs/span" } }, "title_ranges": { "type": "array", "items": { "$ref": "#/$defs/span" } },
+    "review_context": { "$ref": "#/$defs/review" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "operation": { "const": "resume" } }, "required": ["operation"] },
+      "then": { "required": ["resume_checkpoint_asset_id", "resume_checkpoint_asset_hash", "resume_state_asset_id", "resume_state_asset_hash"] }
+    },
+    {
+      "if": { "properties": { "operation": { "enum": ["run", "cancel"] } }, "required": ["operation"] },
+      "then": {
+        "not": {
+          "anyOf": [
+            { "required": ["resume_checkpoint_asset_id"] },
+            { "required": ["resume_checkpoint_asset_hash"] },
+            { "required": ["resume_state_asset_id"] },
+            { "required": ["resume_state_asset_hash"] }
+          ]
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$" }, "hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "span": { "type": "object", "additionalProperties": false, "required": ["start", "end"], "properties": { "start": { "type": "integer", "minimum": 0 }, "end": { "type": "integer", "minimum": 0 } } },
+    "rule": {
+      "type": "object", "additionalProperties": false, "required": ["id", "name", "description", "pattern", "scope", "target", "input_kinds", "flags", "enabled", "order", "tags"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" }, "name": { "type": "string", "minLength": 1 }, "description": { "type": "string" }, "pattern": { "type": "string", "minLength": 1 },
+        "scope": { "enum": ["line", "paragraph", "chapter"] }, "target": { "enum": ["body", "title"] },
+        "input_kinds": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "enum": ["txt", "epub", "paste", "all"] } },
+        "flags": { "type": "array", "uniqueItems": true, "items": { "enum": ["ignore_case", "multiline", "dotall"] } }, "enabled": { "type": "boolean" }, "order": { "type": "integer", "minimum": 0 }, "tags": { "type": "array", "uniqueItems": true, "items": { "type": "string" } }
+      }
+    },
+    "rules": { "type": "object", "additionalProperties": false, "required": ["schema", "rules"], "properties": { "schema": { "const": "source-cleaning-rules/v1" }, "rules": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/rule" } } } },
+    "profile": {
+      "type": "object", "additionalProperties": false, "required": ["schema", "rules_release_id", "rules_package_hash", "rules_hash", "rule_order", "thresholds", "excluded_hit_ids", "profile_hash"],
+      "properties": {
+        "schema": { "const": "source-cleaning-profile/v1" }, "rules_release_id": { "$ref": "#/$defs/hash" }, "rules_package_hash": { "$ref": "#/$defs/hash" }, "rules_hash": { "$ref": "#/$defs/hash" }, "rule_order": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/id" } },
+        "thresholds": { "type": "object", "additionalProperties": false, "required": ["max_total_matches", "max_deleted_codepoints"], "properties": { "max_total_matches": { "type": "integer", "minimum": 0 }, "max_deleted_codepoints": { "type": "integer", "minimum": 0 } } },
+        "excluded_hit_ids": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/hash" } }, "profile_hash": { "$ref": "#/$defs/hash" }
+      }
+    },
+    "limits": { "type": "object", "additionalProperties": false, "required": ["scope_timeout_ms", "rule_timeout_ms", "import_timeout_ms", "max_scope_codepoints", "max_rule_scanned_codepoints", "max_import_scanned_codepoints", "max_scope_matches", "max_rule_matches", "max_import_matches", "max_plugins", "max_rules", "max_pattern_bytes", "max_snapshot_bytes", "max_persisted_matches"], "properties": { "scope_timeout_ms": { "type": "integer", "minimum": 1 }, "rule_timeout_ms": { "type": "integer", "minimum": 1 }, "import_timeout_ms": { "type": "integer", "minimum": 1 }, "max_scope_codepoints": { "type": "integer", "minimum": 1 }, "max_rule_scanned_codepoints": { "type": "integer", "minimum": 1 }, "max_import_scanned_codepoints": { "type": "integer", "minimum": 1 }, "max_scope_matches": { "type": "integer", "minimum": 1 }, "max_rule_matches": { "type": "integer", "minimum": 1 }, "max_import_matches": { "type": "integer", "minimum": 1 }, "max_plugins": { "type": "integer", "minimum": 1 }, "max_rules": { "type": "integer", "minimum": 1 }, "max_pattern_bytes": { "type": "integer", "minimum": 1 }, "max_snapshot_bytes": { "type": "integer", "minimum": 1 }, "max_persisted_matches": { "type": "integer", "minimum": 1 } } },
+    "review": {
+      "type": "object", "additionalProperties": false, "required": ["schema", "run_snapshot_hash", "source_asset_hash", "source_text_hash", "rules_release_id", "rules_package_hash", "rules_hash", "profile_hash", "rule_order", "match_rows", "match_manifest_hash", "cleaned_text_hash", "canonical_text_hash"],
+      "properties": {
+        "schema": { "const": "source-cleaning-review/v1" }, "run_snapshot_hash": { "$ref": "#/$defs/hash" }, "source_asset_hash": { "$ref": "#/$defs/hash" }, "source_text_hash": { "$ref": "#/$defs/hash" }, "rules_release_id": { "$ref": "#/$defs/hash" }, "rules_package_hash": { "$ref": "#/$defs/hash" }, "rules_hash": { "$ref": "#/$defs/hash" }, "profile_hash": { "$ref": "#/$defs/hash" }, "rule_order": { "type": "array", "items": { "$ref": "#/$defs/id" } }, "match_rows": { "type": "array" }, "match_manifest_hash": { "$ref": "#/$defs/hash" }, "cleaned_text_hash": { "$ref": "#/$defs/hash" }, "canonical_text_hash": { "$ref": "#/$defs/hash" }
+      }
+    }
+  }
+}

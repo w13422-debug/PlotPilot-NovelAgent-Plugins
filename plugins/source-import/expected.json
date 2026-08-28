@@ -1,0 +1,59 @@
+{
+  "schema": "source-import-package-expected/v1",
+  "plugin_id": "com.plotpilot.novelagent.source-import",
+  "version": "0.1.0",
+  "package_files": [
+    "backend/plotpilot_source_import-0.1.0-py3-none-any.whl",
+    "backend/requirements.lock",
+    "backend/wheels/README.txt",
+    "descriptor-parse.json",
+    "descriptor.json",
+    "files.sha256",
+    "migrations/manifest.json",
+    "plugin.json",
+    "pyproject.toml",
+    "source_import/__init__.py",
+    "source_import/adapters/__init__.py",
+    "source_import/adapters/txt.py",
+    "source_import/build_backend.py",
+    "source_import/contract.py",
+    "source_import/identity.json",
+    "source_import/importer/__init__.py",
+    "source_import/importer/epub.py",
+    "source_import/limits.py",
+    "source_import/package_identity.py",
+    "source_import/pipeline.py",
+    "source_import/schemas/inspect-index.json",
+    "source_import/schemas/inspect-input.schema.json",
+    "source_import/schemas/inspect-output.schema.json",
+    "source_import/schemas/parse-index.json",
+    "source_import/schemas/parse-input.schema.json",
+    "source_import/schemas/parse-output.schema.json",
+    "source_import/structure.py",
+    "source_import/worker.py"
+  ],
+  "files_sha256": "b573f82fdf67d4ef34260f7da4ba0b643067d6345c1a7dacfb6021feaaf7a7fa  backend/plotpilot_source_import-0.1.0-py3-none-any.whl\n1c5d8105daa526c97fd2473fe1b1030d1a8924f9f121a90a28bfe24d617caf09  backend/requirements.lock\neeea7f8b8352ad45ee04b309b35d0549588a8f7b4301cf94517f9e8f5f81e746  backend/wheels/README.txt\n88fcc1fe29b4e2f8eb6c5e427eb7819fe5c24c74b3c8235031ff4c8f78f82c33  migrations/manifest.json\n989df6ca2dca572a52bbbec6e5a4f2c6cc2b6432d243e779356379a109b70750  plugin.json\n022a8ce9bb20882128753576e4b1f04ee9bd54f13fdd9f115dae553e367e3e40  pyproject.toml\n265b5262e51898b27931dd9ba2d3dde670fafe0e9ac50d9a34338dd450cd31cd  source_import/__init__.py\n16c3be0c3310b89f5677b581a74c4672d6eb4c0e633c69d1ff1169063b236740  source_import/adapters/__init__.py\n06a1f8b5c55c60aab08d34b4282b34dbb3e25024b12ec09ddcbfdad611f094e5  source_import/adapters/txt.py\na55d7b4ec973d7e2531ea01d9d564ee52fabeaeb82e0594de9b23c4335df01da  source_import/build_backend.py\n4fe2280248da8af67e921ba3fd0ad2244ff88ffbcc1a96f11ea840fab5739b27  source_import/contract.py\n3e823da52720850e9cff703b576d5c4afa793f74ecd7d3c29359d9e9a5084c2b  source_import/importer/__init__.py\na38326b8586934bf106d9316234d6c92f0de46e5b123e44b68dfa7a060fa2dd9  source_import/importer/epub.py\n2db2e8e9c815d5118f2a06430e03ce2daed83d3725eda416eac2b6cd355eae1b  source_import/limits.py\n6b5cc41901e757b8ade73389b692d250818bcfbad7a00c78ca82add31bb71ede  source_import/package_identity.py\nf78dd26102bd938b84a03ad9fce6080cb0f5d0b2708b82a79f233098e042f0ff  source_import/pipeline.py\naadeff391f33558e73d7bd456cb893b926f834c40d20d842d318642bfa4c8ad9  source_import/schemas/inspect-index.json\nd8b8aa14699aa6daf2b3fa4cfef3e9502490ad79fb49c5d1faf1480b42f0d2a4  source_import/schemas/inspect-input.schema.json\n6360045fec9fa6a6efeceb382f1ddf6910df455c6e3586843550cf1bb6045f76  source_import/schemas/inspect-output.schema.json\nfbdd5e09438a1caeb1d2e1be581c22a569defd3f260ba62eae3edf478825b1d0  source_import/schemas/parse-index.json\nfd048245ecaa775dc5c27139ec58501de25205b5ba667343cb8a750082631430  source_import/schemas/parse-input.schema.json\naffe252e312103a74f6b8581e37d47fd820dc0e026f6fdf3da71a80c88229f1c  source_import/schemas/parse-output.schema.json\nf166bb44a07c2a11e391c89ac15148499f0b0849d09d56cb4543ab69a0f2ce88  source_import/structure.py\n5ba387aeac44cefac449b832ee982c63de616043b4e530a509098c4c725fdc55  source_import/worker.py\n",
+  "descriptor_sha256": "3d6662d3cfb7f26b27b5d924a9f5756008094e607edd873a7761dec487e2dd1f",
+  "descriptor_parse_sha256": "42adbefaab4e7f84d47f13c589c12b2c6fe9d0bb48b2798d60cbc7e8f493e6ed",
+  "package_hash": "c9bf87f728c3cff62aa0d251335d08fdc0000b4a05b2ad82623ac9a161699f16",
+  "release_id": "1516d73072736a07f05ef854360eb86cedf5f9742dce4551d40689c116a2c73e",
+  "wheel_path": "backend/plotpilot_source_import-0.1.0-py3-none-any.whl",
+  "wheel_import": "source_import",
+  "input_schema_paths": [
+    "source_import/schemas/inspect-input.schema.json",
+    "source_import/schemas/parse-input.schema.json"
+  ],
+  "output_schema_paths": [
+    "source_import/schemas/inspect-output.schema.json",
+    "source_import/schemas/parse-output.schema.json"
+  ],
+  "descriptor_paths": [
+    "descriptor.json",
+    "descriptor-parse.json"
+  ],
+  "plugin_path": "plugin.json",
+  "schema_index_paths": {
+    "source.import.inspect/v1": "source_import/schemas/inspect-index.json",
+    "source.import.parse/v1": "source_import/schemas/parse-index.json"
+  }
+}

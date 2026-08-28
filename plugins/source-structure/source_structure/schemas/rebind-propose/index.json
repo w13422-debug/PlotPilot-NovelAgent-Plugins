@@ -1,0 +1,17 @@
+{
+  "schema": "provider-schema-index/v1",
+  "plugin_id": "com.plotpilot.novelagent.source-structure",
+  "capability_id": "source.evidence.rebind.propose/v1",
+  "schemas": [
+    {
+      "schema_id": "source.evidence.rebind.propose-request/v1",
+      "path": "schemas/rebind-propose/input.schema.json",
+      "sha256": "54156476d073fc7c168d639fec8ffb8a1e93d8d67ae4950028a8d55eea598704"
+    },
+    {
+      "schema_id": "source.evidence.rebind.propose-result/v1",
+      "path": "schemas/rebind-propose/result.schema.json",
+      "sha256": "7b1d638e2c9de32618d3d0de102ae8eaa7e86125230f4809d168efec5c9fd802"
+    }
+  ]
+}
