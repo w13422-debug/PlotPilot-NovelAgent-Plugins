@@ -1,0 +1,54 @@
+{
+  "schema": "nap-b1-provenance-prerequisite-acceptance/v1",
+  "batch": "B1",
+  "owner_project": "NAP-00",
+  "purpose": "Align Python SDK provenance-receipt/v1 staged_items verification with frozen string-ID semantics before B1 source candidate.",
+  "contract_decision": {
+    "contract": "provenance-receipt/v1",
+    "staged_items": "string[] item IDs",
+    "host_candidate_stage_result": "object mapping[]",
+    "version_change": false,
+    "schema_changed": false,
+    "rpc_changed": false,
+    "typescript_changed": false
+  },
+  "source": {
+    "head": "8b4a333701d74bf0992c7a70b298f0f6dbf7630d",
+    "tree": "cd8e778a3ace1fad57d4481b35965255f5151f4d",
+    "parent": "ba01ca675a835e4b4d76fe4e7b4928cfe95ff905",
+    "branch": "codex/nap-00-integration",
+    "paths": [
+      "sdk/plotpilot_plugin_sdk/verifier.py",
+      "tests/contracts/test_provenance_staged_items_contract.py"
+    ]
+  },
+  "controller_validation": {
+    "new_contract_tests": "6/6 PASS",
+    "affected_sdk_parity_candidate_tests": "19/19 PASS",
+    "combined": "25/25 PASS",
+    "compileall": "PASS",
+    "diff_check": "PASS",
+    "worktree": "clean"
+  },
+  "sol_review": {
+    "agent_id": "01a04715-fdd9-7b73-9c61-78546a066d45",
+    "nickname": "Kepler",
+    "model": "gpt-5.6-sol",
+    "reasoning_effort": "max",
+    "read_only": true,
+    "verdict": "PASS",
+    "findings": [],
+    "public_contract_consistent": true,
+    "prerequisite_baseline_eligible": true,
+    "B1_candidate_gate_open": true,
+    "no_files_changed": true
+  },
+  "decision": {
+    "accepted": true,
+    "all_findings_closed": true,
+    "b1_implementation_may_continue": true,
+    "b1_source_candidate_gate_open": true,
+    "nap01_baseline_may_fast_forward": true
+  },
+  "accepted_at": "2026-08-28T15:07:57.7338811+08:00"
+}
