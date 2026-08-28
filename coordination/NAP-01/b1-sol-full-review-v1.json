@@ -1,0 +1,177 @@
+{
+  "schema": "nap-b1-sol-review/v1",
+  "reviewed_source_head": "0a1ced6d47fb5c3622ff36f14bf09a727cb96a0b",
+  "reviewed_source_tree": "ee3d0e8017068716310e114080dec8cf44261ca9",
+  "reviewed_evidence_head": "044d5d1533d63d448aa72c2063c5c02754cdeff2",
+  "identity_verified": true,
+  "verdict": "BLOCK",
+  "manifest_frozen": true,
+  "findings": [
+    {
+      "id": "NAP-B1-F-001",
+      "severity": "P1",
+      "title": "source-import 已发布输入/输出 schema 与真实 wire contract 不一致",
+      "exact_evidence": [
+        "plugins/source-import/source_import/worker.py:543-545",
+        "plugins/source-import/source_import/contract.py:102-166",
+        "plugins/source-import/source_import/worker.py:485-492",
+        "plugins/source-import/source_import/worker.py:644-648",
+        "plugins/source-import/source_import/worker.py:826-829",
+        "plugins/source-import/source_import/worker.py:873-885",
+        "plugins/source-import/source_import/worker.py:921-924",
+        "plugins/source-import/source_import/schemas/inspect-output.schema.json:14",
+        "plugins/source-import/source_import/schemas/inspect-output.schema.json:50-63",
+        "plugins/source-import/source_import/schemas/inspect-output.schema.json:92",
+        "plugins/source-import/source_import/schemas/parse-output.schema.json:14",
+        "plugins/source-import/source_import/schemas/parse-output.schema.json:50-63",
+        "plugins/source-import/source_import/schemas/parse-output.schema.json:91-105",
+        "tests/source/import/test_source_import.py:509-523",
+        "git 0a1ced6d47fb5c3622ff36f14bf09a727cb96a0b: bounded read-only probe produced succeeded inspect and parse envelopes rejected by their descriptor schemas",
+        "git 0a1ced6d47fb5c3622ff36f14bf09a727cb96a0b: bounded read-only probe accepted an undeclared input property despite additionalProperties=false",
+        "git 0a1ced6d47fb5c3622ff36f14bf09a727cb96a0b: real cancelled envelope exposes a checkpoint wrapper rejected by the published checkpoint schema"
+      ],
+      "contract_violation": "B1 要求 descriptor schema、运行时验证和 public SDK wire contract 一致且 fail-closed。运行时未拒绝未声明输入字段；真实 producer、mutation、write_set 和取消 checkpoint wrapper 又无法通过已发布的 closed schema，导致 Host 无法依据 catalog/schema 正确验证真实结果。",
+      "minimal_remediation_scope": [
+        "plugins/source-import/source_import/contract.py",
+        "plugins/source-import/source_import/worker.py",
+        "plugins/source-import/source_import/schemas/",
+        "tests/source/import/"
+      ],
+      "closure_tests": [
+        "对 inspect 和 parse 的成功、失败、取消、恢复真实 envelope 逐一执行 descriptor output schema 验证，全部必须通过",
+        "对每个 capability 的真实输入执行 descriptor input schema 与运行时双重验证；任意未知字段必须 fail-closed",
+        "统一 checkpoint wire shape，使取消返回值、checkpoint/v1 schema 和 resume 消费端完全一致",
+        "用 public SDK 验证真实 result、receipt、Host RPC 及 staged string item IDs，而非仅验证手工裁剪对象"
+      ]
+    },
+    {
+      "id": "NAP-B1-F-002",
+      "severity": "P1",
+      "title": "同 Revision 内容漂移可被错误分类为 rebound 并进入 Candidate",
+      "exact_evidence": [
+        "plugins/source-structure/source_structure/contract.py:466-472",
+        "plugins/source-structure/source_structure/contract.py:494-509",
+        "plugins/source-structure/source_structure/contract.py:511-549",
+        "plugins/source-structure/source_structure/runtime.py:1915-1924",
+        "plugins/source-structure/source_structure/runtime.py:1954-2047",
+        "tests/source/structure/test_structure.py:535-638",
+        "git 0a1ced6d47fb5c3622ff36f14bf09a727cb96a0b: bounded read-only probe classified same-revision changed content as rebound with candidate_eligible=true and reason unique_exact_quote_with_containment"
+      ],
+      "contract_violation": "B1 与 accepted catalog 规定 unchanged 仅限 same-Revision no-op，rebound、needs_rerun、orphaned 是跨 Revision 分类。当前逻辑在同 Revision 未满足 unchanged 后继续进行通用 quote rebind，允许不可能的同 Revision 内容漂移生成 rebound Candidate，破坏 Revision/hash 不可变绑定。",
+      "minimal_remediation_scope": [
+        "plugins/source-structure/source_structure/contract.py",
+        "plugins/source-structure/source_structure/runtime.py",
+        "tests/source/structure/"
+      ],
+      "closure_tests": [
+        "同 Revision、同 hash、同 node 的精确 no-op 只能返回 unchanged",
+        "同 Revision下 target hash、文本或 node 任一漂移必须 fail-closed，且不得生成 Candidate",
+        "rebound、needs_rerun、orphaned 只能在 target Revision 与 source Revision 不同时出现",
+        "覆盖 Unicode-scalar span、quote hash、revision hash、casefold dedupe 与四分类的组合回归"
+      ]
+    },
+    {
+      "id": "NAP-B1-F-003",
+      "severity": "P1",
+      "title": "source-cleaning-runtime 未把 outer files.sha256 绑定为运行时 package identity 权威",
+      "exact_evidence": [
+        "plugins/source-cleaning-runtime/source_cleaning_runtime/package_identity.py:21-41",
+        "plugins/source-cleaning-runtime/source_cleaning_runtime/runtime.py:1419-1420",
+        "tests/source/cleaning/test_package_contract.py:27-83",
+        "tests/source/cleaning/rebuild_package.py:156-166",
+        "git 0a1ced6d47fb5c3622ff36f14bf09a727cb96a0b: bounded in-memory probe replaced package_id and release_id with different well-formed 64-hex values and load_identity accepted them"
+      ],
+      "contract_violation": "accepted B0 outer-sidecar contract 要求 files.sha256 作为非循环 package identity 权威，并要求 missing/tampered identity fail-closed。cleaning 运行时仅检查 identity.json 的形状、owner、version 和十六进制格式，没有从 outer manifest 重算并验证 package/release identity；provenance receipt 因而可以携带与已安装 payload 无关的格式正确身份。",
+      "minimal_remediation_scope": [
+        "plugins/source-cleaning-runtime/source_cleaning_runtime/package_identity.py",
+        "plugins/source-cleaning-runtime/source_cleaning_runtime/runtime.py",
+        "tests/source/cleaning/test_package_contract.py",
+        "tests/source/cleaning/rebuild_package.py"
+      ],
+      "closure_tests": [
+        "依据 committed outer files.sha256 重算 package_id 和 release_id，并与 identity.json 精确比对",
+        "identity.json 缺失、files.sha256 缺失、payload tamper、manifest tamper、格式正确但值错误的 package/release identity 均必须 fail-closed",
+        "验证 provenance receipt 中 identity 来自已验证 payload，而非未经绑定的 sidecar 字符串",
+        "继续保持 wheel 内不包含自引用 identity，B6 installer/Core sidecar smoke 仍按原计划延后"
+      ]
+    },
+    {
+      "id": "NAP-B1-F-004",
+      "severity": "P1",
+      "title": "cleaning 并发取消存在双终态所有者",
+      "exact_evidence": [
+        "plugins/source-cleaning-runtime/source_cleaning_runtime/runtime.py:653-655",
+        "plugins/source-cleaning-runtime/source_cleaning_runtime/runtime.py:677-679",
+        "plugins/source-cleaning-runtime/source_cleaning_runtime/runtime.py:700-702",
+        "plugins/source-cleaning-runtime/source_cleaning_runtime/runtime.py:1602-1657",
+        "plugins/source-cleaning-runtime/source_cleaning_runtime/runtime.py:1900-1902",
+        "plugins/source-cleaning-runtime/source_cleaning_runtime/runtime.py:2075-2082",
+        "plugins/source-cleaning-runtime/source_cleaning_runtime/runtime.py:2088-2126",
+        "tests/source/cleaning/test_controller_preaudit.py:443-447"
+      ],
+      "contract_violation": "cancel 控制调用会立即执行取消终态和 checkpoint 提交，同时活动 apply 通过共享取消标志观察取消后再次进入 _cancel_terminal。控制路径和工作路径均拥有 job.complete 权限，无法保证一个 worker run 只有一个确定性终态及一个可恢复 checkpoint；现有测试只覆盖无活动 run 的独立 cancel。",
+      "minimal_remediation_scope": [
+        "plugins/source-cleaning-runtime/source_cleaning_runtime/runtime.py",
+        "tests/source/cleaning/"
+      ],
+      "closure_tests": [
+        "活动 apply 位于规则循环时并发发出 cancel，断言恰好一次 cancelled job.complete 和恰好一个 cancellation checkpoint",
+        "覆盖 cancel 与成功提交相邻的竞态，禁止 succeeded/cancelled 冲突或重复终态",
+        "从唯一取消 checkpoint 恢复 apply，验证 run、attempt、lease、snapshot、rules profile 和 Candidate identity 绑定",
+        "验证身份不匹配的 resume fail-closed，且取消信号不会污染合法后续 resume"
+      ]
+    },
+    {
+      "id": "NAP-B1-F-005",
+      "severity": "P2",
+      "title": "cleaning 的 max_snapshot_bytes 在完整读取后才执行",
+      "exact_evidence": [
+        "plugins/source-cleaning-runtime/source_cleaning_runtime/contract.py:74",
+        "plugins/source-cleaning-runtime/source_cleaning_runtime/runtime.py:476-503",
+        "plugins/source-cleaning-runtime/source_cleaning_runtime/runtime.py:864-905"
+      ],
+      "contract_violation": "运行时先按页完整读取并聚合 Asset，随后才执行 max_snapshot_bytes 检查；分页上限允许在声明的 snapshot 限额之前读取和驻留远大于限额的数据。因此该资源限制不是读取边界上的 fail-closed 限制，不能满足 B1 的有界处理要求。",
+      "minimal_remediation_scope": [
+        "plugins/source-cleaning-runtime/source_cleaning_runtime/runtime.py",
+        "tests/source/cleaning/"
+      ],
+      "closure_tests": [
+        "把 max_snapshot_bytes 传入分页读取器，在累计长度超过限额时立即停止且不继续请求后续页",
+        "精确限额大小必须成功，限额加一个 Unicode scalar/byte 必须 fail-closed",
+        "用计数 Host 证明超限请求不会完整读取或缓存整个 Asset",
+        "对 preview、apply 和 resume 入口执行相同边界测试"
+      ]
+    }
+  ],
+  "checks": {
+    "A_identity_write_set": "PASS",
+    "B_catalog_manifests_schemas": "BLOCK",
+    "C_asset_authority": "PASS",
+    "D_import_fail_closed": "BLOCK",
+    "E_cleaning_contract": "BLOCK",
+    "F_structure_evidence_rebind": "BLOCK",
+    "G_lifecycle_stage_provenance": "BLOCK",
+    "H_package_identity_supply_chain": "BLOCK",
+    "I_tests_fresh_checkout": "PASS",
+    "J_scope_boundaries": "PASS"
+  },
+  "all_findings_closed": false,
+  "merge_eligible": false,
+  "release_NAP_02_eligible": false,
+  "reviewer": {
+    "agent_id": "01a0479b-7bea-7e81-b652-061a3aea61a0",
+    "nickname": "Wegener",
+    "model": "gpt-5.6-sol",
+    "reasoning_effort": "max",
+    "completion_submission": "01a047c3-bd7e-7083-ab82-198076d40fc9"
+  },
+  "notes": [
+    "accepted prerequisite、source/evidence parent/tree、protocol 与 committed evidence blob identities 均已精确验证。",
+    "prerequisite..source 共 131 个 source 路径，冻结 write set 外为 0；source..evidence 仅新增两份 coordination/NAP-01 证据。",
+    "九项 capability、accepted_data_formats、Asset-only authority、无数据库/Core/donor mutation、无 plugin-to-plugin import 均通过静态审查。",
+    "controller/full/fresh-checkout 证据为 84 pass + 40 subtests、compileall PASS、Git clean，但未覆盖本 Manifest 的合约反例。",
+    "B6 的真实桌面/Core installer sidecar smoke 明确延后，不作为 B1 Finding。",
+    "未运行 Windows EXE、installer、GUI build 或 smoke，reviewer 未修改任何文件。",
+    "本 Finding Manifest 已一次性冻结；后续 targeted rereview 只能关闭 NAP-B1-F-001 至 NAP-B1-F-005，不得新增 Finding ID 或扩大整改范围。"
+  ]
+}
