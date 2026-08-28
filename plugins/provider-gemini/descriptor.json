@@ -3,12 +3,15 @@
   "capability_id": "model.provider.gemini.invoke/v1",
   "provider": {
     "plugin_id": "com.plotpilot.novelagent.provider-gemini",
-    "release_id": "48758159c86dbb668c128177b538a74ef84e378e2236431d15bfaae05b71ee4a"
+    "release_id": "9ea791d0268435d7353e972962d84d9c8cf1b3c9f927ed5448cd83c0a175c48c"
   },
   "input_schema": "model.provider.gemini.invoke-request/v1",
   "output_schema": "model.provider.gemini.invoke-result/v1",
   "result_contract": "artifact-bundle/v1",
-  "supports": ["run", "cancel"],
+  "supports": [
+    "run",
+    "cancel"
+  ],
   "deterministic": false,
   "accepted_data_formats": []
 }

@@ -1,0 +1,9 @@
+[build-system]
+requires = []
+build-backend = "nap00_wheel_backend"
+
+[project]
+name = "plotpilot-provider-gemini"
+version = "0.1.0"
+description = "PlotPilot Gemini provider package"
+requires-python = ">=3.12,<3.13"

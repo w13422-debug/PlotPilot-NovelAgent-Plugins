@@ -12,6 +12,7 @@ from .provider import (
     InvocationOutcome,
     StreamChunk,
     capability_descriptor,
+    main,
 )
 
 __all__ = [
@@ -26,4 +27,5 @@ __all__ = [
     "InvocationOutcome",
     "StreamChunk",
     "capability_descriptor",
+    "main",
 ]

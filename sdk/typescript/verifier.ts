@@ -1,7 +1,24 @@
 import { canonicalJson, hashJcs, sha256Hex, utf8 } from './canonical.ts'
 import unicodeCasefoldContractJson from '../../contracts/unicode-casefold-v1.json' with { type: 'json' }
 import rpcMethodMatrixJson from '../../contracts/json-schema/rpc-method-matrix.v1.json' with { type: 'json' }
-import type { BackupBundle, CandidateItem, EvidenceSpan, JsonObject, ResultBundle, RunSnapshot } from './types.ts'
+import { assertValidContract, frozenSchemaInventory, schemaErrors } from './schema-validator.ts'
+import type {
+  BackupBundle,
+  AuthoritativeAtom,
+  CandidateItem,
+  CandidateStageReceipt,
+  Checkpoint,
+  EvidenceSpan,
+  JsonObject,
+  PluginLifecycleTransition,
+  ProvenanceReceipt,
+  ResultBundle,
+  RunSnapshot,
+  SkillChainResult,
+  SkillRunReceipt,
+  SseRecovery,
+  StreamPrefix,
+} from './types.ts'
 
 type ByteFiles = Record<string, Uint8Array>
 type CasefoldContract = {
@@ -15,6 +32,31 @@ type CasefoldContract = {
   nfc_hangul: Record<string, number>
 }
 type RpcDefinition = { meta_profile: string; params: { fields: string[] }; result: { fields: string[] } }
+
+export type AuthoritativeAtomSource =
+  | Record<string, AuthoritativeAtom>
+  | readonly AuthoritativeAtom[]
+  | ((atomId: string) => AuthoritativeAtom | null | undefined)
+
+export interface ClaimInputStructureOptions {
+  expectedSourceRevisionId?: string
+  canonicalText?: string
+  expectedCanonicalTextHash?: string
+}
+
+export interface ClaimInputValidationOptions extends ClaimInputStructureOptions {
+  acceptedAtoms?: AuthoritativeAtomSource | null
+}
+
+export interface ClaimInputAuthorityOptions extends ClaimInputStructureOptions {
+  acceptedAtoms: AuthoritativeAtomSource
+}
+
+export interface ResultVerificationContext {
+  snapshotWorkspaceId?: string | null
+  snapshotHashValue?: string | null
+  knownParentIds?: Iterable<string>
+}
 
 const unicodeCasefoldContract = unicodeCasefoldContractJson as unknown as CasefoldContract
 const rpcMethodMatrix = rpcMethodMatrixJson as unknown as {
@@ -66,8 +108,18 @@ function assertUnique(values: Iterable<unknown>, label: string): void {
 }
 
 function assertSchema(value: JsonObject, schema: string): void {
-  if (value.schema !== schema) fail(`${schema} schema mismatch`)
+  // EvidenceSpan and claim-input are the two frozen v1 contracts whose
+  // schemas are intentionally expressed by their dedicated cross-object
+  // validators rather than a standalone JSON-Schema artifact.
+  if (schema === 'evidence-span/v1' || schema === 'claim-input/v1') {
+    if (value.schema !== schema) fail(`${schema} schema mismatch`)
+    return
+  }
+  assertValidContract(schema, value)
 }
+
+/** Validate any contract in the frozen JSON-Schema inventory. */
+export { assertValidContract, frozenSchemaInventory, schemaErrors }
 
 export function assertHash(value: unknown, label: string): asserts value is string {
   if (typeof value !== 'string' || !HASH.test(value)) fail(`${label} must be lowercase SHA-256`)
@@ -389,7 +441,7 @@ export function verifyPlan(plan: JsonObject, interpreterBindings?: Record<string
     if (match.length !== 1 || match[0]?.enabled !== true) fail('synthesizer must resolve to an enabled binding')
     for (const field of ['capability_id', 'plugin_id', 'release_requirement']) if (match[0]?.[field] !== synthesizer[field]) fail('synthesizer identity does not match its binding')
   } else if (synthesizer != null) fail('separate plan must not declare a synthesizer')
-  if (dataBindings.length !== 0) {
+  if (interpreterBindings != null || catalog != null) {
     if (catalog == null || interpreterBindings == null) fail('Data bindings require catalog and resolved interpreter bindings')
     verifyCatalog(catalog)
     for (const binding of dataBindings) {
@@ -423,20 +475,81 @@ const LIFECYCLE_EDGES: Record<string, Set<string>> = {
   rolled_back: new Set(['safe_mode']), safe_mode: new Set(), failed: new Set(), superseded: new Set(),
 }
 
-export function verifyLifecycleTransition(transition: JsonObject, previous?: JsonObject): void {
-  assertSchema(transition, 'plugin-lifecycle-transition/v1')
+const LIFECYCLE_QUALIFIED_STATES = new Set(['qualified', 'pending_apply', 'current_committed', 'lkg_pending', 'lkg_promoted', 'rollback_armed', 'rolled_back', 'safe_mode'])
+const LIFECYCLE_SHADOW_STATES = new Set(['shadow_prepared', 'migrated', 'settings_validated', 'qualified', 'pending_apply', 'current_committed', 'lkg_pending', 'lkg_promoted', 'rollback_armed', 'rolled_back', 'safe_mode'])
+const LIFECYCLE_ROLLBACK_STATES = new Set(['rollback_armed', 'rolled_back', 'safe_mode'])
+const PACKAGE_STORE_ORDER: Record<string, number> = { absent: 0, staged: 1, published: 2, orphan: 3 }
+
+function lifecycleSettingsIdentity(transition: JsonObject): string {
+  const settings = arrayOf(transition.target_settings_revision_ids, 'target_settings_revision_ids').map(item => objectOf(item, 'target setting'))
+  assertUnique(settings.map(item => item.plugin_id), 'target settings must contain one revision per plugin')
+  return canonicalJson([...settings].sort((left, right) => compareUtf8(`${String(left.plugin_id)}\0${String(left.settings_revision_id)}`, `${String(right.plugin_id)}\0${String(right.settings_revision_id)}`)))
+}
+
+function lifecycleTime(value: unknown, label: string): number {
+  if (typeof value !== 'string') fail(`${label} must be a UTC timestamp`)
+  const parsed = Date.parse(value)
+  if (!Number.isFinite(parsed)) fail(`${label} must be a valid UTC timestamp`)
+  return parsed
+}
+
+function verifyLifecycleStateShape(transition: JsonObject): void {
   const state = String(transition.state)
+  const target = transition.target_generation_id
+  if (['current_committed', 'lkg_pending', 'lkg_promoted', 'rollback_armed', 'rolled_back', 'safe_mode'].includes(state) && target == null) fail(`${state} requires target_generation_id`)
+  if (LIFECYCLE_QUALIFIED_STATES.has(state) && transition.qualification_id == null) fail(`${state} requires qualification_id`)
+  if (LIFECYCLE_SHADOW_STATES.has(state) && transition.shadow_data_generation_id == null) fail(`${state} requires shadow_data_generation_id`)
   if (state === 'failed' && transition.failure_code == null) fail('failed lifecycle transition requires failure_code')
   if (state !== 'failed' && transition.failure_code != null) fail('non-failed lifecycle transition cannot carry failure_code')
-  if (['current_committed', 'lkg_pending', 'lkg_promoted', 'rollback_armed', 'rolled_back', 'safe_mode'].includes(state) && transition.target_generation_id == null) fail(`${state} requires target_generation_id`)
-  if (state === 'rollback_armed' && transition.rollback_token == null) fail('rollback_armed requires rollback_token')
-  if (state === 'rolled_back' && (transition.rollback_attempt !== 1 || transition.rollback_token == null)) fail('rolled_back requires one rollback attempt and a rollback token')
-  if (state === 'safe_mode' && transition.rollback_attempt !== 1) fail('safe_mode requires a completed rollback attempt')
+  if (state === 'rollback_armed') {
+    if (transition.base_lkg_generation_id == null) fail('rollback_armed requires an exact base LKG Generation')
+    if (transition.rollback_token == null || transition.rollback_attempt !== 0) fail('rollback_armed requires a fresh rollback token and zero attempts')
+  }
+  if (state === 'rolled_back' || state === 'safe_mode') {
+    if (transition.base_lkg_generation_id == null) fail(`${state} requires the exact base LKG Generation`)
+    if (transition.rollback_attempt !== 1 || transition.rollback_token == null) fail(`${state} requires one rollback attempt and a rollback token`)
+    if (transition.package_store_status !== 'published') fail(`${state} requires the LKG package to remain published`)
+  }
+  if (state === 'lkg_promoted' && transition.rollback_attempt !== 0) fail('LKG promotion is not a Generation rollback')
+  if (!LIFECYCLE_ROLLBACK_STATES.has(state) && transition.rollback_token != null) fail('rollback_token is only valid for the rollback action')
+}
+
+function verifyLifecycleIdentity(previous: JsonObject, current: JsonObject): void {
+  for (const field of ['base_generation_id', 'base_lkg_generation_id'] as const) {
+    if (previous[field] !== current[field]) fail(`install operation ${field} changed`)
+  }
+  if (previous.target_generation_id !== current.target_generation_id) {
+    fail('install target_generation_id changed')
+  }
+  if (lifecycleSettingsIdentity(previous) !== lifecycleSettingsIdentity(current)) fail('install target settings identity changed')
+  if (previous.qualification_id !== current.qualification_id && !(previous.qualification_id == null && current.qualification_id != null && LIFECYCLE_QUALIFIED_STATES.has(String(current.state)))) fail('qualification identity changed')
+  if (previous.shadow_data_generation_id !== current.shadow_data_generation_id && !(previous.shadow_data_generation_id == null && current.shadow_data_generation_id != null && LIFECYCLE_SHADOW_STATES.has(String(current.state)))) fail('shadow data Generation identity changed')
+  if (previous.rollback_token !== current.rollback_token && !(previous.rollback_token == null && current.rollback_token != null && LIFECYCLE_ROLLBACK_STATES.has(String(current.state)))) fail('rollback token identity changed')
+}
+
+function verifyLifecycleProgression(previous: JsonObject, current: JsonObject): void {
+  const previousState = String(previous.state)
+  const state = String(current.state)
+  if (state === previousState && ['lkg_promoted', 'rolled_back', 'safe_mode', 'failed', 'superseded'].includes(state)) fail(`terminal lifecycle state ${state} cannot be repeated`)
+  if (state !== previousState && !(LIFECYCLE_EDGES[previousState]?.has(state) ?? false)) fail(`illegal lifecycle transition ${previousState} -> ${state}`)
+  if (Number(current.rollback_attempt) < Number(previous.rollback_attempt)) fail('rollback attempt moved backwards')
+  if (previous.rollback_attempt === 1 && current.rollback_attempt !== 1) fail('completed rollback attempt cannot be cleared')
+  if (PACKAGE_STORE_ORDER[String(current.package_store_status)] < PACKAGE_STORE_ORDER[String(previous.package_store_status)]) fail('package-store status moved backwards')
+  if (lifecycleTime(current.created_at, 'created_at') !== lifecycleTime(previous.created_at, 'created_at')) fail('install operation created_at changed')
+  if (lifecycleTime(current.updated_at, 'updated_at') < lifecycleTime(previous.updated_at, 'updated_at')) fail('lifecycle updated_at moved backwards')
+}
+
+export function verifyLifecycleTransition(transition: PluginLifecycleTransition | JsonObject, previous?: PluginLifecycleTransition | JsonObject): void {
+  const currentValue = objectOf(transition, 'lifecycle transition')
+  assertSchema(currentValue, 'plugin-lifecycle-transition/v1')
+  verifyLifecycleStateShape(currentValue)
   if (previous != null) {
-    assertSchema(previous, 'plugin-lifecycle-transition/v1')
-    if (previous.install_operation_id !== transition.install_operation_id) fail('lifecycle transition changed install operation identity')
-    if (state !== String(previous.state) && !(LIFECYCLE_EDGES[String(previous.state)]?.has(state) ?? false)) fail(`illegal lifecycle transition ${String(previous.state)} -> ${state}`)
-    if (Number(transition.rollback_attempt) < Number(previous.rollback_attempt)) fail('rollback attempt moved backwards')
+    const previousValue = objectOf(previous, 'previous lifecycle transition')
+    assertSchema(previousValue, 'plugin-lifecycle-transition/v1')
+    verifyLifecycleStateShape(previousValue)
+    if (previousValue.install_operation_id !== currentValue.install_operation_id) fail('lifecycle transition changed install operation identity')
+    verifyLifecycleIdentity(previousValue, currentValue)
+    verifyLifecycleProgression(previousValue, currentValue)
   }
 }
 
@@ -491,7 +604,7 @@ export async function verifyEvidenceSpan(span: EvidenceSpan, canonicalText?: str
     assertHash(expectedCanonicalTextHash, 'expectedCanonicalTextHash')
     if (value.canonical_text_hash !== expectedCanonicalTextHash) fail('EvidenceSpan canonical text hash does not match the Revision')
   }
-  if (nodeRange != null && (value.start_codepoint < nodeRange.start_codepoint || value.end_codepoint > nodeRange.end_codepoint)) fail('EvidenceSpan is outside its Node range')
+  if (nodeRange != null && (Number(value.start_codepoint) < nodeRange.start_codepoint || Number(value.end_codepoint) > nodeRange.end_codepoint)) fail('EvidenceSpan is outside its Node range')
   if (canonicalText != null) {
     if (Number(value.end_codepoint) > [...canonicalText].length) fail('EvidenceSpan range exceeds canonical text scalar length')
     const scalarSlice = [...canonicalText].slice(Number(value.start_codepoint), Number(value.end_codepoint)).join('')
@@ -503,7 +616,7 @@ export async function verifyEvidenceSpan(span: EvidenceSpan, canonicalText?: str
 const CLAIM_INPUT_FIELDS = ['schema', 'source_revision_id', 'ordered_atoms'] as const
 const CLAIM_INPUT_ATOM_FIELDS = ['ordinal', 'atom_id', 'payload_hash', 'acceptance_ordinal', 'evidence_spans'] as const
 
-export async function verifyClaimInput(claimInput: JsonObject, options: { expectedSourceRevisionId?: string; acceptedAtoms?: Record<string, JsonObject>; canonicalText?: string; expectedCanonicalTextHash?: string } = {}): Promise<void> {
+export async function verifyClaimInputStructure(claimInput: JsonObject, options: ClaimInputStructureOptions = {}): Promise<void> {
   assertExactKeys(claimInput, CLAIM_INPUT_FIELDS, 'claim-input/v1')
   assertSchema(claimInput, 'claim-input/v1')
   assertId(claimInput.source_revision_id, 'claim-input.source_revision_id')
@@ -524,25 +637,63 @@ export async function verifyClaimInput(claimInput: JsonObject, options: { expect
       await verifyEvidenceSpan(span as unknown as EvidenceSpan, options.canonicalText, undefined, options.expectedCanonicalTextHash)
     }
     atomIds.push(String(atom.atom_id))
-    if (options.acceptedAtoms != null) {
-      const accepted = options.acceptedAtoms[String(atom.atom_id)]
-      if (accepted == null || accepted.current === false || accepted.accepted === false) fail('claim-input Atom is not an accepted current Atom')
-      if (accepted.payload_hash != null && accepted.payload_hash !== atom.payload_hash) fail('claim-input payload_hash drifted from the accepted Atom')
-      if (accepted.acceptance_ordinal != null && accepted.acceptance_ordinal !== atom.acceptance_ordinal) fail('claim-input acceptance_ordinal drifted from the accepted Atom')
-      if (accepted.revision_id != null && accepted.revision_id !== claimInput.source_revision_id) fail('accepted Atom belongs to another source Revision')
-    }
   }
   assertUnique(atomIds, 'claim-input Atom IDs must be unique')
 }
 
-export async function buildClaimInputAsset(sourceRevisionId: string, orderedAtoms: JsonObject[]): Promise<{ bytes: Uint8Array; assetHash: string }> {
+function resolveAuthoritativeAtom(source: AuthoritativeAtomSource | null | undefined, atomId: string): JsonObject {
+  if (source == null) return fail('claim-input sealing requires authoritative Atom records')
+  let candidate: JsonObject | null | undefined
+  if (typeof source === 'function') {
+    candidate = source(atomId)
+  } else if (Array.isArray(source)) {
+    const matches = source.filter(item => item.atom_id === atomId)
+    if (matches.length > 1) fail('claim-input authority contains duplicate Atom records')
+    candidate = matches[0]
+  } else if (Object.prototype.hasOwnProperty.call(source, 'atom_id')) {
+    candidate = source as unknown as AuthoritativeAtom
+  } else {
+    candidate = (source as Record<string, AuthoritativeAtom>)[atomId]
+  }
+  if (candidate == null) return fail('claim-input Atom is not an authoritative current Atom')
+  return objectOf(candidate, 'authoritative Atom')
+}
+
+function verifyClaimInputAuthority(claimInput: JsonObject, source: AuthoritativeAtomSource | null | undefined): void {
+  const sourceRevisionId = String(claimInput.source_revision_id)
+  const atoms = arrayOf(claimInput.ordered_atoms, 'claim-input.ordered_atoms').map(item => objectOf(item, 'ordered Atom'))
+  for (const atom of atoms) {
+    const authority = resolveAuthoritativeAtom(source, String(atom.atom_id))
+    const required = ['atom_id', 'payload_hash', 'acceptance_ordinal', 'current', 'accepted']
+    const missing = required.filter(field => !Object.prototype.hasOwnProperty.call(authority, field))
+    if (missing.length !== 0) fail(`authoritative Atom is missing required fields: ${missing.join(',')}`)
+    assertId(authority.atom_id, 'authoritative Atom.atom_id')
+    assertHash(authority.payload_hash, 'authoritative Atom.payload_hash')
+    if (authority.atom_id !== atom.atom_id) fail('authoritative Atom ID does not match claim-input Atom')
+    if (authority.current !== true || authority.accepted !== true) fail('claim-input Atom is not current and accepted')
+    if (!Number.isInteger(authority.acceptance_ordinal) || Number(authority.acceptance_ordinal) < 1) fail('authoritative Atom acceptance_ordinal must be a positive integer')
+    const revisions = ['revision_id', 'source_revision_id']
+      .filter(field => Object.prototype.hasOwnProperty.call(authority, field))
+      .map(field => authority[field])
+    if (revisions.length === 0 || revisions.some(revision => typeof revision !== 'string' || revision !== sourceRevisionId)) fail('authoritative Atom belongs to another source Revision')
+    if (authority.payload_hash !== atom.payload_hash) fail('claim-input payload_hash drifted from the authoritative Atom')
+    if (authority.acceptance_ordinal !== atom.acceptance_ordinal) fail('claim-input acceptance_ordinal drifted from the authoritative Atom')
+  }
+}
+
+export async function verifyClaimInput(claimInput: JsonObject, options: ClaimInputValidationOptions = {}): Promise<void> {
+  await verifyClaimInputStructure(claimInput, options)
+  verifyClaimInputAuthority(claimInput, options.acceptedAtoms)
+}
+
+export async function buildClaimInputAsset(sourceRevisionId: string, orderedAtoms: JsonObject[], options: ClaimInputAuthorityOptions): Promise<{ bytes: Uint8Array; assetHash: string }> {
   const value: JsonObject = { schema: 'claim-input/v1', source_revision_id: sourceRevisionId, ordered_atoms: structuredClone(orderedAtoms) }
-  await verifyClaimInput(value)
+  await verifyClaimInput(value, options)
   const bytes = canonicalBytes(value)
   return { bytes, assetHash: await sha256Hex(bytes) }
 }
 
-export async function verifyClaimInputAsset(rawAssetBytes: Uint8Array, snapshot: RunSnapshot, options: { assetId?: string; expectedSourceRevisionId?: string; acceptedAtoms?: Record<string, JsonObject>; canonicalText?: string; expectedCanonicalTextHash?: string } = {}): Promise<JsonObject> {
+export async function verifyClaimInputAsset(rawAssetBytes: Uint8Array, snapshot: RunSnapshot, options: ClaimInputValidationOptions & { assetId?: string } = {}): Promise<JsonObject> {
   await verifySnapshot(snapshot)
   const assetId = snapshot.parameters_asset_id
   if (assetId == null) fail('RunSnapshot has no claim-input parameters Asset')
@@ -560,18 +711,87 @@ export async function verifyClaimInputAsset(rawAssetBytes: Uint8Array, snapshot:
 function verifyCandidate(item: CandidateItem, workspaceId: string): void {
   const value = objectOf(item, 'candidate')
   assertSchema(value, 'candidate-item/v1')
+  if (value.status === 'failed' || value.status === 'skipped') fail('failed/skipped result item cannot create or retain a Candidate')
   const target = objectOf(value.target, 'candidate target')
   if (target.workspace_id !== workspaceId) fail('candidate target is outside the snapshot workspace')
   const base = objectOf(value.base, 'candidate base')
   const writes = arrayOf(value.write_set, 'candidate write_set').map(entry => objectOf(entry, 'write_set entry'))
+  if (writes.some(entry => entry.workspace_id !== workspaceId)) fail('candidate write_set crosses the snapshot workspace')
   assertUnique(writes.map(entry => `${entry.workspace_id}\0${entry.entity_kind}\0${entry.entity_id}`), 'candidate write_set contains duplicate target identity')
   const targetEntry = writes.find(entry => `${entry.workspace_id}\0${entry.entity_kind}\0${entry.entity_id}` === `${target.workspace_id}\0${target.entity_kind}\0${target.entity_id}`)
   if (targetEntry == null || targetEntry.revision_id !== base.revision_id || targetEntry.content_hash !== base.content_hash) fail('candidate base does not match target write_set entry')
-  if (value.status === 'failed' || value.status === 'skipped') fail('failed/skipped result item cannot create a Candidate')
-  if (value.item_kind === 'incomplete_stream' && (value.status !== 'partial' || target.entity_kind !== 'document' || objectOf(value.mutation, 'mutation').mode !== 'replace')) fail('invalid incomplete stream Candidate')
+  const mutation = objectOf(value.mutation, 'mutation')
+  if (value.item_kind === 'incomplete_stream') {
+    if (value.status !== 'partial' || target.entity_kind !== 'document' || mutation.mode !== 'replace') fail('invalid incomplete stream Candidate')
+    if (mutation.payload_schema !== 'core/document-text/v1') fail('incomplete_stream must use the Core document-text schema')
+    return
+  }
+  const allowed: Record<string, { itemKind: string; modes: Set<string> }> = {
+    document: { itemKind: 'document', modes: new Set(['replace', 'text_patch', 'append_text']) },
+    node_structure: { itemKind: 'node_structure', modes: new Set(['structure_patch']) },
+    relation_set: { itemKind: 'relation_set', modes: new Set(['relation_patch']) },
+  }
+  const expected = allowed[String(target.entity_kind)]
+  if (expected == null || value.item_kind !== expected.itemKind || !expected.modes.has(String(mutation.mode))) fail('candidate item kind/mutation does not match target')
 }
 
-export function verifyResultProfile(bundle: ResultBundle, workspaceId: string): void {
+export function verifyCandidateItem(item: CandidateItem | JsonObject, workspaceId?: string | null): void {
+  const value = objectOf(item, 'candidate')
+  assertSchema(value, 'candidate-item/v1')
+  if (workspaceId == null) fail('candidate result verification requires a snapshot workspace')
+  verifyCandidate(value as unknown as CandidateItem, workspaceId)
+}
+
+function verifyParentGraph(items: JsonObject[], workspaceId: string, knownParentIds?: Iterable<string>): void {
+  const graph = new Map<string, Set<string>>()
+  for (const item of items) {
+    verifyCandidate(item as unknown as CandidateItem, workspaceId)
+    graph.set(String(item.item_id), new Set(arrayOf(item.parent_candidate_ids, 'candidate parent IDs').map(parent => String(parent))))
+  }
+  const known = new Set<string>([...graph.keys(), ...(knownParentIds ?? [])])
+  const visiting = new Set<string>()
+  const visited = new Set<string>()
+  const visit = (node: string): void => {
+    if (visiting.has(node)) fail('candidate parent cycle detected')
+    if (visited.has(node) || !graph.has(node)) return
+    visiting.add(node)
+    for (const parent of graph.get(node) ?? []) {
+      if (!known.has(parent)) fail('candidate parent does not exist')
+      visit(parent)
+    }
+    visiting.delete(node)
+    visited.add(node)
+  }
+  for (const node of graph.keys()) visit(node)
+}
+
+function isResultVerificationContext(value: unknown): value is ResultVerificationContext {
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) return false
+  return ['snapshotWorkspaceId', 'snapshotHashValue', 'knownParentIds'].some(field => Object.prototype.hasOwnProperty.call(value, field))
+}
+
+function normalizeResultVerificationContext(
+  workspaceOrContext?: string | null | ResultVerificationContext,
+  knownParentIdsOrSnapshotHash?: Iterable<string> | string | null,
+  snapshotHashOrKnownParentIds?: string | null | Iterable<string>,
+): ResultVerificationContext {
+  if (isResultVerificationContext(workspaceOrContext)) return workspaceOrContext
+  let knownParentIds: Iterable<string> | undefined
+  let snapshotHashValue: string | null | undefined
+  if (typeof knownParentIdsOrSnapshotHash === 'string' || knownParentIdsOrSnapshotHash === null) snapshotHashValue = knownParentIdsOrSnapshotHash
+  else knownParentIds = knownParentIdsOrSnapshotHash
+  if (typeof snapshotHashOrKnownParentIds === 'string' || snapshotHashOrKnownParentIds === null) snapshotHashValue = snapshotHashOrKnownParentIds
+  else if (snapshotHashOrKnownParentIds !== undefined) knownParentIds = snapshotHashOrKnownParentIds
+  return { snapshotWorkspaceId: workspaceOrContext, snapshotHashValue, knownParentIds }
+}
+
+export function verifyResultProfile(
+  bundle: ResultBundle | JsonObject,
+  workspaceOrContext?: string | null | ResultVerificationContext,
+  knownParentIdsOrSnapshotHash?: Iterable<string> | string | null,
+  snapshotHashOrKnownParentIds?: string | null | Iterable<string>,
+): void {
+  const context = normalizeResultVerificationContext(workspaceOrContext, knownParentIdsOrSnapshotHash, snapshotHashOrKnownParentIds)
   const value = objectOf(bundle, 'result bundle')
   assertSchema(value, 'result-bundle/v1')
   const profile: Record<string, [string, string]> = {
@@ -581,12 +801,274 @@ export function verifyResultProfile(bundle: ResultBundle, workspaceId: string): 
   }
   const expected = profile[String(value.contract_id)]
   if (expected == null || value.bundle_type !== expected[0]) fail('result bundle profile mismatch')
+  if (expected[1] === 'candidate-item/v1' && context.snapshotWorkspaceId == null) fail('candidate result verification requires a snapshot workspace')
   const items = arrayOf(value.items, 'result items').map(item => objectOf(item, 'result item'))
   assertUnique(items.map(item => item.item_id), 'result item IDs must be unique')
+  const itemIds = new Set(items.map(item => String(item.item_id)))
+  const incompleteTargets = new Set<string>()
   for (const item of items) {
     if (item.schema !== expected[1]) fail('result bundle item profile does not match contract')
-    if (expected[1] === 'candidate-item/v1') verifyCandidate(item as unknown as CandidateItem, workspaceId)
+    if (expected[1] === 'candidate-item/v1') {
+      verifyCandidate(item as unknown as CandidateItem, context.snapshotWorkspaceId as string)
+      if (item.item_kind === 'incomplete_stream') {
+        const target = objectOf(item.target, 'incomplete stream target')
+        const targetKey = `${String(target.workspace_id)}\0${String(target.entity_kind)}\0${String(target.entity_id)}`
+        if (incompleteTargets.has(targetKey)) fail('only one incomplete stream Candidate is allowed per target')
+        incompleteTargets.add(targetKey)
+      }
+    }
   }
+  if (expected[1] === 'candidate-item/v1') verifyParentGraph(items, context.snapshotWorkspaceId as string, context.knownParentIds)
+  if (context.snapshotHashValue != null && value.input_snapshot_hash !== context.snapshotHashValue) fail('bundle input snapshot does not match current snapshot')
+  for (const rawRef of arrayOf(value.skill_chain_result_refs, 'result Skill references')) {
+    verifyChainRef(objectOf(rawRef, 'result Skill reference'), false, {
+      bundleId: String(value.bundle_id),
+      itemIds,
+      allowStream: false,
+    })
+  }
+  const statuses = items.map(item => String(item.status))
+  if (value.partial === true && !statuses.some(status => ['partial', 'failed', 'skipped'].includes(status))) fail('partial result bundle must expose a non-complete item')
+  if (value.partial === false && statuses.some(status => status !== 'complete')) fail('complete result bundle cannot contain partial/failed/skipped items')
+}
+
+export function verifyAttemptResult(
+  bundle: ResultBundle | JsonObject | null,
+  attemptState: string,
+  workspaceOrContext?: string | null | ResultVerificationContext,
+  knownParentIdsOrSnapshotHash?: Iterable<string> | string | null,
+  snapshotHashOrKnownParentIds?: string | null | Iterable<string>,
+): void {
+  const context = normalizeResultVerificationContext(workspaceOrContext, knownParentIdsOrSnapshotHash, snapshotHashOrKnownParentIds)
+  if (attemptState === 'failed' || attemptState === 'skipped') {
+    if (bundle == null) return
+    const value = objectOf(bundle, 'failed Attempt result')
+    if (value.contract_id !== 'diagnostic-bundle/v1' || value.bundle_type !== 'diagnostic') fail('failed/skipped Attempt may only return null or diagnostic-bundle/v1')
+    verifyResultProfile(bundle, context)
+    return
+  }
+  if (bundle == null) fail('non-failed Attempt requires a result Bundle')
+  verifyResultProfile(bundle, context)
+}
+
+function stageReceipt(candidateIds: Iterable<string>, state: CandidateStageReceipt['state']): CandidateStageReceipt {
+  return { candidate_ids: [...candidateIds], state }
+}
+
+export class CandidateStagingStore {
+  readonly workspaceId: string
+  _visible: Map<string, CandidateItem>
+  readonly _knownParentIds: Set<string>
+  _version: number
+
+  constructor(workspaceId: string, visibleCandidates: readonly CandidateItem[] = [], knownParentIds: Iterable<string> = []) {
+    if (typeof workspaceId !== 'string' || workspaceId.length === 0) fail('Candidate staging requires a non-empty workspace_id')
+    this.workspaceId = workspaceId
+    this._visible = new Map()
+    this._knownParentIds = new Set(knownParentIds)
+    this._version = 0
+    for (const candidate of visibleCandidates) {
+      const value = structuredClone(candidate)
+      verifyCandidateItem(value, workspaceId)
+      if (this._visible.has(value.item_id)) fail('visible Candidate IDs must be unique')
+      this._visible.set(value.item_id, value)
+    }
+    verifyParentGraph([...this._visible.values()] as unknown as JsonObject[], workspaceId, this._knownParentIds)
+  }
+
+  visibleCandidates(): CandidateItem[] {
+    return [...this._visible.values()].map(candidate => structuredClone(candidate))
+  }
+
+  visibleCandidateIds(): string[] {
+    return [...this._visible.keys()]
+  }
+
+  transaction(): CandidateStagingTransaction {
+    return new CandidateStagingTransaction(this)
+  }
+
+  beginTransaction(): CandidateStagingTransaction {
+    return this.transaction()
+  }
+
+  stageAndPublish(bundle: ResultBundle | JsonObject | null, attemptState = 'succeeded'): CandidateStageReceipt {
+    const transaction = this.transaction()
+    try {
+      const staged = transaction.stage(bundle, attemptState)
+      if (staged.state === 'rolled_back') return staged
+      return transaction.publish()
+    } catch (error) {
+      transaction.rollback()
+      throw error
+    }
+  }
+}
+
+export class CandidateStagingTransaction {
+  readonly _store: CandidateStagingStore
+  readonly _baseVersion: number
+  _pending: Map<string, CandidateItem>
+  _bundle: JsonObject | null
+  _state: CandidateStageReceipt['state'] | 'open'
+
+  constructor(store: CandidateStagingStore) {
+    this._store = store
+    this._baseVersion = store._version
+    this._pending = new Map()
+    this._bundle = null
+    this._state = 'open'
+  }
+
+  private ensureOpen(): void {
+    if (this._state !== 'open') fail('Candidate staging transaction is closed')
+  }
+
+  stage(bundle: ResultBundle | JsonObject | null, attemptState = 'succeeded'): CandidateStageReceipt {
+    this.ensureOpen()
+    try {
+      verifyAttemptResult(bundle, attemptState, this._store.workspaceId, new Set([...this._store._visible.keys(), ...this._store._knownParentIds]))
+      if (bundle == null) return this.rollback()
+      const value = objectOf(bundle, 'candidate staging result')
+      if (value.contract_id !== 'candidate-batch/v1') return this.rollback()
+      const items = arrayOf(value.items, 'candidate staging items').map(item => objectOf(item, 'candidate staging item'))
+      this._pending = new Map(items.map(item => [String(item.item_id), structuredClone(item) as unknown as CandidateItem]))
+      this._bundle = structuredClone(value)
+      return stageReceipt(this._pending.keys(), 'staged')
+    } catch (error) {
+      this.rollback()
+      throw error
+    }
+  }
+
+  publish(): CandidateStageReceipt {
+    this.ensureOpen()
+    try {
+      if (this._bundle == null) return this.rollback()
+      if (this._store._version !== this._baseVersion) fail('Candidate staging base changed before publish')
+      verifyResultProfile(this._bundle, this._store.workspaceId, new Set([...this._store._visible.keys(), ...this._store._knownParentIds]))
+      const updated = new Map(this._store._visible)
+      for (const [candidateId, candidate] of this._pending) {
+        const previous = updated.get(candidateId)
+        if (previous != null && canonicalJson(previous) !== canonicalJson(candidate)) fail('Candidate ID is already visible with different content')
+        updated.set(candidateId, structuredClone(candidate))
+      }
+      this._store._visible = updated
+      this._store._version += 1
+      this._state = 'published'
+      return stageReceipt(this._pending.keys(), 'published')
+    } catch (error) {
+      this.rollback()
+      throw error
+    }
+  }
+
+  rollback(): CandidateStageReceipt {
+    if (this._state === 'published') fail('published Candidate staging cannot be rolled back')
+    this._pending.clear()
+    this._bundle = null
+    this._state = 'rolled_back'
+    return stageReceipt([], 'rolled_back')
+  }
+}
+
+export async function verifySettingsValidationReceipt(receipt: JsonObject): Promise<void> {
+  assertSchema(receipt, 'settings-validation-receipt/v1')
+  if (await hashWithoutField(receipt, 'receipt_hash', 'settings-validation-receipt/v1') !== receipt.receipt_hash) fail('settings validation receipt_hash mismatch')
+}
+
+export async function verifyProvenanceReceipt(receipt: ProvenanceReceipt | JsonObject): Promise<void> {
+  const value = objectOf(receipt, 'provenance receipt')
+  assertSchema(value, 'provenance-receipt/v1')
+  if ((value.bundle_id == null) !== (value.bundle_hash == null)) fail('provenance Bundle ID/hash must be all-null or all-present')
+  const staged = arrayOf(value.staged_items, 'provenance staged_items')
+  assertUnique(staged, 'provenance staged item IDs must be unique')
+  for (const rawRef of arrayOf(value.skill_chain_result_refs, 'provenance skill_chain_result_refs')) verifyChainRef(objectOf(rawRef, 'provenance Skill reference'), true)
+  if (await hashWithoutField(value, 'receipt_hash', 'provenance-receipt/v1') !== value.receipt_hash) fail('provenance receipt_hash mismatch')
+}
+
+export async function verifyCheckpoint(checkpoint: Checkpoint | JsonObject, options: { expectedSnapshotHash?: string; previousSeq?: number } = {}): Promise<void> {
+  const value = objectOf(checkpoint, 'checkpoint')
+  assertSchema(value, 'checkpoint/v1')
+  if (options.expectedSnapshotHash != null && value.run_snapshot_hash !== options.expectedSnapshotHash) fail('checkpoint belongs to another RunSnapshot')
+  if (options.previousSeq != null && Number(value.checkpoint_seq) <= options.previousSeq) fail('checkpoint sequence moved backwards')
+  if (await hashWithoutField(value, 'checkpoint_hash', 'checkpoint/v1') !== value.checkpoint_hash) fail('checkpoint_hash mismatch')
+}
+
+export async function verifyStreamPrefix(prefix: StreamPrefix | JsonObject, options: { previous?: StreamPrefix | JsonObject; content?: Uint8Array } = {}): Promise<void> {
+  const value = objectOf(prefix, 'stream prefix')
+  assertSchema(value, 'stream-prefix/v1')
+  if (options.previous != null) {
+    const previous = objectOf(options.previous, 'previous stream prefix')
+    assertSchema(previous, 'stream-prefix/v1')
+    if (value.stream_id !== previous.stream_id || value.attempt_id !== previous.attempt_id || value.lease_epoch !== previous.lease_epoch) fail('stream prefix binding changed')
+    if (Number(value.prefix_seq) <= Number(previous.prefix_seq) || Number(value.byte_length) < Number(previous.byte_length)) fail('stream prefix moved backwards')
+  }
+  if (options.content != null && (options.content.byteLength !== Number(value.byte_length) || await sha256Hex(options.content) !== value.prefix_hash)) fail('stream prefix asset hash/length mismatch')
+}
+
+function verifyChainRef(ref: JsonObject, allowBundleless: boolean, options: { bundleId?: string; itemIds?: ReadonlySet<string>; allowStream?: boolean } = {}): void {
+  if ((ref.asset_id == null) !== (ref.asset_hash == null)) fail('Skill chain asset ID/hash must be all-null or all-present')
+  const bundlePair = ref.result_bundle_id != null && ref.result_item_id != null
+  const streamPair = ref.stream_id != null && ref.acked_prefix_hash != null
+  if ((ref.result_bundle_id == null) !== (ref.result_item_id == null)) fail('bundle anchor must be all-null or all-present')
+  if ((ref.stream_id == null) !== (ref.acked_prefix_hash == null)) fail('stream anchor must be all-null or all-present')
+  if (bundlePair && streamPair) fail('Skill chain reference must have exactly one anchor profile')
+  if (!bundlePair && !streamPair && !allowBundleless) fail('bundleless Skill reference is not allowed here')
+  if (streamPair && options.allowStream === false) fail('result Bundle refs must be bundle-backed')
+  if (bundlePair && options.bundleId != null && ref.result_bundle_id !== options.bundleId) fail('Skill reference points at another Bundle')
+  if (bundlePair && options.itemIds != null && !options.itemIds.has(String(ref.result_item_id))) fail('Skill reference points at an unknown item')
+}
+
+export async function verifySkillReceipt(receipt: SkillRunReceipt | JsonObject): Promise<void> {
+  const value = objectOf(receipt, 'Skill receipt')
+  assertSchema(value, 'skill-run-receipt/v1')
+  verifyChainRef({ result_bundle_id: value.result_bundle_id, result_item_id: value.result_item_id, stream_id: value.stream_id, acked_prefix_hash: value.acked_prefix_hash }, true)
+  if (value.result_bundle_id == null && value.stream_id == null && !['failed', 'skipped'].includes(String(value.step_state))) fail('only a failed/skipped Skill receipt may be bundleless')
+  if (value.frozen !== true) fail('Skill receipt must be frozen before chain aggregation')
+  if (value.step_state === 'skipped' && (value.participated === true || value.verified_patch === true)) fail('skipped Skill step cannot be participated or verified')
+  if (value.model_claimed === true && value.claim_evidence_asset_id == null) fail('model_claimed requires claim evidence')
+  const patches = arrayOf(value.patches, 'Skill patches').map(item => objectOf(item, 'Skill patch'))
+  if (value.verified_patch === true && !patches.some(patch => patch.verified === true)) fail('verified_patch requires a verified patch')
+  for (const patch of patches) if (Number(patch.end_codepoint) < Number(patch.start_codepoint)) fail('Skill patch range is inverted')
+  if ((value.output_asset_id == null) !== (value.output_hash == null)) fail('Skill output Asset ID/hash must be all-null or all-present')
+  if (await hashWithoutField(value, 'receipt_hash', 'skill-run-receipt/v1') !== value.receipt_hash) fail('Skill receipt_hash mismatch')
+}
+
+export async function verifySkillChain(chain: SkillChainResult | JsonObject, receipts: Array<SkillRunReceipt | JsonObject>): Promise<void> {
+  const value = objectOf(chain, 'Skill chain')
+  assertSchema(value, 'skill-chain-result/v1')
+  const receiptList = receipts.map(item => objectOf(item, 'Skill receipt')).sort((left, right) => Number(left.chain_index) - Number(right.chain_index))
+  assertUnique(receiptList.map(item => item.receipt_id), 'Skill chain receipt IDs must be unique')
+  assertUnique(receiptList.map(item => item.chain_index), 'Skill chain receipt indexes must be unique')
+  const receiptIds = arrayOf(value.receipt_ids, 'Skill chain receipt_ids')
+  if (receiptList.length !== receiptIds.length || receiptList.some((item, index) => item.receipt_id !== receiptIds[index])) fail('Skill chain receipt IDs/indexes are not continuous')
+  const chainRef: JsonObject = { result_bundle_id: value.result_bundle_id, result_item_id: value.result_item_id, stream_id: value.stream_id, acked_prefix_hash: value.acked_prefix_hash }
+  verifyChainRef(chainRef, true)
+  if (value.result_bundle_id == null && value.stream_id == null && !['failed', 'cancelled'].includes(String(value.chain_status))) fail('only a failed/cancelled Skill chain may be bundleless')
+  for (const [index, receipt] of receiptList.entries()) {
+    await verifySkillReceipt(receipt)
+    if (receipt.chain_index !== index || receipt.chain_id !== value.chain_id || receipt.run_snapshot_hash !== value.run_snapshot_hash) fail('Skill chain receipt index/identity mismatch')
+    const receiptRef: JsonObject = { result_bundle_id: receipt.result_bundle_id, result_item_id: receipt.result_item_id, stream_id: receipt.stream_id, acked_prefix_hash: receipt.acked_prefix_hash }
+    if (!['result_bundle_id', 'result_item_id', 'stream_id', 'acked_prefix_hash'].every(field => receiptRef[field] === chainRef[field])) fail('Skill receipt anchor does not match its chain')
+  }
+  const receiptHashes = arrayOf(value.receipt_hashes, 'Skill chain receipt_hashes')
+  if (receiptHashes.length !== receiptList.length || receiptList.some((item, index) => item.receipt_hash !== receiptHashes[index])) fail('Skill chain receipt hashes do not match')
+  if ((value.final_output_asset_id == null) !== (value.final_output_hash == null)) fail('final output asset/hash must be all-null or all-present')
+  const finalHash = value.final_output_hash == null ? '-' : String(value.final_output_hash)
+  const expected = await sha256Hex(utf8(`skill-chain/v1\n${receiptList.map(item => `${String(item.receipt_hash)}\n`).join('')}${finalHash}\n`))
+  if (expected !== value.chain_hash) fail('chain_hash mismatch')
+}
+
+export function verifySseRecovery(value: SseRecovery | JsonObject): void {
+  const recovery = objectOf(value, 'SSE recovery')
+  assertSchema(recovery, 'sse-recovery/v1')
+  if (recovery.gap !== recovery.snapshot_required) fail('SSE snapshot_required must equal gap')
+  if (recovery.stream_kind === 'core_event' && recovery.aggregate_id != null) fail('core event recovery cannot carry an aggregate job ID')
+  if (Number(recovery.requested_after_seq) > Number(recovery.durable_high_water_seq)) fail('SSE cursor is ahead of the durable high-water mark')
+  const present = ['snapshot_schema', 'snapshot_revision', 'snapshot_asset_id', 'snapshot_hash'].map(field => recovery[field] != null)
+  if ((present.some(Boolean) !== recovery.gap) || (present.some(Boolean) && !present.every(Boolean))) fail('SSE snapshot fields must be all-null or all-present with a gap')
+  if (recovery.gap === true && recovery.snapshot_schema !== (recovery.stream_kind === 'core_event' ? 'core-snapshot/v1' : 'job-snapshot/v1')) fail('SSE snapshot schema does not match stream kind')
 }
 
 export async function verifyBackup(bundle: BackupBundle): Promise<void> {

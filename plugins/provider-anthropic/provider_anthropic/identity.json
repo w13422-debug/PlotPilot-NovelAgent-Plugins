@@ -1,0 +1,7 @@
+{
+  "schema": "provider-package-identity/v1",
+  "plugin_id": "com.plotpilot.novelagent.provider-anthropic",
+  "version": "0.1.0",
+  "package_hash": "3af82724299f861b3e7a962bdd19dff08cb31c25e8bd59f64b04cc167172fdb0",
+  "release_id": "4b97d23bdbe98d6b203c14889dca3ec94eef207a648190d22fc816599cfd3ad2"
+}

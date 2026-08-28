@@ -3,7 +3,13 @@
   "private": true,
   "version": "1.2.0",
   "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
   "exports": {
     ".": "./index.ts"
+  },
+  "devDependencies": {
+    "typescript": "5.8.3"
   }
 }

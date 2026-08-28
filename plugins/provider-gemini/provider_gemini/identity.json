@@ -1,0 +1,7 @@
+{
+  "schema": "provider-package-identity/v1",
+  "plugin_id": "com.plotpilot.novelagent.provider-gemini",
+  "version": "0.1.0",
+  "package_hash": "68a5bff01ab52550190644490c3cd717b17a77462b16941f4a7b7fe05a657726",
+  "release_id": "9ea791d0268435d7353e972962d84d9c8cf1b3c9f927ed5448cd83c0a175c48c"
+}

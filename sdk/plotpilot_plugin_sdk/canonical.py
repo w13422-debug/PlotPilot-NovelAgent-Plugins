@@ -24,13 +24,55 @@ def _reject_duplicate(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
     return result
 
 
+def _normalize_well_formed_strings(value: Any) -> Any:
+    """Normalize valid UTF-16 pairs and reject lone surrogate code points.
+
+    JSON parsers normally combine an escaped surrogate pair into one scalar,
+    but callers may also pass Python strings containing the two code units
+    directly.  Treat both representations identically so Python and
+    TypeScript share the same JCS input domain.
+    """
+
+    if isinstance(value, str):
+        result: list[str] = []
+        index = 0
+        while index < len(value):
+            codepoint = ord(value[index])
+            if 0xD800 <= codepoint <= 0xDBFF:
+                if index + 1 >= len(value):
+                    raise ContractValidationError("string contains an unpaired high surrogate")
+                low = ord(value[index + 1])
+                if not 0xDC00 <= low <= 0xDFFF:
+                    raise ContractValidationError("string contains an unpaired high surrogate")
+                result.append(chr(0x10000 + ((codepoint - 0xD800) << 10) + (low - 0xDC00)))
+                index += 2
+                continue
+            if 0xDC00 <= codepoint <= 0xDFFF:
+                raise ContractValidationError("string contains an unpaired low surrogate")
+            result.append(value[index])
+            index += 1
+        return "".join(result)
+    if isinstance(value, list):
+        return [_normalize_well_formed_strings(item) for item in value]
+    if isinstance(value, dict):
+        result: dict[Any, Any] = {}
+        for key, item in value.items():
+            normalized_key = _normalize_well_formed_strings(key) if isinstance(key, str) else key
+            if normalized_key in result:
+                raise ContractValidationError(f"duplicate JSON object key: {normalized_key}")
+            result[normalized_key] = _normalize_well_formed_strings(item)
+        return result
+    return value
+
+
 def parse_json_bytes(data: bytes) -> Any:
     """Parse UTF-8 JSON while rejecting BOMs, duplicate keys and NaN values."""
     if data.startswith(b"\xef\xbb\xbf"):
         raise ContractValidationError("UTF-8 BOM is forbidden")
     try:
         text = data.decode("utf-8", errors="strict")
-        return json.loads(text, object_pairs_hook=_reject_duplicate, parse_constant=_reject_constant)
+        parsed = json.loads(text, object_pairs_hook=_reject_duplicate, parse_constant=_reject_constant)
+        return _normalize_well_formed_strings(parsed)
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise ContractValidationError(f"invalid UTF-8 JSON: {exc}") from exc
 
@@ -38,7 +80,7 @@ def parse_json_bytes(data: bytes) -> Any:
 def canonical_bytes(value: Any) -> bytes:
     """Return RFC 8785 bytes and fail closed for values outside JSON."""
     try:
-        return bytes(rfc8785.dumps(value))
+        return bytes(rfc8785.dumps(_normalize_well_formed_strings(value)))
     except (ValueError, TypeError, OverflowError) as exc:
         raise ContractValidationError(f"value is not RFC 8785 JSON: {exc}") from exc
 

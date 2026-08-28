@@ -147,6 +147,17 @@ export interface ClaimInput {
   ordered_atoms: ClaimInputAtom[]
 }
 
+export interface AuthoritativeAtom {
+  atom_id: Id
+  payload_hash: Hash
+  acceptance_ordinal: number
+  current: boolean
+  accepted: boolean
+  revision_id?: Id
+  source_revision_id?: Id
+  [key: string]: unknown
+}
+
 export interface Target {
   workspace_id: Id
   entity_kind: 'document' | 'node_structure' | 'relation_set'
@@ -158,6 +169,13 @@ export interface WriteSetEntry extends Target {
   content_hash: Hash
 }
 
+export interface SourceRef {
+  workspace_id: Id | null
+  source_type: string
+  source_id: Id
+  revision_or_hash: string
+}
+
 export interface CandidateItem {
   schema: 'candidate-item/v1'
   item_id: Id
@@ -166,43 +184,212 @@ export interface CandidateItem {
   target: Target
   base: { revision_id: Id; content_hash: Hash }
   write_set: WriteSetEntry[]
-  mutation: { mode: string; payload_schema: string; payload_hash: Hash }
+  mutation: { mode: 'replace' | 'text_patch' | 'structure_patch' | 'relation_patch' | 'append_text'; payload_schema: string; payload_hash: Hash }
   payload_asset_id: Id
   parent_candidate_ids: Id[]
-  source_refs: Record<string, unknown>[]
+  source_refs: SourceRef[]
+}
+
+export type CandidateStageState = 'staged' | 'published' | 'rolled_back'
+
+export interface CandidateStageReceipt {
+  candidate_ids: Id[]
+  state: CandidateStageState
 }
 
 export interface ArtifactItem {
   schema: 'artifact-item/v1'
   item_id: Id
-  item_kind: string
+  artifact_kind: string
+  payload_asset_id: Id
+  payload_hash: Hash
+  mime: string
+  source_refs: SourceRef[]
   status: 'complete' | 'partial' | 'failed' | 'skipped'
-  asset_id: Id
-  asset_hash: Hash
-  artifact_schema: string
-  source_refs: Record<string, unknown>[]
 }
 
 export interface DiagnosticItem {
   schema: 'diagnostic-item/v1'
   item_id: Id
-  item_kind: string
-  status: 'complete' | 'partial' | 'failed' | 'skipped'
   severity: 'info' | 'warning' | 'error'
   code: string
   message: string
   details_asset_id: Id | null
-  source_refs: Record<string, unknown>[]
+  details_hash: Hash | null
+  source_refs: SourceRef[]
+  status: 'complete' | 'failed' | 'skipped'
 }
 
 export interface SkillChainRef {
   schema: 'skill-chain-ref/v1'
+  chain_result_id: Id
   result_bundle_id: Id | null
   result_item_id: Id | null
   stream_id: Id | null
   acked_prefix_hash: Hash | null
   asset_id: Id | null
   asset_hash: Hash | null
+}
+
+export interface Checkpoint {
+  schema: 'checkpoint/v1'
+  checkpoint_id: Id
+  checkpoint_seq: number
+  job_id: Id
+  step_id: Id
+  source_attempt_id: Id
+  lease_epoch: number
+  run_snapshot_hash: Hash
+  replay_policy: 'idempotent_auto' | 'checkpoint_resume' | 'manual_if_unknown' | 'never_replay'
+  completed_units: number
+  total_units: number | null
+  unit_set_hash: Hash | null
+  state_asset_id: Id | null
+  created_at: string
+  checkpoint_hash: Hash
+}
+
+export interface StreamPrefix {
+  schema: 'stream-prefix/v1'
+  stream_id: Id
+  job_id: Id
+  step_id: Id
+  output_role: string
+  target: Target
+  attempt_id: Id
+  lease_epoch: number
+  prefix_seq: number
+  prefix_asset_id: Id
+  prefix_hash: Hash
+  byte_length: number
+  encoding: 'utf-8'
+}
+
+export interface SkillPatch {
+  patch_id: Id
+  start_codepoint: number
+  end_codepoint: number
+  replacement_asset_id: Id
+  replacement_hash: Hash
+  before_hash: Hash
+  after_hash: Hash
+  verified: boolean
+}
+
+export interface SkillRunReceipt {
+  schema: 'skill-run-receipt/v1'
+  receipt_id: Id
+  chain_id: Id
+  chain_index: number
+  run_snapshot_hash: Hash
+  result_bundle_id: Id | null
+  result_item_id: Id | null
+  stream_id: Id | null
+  acked_prefix_hash: Hash | null
+  skill_id: Id
+  release_id: Hash
+  package_hash: Hash
+  parameters_asset_id: Id | null
+  input_asset_id: Id
+  input_hash: Hash
+  output_asset_id: Id | null
+  output_hash: Hash | null
+  step_state: 'executed' | 'failed' | 'skipped'
+  frozen: boolean
+  participated: boolean
+  model_claimed: boolean
+  verified_patch: boolean
+  claim_evidence_asset_id: Id | null
+  patches: SkillPatch[]
+  warnings: Array<{ code: string; message: string; details_asset_id: Id | null }>
+  previous_receipt_hash: Hash | null
+  receipt_hash: Hash
+}
+
+export interface SkillChainResult {
+  schema: 'skill-chain-result/v1'
+  chain_id: Id
+  run_snapshot_hash: Hash
+  result_bundle_id: Id | null
+  result_item_id: Id | null
+  stream_id: Id | null
+  acked_prefix_hash: Hash | null
+  receipt_ids: Id[]
+  receipt_hashes: Hash[]
+  chain_status: 'succeeded' | 'partial' | 'failed' | 'cancelled'
+  input_hash: Hash
+  final_output_asset_id: Id | null
+  final_output_hash: Hash | null
+  chain_hash: Hash
+}
+
+export interface ProvenanceReceipt {
+  schema: 'provenance-receipt/v1'
+  receipt_id: Id
+  plugin_id: Id
+  release_id: Hash
+  package_hash: Hash
+  capability_id: Id
+  job_id: Id
+  step_id: Id
+  attempt_id: Id
+  lease_epoch: number
+  run_snapshot_hash: Hash
+  bundle_id: Id | null
+  bundle_hash: Hash | null
+  parent_receipt_ids: Id[]
+  model_receipt_ids: Id[]
+  skill_chain_result_refs: SkillChainRef[]
+  staged_items: Id[]
+  created_at: string
+  receipt_hash: Hash
+}
+
+export interface SseRecovery {
+  schema: 'sse-recovery/v1'
+  stream_kind: 'core_event' | 'job_event'
+  aggregate_id: Id | null
+  requested_after_seq: number
+  replay_floor_seq: number
+  durable_high_water_seq: number
+  gap: boolean
+  snapshot_required: boolean
+  snapshot_schema: string | null
+  snapshot_revision: number | null
+  snapshot_asset_id: Id | null
+  snapshot_hash: Hash | null
+}
+
+export interface SettingsValidationReceipt {
+  schema: 'settings-validation-receipt/v1'
+  receipt_id: Id
+  plugin_id: Id
+  plugin_release_id: Hash
+  settings_revision_id: Id
+  schema_hash: Hash
+  payload_hash: Hash
+  valid: boolean
+  details_asset_id: Id | null
+  created_at: string
+  receipt_hash: Hash
+}
+
+export interface PluginLifecycleTransition {
+  schema: 'plugin-lifecycle-transition/v1'
+  install_operation_id: Id
+  base_generation_id: Id | null
+  base_lkg_generation_id: Id | null
+  target_generation_id: Id | null
+  state: 'selected' | 'staged' | 'package_published' | 'env_prepared' | 'shadow_prepared' | 'migrated' | 'settings_validated' | 'qualified' | 'pending_apply' | 'current_committed' | 'lkg_pending' | 'lkg_promoted' | 'failed' | 'superseded' | 'rollback_armed' | 'rolled_back' | 'safe_mode'
+  package_store_status: 'absent' | 'staged' | 'published' | 'orphan'
+  shadow_data_generation_id: Id | null
+  target_settings_revision_ids: Array<{ plugin_id: Id; settings_revision_id: Id }>
+  qualification_id: Id | null
+  rollback_attempt: 0 | 1
+  rollback_token: Id | null
+  failure_code: string | null
+  created_at: string
+  updated_at: string
 }
 
 export interface ResultBundle {

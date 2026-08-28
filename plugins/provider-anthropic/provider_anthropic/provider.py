@@ -1,10 +1,4 @@
-"""Anthropic Messages wire adapter and B0 provider contract boundary.
-
-The module deliberately has no dependency on another provider.  It consumes
-the public PlotPilot SDK when that package is available and keeps only the
-canonical hashing primitives needed to run the package in this design-only
-worktree when the SDK has not yet been published here.
-"""
+"""Anthropic Messages adapter with a closed, Core-bound provider boundary."""
 
 from __future__ import annotations
 
@@ -13,49 +7,62 @@ from copy import deepcopy
 from dataclasses import dataclass
 import hashlib
 import json
+import math
 from numbers import Real
 from typing import Any, Iterable, Iterator, Mapping, Protocol
 from urllib import request as urllib_request
+from urllib.parse import urlsplit
 
-try:  # Public SDK is the authoritative implementation when installed.
-    from plotpilot_plugin_sdk.canonical import canonical_bytes as _canonical_bytes
-    from plotpilot_plugin_sdk.canonical import hash_jcs as _hash_jcs
-    from plotpilot_plugin_sdk.contracts import ResultBundle as PublicResultBundle
-except ImportError:  # B0 worktree fallback: IDs, not a second JSON schema.
-    PublicResultBundle = dict  # type: ignore[misc,assignment]
-
-    def _canonical_bytes(value: Any) -> bytes:
-        return json.dumps(
-            value,
-            ensure_ascii=False,
-            sort_keys=True,
-            separators=(",", ":"),
-            allow_nan=False,
-        ).encode("utf-8")
-
-    def _hash_jcs(prefix: str, value: Any) -> str:
-        return hashlib.sha256(
-            prefix.encode("ascii") + b"\n" + _canonical_bytes(value)
-        ).hexdigest()
+from .contract import ProviderSchemaError, validate_descriptor_schema_references, validate_schema
+from .package_identity import load_runtime_identity
 
 
-ResultBundle = PublicResultBundle
+class ProviderError(RuntimeError):
+    """A fail-closed provider or Host contract error."""
 
+    def __init__(self, code: str, message: str, *, retryable: bool = False) -> None:
+        self.code = code
+        self.retryable = retryable
+        super().__init__(message)
+
+
+class _Cancelled(RuntimeError):
+    pass
+
+
+# The provider never has a canonical/hash fallback.  When the public SDK or
+# one of its locked dependencies is unavailable, every operation requiring a
+# contract identity fails closed with SDK_UNAVAILABLE.
+try:
+    from plotpilot_plugin_sdk.canonical import canonical_bytes as _sdk_canonical_bytes
+    from plotpilot_plugin_sdk.canonical import hash_jcs as _sdk_hash_jcs
+    from plotpilot_plugin_sdk.verifier import validate_rpc_result as _sdk_validate_rpc_result
+    from plotpilot_plugin_sdk.verifier import verify_checkpoint as _sdk_verify_checkpoint
+    from plotpilot_plugin_sdk.verifier import verify_provenance_receipt as _sdk_verify_receipt
+    from plotpilot_plugin_sdk.verifier import verify_result_bundle as _sdk_verify_result
+    from plotpilot_plugin_sdk.verifier import verify_stream_prefix as _sdk_verify_stream
+except ImportError as exc:  # pragma: no cover - exercised by the SDK-absent subprocess test
+    _SDK_IMPORT_ERROR: BaseException | None = exc
+    _sdk_canonical_bytes = None  # type: ignore[assignment]
+    _sdk_hash_jcs = None  # type: ignore[assignment]
+    _sdk_validate_rpc_result = None  # type: ignore[assignment]
+    _sdk_verify_checkpoint = None  # type: ignore[assignment]
+    _sdk_verify_receipt = None  # type: ignore[assignment]
+    _sdk_verify_result = None  # type: ignore[assignment]
+    _sdk_verify_stream = None  # type: ignore[assignment]
+else:
+    _SDK_IMPORT_ERROR = None
+
+
+_IDENTITY = load_runtime_identity()
 PLUGIN_ID = "com.plotpilot.novelagent.provider-anthropic"
+VERSION = "0.1.0"
 ANTHROPIC_CAPABILITY_ID = "model.provider.anthropic.invoke/v1"
 INPUT_SCHEMA = "model.provider.anthropic.invoke-request/v1"
 OUTPUT_SCHEMA = "model.provider.anthropic.invoke-result/v1"
 RESULT_CONTRACT = "artifact-bundle/v1"
-PACKAGE_HASH = hashlib.sha256(
-    b"plotpilot-provider-package/v1\n" + PLUGIN_ID.encode("ascii")
-).hexdigest()
-RELEASE_ID = hashlib.sha256(
-    b"plotpilot-provider-release/v1\n"
-    + PLUGIN_ID.encode("ascii")
-    + b"\n0.1.0\n"
-    + PACKAGE_HASH.encode("ascii")
-    + b"\n"
-).hexdigest()
+PACKAGE_HASH = str(_IDENTITY["package_hash"])
+RELEASE_ID = str(_IDENTITY["release_id"])
 NEEDS = (
     "host.asset.read/v1",
     "host.asset.create/v1",
@@ -65,6 +72,10 @@ NEEDS = (
     "host.checkpoint.commit/v1",
     "host.stream.commit/v1",
 )
+CORE_ENDPOINT_ORIGIN = "https://api.anthropic.com"
+CORE_ENDPOINT_PATH = "/v1/messages"
+_FIXED_TIME = "2026-08-27T00:00:00Z"
+
 DESCRIPTOR: dict[str, Any] = {
     "schema": "capability-provider/v1",
     "capability_id": ANTHROPIC_CAPABILITY_ID,
@@ -77,12 +88,8 @@ DESCRIPTOR: dict[str, Any] = {
     "accepted_data_formats": [],
 }
 
-_FIXED_TIME = "2026-08-27T00:00:00Z"
-
 
 class HostPort(Protocol):
-    """The only host surface used by this provider."""
-
     def call(self, method: str, params: Mapping[str, object]) -> Mapping[str, object]:
         ...
 
@@ -92,21 +99,8 @@ class AnthropicTransport(Protocol):
         ...
 
 
-class ProviderError(RuntimeError):
-    def __init__(self, code: str, message: str, *, retryable: bool = False) -> None:
-        self.code = code
-        self.retryable = retryable
-        super().__init__(message)
-
-
-class _Cancelled(RuntimeError):
-    pass
-
-
 @dataclass(frozen=True)
 class StreamChunk:
-    """A normalized delta plus its durable UTF-8 prefix identity."""
-
     seq: int
     delta: str
     prefix: str
@@ -116,9 +110,100 @@ class StreamChunk:
     stream_prefix: Mapping[str, Any] | None = None
 
 
+@dataclass
+class _RunContext:
+    request_hash: str
+    stream_id: str
+    receipt_id: str
+    checkpoint_ids: tuple[str, ...]
+    last_job_event_seq: int = 0
+    last_checkpoint_seq: int = 0
+    last_stream_seq: int = 0
+    previous_prefix: Mapping[str, Any] | None = None
+
+
+def _require_sdk() -> None:
+    if _SDK_IMPORT_ERROR is not None:
+        raise ProviderError("SDK_UNAVAILABLE", "public PlotPilot SDK is unavailable; provider is fail-closed") from _SDK_IMPORT_ERROR
+
+
+def _canonical_bytes(value: Any) -> bytes:
+    _require_sdk()
+    assert _sdk_canonical_bytes is not None
+    return bytes(_sdk_canonical_bytes(value))
+
+
+def _hash_jcs(prefix: str, value: Any) -> str:
+    _require_sdk()
+    assert _sdk_hash_jcs is not None
+    return str(_sdk_hash_jcs(prefix, value))
+
+
+def _sha256(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
+
+
+def _id(prefix: str, request_hash: str, suffix: str = "") -> str:
+    tail = request_hash[:20]
+    return f"{prefix}-{tail}{('-' + suffix) if suffix else ''}"
+
+
+def _validate_provider_schema(schema_id: str, value: Any, *, code: str) -> None:
+    try:
+        validate_schema(schema_id, value)
+    except ProviderSchemaError as exc:
+        raise ProviderError(code, str(exc)) from exc
+
+
+def _output_dict(
+    status: str,
+    result: Mapping[str, Any] | None,
+    conditional_result: Mapping[str, Any] | None,
+    receipt: Mapping[str, Any],
+    error: Mapping[str, Any] | None,
+    chunks: tuple[StreamChunk, ...],
+    output_text: str,
+) -> dict[str, Any]:
+    return {
+        "status": status,
+        "result": result,
+        "conditional_result": conditional_result,
+        "receipt": receipt,
+        "error": error,
+        "chunks": [
+            {
+                "seq": chunk.seq,
+                "delta": chunk.delta,
+                "prefix": chunk.prefix,
+                "prefix_hash": chunk.prefix_hash,
+                "usage": dict(chunk.usage) if chunk.usage is not None else None,
+                "prefix_asset_id": chunk.prefix_asset_id,
+                "stream_prefix": dict(chunk.stream_prefix) if chunk.stream_prefix is not None else None,
+            }
+            for chunk in chunks
+        ],
+        "output_text": output_text,
+    }
+
+
+def _validate_output(envelope: Mapping[str, Any]) -> None:
+    _require_sdk()
+    _validate_provider_schema(OUTPUT_SCHEMA, envelope, code="OUTPUT_SCHEMA_INVALID")
+    result = envelope["result"]
+    conditional = envelope["conditional_result"]
+    if result is not None:
+        assert _sdk_verify_result is not None
+        _sdk_verify_result(result)
+    if conditional is not None:
+        assert _sdk_verify_result is not None
+        _sdk_verify_result(conditional)
+    assert _sdk_verify_receipt is not None
+    _sdk_verify_receipt(envelope["receipt"])
+
+
 @dataclass(frozen=True)
 class InvocationOutcome:
-    """Python control envelope; ``result`` remains the only success contract."""
+    """The closed provider output envelope, including durable stream chunks."""
 
     status: str
     result: Mapping[str, Any] | None
@@ -128,116 +213,183 @@ class InvocationOutcome:
     chunks: tuple[StreamChunk, ...] = ()
     output_text: str = ""
 
+    def __post_init__(self) -> None:
+        _validate_output(_output_dict(self.status, self.result, self.conditional_result, self.receipt, self.error, self.chunks, self.output_text))
+
     @property
     def bundle(self) -> Mapping[str, Any] | None:
         return self.result if self.result is not None else self.conditional_result
 
     def as_dict(self) -> dict[str, Any]:
-        return {
-            "status": self.status,
-            "result": self.result,
-            "conditional_result": self.conditional_result,
-            "receipt": self.receipt,
-            "error": self.error,
-        }
+        value = _output_dict(self.status, self.result, self.conditional_result, self.receipt, self.error, self.chunks, self.output_text)
+        _validate_output(value)
+        return value
 
 
 def capability_descriptor() -> dict[str, Any]:
-    return deepcopy(DESCRIPTOR)
+    descriptor = deepcopy(DESCRIPTOR)
+    try:
+        validate_descriptor_schema_references(descriptor)
+    except ProviderSchemaError as exc:
+        raise ProviderError("SCHEMA_INDEX_INVALID", str(exc)) from exc
+    return descriptor
 
 
-def _sha256(data: bytes) -> str:
-    return hashlib.sha256(data).hexdigest()
-
-
-def _without(value: Mapping[str, Any], field: str) -> dict[str, Any]:
-    result = dict(value)
-    result.pop(field, None)
-    return result
-
-
-def _id(prefix: str, request_hash: str, suffix: str = "") -> str:
-    tail = request_hash[:20]
-    return f"{prefix}-{tail}{('-' + suffix) if suffix else ''}"
-
-
-def _host_call(host: HostPort, method: str, params: Mapping[str, object]) -> Mapping[str, object]:
-    result = host.call(method, dict(params))
+def _host_call(host: HostPort, method: str, params: Mapping[str, object]) -> dict[str, object]:
+    _require_sdk()
+    try:
+        result = host.call(method, dict(params))
+    except ProviderError:
+        raise
+    except Exception as exc:
+        raise ProviderError("HOST_RPC_ERROR", f"{method}: {type(exc).__name__}: {exc}") from exc
     if not isinstance(result, Mapping):
         raise ProviderError("HOST_CONTRACT_ERROR", f"{method} returned a non-object")
-    return result
+    assert _sdk_validate_rpc_result is not None
+    try:
+        _sdk_validate_rpc_result(method, result)
+    except Exception as exc:
+        raise ProviderError("HOST_CONTRACT_ERROR", f"{method} result failed the public RPC schema: {exc}") from exc
+    return dict(result)
+
+
+_ASSET_READ_LENGTH = 8_388_608
+_MAX_ASSET_READ_PAGES = 4096
+
+
+def _read_asset(asset_id: str, host: HostPort) -> bytes:
+    """Read one Core Asset as contiguous, per-chunk-authenticated pages."""
+    if not isinstance(asset_id, str) or not asset_id:
+        raise ProviderError("ASSET_READ_ERROR", "request Asset ID must be a non-empty string")
+
+    offset = 0
+    total_size: int | None = None
+    chunks: list[bytes] = []
+    for page_index in range(_MAX_ASSET_READ_PAGES):
+        response = _host_call(
+            host,
+            "host.asset.read/v1",
+            {"asset_id": asset_id, "offset": offset, "length": _ASSET_READ_LENGTH},
+        )
+
+        # The public RPC result carries next_offset rather than a second offset
+        # field.  If a lower-level fixture exposes one, bind it to our request
+        # as well; the public validator still rejects fields outside its schema.
+        returned_offset = response.get("offset")
+        if returned_offset is not None and (
+            isinstance(returned_offset, bool)
+            or not isinstance(returned_offset, int)
+            or returned_offset != offset
+        ):
+            raise ProviderError("ASSET_READ_ERROR", "request Asset page returned an unexpected offset")
+
+        encoded = response.get("base64_chunk")
+        if not isinstance(encoded, str):
+            raise ProviderError("ASSET_READ_ERROR", "request Asset page did not return base64 data")
+        try:
+            chunk = base64.b64decode(encoded, validate=True)
+        except Exception as exc:
+            raise ProviderError("ASSET_READ_ERROR", "request Asset page is not valid base64") from exc
+        if len(chunk) > _ASSET_READ_LENGTH:
+            raise ProviderError("ASSET_READ_ERROR", "request Asset page exceeds the requested length")
+
+        returned_length = response.get("length")
+        if returned_length is not None and (
+            isinstance(returned_length, bool)
+            or not isinstance(returned_length, int)
+            or returned_length != len(chunk)
+        ):
+            raise ProviderError("ASSET_READ_ERROR", "request Asset page length is inconsistent")
+
+        page_total = response.get("total_size")
+        if page_total is not None:
+            if isinstance(page_total, bool) or not isinstance(page_total, int) or page_total < 0:
+                raise ProviderError("ASSET_READ_ERROR", "request Asset total size is invalid")
+            if total_size is None:
+                total_size = page_total
+            elif total_size != page_total:
+                raise ProviderError("ASSET_READ_ERROR", "request Asset total size changed between pages")
+            if offset + len(chunk) > total_size:
+                raise ProviderError("ASSET_READ_ERROR", "request Asset page exceeds its total size")
+
+        if response.get("content_hash") != _sha256(chunk):
+            raise ProviderError("ASSET_READ_ERROR", "request Asset page hash is inconsistent")
+
+        expected_next = offset + len(chunk)
+        next_offset = response.get("next_offset")
+        if next_offset is None:
+            if not chunk:
+                raise ProviderError("ASSET_READ_ERROR", "request Asset page made no progress at EOF")
+            if total_size is not None and expected_next != total_size:
+                raise ProviderError("ASSET_READ_ERROR", "request Asset reached EOF before its total size")
+            chunks.append(chunk)
+            offset = expected_next
+            break
+        if isinstance(next_offset, bool) or not isinstance(next_offset, int) or next_offset < 0:
+            raise ProviderError("ASSET_READ_ERROR", "request Asset next_offset is invalid")
+        if next_offset != expected_next or next_offset <= offset:
+            raise ProviderError("ASSET_READ_ERROR", "request Asset pages are not contiguous")
+        if total_size is not None and next_offset >= total_size:
+            raise ProviderError("ASSET_READ_ERROR", "request Asset must return null next_offset at EOF")
+        chunks.append(chunk)
+        offset = next_offset
+    else:
+        raise ProviderError("ASSET_READ_ERROR", "request Asset did not terminate at EOF")
+
+    data = b"".join(chunks)
+    if len(data) != offset:
+        raise ProviderError("ASSET_READ_ERROR", "request Asset total size is inconsistent")
+    if total_size is not None and len(data) != total_size:
+        raise ProviderError("ASSET_READ_ERROR", "request Asset total size is inconsistent")
+    return data
 
 
 def _load_request(request: Mapping[str, Any], host: HostPort) -> dict[str, Any]:
     if "request_asset_id" not in request:
         return dict(request)
-    response = _host_call(
-        host,
-        "host.asset.read/v1",
-        {"asset_id": request["request_asset_id"], "offset": 0, "length": 8_388_608},
-    )
-    encoded = response.get("base64_chunk")
-    if not isinstance(encoded, str):
-        raise ProviderError("ASSET_READ_ERROR", "request Asset did not return base64 data")
+    if set(request) != {"request_asset_id"}:
+        raise ProviderError("INPUT_INVALID", "request_asset_id envelope cannot carry caller fields")
+    data = _read_asset(request["request_asset_id"], host)
     try:
-        loaded = json.loads(base64.b64decode(encoded, validate=True).decode("utf-8"))
-    except (ValueError, UnicodeDecodeError, json.JSONDecodeError) as exc:
-        raise ProviderError("ASSET_READ_ERROR", "request Asset is not UTF-8 JSON") from exc
+        _require_sdk()
+        from plotpilot_plugin_sdk.canonical import parse_json_bytes
+
+        loaded = parse_json_bytes(data)
+    except ProviderError:
+        raise
+    except Exception as exc:
+        raise ProviderError("ASSET_READ_ERROR", "request Asset is not strict UTF-8 JSON") from exc
     if not isinstance(loaded, dict):
         raise ProviderError("INPUT_INVALID", "request Asset must contain a JSON object")
     return loaded
 
 
 def _validate_request(request: Mapping[str, Any]) -> dict[str, Any]:
+    if not isinstance(request, Mapping):
+        raise ProviderError("INPUT_INVALID", "request must be an object")
     value = dict(request)
-    if value.get("schema") != INPUT_SCHEMA:
-        raise ProviderError("INPUT_INVALID", f"schema must be {INPUT_SCHEMA}")
-    forbidden = {"api_key", "access_token", "secret", "credentials"}
+    forbidden = {
+        "api_key", "access_token", "secret", "credentials", "base_url", "endpoint",
+        "transport", "transport_config", "headers", "url", "proxy", "verify_tls",
+    }
     leaked = sorted(forbidden.intersection(value))
     if leaked:
-        raise ProviderError("INPUT_INVALID", "credentials must not be supplied in the request")
-    for field in ("invocation_id", "job_id", "step_id", "attempt_id", "model"):
-        if not isinstance(value.get(field), str) or not value[field]:
-            raise ProviderError("INPUT_INVALID", f"{field} is required")
-    lease_epoch = value.get("lease_epoch")
-    if isinstance(lease_epoch, bool) or not isinstance(lease_epoch, int) or lease_epoch < 1:
-        raise ProviderError("INPUT_INVALID", "lease_epoch must be a positive integer")
-    snapshot_hash = value.get("run_snapshot_hash")
-    if not isinstance(snapshot_hash, str) or len(snapshot_hash) != 64 or any(
-        char not in "0123456789abcdef" for char in snapshot_hash
-    ):
-        raise ProviderError("INPUT_INVALID", "run_snapshot_hash must be lowercase SHA-256")
-    max_tokens = value.get("max_tokens", 1024)
-    if isinstance(max_tokens, bool) or not isinstance(max_tokens, int) or max_tokens < 1:
-        raise ProviderError("INPUT_INVALID", "max_tokens must be a positive integer")
-    temperature = value.get("temperature", 0.0)
-    if isinstance(temperature, bool) or not isinstance(temperature, Real):
-        raise ProviderError("INPUT_INVALID", "temperature must be numeric")
-    messages = value.get("messages")
-    if messages is None and isinstance(value.get("prompt"), str):
-        messages = [{"role": "user", "content": value["prompt"]}]
-        value["messages"] = messages
-    if not isinstance(messages, list) or not messages:
-        raise ProviderError("INPUT_INVALID", "messages must be a non-empty list")
-    for item in messages:
-        if not isinstance(item, Mapping) or item.get("role") not in {"system", "user", "assistant"}:
-            raise ProviderError("INPUT_INVALID", "message role is invalid")
-        if not isinstance(item.get("content"), str):
-            raise ProviderError("INPUT_INVALID", "message content must be text")
-    value["max_tokens"] = max_tokens
-    value["temperature"] = temperature
+        raise ProviderError("INPUT_INVALID", "caller transport/credential fields are forbidden: " + ",".join(leaked))
+    if "messages" not in value and isinstance(value.get("prompt"), str):
+        value["messages"] = [{"role": "user", "content": value["prompt"]}]
+    value.setdefault("max_tokens", 1024)
+    value.setdefault("temperature", 0.0)
     value.setdefault("stream", True)
     value.setdefault("output_role", "assistant.text")
-    value.setdefault(
-        "target",
-        {"workspace_id": "provider-fixture", "entity_kind": "document", "entity_id": "model-output"},
-    )
-    if not isinstance(value["target"], Mapping):
-        raise ProviderError("INPUT_INVALID", "target must be an object")
-    target = value["target"]
-    if not all(isinstance(target.get(field), str) and target[field] for field in ("workspace_id", "entity_kind", "entity_id")):
-        raise ProviderError("INPUT_INVALID", "target identity is incomplete")
+    value.setdefault("target", {"workspace_id": "provider-fixture", "entity_kind": "document", "entity_id": "model-output"})
     value.setdefault("created_at", _FIXED_TIME)
+    _validate_provider_schema(INPUT_SCHEMA, value, code="INPUT_SCHEMA_INVALID")
+    temperature = value["temperature"]
+    if isinstance(temperature, bool) or not isinstance(temperature, Real) or not math.isfinite(float(temperature)):
+        raise ProviderError("INPUT_INVALID", "temperature must be a finite JSON number")
+    checkpoint_ids = value["checkpoint_ids"]
+    if len(set(checkpoint_ids)) != len(checkpoint_ids):
+        raise ProviderError("INPUT_INVALID", "checkpoint_ids must be unique Core-issued identities")
     return value
 
 
@@ -250,24 +402,46 @@ def _safe_message(exc: BaseException) -> str:
     return message[:240] or type(exc).__name__
 
 
+def _validate_core_url(url: str, *, path: str) -> None:
+    parsed = urlsplit(url)
+    expected = urlsplit(CORE_ENDPOINT_ORIGIN)
+    if (
+        parsed.scheme != "https"
+        or parsed.hostname != expected.hostname
+        or parsed.username is not None
+        or parsed.password is not None
+        or parsed.query
+        or parsed.fragment
+        or parsed.path != path
+        or parsed.port not in (None, 443)
+    ):
+        raise ValueError("provider endpoint is not the fixed Core-owned origin")
+
+
 class AnthropicHTTPTransport:
-    """Optional stdlib transport; tests use ScriptedTransport instead."""
+    """Stdlib transport whose credential-bearing request is origin-bound."""
 
     def __init__(self, base_url: str, api_key: str, *, timeout: float = 300.0) -> None:
-        if not base_url or not api_key:
-            raise ValueError("base_url and api_key are required")
-        self.base_url = base_url.rstrip("/")
+        if not isinstance(base_url, str) or not base_url or not isinstance(api_key, str) or not api_key:
+            raise ValueError("Core-owned base_url and api_key are required")
+        candidate = base_url.rstrip("/") or base_url
+        parsed = urlsplit(candidate)
+        expected = urlsplit(CORE_ENDPOINT_ORIGIN)
+        if parsed.path not in ("", "/") or parsed.query or parsed.fragment or parsed.scheme != "https" or parsed.hostname != expected.hostname or parsed.port not in (None, 443) or parsed.username or parsed.password:
+            raise ValueError("base_url must be the fixed Core-owned origin")
+        self.base_url = CORE_ENDPOINT_ORIGIN
         self.api_key = api_key
         self.timeout = timeout
 
     def stream(self, wire_request: Mapping[str, object]) -> Iterator[Mapping[str, Any]]:
-        url = str(wire_request["url"])
-        headers = dict(wire_request["headers"])  # type: ignore[arg-type]
+        url = str(wire_request.get("url", ""))
+        _validate_core_url(url, path=CORE_ENDPOINT_PATH)
+        headers = dict(wire_request.get("headers") or {})  # type: ignore[arg-type]
         headers["x-api-key"] = self.api_key
-        payload = json.dumps(wire_request["body"], ensure_ascii=False).encode("utf-8")
+        payload = json.dumps(wire_request.get("body"), ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode("utf-8")
         req = urllib_request.Request(url, data=payload, headers=headers, method="POST")
         try:
-            with urllib_request.urlopen(req, timeout=self.timeout) as response:  # nosec B310 - explicit provider endpoint
+            with urllib_request.urlopen(req, timeout=self.timeout) as response:  # nosec B310 - fixed provider origin above
                 for raw_line in response:
                     line = raw_line.decode("utf-8", "replace").strip()
                     if not line.startswith("data:"):
@@ -277,13 +451,13 @@ class AnthropicHTTPTransport:
                         parsed = json.loads(data)
                         if isinstance(parsed, Mapping):
                             yield dict(parsed)
+        except ProviderError:
+            raise
         except Exception as exc:
             raise ProviderError("UPSTREAM_TRANSPORT_ERROR", _safe_message(exc), retryable=True) from exc
 
 
 class AnthropicProvider:
-    """Headless adapter. Core remains the owner of Job/Asset/stream identity."""
-
     plugin_id = PLUGIN_ID
     capability_id = ANTHROPIC_CAPABILITY_ID
     release_id = RELEASE_ID
@@ -297,11 +471,7 @@ class AnthropicProvider:
         return capability_descriptor()
 
     def cancel(self, run_id_or_request: str | Mapping[str, Any]) -> bool:
-        run_id = (
-            run_id_or_request
-            if isinstance(run_id_or_request, str)
-            else str(run_id_or_request.get("worker_run_id") or run_id_or_request.get("invocation_id") or "")
-        )
+        run_id = run_id_or_request if isinstance(run_id_or_request, str) else str(run_id_or_request.get("worker_run_id") or run_id_or_request.get("invocation_id") or "")
         if not run_id:
             return False
         was_new = run_id not in self._cancelled
@@ -310,253 +480,123 @@ class AnthropicProvider:
 
     def _wire_request(self, request: Mapping[str, Any]) -> dict[str, Any]:
         system = [item["content"] for item in request["messages"] if item["role"] == "system"]
-        messages = [
-            {"role": item["role"], "content": item["content"]}
-            for item in request["messages"]
-            if item["role"] in {"user", "assistant"}
-        ]
-        body: dict[str, Any] = {
-            "model": request["model"],
-            "messages": messages,
-            "max_tokens": request["max_tokens"],
-            "temperature": request["temperature"],
-            "stream": True,
-        }
+        messages = [{"role": item["role"], "content": item["content"]} for item in request["messages"] if item["role"] in {"user", "assistant"}]
+        body: dict[str, Any] = {"model": request["model"], "messages": messages, "max_tokens": request["max_tokens"], "temperature": request["temperature"], "stream": True}
         if system:
             body["system"] = "\n\n".join(system)
-        return {
-            "url": f"{request.get('base_url', 'https://api.anthropic.com').rstrip('/')}/v1/messages",
-            "headers": {
-                "content-type": "application/json",
-                "accept": "text/event-stream",
-                "anthropic-version": "2023-06-01",
-            },
-            "body": body,
-        }
+        return {"url": CORE_ENDPOINT_ORIGIN + CORE_ENDPOINT_PATH, "headers": {"content-type": "application/json", "accept": "text/event-stream", "anthropic-version": "2023-06-01"}, "body": body}
 
-    def _upload(self, host: HostPort, operation_key: str, data: bytes, mime: str, suffix: str) -> str:
+    @staticmethod
+    def _accepted(result: Mapping[str, object], method: str) -> None:
+        if result.get("accepted") is not True:
+            raise ProviderError("HOST_REJECTED", f"Host rejected {method}")
+
+    def _record_event(self, context: _RunContext, result: Mapping[str, object], method: str) -> None:
+        self._accepted(result, method)
+        seq = result.get("job_event_seq")
+        if isinstance(seq, bool) or not isinstance(seq, int) or seq < context.last_job_event_seq:
+            raise ProviderError("HOST_CONTRACT_ERROR", f"{method} job_event_seq moved backwards")
+        context.last_job_event_seq = seq
+
+    def _upload(self, host: HostPort, context: _RunContext, data: bytes, mime: str, suffix: str) -> str:
         expected_hash = _sha256(data)
-        upload_id = f"{operation_key}-upload-{suffix}"
-        created = _host_call(
-            host,
-            "host.asset.create/v1",
-            {
-                "operation_key": operation_key,
-                "upload_id": upload_id,
-                "offset": 0,
-                "mime": mime,
-                "total_size": len(data),
-                "expected_hash": expected_hash,
-                "chunk_hash": expected_hash,
-                "base64_chunk": base64.b64encode(data).decode("ascii"),
-                "final": True,
-            },
-        )
+        upload_id = f"{context.request_hash}-upload-{suffix}"
+        created = _host_call(host, "host.asset.create/v1", {"operation_key": context.request_hash, "upload_id": upload_id, "offset": 0, "mime": mime, "total_size": len(data), "expected_hash": expected_hash, "chunk_hash": expected_hash, "base64_chunk": base64.b64encode(data).decode("ascii"), "final": True})
         asset_id = created.get("asset_id")
-        if not isinstance(asset_id, str) or not asset_id:
-            raise ProviderError("ASSET_CREATE_ERROR", "Host did not return an Asset ID")
-        status = _host_call(
-            host,
-            "host.asset.upload.status/v1",
-            {"upload_id": upload_id, "expected_hash": expected_hash},
-        )
-        if status.get("completed") is not True or status.get("asset_id") != asset_id:
-            raise ProviderError("ASSET_UPLOAD_ERROR", "Host did not confirm the completed Asset")
+        if created.get("upload_id") != upload_id or created.get("accepted_bytes") != len(data) or created.get("completed") is not True or not isinstance(asset_id, str) or not asset_id:
+            raise ProviderError("ASSET_CREATE_ERROR", "Host Asset create identity/size was not accepted")
+        status = _host_call(host, "host.asset.upload.status/v1", {"upload_id": upload_id, "expected_hash": expected_hash})
+        if status.get("accepted_bytes") != len(data) or status.get("completed") is not True or status.get("asset_id") != asset_id:
+            raise ProviderError("ASSET_UPLOAD_ERROR", "Host Asset upload status did not match the upload")
         return asset_id
 
-    def _event(self, host: HostPort, op: str, event_type: str, payload_asset_id: str | None, seq: int) -> None:
-        _host_call(
-            host,
-            "host.job.event/v1",
-            {"operation_key": op, "event_type": event_type, "payload_asset_id": payload_asset_id, "local_seq": seq},
-        )
+    def _event(self, host: HostPort, context: _RunContext, event_type: str, payload_asset_id: str | None, seq: int) -> None:
+        result = _host_call(host, "host.job.event/v1", {"operation_key": context.request_hash, "event_type": event_type, "payload_asset_id": payload_asset_id, "local_seq": seq})
+        self._record_event(context, result, "host.job.event/v1")
 
-    def _checkpoint(
-        self,
-        host: HostPort,
-        request: Mapping[str, Any],
-        request_hash: str,
-        prefix_asset_id: str,
-        seq: int,
-    ) -> Mapping[str, Any]:
-        checkpoint: dict[str, Any] = {
-            "schema": "checkpoint/v1",
-            "checkpoint_id": _id("anthropic-checkpoint", request_hash, str(seq)),
-            "checkpoint_seq": seq,
-            "job_id": request["job_id"],
-            "step_id": request["step_id"],
-            "source_attempt_id": request["attempt_id"],
-            "lease_epoch": request["lease_epoch"],
-            "run_snapshot_hash": request["run_snapshot_hash"],
-            "replay_policy": "checkpoint_resume",
-            "completed_units": seq,
-            "total_units": request.get("total_units") if isinstance(request.get("total_units"), int) else None,
-            "unit_set_hash": None,
-            "state_asset_id": prefix_asset_id,
-            "created_at": request.get("created_at", _FIXED_TIME),
-        }
+    def _checkpoint(self, host: HostPort, request: Mapping[str, Any], context: _RunContext, prefix_asset_id: str, seq: int) -> Mapping[str, Any]:
+        if seq > len(context.checkpoint_ids):
+            raise ProviderError("CHECKPOINT_ID_EXHAUSTED", "Core did not issue a checkpoint identity for this stream sequence")
+        checkpoint_id = context.checkpoint_ids[seq - 1]
+        checkpoint: dict[str, Any] = {"schema": "checkpoint/v1", "checkpoint_id": checkpoint_id, "checkpoint_seq": seq, "job_id": request["job_id"], "step_id": request["step_id"], "source_attempt_id": request["attempt_id"], "lease_epoch": request["lease_epoch"], "run_snapshot_hash": request["run_snapshot_hash"], "replay_policy": "checkpoint_resume", "completed_units": seq, "total_units": request.get("total_units") if isinstance(request.get("total_units"), int) else None, "unit_set_hash": None, "state_asset_id": prefix_asset_id, "created_at": request.get("created_at", _FIXED_TIME)}
         checkpoint["checkpoint_hash"] = _hash_jcs("checkpoint/v1", checkpoint)
-        data = _canonical_bytes(checkpoint)
-        asset_id = self._upload(host, f"{request_hash}-checkpoint", data, "application/json", str(seq))
-        response = _host_call(
-            host,
-            "host.checkpoint.commit/v1",
-            {"operation_key": request_hash, "checkpoint_asset_id": asset_id},
-        )
-        if response.get("accepted") is not True:
-            raise ProviderError("CHECKPOINT_REJECTED", "Host rejected checkpoint commit")
+        assert _sdk_verify_checkpoint is not None
+        _sdk_verify_checkpoint(checkpoint, expected_snapshot_hash=str(request["run_snapshot_hash"]), previous_seq=context.last_checkpoint_seq or None)
+        checkpoint_asset_id = self._upload(host, context, _canonical_bytes(checkpoint), "application/json", f"checkpoint-{seq}")
+        response = _host_call(host, "host.checkpoint.commit/v1", {"operation_key": context.request_hash, "checkpoint_asset_id": checkpoint_asset_id})
+        self._accepted(response, "host.checkpoint.commit/v1")
+        if response.get("checkpoint_id") != checkpoint_id or response.get("completed_units") != seq or response.get("total_units") != checkpoint["total_units"]:
+            raise ProviderError("CHECKPOINT_ID_MISMATCH", "Host checkpoint result does not match the Core-issued identity")
+        self._record_event(context, response, "host.checkpoint.commit/v1")
+        context.last_checkpoint_seq = seq
         return checkpoint
 
-    def _receipt(
-        self,
-        request: Mapping[str, Any],
-        request_hash: str,
-        receipt_id: str,
-        bundle_id: str | None,
-        bundle_hash: str | None,
-    ) -> dict[str, Any]:
-        receipt: dict[str, Any] = {
-            "schema": "provenance-receipt/v1",
-            "receipt_id": receipt_id,
-            "plugin_id": PLUGIN_ID,
-            "release_id": RELEASE_ID,
-            "package_hash": PACKAGE_HASH,
-            "capability_id": ANTHROPIC_CAPABILITY_ID,
-            "job_id": request["job_id"],
-            "step_id": request["step_id"],
-            "attempt_id": request["attempt_id"],
-            "lease_epoch": request["lease_epoch"],
-            "run_snapshot_hash": request["run_snapshot_hash"],
-            "bundle_id": bundle_id,
-            "bundle_hash": bundle_hash,
-            "parent_receipt_ids": [],
-            "model_receipt_ids": [],
-            "skill_chain_result_refs": [],
-            "staged_items": [],
-            "created_at": request.get("created_at", _FIXED_TIME),
-        }
+    def _receipt(self, request: Mapping[str, Any], receipt_id: str, bundle_id: str | None, bundle_hash: str | None) -> dict[str, Any]:
+        receipt: dict[str, Any] = {"schema": "provenance-receipt/v1", "receipt_id": receipt_id, "plugin_id": PLUGIN_ID, "release_id": RELEASE_ID, "package_hash": PACKAGE_HASH, "capability_id": ANTHROPIC_CAPABILITY_ID, "job_id": request["job_id"], "step_id": request["step_id"], "attempt_id": request["attempt_id"], "lease_epoch": request["lease_epoch"], "run_snapshot_hash": request["run_snapshot_hash"], "bundle_id": bundle_id, "bundle_hash": bundle_hash, "parent_receipt_ids": [], "model_receipt_ids": [], "skill_chain_result_refs": [], "staged_items": [], "created_at": request.get("created_at", _FIXED_TIME)}
         receipt["receipt_hash"] = _hash_jcs("provenance-receipt/v1", receipt)
+        assert _sdk_verify_receipt is not None
+        _sdk_verify_receipt(receipt)
         return receipt
 
-    def _complete_host(
-        self,
-        host: HostPort,
-        request: Mapping[str, Any],
-        operation_key: str,
-        outcome: str,
-        result_asset_id: str | None,
-        detail_asset_id: str | None,
-        local_seq: int,
-    ) -> None:
-        _host_call(
-            host,
-            "host.job.complete/v1",
-            {
-                "operation_key": operation_key,
-                "worker_run_id": request.get("worker_run_id", request["invocation_id"]),
-                "outcome": outcome,
-                "result_bundle_asset_id": result_asset_id,
-                "candidate_stage_operation_key": None,
-                "terminal_detail_asset_id": detail_asset_id,
-                "local_seq": local_seq,
-            },
-        )
+    def _complete_host(self, host: HostPort, request: Mapping[str, Any], context: _RunContext, outcome: str, result_asset_id: str | None, detail_asset_id: str | None, local_seq: int) -> None:
+        response = _host_call(host, "host.job.complete/v1", {"operation_key": context.request_hash, "worker_run_id": request["worker_run_id"], "outcome": outcome, "result_bundle_asset_id": result_asset_id, "candidate_stage_operation_key": None, "terminal_detail_asset_id": detail_asset_id, "local_seq": local_seq})
+        self._accepted(response, "host.job.complete/v1")
+        expected_receipt = request["provenance_receipt_id"]
+        if response.get("provenance_receipt_id") != expected_receipt or response.get("attempt_state") != outcome or response.get("step_state") != outcome or response.get("job_state") != outcome:
+            raise ProviderError("TERMINAL_IDENTITY_MISMATCH", "Host terminal result did not preserve Core job/attempt/receipt identity")
+        if outcome == "succeeded" and not isinstance(result_asset_id, str):
+            raise ProviderError("TERMINAL_RESULT_MISSING", "accepted succeeded terminal result has no result Asset")
+        event_seq = response.get("job_event_seq")
+        high_water = response.get("core_event_high_water")
+        if isinstance(event_seq, bool) or not isinstance(event_seq, int) or event_seq < context.last_job_event_seq or isinstance(high_water, bool) or not isinstance(high_water, int) or high_water < event_seq:
+            raise ProviderError("HOST_CONTRACT_ERROR", "Host terminal event identity/high-water is invalid")
+        context.last_job_event_seq = event_seq
 
-    def _failure(
-        self,
-        host: HostPort,
-        request: Mapping[str, Any],
-        request_hash: str,
-        error: ProviderError,
-        chunks: tuple[StreamChunk, ...],
-        output_text: str,
-    ) -> InvocationOutcome:
+    def _failure(self, host: HostPort, request: Mapping[str, Any], context: _RunContext, error: ProviderError, chunks: tuple[StreamChunk, ...], output_text: str) -> InvocationOutcome:
         error_payload = {"code": error.code, "message": _safe_message(error), "retryable": error.retryable}
-        receipt_id = str(request.get("provenance_receipt_id") or _id("anthropic-receipt", request_hash))
-        diagnostic: dict[str, Any] | None = None
-        detail_asset_id: str | None = None
+        receipt_id = request["provenance_receipt_id"]
         try:
             detail_bytes = _canonical_bytes(error_payload)
-            detail_asset_id = self._upload(host, request_hash, detail_bytes, "application/json", "failure-detail")
-            detail_hash = _sha256(detail_bytes)
-            item_id = _id("anthropic-diagnostic", request_hash)
-            diagnostic = {
-                "schema": "result-bundle/v1",
-                "contract_id": "diagnostic-bundle/v1",
-                "bundle_id": _id("anthropic-failure", request_hash),
-                "bundle_type": "diagnostic",
-                "producer": {
-                    "plugin_id": PLUGIN_ID,
-                    "release_id": RELEASE_ID,
-                    "capability_id": ANTHROPIC_CAPABILITY_ID,
-                    "job_id": request["job_id"],
-                    "step_id": request["step_id"],
-                    "attempt_id": request["attempt_id"],
-                    "lease_epoch": request["lease_epoch"],
-                },
-                "input_snapshot_hash": request["run_snapshot_hash"],
-                "items": [{
-                    "schema": "diagnostic-item/v1",
-                    "item_id": item_id,
-                    "severity": "error",
-                    "code": error.code,
-                    "message": _safe_message(error),
-                    "details_asset_id": detail_asset_id,
-                    "details_hash": detail_hash,
-                    "source_refs": [],
-                    "status": "failed",
-                }],
-                "warnings": [],
-                "partial": True,
-                "provenance_receipt_id": receipt_id,
-                "skill_chain_result_refs": [],
-            }
-            diagnostic_bytes = _canonical_bytes(diagnostic)
-            bundle_asset_id = self._upload(host, request_hash, diagnostic_bytes, "application/json", "failure-bundle")
-            bundle_hash = _hash_jcs("result-bundle/v1", diagnostic)
-            receipt = self._receipt(request, request_hash, receipt_id, diagnostic["bundle_id"], bundle_hash)
-            self._complete_host(host, request, request_hash, "failed", bundle_asset_id, detail_asset_id, len(chunks) + 1)
+            detail_asset_id = self._upload(host, context, detail_bytes, "application/json", "failure-detail")
+            diagnostic: dict[str, Any] = {"schema": "result-bundle/v1", "contract_id": "diagnostic-bundle/v1", "bundle_id": _id("anthropic-failure", context.request_hash), "bundle_type": "diagnostic", "producer": {"plugin_id": PLUGIN_ID, "release_id": RELEASE_ID, "capability_id": ANTHROPIC_CAPABILITY_ID, "job_id": request["job_id"], "step_id": request["step_id"], "attempt_id": request["attempt_id"], "lease_epoch": request["lease_epoch"]}, "input_snapshot_hash": request["run_snapshot_hash"], "items": [{"schema": "diagnostic-item/v1", "item_id": _id("anthropic-diagnostic", context.request_hash), "severity": "error", "code": error.code, "message": _safe_message(error), "details_asset_id": detail_asset_id, "details_hash": _sha256(detail_bytes), "source_refs": [], "status": "failed"}], "warnings": [], "partial": True, "provenance_receipt_id": receipt_id, "skill_chain_result_refs": []}
+            assert _sdk_verify_result is not None
+            _sdk_verify_result(diagnostic, snapshot_hash_value=str(request["run_snapshot_hash"]))
+            bundle_asset_id = self._upload(host, context, _canonical_bytes(diagnostic), "application/json", "failure-bundle")
+            receipt = self._receipt(request, receipt_id, diagnostic["bundle_id"], _hash_jcs("result-bundle/v1", diagnostic))
+            self._complete_host(host, request, context, "failed", bundle_asset_id, detail_asset_id, len(chunks) + 1)
             return InvocationOutcome("failed", None, diagnostic, receipt, error_payload, chunks, output_text)
         except Exception as host_error:
-            receipt = self._receipt(request, request_hash, receipt_id, None, None)
+            receipt = self._receipt(request, receipt_id, None, None)
             try:
-                self._complete_host(host, request, request_hash, "failed", None, detail_asset_id, len(chunks) + 1)
+                self._complete_host(host, request, context, "failed", None, None, len(chunks) + 1)
             except Exception:
                 pass
-            error_payload = {
-                "code": "HOST_CONTRACT_ERROR",
-                "message": f"{error.code}; {_safe_message(host_error)}",
-                "retryable": False,
-            }
-            return InvocationOutcome("failed", None, None, receipt, error_payload, chunks, output_text)
+            fallback_error = {"code": "HOST_CONTRACT_ERROR", "message": f"{error.code}; {_safe_message(host_error)}", "retryable": False}
+            return InvocationOutcome("failed", None, None, receipt, fallback_error, chunks, output_text)
 
-    def _cancelled_outcome(
-        self, host: HostPort, request: Mapping[str, Any], request_hash: str, chunks: tuple[StreamChunk, ...], output_text: str
-    ) -> InvocationOutcome:
-        receipt_id = str(request.get("provenance_receipt_id") or _id("anthropic-receipt", request_hash))
-        receipt = self._receipt(request, request_hash, receipt_id, None, None)
+    def _cancelled_outcome(self, host: HostPort, request: Mapping[str, Any], context: _RunContext, chunks: tuple[StreamChunk, ...], output_text: str) -> InvocationOutcome:
+        receipt = self._receipt(request, context.receipt_id, None, None)
         error = {"code": "CANCELLED", "message": "provider run cancelled", "retryable": False}
-        self._complete_host(host, request, request_hash, "cancelled", None, None, len(chunks) + 1)
+        self._complete_host(host, request, context, "cancelled", None, None, len(chunks) + 1)
         return InvocationOutcome("cancelled", None, None, receipt, error, chunks, output_text)
 
     def run(self, request: Mapping[str, Any], host: HostPort, *, transport: AnthropicTransport | None = None) -> InvocationOutcome:
-        loaded = _load_request(request, host)
-        normalized = _validate_request(loaded)
+        _require_sdk()
+        normalized = _validate_request(_load_request(request, host))
         request_hash = _request_hash(normalized)
-        run_id = str(normalized.get("worker_run_id", normalized["invocation_id"]))
+        run_id = normalized["worker_run_id"]
+        context = _RunContext(request_hash, normalized["stream_id"], normalized["provenance_receipt_id"], tuple(normalized["checkpoint_ids"]))
         if run_id in self._cancelled:
-            return self._cancelled_outcome(host, normalized, request_hash, (), "")
+            return self._cancelled_outcome(host, normalized, context, (), "")
         active_transport = transport or self.transport
         if active_transport is None:
             raise ValueError("an AnthropicTransport is required; no network transport is implicit")
-        operation_key = request_hash
-        self._event(host, operation_key, "provider.started", None, 1)
-        wire = self._wire_request(normalized)
+        self._event(host, context, "provider.started", None, 1)
         chunks: list[StreamChunk] = []
         prefix = ""
         usage: dict[str, int] = {}
         try:
-            for event in active_transport.stream(wire):
+            for event in active_transport.stream(self._wire_request(normalized)):
                 if run_id in self._cancelled:
                     raise _Cancelled()
                 event_type = event.get("type")
@@ -577,41 +617,20 @@ class AnthropicProvider:
                     seq = len(chunks) + 1
                     prefix_bytes = prefix.encode("utf-8")
                     prefix_hash = _sha256(prefix_bytes)
-                    prefix_asset_id = self._upload(host, operation_key, prefix_bytes, "text/plain; charset=utf-8", f"stream-{seq}")
-                    stream_prefix = {
-                        "schema": "stream-prefix/v1",
-                        "stream_id": _id("anthropic-stream", request_hash),
-                        "job_id": normalized["job_id"],
-                        "step_id": normalized["step_id"],
-                        "output_role": normalized["output_role"],
-                        "target": dict(normalized["target"]),
-                        "attempt_id": normalized["attempt_id"],
-                        "lease_epoch": normalized["lease_epoch"],
-                        "prefix_seq": seq,
-                        "prefix_asset_id": prefix_asset_id,
-                        "prefix_hash": prefix_hash,
-                        "byte_length": len(prefix_bytes),
-                        "encoding": "utf-8",
-                    }
-                    ack = _host_call(
-                        host,
-                        "host.stream.commit/v1",
-                        {"operation_key": operation_key, "stream_prefix_asset_id": prefix_asset_id},
-                    )
-                    if ack.get("accepted") is not True or ack.get("acked_prefix_seq") != seq or ack.get("acked_prefix_hash") != prefix_hash:
-                        raise ProviderError("STREAM_ACK_INVALID", "Host ACK did not match the emitted prefix")
-                    chunk = StreamChunk(
-                        seq,
-                        text,
-                        prefix,
-                        prefix_hash,
-                        dict(usage) if usage else None,
-                        prefix_asset_id,
-                        stream_prefix,
-                    )
-                    chunks.append(chunk)
-                    self._event(host, operation_key, "provider.chunk", prefix_asset_id, seq + 1)
-                    self._checkpoint(host, normalized, request_hash, prefix_asset_id, seq)
+                    prefix_asset_id = self._upload(host, context, prefix_bytes, "text/plain; charset=utf-8", f"stream-{seq}")
+                    stream_prefix = {"schema": "stream-prefix/v1", "stream_id": context.stream_id, "job_id": normalized["job_id"], "step_id": normalized["step_id"], "output_role": normalized["output_role"], "target": dict(normalized["target"]), "attempt_id": normalized["attempt_id"], "lease_epoch": normalized["lease_epoch"], "prefix_seq": seq, "prefix_asset_id": prefix_asset_id, "prefix_hash": prefix_hash, "byte_length": len(prefix_bytes), "encoding": "utf-8"}
+                    assert _sdk_verify_stream is not None
+                    _sdk_verify_stream(stream_prefix, previous=context.previous_prefix, content=prefix_bytes)
+                    ack = _host_call(host, "host.stream.commit/v1", {"operation_key": context.request_hash, "stream_prefix_asset_id": prefix_asset_id})
+                    self._accepted(ack, "host.stream.commit/v1")
+                    if ack.get("stream_id") != context.stream_id or ack.get("acked_prefix_seq") != seq or ack.get("acked_bytes") != len(prefix_bytes) or ack.get("acked_prefix_hash") != prefix_hash:
+                        raise ProviderError("STREAM_IDENTITY_MISMATCH", "Host stream ACK did not match the Core-issued stream/prefix")
+                    self._record_event(context, ack, "host.stream.commit/v1")
+                    context.last_stream_seq = seq
+                    context.previous_prefix = stream_prefix
+                    chunks.append(StreamChunk(seq, text, prefix, prefix_hash, dict(usage) if usage else None, prefix_asset_id, stream_prefix))
+                    self._event(host, context, "provider.chunk", prefix_asset_id, seq + 1)
+                    self._checkpoint(host, normalized, context, prefix_asset_id, seq)
                 elif event_type == "error":
                     detail = event.get("error") if isinstance(event.get("error"), Mapping) else event
                     message = detail.get("message") if isinstance(detail, Mapping) else "Anthropic stream error"
@@ -621,61 +640,22 @@ class AnthropicProvider:
             if not prefix:
                 raise ProviderError("EMPTY_MODEL_RESPONSE", "Anthropic returned no text")
             output_bytes = prefix.encode("utf-8")
-            output_asset_id = self._upload(host, operation_key, output_bytes, "text/plain; charset=utf-8", "output")
-            receipt_id = str(normalized.get("provenance_receipt_id") or _id("anthropic-receipt", request_hash))
-            item = {
-                "schema": "artifact-item/v1",
-                "item_id": _id("anthropic-artifact", request_hash),
-                "artifact_kind": "model-response",
-                "payload_asset_id": output_asset_id,
-                "payload_hash": _sha256(output_bytes),
-                "mime": normalized.get("response_mime", "text/plain; charset=utf-8"),
-                "source_refs": [],
-                "status": "complete",
-            }
-            bundle: dict[str, Any] = {
-                "schema": "result-bundle/v1",
-                "contract_id": RESULT_CONTRACT,
-                "bundle_id": _id("anthropic-bundle", request_hash),
-                "bundle_type": "artifact",
-                "producer": {
-                    "plugin_id": PLUGIN_ID,
-                    "release_id": RELEASE_ID,
-                    "capability_id": ANTHROPIC_CAPABILITY_ID,
-                    "job_id": normalized["job_id"],
-                    "step_id": normalized["step_id"],
-                    "attempt_id": normalized["attempt_id"],
-                    "lease_epoch": normalized["lease_epoch"],
-                },
-                "input_snapshot_hash": normalized["run_snapshot_hash"],
-                "items": [item],
-                "warnings": [],
-                "partial": False,
-                "provenance_receipt_id": receipt_id,
-                "skill_chain_result_refs": [],
-            }
-            bundle_bytes = _canonical_bytes(bundle)
-            bundle_asset_id = self._upload(host, operation_key, bundle_bytes, "application/json", "result")
-            bundle_hash = _hash_jcs("result-bundle/v1", bundle)
-            receipt = self._receipt(normalized, request_hash, receipt_id, bundle["bundle_id"], bundle_hash)
-            self._complete_host(host, normalized, operation_key, "succeeded", bundle_asset_id, None, len(chunks) + 1)
+            output_asset_id = self._upload(host, context, output_bytes, "text/plain; charset=utf-8", "output")
+            receipt_id = context.receipt_id
+            bundle: dict[str, Any] = {"schema": "result-bundle/v1", "contract_id": RESULT_CONTRACT, "bundle_id": _id("anthropic-bundle", context.request_hash), "bundle_type": "artifact", "producer": {"plugin_id": PLUGIN_ID, "release_id": RELEASE_ID, "capability_id": ANTHROPIC_CAPABILITY_ID, "job_id": normalized["job_id"], "step_id": normalized["step_id"], "attempt_id": normalized["attempt_id"], "lease_epoch": normalized["lease_epoch"]}, "input_snapshot_hash": normalized["run_snapshot_hash"], "items": [{"schema": "artifact-item/v1", "item_id": _id("anthropic-artifact", context.request_hash), "artifact_kind": "model-response", "payload_asset_id": output_asset_id, "payload_hash": _sha256(output_bytes), "mime": normalized.get("response_mime", "text/plain; charset=utf-8"), "source_refs": [], "status": "complete"}], "warnings": [], "partial": False, "provenance_receipt_id": receipt_id, "skill_chain_result_refs": []}
+            assert _sdk_verify_result is not None
+            _sdk_verify_result(bundle, snapshot_hash_value=str(normalized["run_snapshot_hash"]))
+            bundle_asset_id = self._upload(host, context, _canonical_bytes(bundle), "application/json", "result")
+            receipt = self._receipt(normalized, receipt_id, bundle["bundle_id"], _hash_jcs("result-bundle/v1", bundle))
+            self._complete_host(host, normalized, context, "succeeded", bundle_asset_id, None, len(chunks) + 1)
             return InvocationOutcome("succeeded", bundle, None, receipt, None, tuple(chunks), prefix)
         except _Cancelled:
-            return self._cancelled_outcome(host, normalized, request_hash, tuple(chunks), prefix)
+            return self._cancelled_outcome(host, normalized, context, tuple(chunks), prefix)
         except ProviderError as exc:
-            return self._failure(host, normalized, request_hash, exc, tuple(chunks), prefix)
+            return self._failure(host, normalized, context, exc, tuple(chunks), prefix)
         except Exception as exc:
-            return self._failure(
-                host,
-                normalized,
-                request_hash,
-                ProviderError("UPSTREAM_FAILURE", f"{type(exc).__name__}: {_safe_message(exc)}", retryable=True),
-                tuple(chunks),
-                prefix,
-            )
+            return self._failure(host, normalized, context, ProviderError("UPSTREAM_FAILURE", f"{type(exc).__name__}: {_safe_message(exc)}", retryable=True), tuple(chunks), prefix)
 
 
 def main() -> dict[str, Any]:
-    """Control-plane entrypoint used by package discovery."""
-
     return capability_descriptor()

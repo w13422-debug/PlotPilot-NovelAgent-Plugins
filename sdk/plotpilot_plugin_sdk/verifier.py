@@ -11,8 +11,9 @@ import copy
 import json
 import re
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
-from typing import Any, Iterable, Mapping, Sequence
+from typing import Any, Callable, Iterable, Mapping, Sequence
 
 from jsonschema import Draft202012Validator, ValidationError
 
@@ -106,6 +107,11 @@ _CLAIM_INPUT_ATOM_FIELDS = (
     "payload_hash",
     "acceptance_ordinal",
     "evidence_spans",
+)
+AcceptedAtomSource = (
+    Mapping[str, Mapping[str, Any]]
+    | Sequence[Mapping[str, Any]]
+    | Callable[[str], Mapping[str, Any] | None]
 )
 
 
@@ -540,15 +546,14 @@ def verify_evidence_span(
             raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, "EvidenceSpan is outside its Node range")
 
 
-def verify_claim_input(
+def verify_claim_input_structure(
     claim_input: Mapping[str, Any],
     *,
     expected_source_revision_id: str | None = None,
-    accepted_atoms: Mapping[str, Mapping[str, Any]] | Sequence[Mapping[str, Any]] | None = None,
     canonical_text: str | None = None,
     expected_canonical_text_hash: str | None = None,
 ) -> None:
-    """Verify an immutable ordered Atom input Asset before a Claim run."""
+    """Verify only the closed structural/evidence shape of claim-input/v1."""
 
     if not isinstance(claim_input, Mapping):
         raise ContractValidationError("claim-input must be an object")
@@ -581,25 +586,89 @@ def verify_claim_input(
             if span["revision_id"] != claim_input["source_revision_id"]:
                 raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, "EvidenceSpan crosses the claim source Revision")
         atom_ids.append(atom["atom_id"])
-        if accepted_atoms is not None:
-            accepted: Mapping[str, Any] | None
-            if isinstance(accepted_atoms, Mapping):
-                accepted = accepted_atoms.get(atom["atom_id"])
-            else:
-                accepted = next((candidate for candidate in accepted_atoms if candidate.get("atom_id") == atom["atom_id"]), None)
-            if accepted is None:
-                raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, "claim-input Atom is not an accepted current Atom")
-            if accepted.get("current") is False or accepted.get("accepted") is False:
-                raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, "claim-input Atom is not current and accepted")
-            for field in ("payload_hash", "acceptance_ordinal"):
-                if field in accepted and accepted[field] != atom[field]:
-                    raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, f"claim-input {field} drifted from the accepted Atom")
-            if accepted.get("revision_id") is not None and accepted["revision_id"] != claim_input["source_revision_id"]:
-                raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, "accepted Atom belongs to another source Revision")
     _assert_unique(atom_ids, "claim-input Atom IDs must be unique")
 
 
-def build_claim_input_asset(source_revision_id: str, ordered_atoms: Sequence[Mapping[str, Any]]) -> tuple[bytes, str]:
+def _resolve_authoritative_atom(source: AcceptedAtomSource | None, atom_id: str) -> Mapping[str, Any]:
+    if source is None:
+        raise ContractValidationError("claim-input sealing requires authoritative Atom records")
+    candidate: Mapping[str, Any] | None
+    if callable(source):
+        candidate = source(atom_id)
+    elif isinstance(source, Mapping):
+        # A single authoritative Atom record is accepted for the one-record
+        # case; otherwise the mapping is keyed by exact atom_id.
+        if "atom_id" in source:
+            candidate = source
+        else:
+            raw = source.get(atom_id)
+            candidate = raw if isinstance(raw, Mapping) else None
+    else:
+        matches = [item for item in source if isinstance(item, Mapping) and item.get("atom_id") == atom_id]
+        if len(matches) > 1:
+            raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, "claim-input authority contains duplicate Atom records")
+        candidate = matches[0] if matches else None
+    if candidate is None:
+        raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, "claim-input Atom is not an authoritative current Atom")
+    return candidate
+
+
+def _verify_claim_input_authority(
+    claim_input: Mapping[str, Any],
+    accepted_atoms: AcceptedAtomSource | None,
+) -> None:
+    source_revision_id = claim_input["source_revision_id"]
+    for atom in claim_input["ordered_atoms"]:
+        authority = _resolve_authoritative_atom(accepted_atoms, atom["atom_id"])
+        required = ("atom_id", "payload_hash", "acceptance_ordinal", "current", "accepted")
+        missing = [field for field in required if field not in authority]
+        if missing:
+            raise ContractValidationError(f"authoritative Atom is missing required fields: {', '.join(missing)}")
+        _assert_id(authority["atom_id"], "authoritative Atom.atom_id")
+        _assert_hash_string(authority["payload_hash"], "authoritative Atom.payload_hash")
+        if authority["atom_id"] != atom["atom_id"]:
+            raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, "authoritative Atom ID does not match claim-input Atom")
+        if authority["current"] is not True or authority["accepted"] is not True:
+            raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, "claim-input Atom is not current and accepted")
+        acceptance_ordinal = authority["acceptance_ordinal"]
+        if isinstance(acceptance_ordinal, bool) or not isinstance(acceptance_ordinal, int) or acceptance_ordinal < 1:
+            raise ContractValidationError("authoritative Atom acceptance_ordinal must be a positive integer")
+        revisions = [authority[field] for field in ("revision_id", "source_revision_id") if field in authority]
+        if not revisions or any(not isinstance(revision, str) or revision != source_revision_id for revision in revisions):
+            raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, "authoritative Atom belongs to another source Revision")
+        if authority["payload_hash"] != atom["payload_hash"]:
+            raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, "claim-input payload_hash drifted from the authoritative Atom")
+        if acceptance_ordinal != atom["acceptance_ordinal"]:
+            raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, "claim-input acceptance_ordinal drifted from the authoritative Atom")
+
+
+def verify_claim_input(
+    claim_input: Mapping[str, Any],
+    *,
+    expected_source_revision_id: str | None = None,
+    accepted_atoms: AcceptedAtomSource | None = None,
+    canonical_text: str | None = None,
+    expected_canonical_text_hash: str | None = None,
+) -> None:
+    """Verify claim input for an authority-bearing Claim boundary."""
+
+    verify_claim_input_structure(
+        claim_input,
+        expected_source_revision_id=expected_source_revision_id,
+        canonical_text=canonical_text,
+        expected_canonical_text_hash=expected_canonical_text_hash,
+    )
+    _verify_claim_input_authority(claim_input, accepted_atoms)
+
+
+def build_claim_input_asset(
+    source_revision_id: str,
+    ordered_atoms: Sequence[Mapping[str, Any]],
+    *,
+    accepted_atoms: AcceptedAtomSource | None = None,
+    canonical_text: str | None = None,
+    expected_canonical_text_hash: str | None = None,
+) -> tuple[bytes, str]:
     """Build deterministic JCS bytes and its exact Asset hash."""
 
     value = {
@@ -607,7 +676,12 @@ def build_claim_input_asset(source_revision_id: str, ordered_atoms: Sequence[Map
         "source_revision_id": source_revision_id,
         "ordered_atoms": [copy.deepcopy(dict(atom)) for atom in ordered_atoms],
     }
-    verify_claim_input(value)
+    verify_claim_input(
+        value,
+        accepted_atoms=accepted_atoms,
+        canonical_text=canonical_text,
+        expected_canonical_text_hash=expected_canonical_text_hash,
+    )
     raw = canonical_bytes(value)
     return raw, sha256_hex(raw)
 
@@ -618,7 +692,7 @@ def verify_claim_input_asset(
     *,
     asset_id: str | None = None,
     expected_source_revision_id: str | None = None,
-    accepted_atoms: Mapping[str, Mapping[str, Any]] | Sequence[Mapping[str, Any]] | None = None,
+    accepted_atoms: AcceptedAtomSource | None = None,
     canonical_text: str | None = None,
     expected_canonical_text_hash: str | None = None,
 ) -> dict[str, Any]:
@@ -699,14 +773,24 @@ def verify_snapshot(
 
 
 def _verify_candidate_item(item: Mapping[str, Any], *, snapshot_workspace_id: str | None) -> None:
+    if snapshot_workspace_id is None:
+        raise ContractError(
+            ErrorCode.RESULT_CONTRACT_MISMATCH,
+            "candidate result verification requires a snapshot workspace",
+        )
+    if item.get("status") in {"failed", "skipped"}:
+        raise ContractError(
+            ErrorCode.RESULT_CONTRACT_MISMATCH,
+            "failed/skipped result item cannot create or retain a Candidate",
+        )
     target_value = item["target"]
-    if snapshot_workspace_id is not None and target_value["workspace_id"] != snapshot_workspace_id:
+    if target_value["workspace_id"] != snapshot_workspace_id:
         raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, "candidate target is outside the snapshot workspace")
     target_key = (target_value["workspace_id"], target_value["entity_kind"], target_value["entity_id"])
     write_keys: list[tuple[str, str, str]] = []
     target_write_entry: Mapping[str, Any] | None = None
     for entry in item["write_set"]:
-        if snapshot_workspace_id is not None and entry["workspace_id"] != snapshot_workspace_id:
+        if entry["workspace_id"] != snapshot_workspace_id:
             raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, "candidate write_set crosses the snapshot workspace")
         entry_key = (entry["workspace_id"], entry["entity_kind"], entry["entity_id"])
         if entry_key in write_keys:
@@ -737,8 +821,37 @@ def _verify_candidate_item(item: Mapping[str, Any], *, snapshot_workspace_id: st
         raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, "candidate item kind/mutation does not match target")
 
 
-def verify_parent_graph(items: Iterable[Mapping[str, Any]], *, known_parent_ids: set[str] | None = None) -> None:
-    graph = {item["item_id"]: set(item["parent_candidate_ids"]) for item in items}
+def verify_candidate_item(item: Mapping[str, Any], *, snapshot_workspace_id: str | None) -> None:
+    """Validate one Candidate item with the workspace fence applied.
+
+    This is the public item-level seam used by the transaction staging test
+    double.  It deliberately keeps the schema check next to the semantic
+    checks so callers cannot stage an unverified item by bypassing a result
+    Bundle.
+    """
+
+    assert_valid("candidate-item/v1", item)
+    _verify_candidate_item(item, snapshot_workspace_id=snapshot_workspace_id)
+
+
+def verify_parent_graph(
+    items: Iterable[Mapping[str, Any]],
+    *,
+    known_parent_ids: set[str] | None = None,
+    snapshot_workspace_id: str | None = None,
+) -> None:
+    item_list = list(items)
+    if snapshot_workspace_id is None:
+        raise ContractError(
+            ErrorCode.RESULT_CONTRACT_MISMATCH,
+            "candidate parent verification requires a snapshot workspace",
+        )
+    for item in item_list:
+        # The caller normally already performed this check.  Repeating the
+        # item-level fence here makes the graph helper fail closed when used
+        # directly and binds every in-bundle parent to the same workspace.
+        _verify_candidate_item(item, snapshot_workspace_id=snapshot_workspace_id)
+    graph = {item["item_id"]: set(item["parent_candidate_ids"]) for item in item_list}
     known = set(graph) | (known_parent_ids or set())
     visiting: set[str] = set()
     visited: set[str] = set()
@@ -795,7 +908,19 @@ def verify_result_bundle(
     snapshot_workspace_id: str | None = None,
     snapshot_hash_value: str | None = None,
     known_parent_ids: set[str] | None = None,
+    attempt_state: str | None = None,
+    attempt_status: str | None = None,
 ) -> None:
+    if attempt_state is not None and attempt_status is not None and attempt_state != attempt_status:
+        raise ContractValidationError("attempt_state and attempt_status disagree")
+    effective_attempt_state = attempt_state if attempt_state is not None else attempt_status
+    if effective_attempt_state in {"failed", "skipped"} and (
+        bundle.get("contract_id") != "diagnostic-bundle/v1" or bundle.get("bundle_type") != "diagnostic"
+    ):
+        raise ContractError(
+            ErrorCode.RESULT_CONTRACT_MISMATCH,
+            "failed/skipped Attempt may only return null or diagnostic-bundle/v1",
+        )
     assert_valid("result-bundle/v1", bundle)
     profile = {
         "candidate-batch/v1": ("candidate_batch", "candidate-item/v1"),
@@ -823,7 +948,16 @@ def verify_result_bundle(
                     raise ContractError(ErrorCode.INVALID_TRANSITION, "only one incomplete stream Candidate is allowed per target")
                 incomplete_targets.add(target_key)
     if expected_item_schema == "candidate-item/v1":
-        verify_parent_graph(bundle["items"], known_parent_ids=known_parent_ids)
+        if snapshot_workspace_id is None:
+            raise ContractError(
+                ErrorCode.RESULT_CONTRACT_MISMATCH,
+                "candidate result verification requires a snapshot workspace",
+            )
+        verify_parent_graph(
+            bundle["items"],
+            known_parent_ids=known_parent_ids,
+            snapshot_workspace_id=snapshot_workspace_id,
+        )
     if snapshot_hash_value is not None and bundle["input_snapshot_hash"] != snapshot_hash_value:
         raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, "bundle input snapshot does not match current snapshot")
     for ref in bundle["skill_chain_result_refs"]:
@@ -833,6 +967,213 @@ def verify_result_bundle(
         raise ContractValidationError("partial result bundle must expose a non-complete item")
     if not bundle["partial"] and any(status != "complete" for status in statuses):
         raise ContractValidationError("complete result bundle cannot contain partial/failed/skipped items")
+
+
+def verify_attempt_result(
+    bundle: Mapping[str, Any] | None,
+    *,
+    attempt_state: str,
+    snapshot_workspace_id: str | None = None,
+    snapshot_hash_value: str | None = None,
+    known_parent_ids: set[str] | None = None,
+) -> None:
+    """Enforce the Attempt/result profile before any staging side effect.
+
+    A failed or skipped Attempt has no ordinary Candidate result: it may be
+    represented only by a null Bundle or a diagnostic Bundle.  The optional
+    context arguments are intentionally forwarded to the normal Bundle
+    verifier so the same closed/hash/identity rules apply to both paths.
+    """
+
+    if attempt_state in {"failed", "skipped"}:
+        if bundle is None:
+            return
+        verify_result_bundle(
+            bundle,
+            snapshot_workspace_id=snapshot_workspace_id,
+            snapshot_hash_value=snapshot_hash_value,
+            known_parent_ids=known_parent_ids,
+            attempt_state=attempt_state,
+        )
+        return
+    if bundle is None:
+        raise ContractError(
+            ErrorCode.RESULT_CONTRACT_MISMATCH,
+            "non-failed Attempt requires a result Bundle",
+        )
+    verify_result_bundle(
+        bundle,
+        snapshot_workspace_id=snapshot_workspace_id,
+        snapshot_hash_value=snapshot_hash_value,
+        known_parent_ids=known_parent_ids,
+        attempt_state=attempt_state,
+    )
+
+
+@dataclass(frozen=True)
+class CandidateStageReceipt:
+    """Observable state transition returned by Candidate staging."""
+
+    candidate_ids: tuple[str, ...]
+    state: str
+
+    @property
+    def published(self) -> bool:
+        return self.state == "published"
+
+    @property
+    def rolled_back(self) -> bool:
+        return self.state == "rolled_back"
+
+
+class CandidateStagingStore:
+    """Small Host-side transaction seam for visible Candidate rows.
+
+    ``stage`` only validates into a private transaction buffer.  ``publish``
+    swaps a copied visible map in one operation, while every failed/skipped
+    Attempt and every validation/commit exception closes the transaction via
+    rollback without touching the externally visible map.
+    """
+
+    def __init__(
+        self,
+        workspace_id: str,
+        visible_candidates: Iterable[Mapping[str, Any]] = (),
+        *,
+        known_parent_ids: Iterable[str] = (),
+    ) -> None:
+        if not isinstance(workspace_id, str) or not workspace_id:
+            raise ContractValidationError("Candidate staging requires a non-empty workspace_id")
+        self.workspace_id = workspace_id
+        self._visible: dict[str, dict[str, Any]] = {}
+        self._known_parent_ids = {str(value) for value in known_parent_ids}
+        self._version = 0
+        for candidate in visible_candidates:
+            value = copy.deepcopy(dict(candidate))
+            verify_candidate_item(value, snapshot_workspace_id=workspace_id)
+            candidate_id = value["item_id"]
+            if candidate_id in self._visible:
+                raise ContractValidationError("visible Candidate IDs must be unique")
+            self._visible[candidate_id] = value
+        verify_parent_graph(
+            self._visible.values(),
+            known_parent_ids=self._known_parent_ids,
+            snapshot_workspace_id=workspace_id,
+        )
+
+    def visible_candidates(self) -> tuple[dict[str, Any], ...]:
+        """Return a detached snapshot; callers cannot mutate visible state."""
+
+        return tuple(copy.deepcopy(value) for value in self._visible.values())
+
+    def visible_candidate_ids(self) -> tuple[str, ...]:
+        return tuple(self._visible)
+
+    def transaction(self) -> "CandidateStagingTransaction":
+        return CandidateStagingTransaction(self)
+
+    def begin_transaction(self) -> "CandidateStagingTransaction":
+        return self.transaction()
+
+    def stage_and_publish(
+        self,
+        bundle: Mapping[str, Any] | None,
+        *,
+        attempt_state: str = "succeeded",
+    ) -> CandidateStageReceipt:
+        transaction = self.transaction()
+        try:
+            staged = transaction.stage(bundle, attempt_state=attempt_state)
+            if staged.rolled_back:
+                return staged
+            return transaction.publish()
+        except Exception:
+            transaction.rollback()
+            raise
+
+
+class CandidateStagingTransaction:
+    """One-shot staging buffer with explicit publish/rollback control."""
+
+    def __init__(self, store: CandidateStagingStore) -> None:
+        self._store = store
+        self._base_version = store._version
+        self._pending: dict[str, dict[str, Any]] = {}
+        self._bundle: dict[str, Any] | None = None
+        self._state = "open"
+
+    def _ensure_open(self) -> None:
+        if self._state != "open":
+            raise ContractError(ErrorCode.INVALID_TRANSITION, "Candidate staging transaction is closed")
+
+    def stage(
+        self,
+        bundle: Mapping[str, Any] | None,
+        *,
+        attempt_state: str = "succeeded",
+    ) -> CandidateStageReceipt:
+        self._ensure_open()
+        try:
+            verify_attempt_result(
+                bundle,
+                attempt_state=attempt_state,
+                snapshot_workspace_id=self._store.workspace_id,
+                known_parent_ids=set(self._store._visible) | self._store._known_parent_ids,
+            )
+            if bundle is None or bundle.get("contract_id") != "candidate-batch/v1":
+                return self.rollback()
+            self._pending = {
+                item["item_id"]: copy.deepcopy(dict(item))
+                for item in bundle["items"]
+            }
+            self._bundle = copy.deepcopy(dict(bundle))
+            return CandidateStageReceipt(tuple(self._pending), "staged")
+        except Exception:
+            self.rollback()
+            raise
+
+    def publish(self) -> CandidateStageReceipt:
+        self._ensure_open()
+        try:
+            if self._bundle is None:
+                return self.rollback()
+            if self._store._version != self._base_version:
+                raise ContractError(ErrorCode.INVALID_TRANSITION, "Candidate staging base changed before publish")
+            verify_result_bundle(
+                self._bundle,
+                snapshot_workspace_id=self._store.workspace_id,
+                known_parent_ids=set(self._store._visible) | self._store._known_parent_ids,
+            )
+            updated = copy.deepcopy(self._store._visible)
+            for candidate_id, candidate in self._pending.items():
+                previous = updated.get(candidate_id)
+                if previous is not None and previous != candidate:
+                    raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, "Candidate ID is already visible with different content")
+                updated[candidate_id] = copy.deepcopy(candidate)
+            self._store._visible = updated
+            self._store._version += 1
+            self._state = "published"
+            return CandidateStageReceipt(tuple(self._pending), "published")
+        except Exception:
+            self.rollback()
+            raise
+
+    def rollback(self) -> CandidateStageReceipt:
+        if self._state == "published":
+            raise ContractError(ErrorCode.INVALID_TRANSITION, "published Candidate staging cannot be rolled back")
+        self._pending.clear()
+        self._bundle = None
+        self._state = "rolled_back"
+        return CandidateStageReceipt((), "rolled_back")
+
+    def __enter__(self) -> "CandidateStagingTransaction":
+        self._ensure_open()
+        return self
+
+    def __exit__(self, exc_type: object, exc_value: object, traceback: object) -> bool:
+        if self._state == "open":
+            self.rollback()
+        return False
 
 
 def verify_package_manifest(files: Mapping[str, bytes], manifest_bytes: bytes) -> None:
@@ -1026,6 +1367,138 @@ _LIFECYCLE_EDGES = {
     "superseded": set(),
 }
 
+_LIFECYCLE_IDENTITY_FIELDS = (
+    "base_generation_id",
+    "base_lkg_generation_id",
+    "target_generation_id",
+    "target_settings_revision_ids",
+)
+_LIFECYCLE_QUALIFIED_STATES = {
+    "qualified",
+    "pending_apply",
+    "current_committed",
+    "lkg_pending",
+    "lkg_promoted",
+    "rollback_armed",
+    "rolled_back",
+    "safe_mode",
+}
+_LIFECYCLE_SHADOW_STATES = {
+    "shadow_prepared",
+    "migrated",
+    "settings_validated",
+    "qualified",
+    "pending_apply",
+    "current_committed",
+    "lkg_pending",
+    "lkg_promoted",
+    "rollback_armed",
+    "rolled_back",
+    "safe_mode",
+}
+_LIFECYCLE_ROLLBACK_STATES = {"rollback_armed", "rolled_back", "safe_mode"}
+_PACKAGE_STORE_ORDER = {"absent": 0, "staged": 1, "published": 2, "orphan": 3}
+
+
+def _lifecycle_settings_identity(transition: Mapping[str, Any]) -> bytes:
+    settings = transition["target_settings_revision_ids"]
+    _assert_unique((item["plugin_id"] for item in settings), "target settings must contain one revision per plugin")
+    normalized = sorted(settings, key=lambda item: (item["plugin_id"], item["settings_revision_id"]))
+    return canonical_bytes(normalized)
+
+
+def _lifecycle_time(value: str, label: str) -> datetime:
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError as exc:
+        raise ContractValidationError(f"{label} is not a valid UTC timestamp") from exc
+    if parsed.tzinfo is None:
+        raise ContractValidationError(f"{label} must be timezone-aware UTC")
+    return parsed
+
+
+def _verify_lifecycle_state_shape(transition: Mapping[str, Any]) -> None:
+    state = transition["state"]
+    target = transition["target_generation_id"]
+    if state in {"current_committed", "lkg_pending", "lkg_promoted", "rollback_armed", "rolled_back", "safe_mode"} and target is None:
+        raise ContractValidationError(f"{state} requires target_generation_id")
+    if state in _LIFECYCLE_QUALIFIED_STATES and transition["qualification_id"] is None:
+        raise ContractValidationError(f"{state} requires qualification_id")
+    if state in _LIFECYCLE_SHADOW_STATES and transition["shadow_data_generation_id"] is None:
+        raise ContractValidationError(f"{state} requires shadow_data_generation_id")
+    if state == "failed" and transition["failure_code"] is None:
+        raise ContractValidationError("failed lifecycle transition requires failure_code")
+    if state != "failed" and transition["failure_code"] is not None:
+        raise ContractValidationError("non-failed lifecycle transition cannot carry failure_code")
+    if state == "rollback_armed":
+        if transition["base_lkg_generation_id"] is None:
+            raise ContractValidationError("rollback_armed requires an exact base LKG Generation")
+        if transition["rollback_token"] is None or transition["rollback_attempt"] != 0:
+            raise ContractValidationError("rollback_armed requires a fresh rollback token and zero attempts")
+    if state in {"rolled_back", "safe_mode"}:
+        if transition["base_lkg_generation_id"] is None:
+            raise ContractError(ErrorCode.INVALID_TRANSITION, f"{state} requires the exact base LKG Generation")
+        if transition["rollback_attempt"] != 1 or transition["rollback_token"] is None:
+            raise ContractValidationError(f"{state} requires one rollback attempt and a rollback token")
+        if transition["package_store_status"] != "published":
+            raise ContractError(ErrorCode.INVALID_TRANSITION, f"{state} requires the LKG package to remain published")
+    if state == "lkg_promoted" and transition["rollback_attempt"] != 0:
+        raise ContractError(ErrorCode.INVALID_TRANSITION, "LKG promotion is not a Generation rollback")
+    if state not in _LIFECYCLE_ROLLBACK_STATES and transition["rollback_token"] is not None:
+        raise ContractValidationError("rollback_token is only valid for the rollback action")
+
+
+def _verify_lifecycle_identity(previous: Mapping[str, Any], current: Mapping[str, Any]) -> None:
+    for field in _LIFECYCLE_IDENTITY_FIELDS:
+        if field == "target_settings_revision_ids":
+            if _lifecycle_settings_identity(previous) != _lifecycle_settings_identity(current):
+                raise ContractError(ErrorCode.INVALID_TRANSITION, "install target settings identity changed")
+        elif field == "target_generation_id" and previous[field] != current[field]:
+            raise ContractError(ErrorCode.INVALID_TRANSITION, "install target_generation_id changed")
+        elif previous[field] != current[field]:
+            raise ContractError(ErrorCode.INVALID_TRANSITION, f"install operation {field} changed")
+
+    if previous["qualification_id"] != current["qualification_id"]:
+        if not (
+            previous["qualification_id"] is None
+            and current["qualification_id"] is not None
+            and current["state"] in _LIFECYCLE_QUALIFIED_STATES
+        ):
+            raise ContractError(ErrorCode.INVALID_TRANSITION, "qualification identity changed")
+    if previous["shadow_data_generation_id"] != current["shadow_data_generation_id"]:
+        if not (
+            previous["shadow_data_generation_id"] is None
+            and current["shadow_data_generation_id"] is not None
+            and current["state"] in _LIFECYCLE_SHADOW_STATES
+        ):
+            raise ContractError(ErrorCode.INVALID_TRANSITION, "shadow data Generation identity changed")
+    if previous["rollback_token"] != current["rollback_token"]:
+        if not (
+            previous["rollback_token"] is None
+            and current["rollback_token"] is not None
+            and current["state"] in _LIFECYCLE_ROLLBACK_STATES
+        ):
+            raise ContractError(ErrorCode.INVALID_TRANSITION, "rollback token identity changed")
+
+
+def _verify_lifecycle_progression(previous: Mapping[str, Any], current: Mapping[str, Any]) -> None:
+    previous_state = previous["state"]
+    state = current["state"]
+    if state == previous_state and state in {"lkg_promoted", "rolled_back", "safe_mode", "failed", "superseded"}:
+        raise ContractError(ErrorCode.INVALID_TRANSITION, f"terminal lifecycle state {state} cannot be repeated")
+    if state != previous_state and state not in _LIFECYCLE_EDGES[previous_state]:
+        raise ContractError(ErrorCode.INVALID_TRANSITION, f"illegal lifecycle transition {previous_state} -> {state}")
+    if current["rollback_attempt"] < previous["rollback_attempt"]:
+        raise ContractError(ErrorCode.INVALID_TRANSITION, "rollback attempt moved backwards")
+    if previous["rollback_attempt"] == 1 and current["rollback_attempt"] != 1:
+        raise ContractError(ErrorCode.INVALID_TRANSITION, "completed rollback attempt cannot be cleared")
+    if _PACKAGE_STORE_ORDER[current["package_store_status"]] < _PACKAGE_STORE_ORDER[previous["package_store_status"]]:
+        raise ContractError(ErrorCode.INVALID_TRANSITION, "package-store status moved backwards")
+    if _lifecycle_time(current["created_at"], "created_at") != _lifecycle_time(previous["created_at"], "created_at"):
+        raise ContractError(ErrorCode.INVALID_TRANSITION, "install operation created_at changed")
+    if _lifecycle_time(current["updated_at"], "updated_at") < _lifecycle_time(previous["updated_at"], "updated_at"):
+        raise ContractError(ErrorCode.INVALID_TRANSITION, "lifecycle updated_at moved backwards")
+
 
 def verify_lifecycle_transition(
     transition: Mapping[str, Any],
@@ -1035,28 +1508,14 @@ def verify_lifecycle_transition(
     """Verify lifecycle ordering and the one-shot LKG rollback contract."""
 
     assert_valid("plugin-lifecycle-transition/v1", transition)
-    state = transition["state"]
-    if state == "failed" and transition["failure_code"] is None:
-        raise ContractValidationError("failed lifecycle transition requires failure_code")
-    if state != "failed" and transition["failure_code"] is not None:
-        raise ContractValidationError("non-failed lifecycle transition cannot carry failure_code")
-    if state in {"current_committed", "lkg_pending", "lkg_promoted", "rollback_armed", "rolled_back", "safe_mode"} and transition["target_generation_id"] is None:
-        raise ContractValidationError(f"{state} requires target_generation_id")
-    if state == "rollback_armed" and transition["rollback_token"] is None:
-        raise ContractValidationError("rollback_armed requires rollback_token")
-    if state == "rolled_back" and (transition["rollback_attempt"] != 1 or transition["rollback_token"] is None):
-        raise ContractValidationError("rolled_back requires one rollback attempt and a rollback token")
-    if state == "safe_mode" and transition["rollback_attempt"] != 1:
-        raise ContractValidationError("safe_mode requires a completed rollback attempt")
+    _verify_lifecycle_state_shape(transition)
     if previous is not None:
         assert_valid("plugin-lifecycle-transition/v1", previous)
+        _verify_lifecycle_state_shape(previous)
         if previous["install_operation_id"] != transition["install_operation_id"]:
             raise ContractError(ErrorCode.INVALID_TRANSITION, "lifecycle transition changed install operation identity")
-        previous_state = previous["state"]
-        if state != previous_state and state not in _LIFECYCLE_EDGES[previous_state]:
-            raise ContractError(ErrorCode.INVALID_TRANSITION, f"illegal lifecycle transition {previous_state} -> {state}")
-        if transition["rollback_attempt"] < previous["rollback_attempt"]:
-            raise ContractError(ErrorCode.INVALID_TRANSITION, "rollback attempt moved backwards")
+        _verify_lifecycle_identity(previous, transition)
+        _verify_lifecycle_progression(previous, transition)
 
 
 def verify_release_retirement(

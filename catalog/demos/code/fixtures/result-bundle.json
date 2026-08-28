@@ -22,7 +22,7 @@
     "job_id": "job-nap00-code",
     "lease_epoch": 1,
     "plugin_id": "com.plotpilot.nap00.demo.code",
-    "release_id": "07eae627043b6e283851d3f50de1f90d03554108d3d2f096ee1efa52d45e75ef",
+    "release_id": "cf7d7fcbe5629f24a7436d8e7999c84f68870d917e7029f44fac6088f6c6557f",
     "step_id": "step-nap00-code"
   },
   "provenance_receipt_id": "receipt-nap00-code",

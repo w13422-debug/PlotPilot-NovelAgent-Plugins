@@ -1,0 +1,17 @@
+{
+  "schema": "provider-schema-index/v1",
+  "plugin_id": "com.plotpilot.novelagent.provider-gemini",
+  "capability_id": "model.provider.gemini.invoke/v1",
+  "schemas": [
+    {
+      "schema_id": "model.provider.gemini.invoke-request/v1",
+      "path": "schemas/input.schema.json",
+      "sha256": "14bac42f2d15d752dcbf155a12b40c3c00d481e4c45a822952b48aa886b54289"
+    },
+    {
+      "schema_id": "model.provider.gemini.invoke-result/v1",
+      "path": "schemas/output.schema.json",
+      "sha256": "e6cb1ecd0a3a684aca79782eeeab81dbadc7a2af1cadc548fcb554af6414acc1"
+    }
+  ]
+}

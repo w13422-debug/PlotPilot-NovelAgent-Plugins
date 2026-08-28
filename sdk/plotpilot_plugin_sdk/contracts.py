@@ -56,6 +56,16 @@ class ClaimInput(TypedDict):
     ordered_atoms: list[ClaimInputAtom]
 
 
+class AuthoritativeAtom(TypedDict):
+    atom_id: str
+    payload_hash: Hash
+    acceptance_ordinal: int
+    current: bool
+    accepted: bool
+    revision_id: NotRequired[str]
+    source_revision_id: NotRequired[str]
+
+
 class RunSnapshot(TypedDict):
     schema: Literal["run-snapshot/v1"]
     snapshot_id: str

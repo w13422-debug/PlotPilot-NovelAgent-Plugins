@@ -29,7 +29,7 @@
   "kind": "code",
   "backend": {
     "entrypoint": "provider_gemini.provider:main",
-    "wheel": "backend/provider-gemini.whl",
+    "wheel": "backend/plotpilot_provider_gemini-0.1.0-py3-none-any.whl",
     "requirements_lock": "backend/requirements.lock",
     "wheelhouse": "backend/wheels",
     "max_concurrency": 1

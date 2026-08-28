@@ -1,0 +1,132 @@
+{
+  "schema": "nap-b0-generation-2-evidence/v1",
+  "generation_id": "NAP-B0-G2-20260828",
+  "status": "candidate_ready_for_fresh_sol_review",
+  "generated_at": "2026-08-28T09:13:14.4843032+08:00",
+  "protocol": {
+    "path": "C:\\Users\\Administrator\\Desktop\\Novel-Agent- (2)\\novel-agent\\cases\\plotpilot-pluginized-seven-project-construction-20260826\\parallel-design\\novel-agent-plugin-absorption\\b0-generation-2-protocol-v1.json",
+    "sha256": "37d6a4335b53e150e8ed8b17765779e86afcc6247fd43bd8ed400d83dd98aedb"
+  },
+  "source_candidate": {
+    "repository": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins",
+    "worktree": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-00-B0-G2",
+    "branch": "codex/nap-00-b0-g2",
+    "baseline_head": "c1b9519c7d25ce1fbef07984cdb548c89e7e1152",
+    "generation_parent": "3cfd6619959c16d394655bda170557b96052e6c9",
+    "head": "eae0b7a4b58a94ae9a5a78ca9b20349fee65217c",
+    "tree": "ac421d0e680e5387ba6cd1059c6f3b029b80808d",
+    "parents": [
+      "3cfd6619959c16d394655bda170557b96052e6c9"
+    ],
+    "source_commit_changed_path_count": 62,
+    "baseline_diff_path_count": 239,
+    "source_commit_contains_evidence_paths": false,
+    "worktree_clean_after_source_commit": true
+  },
+  "generation_isolation": {
+    "rejected_source_head": "db434847edb84ac337bb4e11d2a6f3a09912eb3b",
+    "rejected_evidence_head": "480d0f464b474ca2c62714803cd28f5c3595c045",
+    "rejected_source_is_ancestor": false,
+    "rejected_evidence_is_ancestor": false
+  },
+  "frozen_finding_manifest": {
+    "path": "coordination/NAP-00/sol-b0-independent-review-v1.json",
+    "blob_oid": "75be4d5a52f4ed60b2901df329e7b72236887ff6",
+    "sha256": "13d418ebc6096210b7c866da7fc4c1da2919f06185b2ef9666b9d69557da77cb",
+    "byte_length": 22433,
+    "unchanged": true
+  },
+  "provider_identities": [
+    {
+      "plugin_id": "com.plotpilot.novelagent.provider-anthropic",
+      "package_hash": "2771aaca6a74abf266050d1b0675fdddfb34a6c0c0f86d3b4b3f569a7cff4b79",
+      "release_id": "3425ec5086efc7667735cd66828e49bf4dd15282dd549035f46270da25ecf6b8",
+      "input_schema_sha256": "f40caaffefa85fec1624b59a9fb1efa17493189937773e3079a79142bd7cdd0b",
+      "output_schema_sha256": "be6067402b16e6a762d5b97f60813155d7c769381807ebbb5edc4ac4105c56dd"
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.provider-gemini",
+      "package_hash": "012814974aad2aea19ae89832091cc4ad66d929809fb24fac699b9be3e6ea3a5",
+      "release_id": "83ba1bfe9f3696c5bd783653af9296ed0a5a4aecc79ae47c93a140559a8cb4d5",
+      "input_schema_sha256": "14bac42f2d15d752dcbf155a12b40c3c00d481e4c45a822952b48aa886b54289",
+      "output_schema_sha256": "e6cb1ecd0a3a684aca79782eeeab81dbadc7a2af1cadc548fcb554af6414acc1"
+    }
+  ],
+  "validation": [
+    {
+      "id": "controller-precommit-integrated",
+      "command": "python -B -m pytest -q -p no:cacheprovider tests/contracts tests/providers tests/e2e -k \"not generation_two_source_has_exact_parent_and_excludes_rejected_generation and not exact_source_gate_passes_fresh_checkout_with_windows_autocrlf\"",
+      "result": "105 passed, 2 deselected in 30.05s",
+      "exit_code": 0,
+      "source_state": "uncommitted G2 source assembly"
+    },
+    {
+      "id": "controller-deterministic-provider-rebuild",
+      "command": "python -B tests/providers/build_provider_wheels.py; compare every provider file SHA-256 before and after",
+      "result": "DETERMINISTIC_REBUILD_DIFF_COUNT=0",
+      "exit_code": 0,
+      "source_state": "precommit G2 source assembly"
+    },
+    {
+      "id": "controller-postcommit-full",
+      "command": "python -B -m pytest -q -p no:cacheprovider tests/contracts tests/providers tests/e2e",
+      "result": "107 passed in 29.87s",
+      "exit_code": 0,
+      "source_state": "eae0b7a4b58a94ae9a5a78ca9b20349fee65217c"
+    },
+    {
+      "id": "controller-source-gate",
+      "command": "python -B tools/integration/validate_b0_delivery.py --baseline-head c1b9519c7d25ce1fbef07984cdb548c89e7e1152 --expected-head eae0b7a4b58a94ae9a5a78ca9b20349fee65217c --expected-tree ac421d0e680e5387ba6cd1059c6f3b029b80808d --branch codex/nap-00-b0-g2",
+      "result": "status=ok; exit 0",
+      "exit_code": 0,
+      "source_state": "eae0b7a4b58a94ae9a5a78ca9b20349fee65217c"
+    },
+    {
+      "id": "fresh-checkout-initial-ordering-observation",
+      "official_gate": false,
+      "checkout": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-validation\\B0-G2-controller-eae0b7a-20260828-090807",
+      "core_autocrlf": true,
+      "command": "pytest before locked npm ci",
+      "result": "106 passed, 1 failed: local tsc unavailable because node_modules had not yet been installed",
+      "disposition": "Environment setup ordering only; rerun in official gate-first order below. Git remained clean and source identity was unchanged."
+    },
+    {
+      "id": "fresh-checkout-official-gate",
+      "checkout": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-validation\\B0-G2-controller-eae0b7a-20260828-090807",
+      "core_autocrlf": true,
+      "pre_status_count": 0,
+      "command": "validate_b0_delivery.py exact-source gate; gate performs locked npm ci and TypeScript typecheck",
+      "result": "status=ok; exit 0",
+      "exit_code": 0
+    },
+    {
+      "id": "fresh-checkout-full-after-locked-install",
+      "command": "python -B -m pytest -q -p no:cacheprovider tests/contracts tests/providers tests/e2e",
+      "result": "107 passed in 28.46s",
+      "exit_code": 0,
+      "post_status_count": 0
+    },
+    {
+      "id": "fresh-checkout-compileall",
+      "command": "python -B -m compileall -q sdk/plotpilot_plugin_sdk tools/integration plugins/provider-anthropic/provider_anthropic plugins/provider-gemini/provider_gemini tests/contracts tests/providers tests/e2e",
+      "result": "exit 0",
+      "exit_code": 0,
+      "post_status_count": 0
+    }
+  ],
+  "review_gate": {
+    "reviewer": "fresh gpt-5.6-sol / max",
+    "scope": "full A-J B0 review",
+    "status": "pending",
+    "b0_acceptance_eligible": false,
+    "release_NAP_01_eligible": false,
+    "note": "Controller evidence is self-test evidence only and does not grant PASS or close Findings."
+  },
+  "protected_boundaries": [
+    "PlotPilot Core not modified",
+    "Novel-Agent donor not modified",
+    "rejected G1 branch not modified",
+    "NAP-01 through NAP-08 remain stopped",
+    "no desktop, EXE, installer, GUI or dist build"
+  ]
+}
