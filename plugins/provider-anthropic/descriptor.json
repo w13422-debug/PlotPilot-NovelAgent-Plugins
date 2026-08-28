@@ -3,7 +3,7 @@
   "capability_id": "model.provider.anthropic.invoke/v1",
   "provider": {
     "plugin_id": "com.plotpilot.novelagent.provider-anthropic",
-    "release_id": "3425ec5086efc7667735cd66828e49bf4dd15282dd549035f46270da25ecf6b8"
+    "release_id": "4b97d23bdbe98d6b203c14889dca3ec94eef207a648190d22fc816599cfd3ad2"
   },
   "input_schema": "model.provider.anthropic.invoke-request/v1",
   "output_schema": "model.provider.anthropic.invoke-result/v1",

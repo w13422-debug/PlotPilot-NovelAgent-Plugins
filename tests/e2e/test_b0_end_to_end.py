@@ -122,7 +122,7 @@ def test_frozen_manifest_identity_uses_committed_blob_not_checkout_bytes() -> No
         check=True,
         capture_output=True,
     ).stdout
-    assert len(committed) == gate.FINDING_MANIFEST_SIZE == 22433
+    assert len(committed) == gate.FINDING_MANIFEST_SIZE == 12646
     assert hashlib.sha256(committed).hexdigest() == gate.FINDING_MANIFEST_SHA256
     worktree_hash = hashlib.sha256((ROOT / gate.FINDING_MANIFEST_PATH).read_bytes()).hexdigest()
     assert worktree_hash in {
@@ -283,6 +283,8 @@ def _source_candidate_from_current_history() -> str:
         "docs/deliveries/NAP-00-B0-remediation-candidate.md",
         "coordination/NAP-00/b0-generation-2-evidence-v1.json",
         "docs/deliveries/NAP-00-B0-G2-candidate.md",
+        "coordination/NAP-00/b0-generation-2-remediation-evidence-v1.json",
+        "docs/deliveries/NAP-00-B0-G2-remediation-candidate.md",
     }
     return _git(ROOT, "rev-parse", "HEAD^") if paths and paths <= evidence_paths else head
 

@@ -99,6 +99,26 @@ def _case_fixture(case: tuple[Any, ...]) -> tuple[Any, Any, Any, Any, Any, str]:
     return case
 
 
+def _manifest_paths(raw: bytes) -> tuple[str, ...]:
+    text = raw.decode("utf-8")
+    paths: list[str] = []
+    for line in text.splitlines(keepends=True):
+        assert line.endswith("\n") and "  " in line
+        path = line[:-1].split("  ", 1)[1]
+        assert path != "files.sha256" and path not in paths
+        paths.append(path)
+    assert paths
+    return tuple(paths)
+
+
+def _asset_page(chunk: bytes, next_offset: int | None, *, hash_bytes: bytes | None = None) -> dict[str, object]:
+    return {
+        "base64_chunk": __import__("base64").b64encode(chunk).decode("ascii"),
+        "next_offset": next_offset,
+        "content_hash": hashlib.sha256(hash_bytes if hash_bytes is not None else chunk).hexdigest(),
+    }
+
+
 @pytest.mark.parametrize("module,provider_type,host_type,transport_type,schema_error,kind", CASES)
 def test_descriptor_and_closed_schema_artifacts_are_resolvable(module: Any, provider_type: Any, host_type: Any, transport_type: Any, schema_error: Any, kind: str) -> None:
     descriptor = module.capability_descriptor()
@@ -311,34 +331,55 @@ def test_f008_every_mutated_host_result_fails_closed(module: Any, provider_type:
 def test_f009_complete_package_manifest_identity_wheel_and_mutations(module: Any, provider_type: Any, host_type: Any, transport_type: Any, schema_error: Any, kind: str) -> None:
     package_root = ROOT / "plugins" / f"provider-{kind}"
     expected = json.loads((package_root / "expected.json").read_text(encoding="utf-8"))
-    required = {"schema", "package_files", "files_sha256", "package_hash", "release_id", "wheel_path", "input_schema_path", "output_schema_path"}
+    required = {"schema", "package_files", "files_sha256", "descriptor_sha256", "package_hash", "release_id", "wheel_path", "input_schema_path", "output_schema_path"}
     assert required <= set(expected)
+    assert "manifest_files" not in expected and "identity_files" not in expected
     package_files = {path: (package_root / path).read_bytes() for path in expected["package_files"]}
     assert "files.sha256" in package_files
-    for required_path in ("descriptor.json", "plugin.json", expected["input_schema_path"], expected["output_schema_path"], expected["wheel_path"], "backend/requirements.lock", "backend/wheels/README.txt", "migrations/manifest.json"):
+    identity_relative = f"provider_{kind}/identity.json"
+    for required_path in ("descriptor.json", "plugin.json", expected["input_schema_path"], expected["output_schema_path"], expected["wheel_path"], "backend/requirements.lock", "backend/wheels/README.txt", "migrations/manifest.json", identity_relative):
         assert required_path in package_files and (package_root / required_path).is_file()
     assert any(path.endswith("provider.py") for path in package_files)
-    assert expected["files_sha256"] == (package_root / "files.sha256").read_text(encoding="utf-8")
-    manifest_files = {path: data for path, data in package_files.items() if path != "files.sha256"}
-    verify_package_manifest(manifest_files, package_files["files.sha256"])
-    identity_files = {path: (package_root / path).read_bytes() for path in expected["identity_files"]}
-    digest = digest_package(identity_files, expected["plugin_id"], expected["version"])
+
+    manifest_bytes = package_files["files.sha256"]
+    assert expected["files_sha256"] == manifest_bytes.decode("utf-8")
+    manifest_names = _manifest_paths(manifest_bytes)
+    assert set(manifest_names) == set(package_files) - {"files.sha256", "descriptor.json", identity_relative}
+    assert expected["wheel_path"] in manifest_names
+    canonical_files = {path: package_files[path] for path in manifest_names}
+    assert build_files_sha256(canonical_files) == manifest_bytes
+    verify_package_manifest(canonical_files, manifest_bytes)
+    digest = digest_package(canonical_files, expected["plugin_id"], expected["version"])
+    assert digest.files_sha256 == manifest_bytes
     assert digest.package_hash == expected["package_hash"]
     assert digest.release_id == expected["release_id"]
-    identity = json.loads((package_root / f"provider_{kind}" / "identity.json").read_text(encoding="utf-8"))
+
+    identity = json.loads((package_root / identity_relative).read_text(encoding="utf-8"))
+    assert set(identity) == {"schema", "plugin_id", "version", "package_hash", "release_id"}
     assert identity["package_hash"] == expected["package_hash"] and identity["release_id"] == expected["release_id"]
-    descriptor = json.loads((package_root / "descriptor.json").read_text(encoding="utf-8"))
+    descriptor_bytes = package_files["descriptor.json"]
+    assert hashlib.sha256(descriptor_bytes).hexdigest() == expected["descriptor_sha256"]
+    descriptor = json.loads(descriptor_bytes.decode("utf-8"))
     assert descriptor["provider"]["release_id"] == expected["release_id"]
 
-    mutated = dict(identity_files)
-    source_path = next(path for path in mutated if path.endswith("provider.py"))
-    mutated[source_path] = mutated[source_path] + b"\n# byte mutation\n"
-    mutated_digest = digest_package(mutated, expected["plugin_id"], expected["version"])
-    assert mutated_digest.package_hash != expected["package_hash"]
-    tampered_manifest = dict(manifest_files)
-    tampered_manifest["descriptor.json"] = tampered_manifest["descriptor.json"].replace(b"capability-provider", b"capability-provideq", 1)
+    # Every canonical payload mutation, including the installable Wheel, must
+    # produce a different public package identity.
+    for path, data in canonical_files.items():
+        mutated = dict(canonical_files)
+        mutated[path] = data + b"\x00"
+        mutated_digest = digest_package(mutated, expected["plugin_id"], expected["version"])
+        assert mutated_digest.package_hash != expected["package_hash"], path
+        assert mutated_digest.release_id != expected["release_id"], path
+
+    tampered_descriptor = copy.deepcopy(descriptor)
+    tampered_descriptor["provider"]["release_id"] = "0" * 64
     with pytest.raises(Exception):
-        verify_package_manifest(tampered_manifest, package_files["files.sha256"])
+        verify_capability_descriptor(
+            tampered_descriptor,
+            expected_capability_id=descriptor["capability_id"],
+            allowed_capability_ids={descriptor["capability_id"]},
+            expected_provider={"plugin_id": expected["plugin_id"], "release_id": expected["release_id"]},
+        )
 
 
 @pytest.mark.parametrize("module,provider_type,host_type,transport_type,schema_error,kind", CASES)
@@ -366,11 +407,66 @@ def test_f009_wheel_is_pep427_importable_and_metadata_is_present(module: Any, pr
                 data = archive.read(name)
                 assert encoded_hash == "sha256=" + __import__("base64").urlsafe_b64encode(hashlib.sha256(data).digest()).decode().rstrip("=")
                 assert size == str(len(data))
+        assert f"{expected['wheel_import']}/identity.json" not in names
+        assert "descriptor.json" not in names
         with tempfile.TemporaryDirectory() as temp:
             archive.extractall(temp)
+            sidecar = package_root / expected["wheel_import"] / "identity.json"
+            shutil.copyfile(sidecar, Path(temp) / expected["wheel_import"] / "identity.json")
             code = "import importlib.metadata, sys; sys.path.insert(0, r'%s'); import %s; print(importlib.metadata.version('%s')); print(%s.main()['schema'])" % (temp, expected["wheel_import"], metadata.split("Name: ", 1)[1].splitlines()[0], expected["wheel_import"])
             result = subprocess.run([sys.executable, "-S", "-c", code], capture_output=True, text=True, check=True)
             assert result.stdout.splitlines() == ["0.1.0", "capability-provider/v1"]
+
+
+@pytest.mark.parametrize("module,provider_type,host_type,transport_type,schema_error,kind", CASES)
+def test_f005_committed_core_eof_fixture_is_accepted(module: Any, provider_type: Any, host_type: Any, transport_type: Any, schema_error: Any, kind: str) -> None:
+    core_http = json.loads((ROOT / "contracts/golden/contract-publication-v1/core-http.json").read_text(encoding="utf-8"))
+    eof = core_http["assets"]["range"]
+    page = {key: eof[key] for key in ("base64_chunk", "next_offset", "content_hash")}
+    host = host_type(asset_read_scripts={"asset-a": (page,)})
+    assert module._read_asset("asset-a", host) == b"hello"
+    assert [params["offset"] for method, params in host.calls if method == "host.asset.read/v1"] == [0]
+
+
+@pytest.mark.parametrize("module,provider_type,host_type,transport_type,schema_error,kind", CASES)
+def test_f005_request_asset_reads_contiguous_pages_to_null_eof(module: Any, provider_type: Any, host_type: Any, transport_type: Any, schema_error: Any, kind: str) -> None:
+    request = _request(module, invocation_id="asset-multipage")
+    payload = canonical_bytes(request)
+    page_size = 73
+    host = host_type(assets={"request-asset": payload}, asset_read_page_size=page_size)
+    outcome = provider_type(transport_type(_fixture(f"{kind}-success.json"))).run({"request_asset_id": "request-asset"}, host)
+    assert outcome.status == "succeeded"
+    reads = [params for method, params in host.calls if method == "host.asset.read/v1"]
+    assert len(reads) > 1
+    assert [params["offset"] for params in reads] == list(range(0, len(payload), page_size))
+    assert all(params["length"] == 8_388_608 for params in reads)
+    assert outcome.receipt["package_hash"] == module.PACKAGE_HASH
+    assert outcome.receipt["release_id"] == module.RELEASE_ID
+
+
+@pytest.mark.parametrize("mutation", ("skipped", "backward", "bad_hash", "premature_null", "non_progress", "trailing"))
+@pytest.mark.parametrize("module,provider_type,host_type,transport_type,schema_error,kind", CASES)
+def test_f005_invalid_asset_pages_fail_closed(module: Any, provider_type: Any, host_type: Any, transport_type: Any, schema_error: Any, kind: str, mutation: str) -> None:
+    payload = canonical_bytes(_request(module, invocation_id=f"asset-invalid-{mutation}"))
+    first = payload[:73]
+    if mutation == "skipped":
+        pages = (_asset_page(first, len(first) + 1),)
+    elif mutation == "backward":
+        pages = (_asset_page(first, 0),)
+    elif mutation == "bad_hash":
+        pages = (_asset_page(first, len(first), hash_bytes=b"tampered"),)
+    elif mutation == "premature_null":
+        pages = (_asset_page(first, None),)
+    elif mutation == "non_progress":
+        pages = (_asset_page(b"", 0),)
+    elif mutation == "trailing":
+        second = payload[73:146]
+        pages = (_asset_page(first, 73), _asset_page(second, 1000))
+    else:  # pragma: no cover - guarded by parametrization
+        raise AssertionError(mutation)
+    host = host_type(asset_read_scripts={"request-asset": pages})
+    with pytest.raises(module.ProviderError):
+        module._load_request({"request_asset_id": "request-asset"}, host)
 
 
 def csv_records(raw: bytes) -> list[tuple[str, str, str]]:
@@ -431,5 +527,8 @@ def test_f012_conditional_failure_and_gemini_output_text_regression(module: Any,
     assert outcome.conditional_result["items"][0]["status"] == "failed"
     assert outcome.receipt["bundle_id"] == outcome.conditional_result["bundle_id"]
     assert outcome.error is not None
+    assert outcome.receipt["package_hash"] == module.PACKAGE_HASH
+    assert outcome.receipt["release_id"] == module.RELEASE_ID
+    assert outcome.conditional_result["producer"]["release_id"] == module.RELEASE_ID
     if module is gemini:
         assert outcome.error["code"] == "PROMPT_BLOCKED"

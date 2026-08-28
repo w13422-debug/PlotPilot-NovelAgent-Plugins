@@ -147,6 +147,17 @@ export interface ClaimInput {
   ordered_atoms: ClaimInputAtom[]
 }
 
+export interface AuthoritativeAtom {
+  atom_id: Id
+  payload_hash: Hash
+  acceptance_ordinal: number
+  current: boolean
+  accepted: boolean
+  revision_id?: Id
+  source_revision_id?: Id
+  [key: string]: unknown
+}
+
 export interface Target {
   workspace_id: Id
   entity_kind: 'document' | 'node_structure' | 'relation_set'

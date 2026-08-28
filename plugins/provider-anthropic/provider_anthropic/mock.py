@@ -59,6 +59,9 @@ class MemoryHost:
     response_drops: dict[str, set[str]] = field(default_factory=dict)
     response_extras: dict[str, dict[str, object]] = field(default_factory=dict)
     reject_methods: set[str] = field(default_factory=set)
+    asset_read_page_size: int | None = None
+    asset_read_scripts: dict[str, tuple[Mapping[str, object], ...]] = field(default_factory=dict)
+    asset_read_script_index: dict[str, int] = field(default_factory=dict)
 
     def seed_json_asset(self, value: Mapping[str, Any], asset_id: str = "request-asset") -> str:
         self.assets[asset_id] = canonical_bytes(dict(value))
@@ -78,11 +81,31 @@ class MemoryHost:
         value = dict(params)
         self.calls.append((method, value))
         if method == "host.asset.read/v1":
-            data = self.assets[str(value["asset_id"])]
+            asset_id = str(value["asset_id"])
+            scripted = self.asset_read_scripts.get(asset_id)
+            if scripted is not None:
+                page_index = self.asset_read_script_index.get(asset_id, 0)
+                if page_index >= len(scripted):
+                    raise AssertionError(f"unexpected trailing Asset read for {asset_id}")
+                self.asset_read_script_index[asset_id] = page_index + 1
+                return self._mutate(method, scripted[page_index])
+            data = self.assets[asset_id]
             offset = int(value.get("offset", 0))
             length = int(value.get("length", len(data)))
+            if self.asset_read_page_size is not None:
+                if self.asset_read_page_size <= 0:
+                    raise AssertionError("asset_read_page_size must be positive")
+                length = min(length, self.asset_read_page_size)
             chunk = data[offset:offset + length]
-            return self._mutate(method, {"base64_chunk": base64.b64encode(chunk).decode("ascii"), "next_offset": offset + len(chunk), "content_hash": _sha256(data)})
+            end = offset + len(chunk)
+            return self._mutate(
+                method,
+                {
+                    "base64_chunk": base64.b64encode(chunk).decode("ascii"),
+                    "next_offset": end if end < len(data) else None,
+                    "content_hash": _sha256(chunk),
+                },
+            )
         if method == "host.asset.create/v1":
             data = base64.b64decode(str(value["base64_chunk"]), validate=True)
             expected = str(value["expected_hash"])

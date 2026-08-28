@@ -4,6 +4,7 @@ import rpcMethodMatrixJson from '../../contracts/json-schema/rpc-method-matrix.v
 import { assertValidContract, frozenSchemaInventory, schemaErrors } from './schema-validator.ts'
 import type {
   BackupBundle,
+  AuthoritativeAtom,
   CandidateItem,
   CandidateStageReceipt,
   Checkpoint,
@@ -31,6 +32,31 @@ type CasefoldContract = {
   nfc_hangul: Record<string, number>
 }
 type RpcDefinition = { meta_profile: string; params: { fields: string[] }; result: { fields: string[] } }
+
+export type AuthoritativeAtomSource =
+  | Record<string, AuthoritativeAtom>
+  | readonly AuthoritativeAtom[]
+  | ((atomId: string) => AuthoritativeAtom | null | undefined)
+
+export interface ClaimInputStructureOptions {
+  expectedSourceRevisionId?: string
+  canonicalText?: string
+  expectedCanonicalTextHash?: string
+}
+
+export interface ClaimInputValidationOptions extends ClaimInputStructureOptions {
+  acceptedAtoms?: AuthoritativeAtomSource | null
+}
+
+export interface ClaimInputAuthorityOptions extends ClaimInputStructureOptions {
+  acceptedAtoms: AuthoritativeAtomSource
+}
+
+export interface ResultVerificationContext {
+  snapshotWorkspaceId?: string | null
+  snapshotHashValue?: string | null
+  knownParentIds?: Iterable<string>
+}
 
 const unicodeCasefoldContract = unicodeCasefoldContractJson as unknown as CasefoldContract
 const rpcMethodMatrix = rpcMethodMatrixJson as unknown as {
@@ -415,7 +441,7 @@ export function verifyPlan(plan: JsonObject, interpreterBindings?: Record<string
     if (match.length !== 1 || match[0]?.enabled !== true) fail('synthesizer must resolve to an enabled binding')
     for (const field of ['capability_id', 'plugin_id', 'release_requirement']) if (match[0]?.[field] !== synthesizer[field]) fail('synthesizer identity does not match its binding')
   } else if (synthesizer != null) fail('separate plan must not declare a synthesizer')
-  if (dataBindings.length !== 0) {
+  if (interpreterBindings != null || catalog != null) {
     if (catalog == null || interpreterBindings == null) fail('Data bindings require catalog and resolved interpreter bindings')
     verifyCatalog(catalog)
     for (const binding of dataBindings) {
@@ -590,7 +616,7 @@ export async function verifyEvidenceSpan(span: EvidenceSpan, canonicalText?: str
 const CLAIM_INPUT_FIELDS = ['schema', 'source_revision_id', 'ordered_atoms'] as const
 const CLAIM_INPUT_ATOM_FIELDS = ['ordinal', 'atom_id', 'payload_hash', 'acceptance_ordinal', 'evidence_spans'] as const
 
-export async function verifyClaimInput(claimInput: JsonObject, options: { expectedSourceRevisionId?: string; acceptedAtoms?: Record<string, JsonObject>; canonicalText?: string; expectedCanonicalTextHash?: string } = {}): Promise<void> {
+export async function verifyClaimInputStructure(claimInput: JsonObject, options: ClaimInputStructureOptions = {}): Promise<void> {
   assertExactKeys(claimInput, CLAIM_INPUT_FIELDS, 'claim-input/v1')
   assertSchema(claimInput, 'claim-input/v1')
   assertId(claimInput.source_revision_id, 'claim-input.source_revision_id')
@@ -611,25 +637,63 @@ export async function verifyClaimInput(claimInput: JsonObject, options: { expect
       await verifyEvidenceSpan(span as unknown as EvidenceSpan, options.canonicalText, undefined, options.expectedCanonicalTextHash)
     }
     atomIds.push(String(atom.atom_id))
-    if (options.acceptedAtoms != null) {
-      const accepted = options.acceptedAtoms[String(atom.atom_id)]
-      if (accepted == null || accepted.current === false || accepted.accepted === false) fail('claim-input Atom is not an accepted current Atom')
-      if (accepted.payload_hash != null && accepted.payload_hash !== atom.payload_hash) fail('claim-input payload_hash drifted from the accepted Atom')
-      if (accepted.acceptance_ordinal != null && accepted.acceptance_ordinal !== atom.acceptance_ordinal) fail('claim-input acceptance_ordinal drifted from the accepted Atom')
-      if (accepted.revision_id != null && accepted.revision_id !== claimInput.source_revision_id) fail('accepted Atom belongs to another source Revision')
-    }
   }
   assertUnique(atomIds, 'claim-input Atom IDs must be unique')
 }
 
-export async function buildClaimInputAsset(sourceRevisionId: string, orderedAtoms: JsonObject[]): Promise<{ bytes: Uint8Array; assetHash: string }> {
+function resolveAuthoritativeAtom(source: AuthoritativeAtomSource | null | undefined, atomId: string): JsonObject {
+  if (source == null) return fail('claim-input sealing requires authoritative Atom records')
+  let candidate: JsonObject | null | undefined
+  if (typeof source === 'function') {
+    candidate = source(atomId)
+  } else if (Array.isArray(source)) {
+    const matches = source.filter(item => item.atom_id === atomId)
+    if (matches.length > 1) fail('claim-input authority contains duplicate Atom records')
+    candidate = matches[0]
+  } else if (Object.prototype.hasOwnProperty.call(source, 'atom_id')) {
+    candidate = source as unknown as AuthoritativeAtom
+  } else {
+    candidate = (source as Record<string, AuthoritativeAtom>)[atomId]
+  }
+  if (candidate == null) return fail('claim-input Atom is not an authoritative current Atom')
+  return objectOf(candidate, 'authoritative Atom')
+}
+
+function verifyClaimInputAuthority(claimInput: JsonObject, source: AuthoritativeAtomSource | null | undefined): void {
+  const sourceRevisionId = String(claimInput.source_revision_id)
+  const atoms = arrayOf(claimInput.ordered_atoms, 'claim-input.ordered_atoms').map(item => objectOf(item, 'ordered Atom'))
+  for (const atom of atoms) {
+    const authority = resolveAuthoritativeAtom(source, String(atom.atom_id))
+    const required = ['atom_id', 'payload_hash', 'acceptance_ordinal', 'current', 'accepted']
+    const missing = required.filter(field => !Object.prototype.hasOwnProperty.call(authority, field))
+    if (missing.length !== 0) fail(`authoritative Atom is missing required fields: ${missing.join(',')}`)
+    assertId(authority.atom_id, 'authoritative Atom.atom_id')
+    assertHash(authority.payload_hash, 'authoritative Atom.payload_hash')
+    if (authority.atom_id !== atom.atom_id) fail('authoritative Atom ID does not match claim-input Atom')
+    if (authority.current !== true || authority.accepted !== true) fail('claim-input Atom is not current and accepted')
+    if (!Number.isInteger(authority.acceptance_ordinal) || Number(authority.acceptance_ordinal) < 1) fail('authoritative Atom acceptance_ordinal must be a positive integer')
+    const revisions = ['revision_id', 'source_revision_id']
+      .filter(field => Object.prototype.hasOwnProperty.call(authority, field))
+      .map(field => authority[field])
+    if (revisions.length === 0 || revisions.some(revision => typeof revision !== 'string' || revision !== sourceRevisionId)) fail('authoritative Atom belongs to another source Revision')
+    if (authority.payload_hash !== atom.payload_hash) fail('claim-input payload_hash drifted from the authoritative Atom')
+    if (authority.acceptance_ordinal !== atom.acceptance_ordinal) fail('claim-input acceptance_ordinal drifted from the authoritative Atom')
+  }
+}
+
+export async function verifyClaimInput(claimInput: JsonObject, options: ClaimInputValidationOptions = {}): Promise<void> {
+  await verifyClaimInputStructure(claimInput, options)
+  verifyClaimInputAuthority(claimInput, options.acceptedAtoms)
+}
+
+export async function buildClaimInputAsset(sourceRevisionId: string, orderedAtoms: JsonObject[], options: ClaimInputAuthorityOptions): Promise<{ bytes: Uint8Array; assetHash: string }> {
   const value: JsonObject = { schema: 'claim-input/v1', source_revision_id: sourceRevisionId, ordered_atoms: structuredClone(orderedAtoms) }
-  await verifyClaimInput(value)
+  await verifyClaimInput(value, options)
   const bytes = canonicalBytes(value)
   return { bytes, assetHash: await sha256Hex(bytes) }
 }
 
-export async function verifyClaimInputAsset(rawAssetBytes: Uint8Array, snapshot: RunSnapshot, options: { assetId?: string; expectedSourceRevisionId?: string; acceptedAtoms?: Record<string, JsonObject>; canonicalText?: string; expectedCanonicalTextHash?: string } = {}): Promise<JsonObject> {
+export async function verifyClaimInputAsset(rawAssetBytes: Uint8Array, snapshot: RunSnapshot, options: ClaimInputValidationOptions & { assetId?: string } = {}): Promise<JsonObject> {
   await verifySnapshot(snapshot)
   const assetId = snapshot.parameters_asset_id
   if (assetId == null) fail('RunSnapshot has no claim-input parameters Asset')
@@ -701,7 +765,33 @@ function verifyParentGraph(items: JsonObject[], workspaceId: string, knownParent
   for (const node of graph.keys()) visit(node)
 }
 
-export function verifyResultProfile(bundle: ResultBundle | JsonObject, workspaceId?: string | null, knownParentIds?: Iterable<string>): void {
+function isResultVerificationContext(value: unknown): value is ResultVerificationContext {
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) return false
+  return ['snapshotWorkspaceId', 'snapshotHashValue', 'knownParentIds'].some(field => Object.prototype.hasOwnProperty.call(value, field))
+}
+
+function normalizeResultVerificationContext(
+  workspaceOrContext?: string | null | ResultVerificationContext,
+  knownParentIdsOrSnapshotHash?: Iterable<string> | string | null,
+  snapshotHashOrKnownParentIds?: string | null | Iterable<string>,
+): ResultVerificationContext {
+  if (isResultVerificationContext(workspaceOrContext)) return workspaceOrContext
+  let knownParentIds: Iterable<string> | undefined
+  let snapshotHashValue: string | null | undefined
+  if (typeof knownParentIdsOrSnapshotHash === 'string' || knownParentIdsOrSnapshotHash === null) snapshotHashValue = knownParentIdsOrSnapshotHash
+  else knownParentIds = knownParentIdsOrSnapshotHash
+  if (typeof snapshotHashOrKnownParentIds === 'string' || snapshotHashOrKnownParentIds === null) snapshotHashValue = snapshotHashOrKnownParentIds
+  else if (snapshotHashOrKnownParentIds !== undefined) knownParentIds = snapshotHashOrKnownParentIds
+  return { snapshotWorkspaceId: workspaceOrContext, snapshotHashValue, knownParentIds }
+}
+
+export function verifyResultProfile(
+  bundle: ResultBundle | JsonObject,
+  workspaceOrContext?: string | null | ResultVerificationContext,
+  knownParentIdsOrSnapshotHash?: Iterable<string> | string | null,
+  snapshotHashOrKnownParentIds?: string | null | Iterable<string>,
+): void {
+  const context = normalizeResultVerificationContext(workspaceOrContext, knownParentIdsOrSnapshotHash, snapshotHashOrKnownParentIds)
   const value = objectOf(bundle, 'result bundle')
   assertSchema(value, 'result-bundle/v1')
   const profile: Record<string, [string, string]> = {
@@ -711,31 +801,54 @@ export function verifyResultProfile(bundle: ResultBundle | JsonObject, workspace
   }
   const expected = profile[String(value.contract_id)]
   if (expected == null || value.bundle_type !== expected[0]) fail('result bundle profile mismatch')
-  if (expected[1] === 'candidate-item/v1' && workspaceId == null) fail('candidate result verification requires a snapshot workspace')
+  if (expected[1] === 'candidate-item/v1' && context.snapshotWorkspaceId == null) fail('candidate result verification requires a snapshot workspace')
   const items = arrayOf(value.items, 'result items').map(item => objectOf(item, 'result item'))
   assertUnique(items.map(item => item.item_id), 'result item IDs must be unique')
+  const itemIds = new Set(items.map(item => String(item.item_id)))
+  const incompleteTargets = new Set<string>()
   for (const item of items) {
     if (item.schema !== expected[1]) fail('result bundle item profile does not match contract')
     if (expected[1] === 'candidate-item/v1') {
-      verifyCandidate(item as unknown as CandidateItem, workspaceId as string)
+      verifyCandidate(item as unknown as CandidateItem, context.snapshotWorkspaceId as string)
+      if (item.item_kind === 'incomplete_stream') {
+        const target = objectOf(item.target, 'incomplete stream target')
+        const targetKey = `${String(target.workspace_id)}\0${String(target.entity_kind)}\0${String(target.entity_id)}`
+        if (incompleteTargets.has(targetKey)) fail('only one incomplete stream Candidate is allowed per target')
+        incompleteTargets.add(targetKey)
+      }
     }
   }
-  if (expected[1] === 'candidate-item/v1') verifyParentGraph(items, workspaceId as string, knownParentIds)
+  if (expected[1] === 'candidate-item/v1') verifyParentGraph(items, context.snapshotWorkspaceId as string, context.knownParentIds)
+  if (context.snapshotHashValue != null && value.input_snapshot_hash !== context.snapshotHashValue) fail('bundle input snapshot does not match current snapshot')
+  for (const rawRef of arrayOf(value.skill_chain_result_refs, 'result Skill references')) {
+    verifyChainRef(objectOf(rawRef, 'result Skill reference'), false, {
+      bundleId: String(value.bundle_id),
+      itemIds,
+      allowStream: false,
+    })
+  }
   const statuses = items.map(item => String(item.status))
   if (value.partial === true && !statuses.some(status => ['partial', 'failed', 'skipped'].includes(status))) fail('partial result bundle must expose a non-complete item')
   if (value.partial === false && statuses.some(status => status !== 'complete')) fail('complete result bundle cannot contain partial/failed/skipped items')
 }
 
-export function verifyAttemptResult(bundle: ResultBundle | JsonObject | null, attemptState: string, workspaceId?: string | null, knownParentIds?: Iterable<string>): void {
+export function verifyAttemptResult(
+  bundle: ResultBundle | JsonObject | null,
+  attemptState: string,
+  workspaceOrContext?: string | null | ResultVerificationContext,
+  knownParentIdsOrSnapshotHash?: Iterable<string> | string | null,
+  snapshotHashOrKnownParentIds?: string | null | Iterable<string>,
+): void {
+  const context = normalizeResultVerificationContext(workspaceOrContext, knownParentIdsOrSnapshotHash, snapshotHashOrKnownParentIds)
   if (attemptState === 'failed' || attemptState === 'skipped') {
     if (bundle == null) return
     const value = objectOf(bundle, 'failed Attempt result')
     if (value.contract_id !== 'diagnostic-bundle/v1' || value.bundle_type !== 'diagnostic') fail('failed/skipped Attempt may only return null or diagnostic-bundle/v1')
-    verifyResultProfile(bundle, workspaceId, knownParentIds)
+    verifyResultProfile(bundle, context)
     return
   }
   if (bundle == null) fail('non-failed Attempt requires a result Bundle')
-  verifyResultProfile(bundle, workspaceId, knownParentIds)
+  verifyResultProfile(bundle, context)
 }
 
 function stageReceipt(candidateIds: Iterable<string>, state: CandidateStageReceipt['state']): CandidateStageReceipt {
@@ -894,7 +1007,7 @@ export async function verifyStreamPrefix(prefix: StreamPrefix | JsonObject, opti
   if (options.content != null && (options.content.byteLength !== Number(value.byte_length) || await sha256Hex(options.content) !== value.prefix_hash)) fail('stream prefix asset hash/length mismatch')
 }
 
-function verifyChainRef(ref: JsonObject, allowBundleless: boolean): void {
+function verifyChainRef(ref: JsonObject, allowBundleless: boolean, options: { bundleId?: string; itemIds?: ReadonlySet<string>; allowStream?: boolean } = {}): void {
   if ((ref.asset_id == null) !== (ref.asset_hash == null)) fail('Skill chain asset ID/hash must be all-null or all-present')
   const bundlePair = ref.result_bundle_id != null && ref.result_item_id != null
   const streamPair = ref.stream_id != null && ref.acked_prefix_hash != null
@@ -902,6 +1015,9 @@ function verifyChainRef(ref: JsonObject, allowBundleless: boolean): void {
   if ((ref.stream_id == null) !== (ref.acked_prefix_hash == null)) fail('stream anchor must be all-null or all-present')
   if (bundlePair && streamPair) fail('Skill chain reference must have exactly one anchor profile')
   if (!bundlePair && !streamPair && !allowBundleless) fail('bundleless Skill reference is not allowed here')
+  if (streamPair && options.allowStream === false) fail('result Bundle refs must be bundle-backed')
+  if (bundlePair && options.bundleId != null && ref.result_bundle_id !== options.bundleId) fail('Skill reference points at another Bundle')
+  if (bundlePair && options.itemIds != null && !options.itemIds.has(String(ref.result_item_id))) fail('Skill reference points at an unknown item')
 }
 
 export async function verifySkillReceipt(receipt: SkillRunReceipt | JsonObject): Promise<void> {

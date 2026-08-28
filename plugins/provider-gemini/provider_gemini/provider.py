@@ -253,21 +253,104 @@ def _host_call(host: HostPort, method: str, params: Mapping[str, object]) -> dic
     return dict(result)
 
 
+_ASSET_READ_LENGTH = 8_388_608
+_MAX_ASSET_READ_PAGES = 4096
+
+
+def _read_asset(asset_id: str, host: HostPort) -> bytes:
+    """Read one Core Asset as contiguous, per-chunk-authenticated pages."""
+    if not isinstance(asset_id, str) or not asset_id:
+        raise ProviderError("ASSET_READ_ERROR", "request Asset ID must be a non-empty string")
+
+    offset = 0
+    total_size: int | None = None
+    chunks: list[bytes] = []
+    for page_index in range(_MAX_ASSET_READ_PAGES):
+        response = _host_call(
+            host,
+            "host.asset.read/v1",
+            {"asset_id": asset_id, "offset": offset, "length": _ASSET_READ_LENGTH},
+        )
+
+        # The public RPC result carries next_offset rather than a second offset
+        # field.  If a lower-level fixture exposes one, bind it to our request
+        # as well; the public validator still rejects fields outside its schema.
+        returned_offset = response.get("offset")
+        if returned_offset is not None and (
+            isinstance(returned_offset, bool)
+            or not isinstance(returned_offset, int)
+            or returned_offset != offset
+        ):
+            raise ProviderError("ASSET_READ_ERROR", "request Asset page returned an unexpected offset")
+
+        encoded = response.get("base64_chunk")
+        if not isinstance(encoded, str):
+            raise ProviderError("ASSET_READ_ERROR", "request Asset page did not return base64 data")
+        try:
+            chunk = base64.b64decode(encoded, validate=True)
+        except Exception as exc:
+            raise ProviderError("ASSET_READ_ERROR", "request Asset page is not valid base64") from exc
+        if len(chunk) > _ASSET_READ_LENGTH:
+            raise ProviderError("ASSET_READ_ERROR", "request Asset page exceeds the requested length")
+
+        returned_length = response.get("length")
+        if returned_length is not None and (
+            isinstance(returned_length, bool)
+            or not isinstance(returned_length, int)
+            or returned_length != len(chunk)
+        ):
+            raise ProviderError("ASSET_READ_ERROR", "request Asset page length is inconsistent")
+
+        page_total = response.get("total_size")
+        if page_total is not None:
+            if isinstance(page_total, bool) or not isinstance(page_total, int) or page_total < 0:
+                raise ProviderError("ASSET_READ_ERROR", "request Asset total size is invalid")
+            if total_size is None:
+                total_size = page_total
+            elif total_size != page_total:
+                raise ProviderError("ASSET_READ_ERROR", "request Asset total size changed between pages")
+            if offset + len(chunk) > total_size:
+                raise ProviderError("ASSET_READ_ERROR", "request Asset page exceeds its total size")
+
+        if response.get("content_hash") != _sha256(chunk):
+            raise ProviderError("ASSET_READ_ERROR", "request Asset page hash is inconsistent")
+
+        expected_next = offset + len(chunk)
+        next_offset = response.get("next_offset")
+        if next_offset is None:
+            if not chunk:
+                raise ProviderError("ASSET_READ_ERROR", "request Asset page made no progress at EOF")
+            if total_size is not None and expected_next != total_size:
+                raise ProviderError("ASSET_READ_ERROR", "request Asset reached EOF before its total size")
+            chunks.append(chunk)
+            offset = expected_next
+            break
+        if isinstance(next_offset, bool) or not isinstance(next_offset, int) or next_offset < 0:
+            raise ProviderError("ASSET_READ_ERROR", "request Asset next_offset is invalid")
+        if next_offset != expected_next or next_offset <= offset:
+            raise ProviderError("ASSET_READ_ERROR", "request Asset pages are not contiguous")
+        if total_size is not None and next_offset >= total_size:
+            raise ProviderError("ASSET_READ_ERROR", "request Asset must return null next_offset at EOF")
+        chunks.append(chunk)
+        offset = next_offset
+    else:
+        raise ProviderError("ASSET_READ_ERROR", "request Asset did not terminate at EOF")
+
+    data = b"".join(chunks)
+    if len(data) != offset:
+        raise ProviderError("ASSET_READ_ERROR", "request Asset total size is inconsistent")
+    if total_size is not None and len(data) != total_size:
+        raise ProviderError("ASSET_READ_ERROR", "request Asset total size is inconsistent")
+    return data
+
+
 def _load_request(request: Mapping[str, Any], host: HostPort) -> dict[str, Any]:
     if "request_asset_id" not in request:
         return dict(request)
     if set(request) != {"request_asset_id"}:
         raise ProviderError("INPUT_INVALID", "request_asset_id envelope cannot carry caller fields")
-    response = _host_call(
-        host,
-        "host.asset.read/v1",
-        {"asset_id": request["request_asset_id"], "offset": 0, "length": 8_388_608},
-    )
-    encoded = response.get("base64_chunk")
-    if not isinstance(encoded, str):
-        raise ProviderError("ASSET_READ_ERROR", "request Asset did not return base64 data")
+    data = _read_asset(request["request_asset_id"], host)
     try:
-        data = base64.b64decode(encoded, validate=True)
         _require_sdk()
         from plotpilot_plugin_sdk.canonical import parse_json_bytes
 
@@ -278,8 +361,6 @@ def _load_request(request: Mapping[str, Any], host: HostPort) -> dict[str, Any]:
         raise ProviderError("ASSET_READ_ERROR", "request Asset is not strict UTF-8 JSON") from exc
     if not isinstance(loaded, dict):
         raise ProviderError("INPUT_INVALID", "request Asset must contain a JSON object")
-    if response.get("next_offset") != len(data) or response.get("content_hash") != _sha256(data):
-        raise ProviderError("ASSET_READ_ERROR", "request Asset read identity is inconsistent")
     return loaded
 
 

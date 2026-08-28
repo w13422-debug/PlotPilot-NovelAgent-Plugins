@@ -181,8 +181,8 @@ def test_claim_input_and_evidence_span_bind_ordered_atoms_to_run_snapshot() -> N
         "acceptance_ordinal": 1,
         "evidence_spans": [span],
     }
-    raw, asset_hash = build_claim_input_asset("rev-a", [atom])
-    accepted = {"atom-1": {"current": True, "accepted": True, "revision_id": "rev-a", "payload_hash": "1" * 64, "acceptance_ordinal": 1}}
+    accepted = {"atom-1": {"atom_id": "atom-1", "current": True, "accepted": True, "revision_id": "rev-a", "payload_hash": "1" * 64, "acceptance_ordinal": 1}}
+    raw, asset_hash = build_claim_input_asset("rev-a", [atom], accepted_atoms=accepted)
     verify_claim_input(json.loads(raw), accepted_atoms=accepted, canonical_text=canonical_text)
     snapshot = _read_json(ROOT / "contracts" / "golden" / "run-snapshot" / "snapshot.json")
     snapshot["asset_hashes"] = [{**item, "sha256": asset_hash if item["asset_id"] == "asset-params" else item["sha256"]} for item in snapshot["asset_hashes"]]

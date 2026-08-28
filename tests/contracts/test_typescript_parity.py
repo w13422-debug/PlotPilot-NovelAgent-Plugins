@@ -84,7 +84,7 @@ const claimSpan = {
   canonical_text_hash: await sdk.sha256Hex(sdk.utf8('A😀B')),
 }
 const claim = { schema: 'claim-input/v1', source_revision_id: 'rev-1', ordered_atoms: [{ ordinal: 0, atom_id: 'atom-1', payload_hash: '1'.repeat(64), acceptance_ordinal: 1, evidence_spans: [claimSpan] }] }
-await sdk.verifyClaimInput(claim, { canonicalText: 'A😀B', acceptedAtoms: { 'atom-1': { current: true, accepted: true, revision_id: 'rev-1', payload_hash: '1'.repeat(64), acceptance_ordinal: 1 } } })
+await sdk.verifyClaimInput(claim, { canonicalText: 'A😀B', acceptedAtoms: { 'atom-1': { atom_id: 'atom-1', current: true, accepted: true, revision_id: 'rev-1', payload_hash: '1'.repeat(64), acceptance_ordinal: 1 } } })
 const observed = {
   package_hash: packageDigest.packageHash,
   package_release_id: packageDigest.releaseId,

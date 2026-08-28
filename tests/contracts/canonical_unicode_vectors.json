@@ -1,0 +1,59 @@
+[
+  {
+    "label": "lone-high-value",
+    "value": "\ud800",
+    "accepted": false
+  },
+  {
+    "label": "lone-low-value",
+    "value": "\udc00",
+    "accepted": false
+  },
+  {
+    "label": "nested-lone-high-value",
+    "value": {
+      "nested": [
+        "\ud800"
+      ]
+    },
+    "accepted": false
+  },
+  {
+    "label": "lone-high-key",
+    "value": {
+      "\ud800": "value"
+    },
+    "accepted": false
+  },
+  {
+    "label": "lone-low-key",
+    "value": {
+      "\udc00": "value"
+    },
+    "accepted": false
+  },
+  {
+    "label": "valid-escaped-surrogate-pair-value",
+    "value": "\ud83d\ude00",
+    "accepted": true
+  },
+  {
+    "label": "valid-escaped-surrogate-pair-key",
+    "value": {
+      "\ud83d\ude00": "value"
+    },
+    "accepted": true
+  },
+  {
+    "label": "ordinary-astral-value",
+    "value": "😀",
+    "accepted": true
+  },
+  {
+    "label": "ordinary-astral-key",
+    "value": {
+      "😀": "value"
+    },
+    "accepted": true
+  }
+]

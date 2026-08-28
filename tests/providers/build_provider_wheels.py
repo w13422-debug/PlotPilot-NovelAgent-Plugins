@@ -20,7 +20,7 @@ SDK_ROOT = ROOT / "sdk"
 if str(SDK_ROOT) not in __import__("sys").path:
     __import__("sys").path.insert(0, str(SDK_ROOT))
 
-from plotpilot_plugin_sdk.package import build_files_sha256, digest_package  # noqa: E402
+from plotpilot_plugin_sdk.package import digest_package  # noqa: E402
 
 
 PROVIDERS = (
@@ -71,7 +71,15 @@ def _build_wheel(config: dict[str, str], root: Path) -> Path:
     files: dict[str, bytes] = {}
     package_root = root / module
     for path in sorted(package_root.rglob("*")):
-        if not path.is_file() or "__pycache__" in path.parts or path.suffix not in {".py", ".json"}:
+        if (
+            not path.is_file()
+            or "__pycache__" in path.parts
+            or path.suffix not in {".py", ".json"}
+            or path.name == "identity.json"
+        ):
+            # identity.json is generated metadata.  It must remain a sidecar:
+            # embedding its package/release digest in the Wheel would make the
+            # Wheel self-referential because the Wheel is payload.
             continue
         relative = path.relative_to(root).as_posix()
         files[relative] = path.read_bytes()
@@ -120,26 +128,70 @@ def _package_files(root: Path) -> dict[str, bytes]:
     return files
 
 
+def _canonical_payload_files(root: Path, module: str) -> dict[str, bytes]:
+    """Build the one payload map whose names are committed in files.sha256."""
+    generated_metadata = {"descriptor.json", "files.sha256", "expected.json", f"{module}/identity.json"}
+    files: dict[str, bytes] = {}
+    for path in sorted(root.rglob("*")):
+        if not path.is_file() or "__pycache__" in path.parts or path.suffix == ".pyc":
+            continue
+        relative = path.relative_to(root).as_posix()
+        if relative in generated_metadata or path.name == ".gitattributes":
+            continue
+        files[relative] = path.read_bytes()
+    return files
+
+
+def _manifest_names(manifest_bytes: bytes) -> tuple[str, ...]:
+    text = manifest_bytes.decode("utf-8")
+    names: list[str] = []
+    for line in text.splitlines(keepends=True):
+        if "  " not in line or not line.endswith("\n"):
+            raise ValueError("generated files.sha256 contains a malformed line")
+        name = line[:-1].split("  ", 1)[1]
+        if name in names:
+            raise ValueError("generated files.sha256 contains a duplicate path")
+        names.append(name)
+    return tuple(names)
+
+
 def rebuild(config: dict[str, str]) -> dict[str, object]:
     root = ROOT / "plugins" / config["folder"]
-    identity_path = root / config["module"] / "identity.json"
-    identity = json.loads(identity_path.read_text(encoding="utf-8"))
-    digest = digest_package(
-        {name: (root / name).read_bytes() for name in identity["identity_files"]},
-        config["plugin_id"],
-        "0.1.0",
-    )
-    identity["package_hash"] = digest.package_hash
-    identity["release_id"] = digest.release_id
+    module = config["module"]
+
+    # Build the installable Wheel before calculating identity.  The Wheel is a
+    # canonical payload member, but generated identity metadata is not embedded
+    # in it and therefore cannot create a hash fixed-point cycle.
+    wheel = _build_wheel(config, root)
+    canonical_files = _canonical_payload_files(root, module)
+    digest = digest_package(canonical_files, config["plugin_id"], "0.1.0")
+    manifest_names = _manifest_names(digest.files_sha256)
+    if set(manifest_names) != set(canonical_files):
+        raise ValueError("public SDK manifest does not describe the canonical payload map")
+    if any(name in manifest_names for name in {"descriptor.json", "files.sha256", f"{module}/identity.json"}):
+        raise ValueError("generated identity/descriptor metadata must remain outside the payload")
+    if wheel.relative_to(root).as_posix() not in manifest_names:
+        raise ValueError("installable Wheel is missing from the canonical payload")
+
+    identity_path = root / module / "identity.json"
+    identity = {
+        "schema": "provider-package-identity/v1",
+        "plugin_id": config["plugin_id"],
+        "version": "0.1.0",
+        "package_hash": digest.package_hash,
+        "release_id": digest.release_id,
+    }
     _write_json(identity_path, identity)
 
-    wheel = _build_wheel(config, root)
-    descriptor = json.loads((root / "descriptor.json").read_text(encoding="utf-8"))
+    descriptor_path = root / "descriptor.json"
+    descriptor = json.loads(descriptor_path.read_text(encoding="utf-8"))
     descriptor["provider"]["release_id"] = digest.release_id
-    _write_json(root / "descriptor.json", descriptor)
+    _write_json(descriptor_path, descriptor)
 
+    # package_files is only the physical bundle inventory used by the gate;
+    # files.sha256 is the sole canonical payload map.
     files = _package_files(root)
-    manifest_bytes = build_files_sha256(files)
+    manifest_bytes = digest.files_sha256
     (root / "files.sha256").write_bytes(manifest_bytes)
     package_files = sorted([*files, "files.sha256"], key=lambda name: name.encode("utf-8"))
     expected = {
@@ -147,22 +199,20 @@ def rebuild(config: dict[str, str]) -> dict[str, object]:
         "plugin_id": config["plugin_id"],
         "version": "0.1.0",
         "package_files": package_files,
-        "manifest_files": sorted(files, key=lambda name: name.encode("utf-8")),
-        "identity_files": sorted(identity["identity_files"], key=lambda name: name.encode("utf-8")),
         "files_sha256": manifest_bytes.decode("utf-8"),
+        "descriptor_sha256": _sha256(descriptor_path.read_bytes()),
         "package_hash": digest.package_hash,
         "release_id": digest.release_id,
         "wheel_path": wheel.relative_to(root).as_posix(),
-        "wheel_import": config["module"],
-        "input_schema_path": f"{config['module']}/schemas/input.schema.json",
-        "output_schema_path": f"{config['module']}/schemas/output.schema.json",
+        "wheel_import": module,
+        "input_schema_path": f"{module}/schemas/input.schema.json",
+        "output_schema_path": f"{module}/schemas/output.schema.json",
         "descriptor_path": "descriptor.json",
         "plugin_path": "plugin.json",
-        "schema_index_path": f"{config['module']}/schemas/index.json",
+        "schema_index_path": f"{module}/schemas/index.json",
     }
     _write_json(root / "expected.json", expected)
     return expected
-
 
 def main() -> None:
     for config in PROVIDERS:

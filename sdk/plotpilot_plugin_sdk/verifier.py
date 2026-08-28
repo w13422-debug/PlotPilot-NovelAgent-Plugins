@@ -13,7 +13,7 @@ import re
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Iterable, Mapping, Sequence
+from typing import Any, Callable, Iterable, Mapping, Sequence
 
 from jsonschema import Draft202012Validator, ValidationError
 
@@ -107,6 +107,11 @@ _CLAIM_INPUT_ATOM_FIELDS = (
     "payload_hash",
     "acceptance_ordinal",
     "evidence_spans",
+)
+AcceptedAtomSource = (
+    Mapping[str, Mapping[str, Any]]
+    | Sequence[Mapping[str, Any]]
+    | Callable[[str], Mapping[str, Any] | None]
 )
 
 
@@ -541,15 +546,14 @@ def verify_evidence_span(
             raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, "EvidenceSpan is outside its Node range")
 
 
-def verify_claim_input(
+def verify_claim_input_structure(
     claim_input: Mapping[str, Any],
     *,
     expected_source_revision_id: str | None = None,
-    accepted_atoms: Mapping[str, Mapping[str, Any]] | Sequence[Mapping[str, Any]] | None = None,
     canonical_text: str | None = None,
     expected_canonical_text_hash: str | None = None,
 ) -> None:
-    """Verify an immutable ordered Atom input Asset before a Claim run."""
+    """Verify only the closed structural/evidence shape of claim-input/v1."""
 
     if not isinstance(claim_input, Mapping):
         raise ContractValidationError("claim-input must be an object")
@@ -582,25 +586,89 @@ def verify_claim_input(
             if span["revision_id"] != claim_input["source_revision_id"]:
                 raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, "EvidenceSpan crosses the claim source Revision")
         atom_ids.append(atom["atom_id"])
-        if accepted_atoms is not None:
-            accepted: Mapping[str, Any] | None
-            if isinstance(accepted_atoms, Mapping):
-                accepted = accepted_atoms.get(atom["atom_id"])
-            else:
-                accepted = next((candidate for candidate in accepted_atoms if candidate.get("atom_id") == atom["atom_id"]), None)
-            if accepted is None:
-                raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, "claim-input Atom is not an accepted current Atom")
-            if accepted.get("current") is False or accepted.get("accepted") is False:
-                raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, "claim-input Atom is not current and accepted")
-            for field in ("payload_hash", "acceptance_ordinal"):
-                if field in accepted and accepted[field] != atom[field]:
-                    raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, f"claim-input {field} drifted from the accepted Atom")
-            if accepted.get("revision_id") is not None and accepted["revision_id"] != claim_input["source_revision_id"]:
-                raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, "accepted Atom belongs to another source Revision")
     _assert_unique(atom_ids, "claim-input Atom IDs must be unique")
 
 
-def build_claim_input_asset(source_revision_id: str, ordered_atoms: Sequence[Mapping[str, Any]]) -> tuple[bytes, str]:
+def _resolve_authoritative_atom(source: AcceptedAtomSource | None, atom_id: str) -> Mapping[str, Any]:
+    if source is None:
+        raise ContractValidationError("claim-input sealing requires authoritative Atom records")
+    candidate: Mapping[str, Any] | None
+    if callable(source):
+        candidate = source(atom_id)
+    elif isinstance(source, Mapping):
+        # A single authoritative Atom record is accepted for the one-record
+        # case; otherwise the mapping is keyed by exact atom_id.
+        if "atom_id" in source:
+            candidate = source
+        else:
+            raw = source.get(atom_id)
+            candidate = raw if isinstance(raw, Mapping) else None
+    else:
+        matches = [item for item in source if isinstance(item, Mapping) and item.get("atom_id") == atom_id]
+        if len(matches) > 1:
+            raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, "claim-input authority contains duplicate Atom records")
+        candidate = matches[0] if matches else None
+    if candidate is None:
+        raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, "claim-input Atom is not an authoritative current Atom")
+    return candidate
+
+
+def _verify_claim_input_authority(
+    claim_input: Mapping[str, Any],
+    accepted_atoms: AcceptedAtomSource | None,
+) -> None:
+    source_revision_id = claim_input["source_revision_id"]
+    for atom in claim_input["ordered_atoms"]:
+        authority = _resolve_authoritative_atom(accepted_atoms, atom["atom_id"])
+        required = ("atom_id", "payload_hash", "acceptance_ordinal", "current", "accepted")
+        missing = [field for field in required if field not in authority]
+        if missing:
+            raise ContractValidationError(f"authoritative Atom is missing required fields: {', '.join(missing)}")
+        _assert_id(authority["atom_id"], "authoritative Atom.atom_id")
+        _assert_hash_string(authority["payload_hash"], "authoritative Atom.payload_hash")
+        if authority["atom_id"] != atom["atom_id"]:
+            raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, "authoritative Atom ID does not match claim-input Atom")
+        if authority["current"] is not True or authority["accepted"] is not True:
+            raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, "claim-input Atom is not current and accepted")
+        acceptance_ordinal = authority["acceptance_ordinal"]
+        if isinstance(acceptance_ordinal, bool) or not isinstance(acceptance_ordinal, int) or acceptance_ordinal < 1:
+            raise ContractValidationError("authoritative Atom acceptance_ordinal must be a positive integer")
+        revisions = [authority[field] for field in ("revision_id", "source_revision_id") if field in authority]
+        if not revisions or any(not isinstance(revision, str) or revision != source_revision_id for revision in revisions):
+            raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, "authoritative Atom belongs to another source Revision")
+        if authority["payload_hash"] != atom["payload_hash"]:
+            raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, "claim-input payload_hash drifted from the authoritative Atom")
+        if acceptance_ordinal != atom["acceptance_ordinal"]:
+            raise ContractError(ErrorCode.RESULT_CONTRACT_MISMATCH, "claim-input acceptance_ordinal drifted from the authoritative Atom")
+
+
+def verify_claim_input(
+    claim_input: Mapping[str, Any],
+    *,
+    expected_source_revision_id: str | None = None,
+    accepted_atoms: AcceptedAtomSource | None = None,
+    canonical_text: str | None = None,
+    expected_canonical_text_hash: str | None = None,
+) -> None:
+    """Verify claim input for an authority-bearing Claim boundary."""
+
+    verify_claim_input_structure(
+        claim_input,
+        expected_source_revision_id=expected_source_revision_id,
+        canonical_text=canonical_text,
+        expected_canonical_text_hash=expected_canonical_text_hash,
+    )
+    _verify_claim_input_authority(claim_input, accepted_atoms)
+
+
+def build_claim_input_asset(
+    source_revision_id: str,
+    ordered_atoms: Sequence[Mapping[str, Any]],
+    *,
+    accepted_atoms: AcceptedAtomSource | None = None,
+    canonical_text: str | None = None,
+    expected_canonical_text_hash: str | None = None,
+) -> tuple[bytes, str]:
     """Build deterministic JCS bytes and its exact Asset hash."""
 
     value = {
@@ -608,7 +676,12 @@ def build_claim_input_asset(source_revision_id: str, ordered_atoms: Sequence[Map
         "source_revision_id": source_revision_id,
         "ordered_atoms": [copy.deepcopy(dict(atom)) for atom in ordered_atoms],
     }
-    verify_claim_input(value)
+    verify_claim_input(
+        value,
+        accepted_atoms=accepted_atoms,
+        canonical_text=canonical_text,
+        expected_canonical_text_hash=expected_canonical_text_hash,
+    )
     raw = canonical_bytes(value)
     return raw, sha256_hex(raw)
 
@@ -619,7 +692,7 @@ def verify_claim_input_asset(
     *,
     asset_id: str | None = None,
     expected_source_revision_id: str | None = None,
-    accepted_atoms: Mapping[str, Mapping[str, Any]] | Sequence[Mapping[str, Any]] | None = None,
+    accepted_atoms: AcceptedAtomSource | None = None,
     canonical_text: str | None = None,
     expected_canonical_text_hash: str | None = None,
 ) -> dict[str, Any]:

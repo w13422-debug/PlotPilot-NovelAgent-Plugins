@@ -12,6 +12,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -38,14 +39,14 @@ from plotpilot_plugin_sdk.verifier import (  # noqa: E402
 )
 BASELINE = "c1b9519c7d25ce1fbef07984cdb548c89e7e1152"
 BRANCH = "codex/nap-00-b0-g2"
-GENERATION_PARENT = "3cfd6619959c16d394655bda170557b96052e6c9"
+GENERATION_PARENT = "8aa250f46fbf7f3064d8d60cc848bce3a7d8e8a2"
 REJECTED_SOURCE = "db434847edb84ac337bb4e11d2a6f3a09912eb3b"
 REJECTED_EVIDENCE = "480d0f464b474ca2c62714803cd28f5c3595c045"
-FINDING_MANIFEST_PATH = "coordination/NAP-00/sol-b0-independent-review-v1.json"
-FINDING_MANIFEST_COMMIT = "3cfd6619959c16d394655bda170557b96052e6c9"
-FINDING_MANIFEST_SHA256 = "13d418ebc6096210b7c866da7fc4c1da2919f06185b2ef9666b9d69557da77cb"
-FINDING_MANIFEST_SIZE = 22433
-FINDING_MANIFEST_PRECOMMIT_WORKTREE_SHA256 = "432dbe4d36ed37fd09f737a621370fbb9ed56ed1389e031ca130e6b046765159"
+FINDING_MANIFEST_PATH = "coordination/NAP-00/sol-b0-g2-independent-review-v1.json"
+FINDING_MANIFEST_COMMIT = "8aa250f46fbf7f3064d8d60cc848bce3a7d8e8a2"
+FINDING_MANIFEST_SHA256 = "51ae0acacff613175c1c78afe33a198850e5a1e75217ad71c9e0cde73ffff139"
+FINDING_MANIFEST_SIZE = 12646
+FINDING_MANIFEST_PRECOMMIT_WORKTREE_SHA256 = "51ae0acacff613175c1c78afe33a198850e5a1e75217ad71c9e0cde73ffff139"
 ALLOWED_PREFIXES = (
     "contracts/",
     "sdk/",
@@ -191,7 +192,7 @@ def check_repository_identity(root: Path, identity: SourceIdentity, *, enforce_f
         else:
             if parents != [GENERATION_PARENT]:
                 failures.append(
-                    "Generation 2 source must be a single commit with the exact generation parent: "
+                    "Generation 2 remediation source must be a single commit with the exact frozen review parent: "
                     f"expected [{GENERATION_PARENT}], got {parents}"
                 )
         for rejected in (REJECTED_SOURCE, REJECTED_EVIDENCE):
@@ -304,6 +305,26 @@ def _read_lf_manifest(path: Path) -> bytes:
         raise ValueError(f"{path} must use LF and end with exactly one newline")
     data.decode("utf-8", "strict")
     return data
+
+
+_MANIFEST_LINE = re.compile(r"^([0-9a-f]{64})  ([^\r\n]+)\n$")
+
+
+def _manifest_paths(data: bytes) -> tuple[str, ...]:
+    """Parse the committed manifest; its paths are the only provider payload map."""
+    text = data.decode("utf-8", "strict")
+    paths: list[str] = []
+    for line in text.splitlines(keepends=True):
+        match = _MANIFEST_LINE.fullmatch(line)
+        if match is None:
+            raise ValueError("provider files.sha256 contains a malformed line")
+        relative = match.group(2)
+        if relative == "files.sha256" or relative in paths:
+            raise ValueError("provider files.sha256 contains a duplicate or self entry")
+        paths.append(relative)
+    if not paths:
+        raise ValueError("provider files.sha256 is empty")
+    return tuple(paths)
 
 
 def _valid_wheel(path: Path, *, import_module: str | None = None) -> bool:
@@ -534,32 +555,42 @@ def check_provider_descriptors(root: Path = ROOT) -> list[str]:
             files_bytes = _read_lf_manifest(files_path)
             if expected.get("files_sha256") != files_bytes.decode("utf-8"):
                 failures.append(f"{plugin_id} expected files.sha256 differs from the package manifest")
-            manifest_names = expected.get("manifest_files")
-            identity_names = expected.get("identity_files")
-            if (
-                not isinstance(manifest_names, list)
-                or not manifest_names
-                or any(not isinstance(path, str) for path in manifest_names)
-                or set(manifest_names) != set(package_files) - {"files.sha256"}
-            ):
-                raise ValueError("provider manifest_files does not cover the physical package")
-            if (
-                not isinstance(identity_names, list)
-                or not identity_names
-                or any(not isinstance(path, str) for path in identity_names)
-                or not set(identity_names) <= set(manifest_names)
-            ):
-                raise ValueError("provider identity_files is not a closed subset of manifest_files")
-            manifest_files = {path: package_files[path] for path in manifest_names}
-            identity_files = {path: package_files[path] for path in identity_names}
-            verify_package_manifest(manifest_files, files_bytes)
+            if "manifest_files" in expected or "identity_files" in expected:
+                raise ValueError("provider package must not publish alternate manifest or identity maps")
+            manifest_names = _manifest_paths(files_bytes)
+            module_name = folder.replace("-", "_")
+            identity_relative = f"{module_name}/identity.json"
+            generated_metadata = {"descriptor.json", "files.sha256", "expected.json", identity_relative}
+            if any(path in generated_metadata for path in manifest_names):
+                raise ValueError("generated provider metadata must remain outside the canonical payload")
+            wheel_relative = str(expected.get("wheel_path") or manifest["backend"]["wheel"])
+            if wheel_relative not in manifest_names:
+                raise ValueError("installable provider Wheel is absent from the canonical payload")
+            if identity_relative not in package_files:
+                raise ValueError("provider identity sidecar is missing from the package inventory")
+            if not isinstance(expected.get("descriptor_sha256"), str) or expected["descriptor_sha256"] != hashlib.sha256(descriptor_path.read_bytes()).hexdigest():
+                raise ValueError("provider descriptor bytes are not bound to expected metadata")
+            canonical_files = {path: package_files[path] for path in manifest_names}
+            verify_package_manifest(canonical_files, files_bytes)
             verify_manifest(manifest)
+            identity = _json(package_root / identity_relative)
+            if set(identity) != {"schema", "plugin_id", "version", "package_hash", "release_id"}:
+                raise ValueError("provider identity sidecar is not the closed canonical identity")
+            if (
+                identity.get("schema") != "provider-package-identity/v1"
+                or identity.get("plugin_id") != plugin_id
+                or identity.get("version") != manifest["version"]
+                or identity.get("package_hash") != expected["package_hash"]
+                or identity.get("release_id") != expected["release_id"]
+            ):
+                raise ValueError("provider sidecar identity differs from the canonical package identity")
             verify_package_identity(
-                identity_files,
+                canonical_files,
                 plugin_id,
                 manifest["version"],
                 expected["package_hash"],
                 expected["release_id"],
+                expected_files_sha256=files_bytes,
             )
             verify_capability_descriptor(
                 descriptor,
@@ -604,6 +635,10 @@ def check_provider_descriptors(root: Path = ROOT) -> list[str]:
             import_module = str(manifest["backend"]["entrypoint"]).split(":", 1)[0].split(".", 1)[0]
             if not _valid_wheel(wheel_path, import_module=import_module):
                 failures.append(f"{plugin_id} Wheel is not a legal importable py3-none-any Wheel")
+            else:
+                with zipfile.ZipFile(wheel_path) as archive:
+                    if f"{module_name}/identity.json" in archive.namelist():
+                        failures.append(f"{plugin_id} Wheel embeds self-referential identity metadata")
             for section, field in (("backend", "wheel"), ("backend", "requirements_lock"), ("backend", "wheelhouse"), ("storage", "migration_manifest")):
                 value = manifest[section][field]
                 referenced = package_root / value
