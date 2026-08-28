@@ -1,7 +1,7 @@
-"""Deterministic test ports for the Anthropic provider.
+"""Deterministic Anthropic transport and Core Host fixture.
 
-These objects are test-only transport/Host doubles.  They do not contain API
-keys, sockets, timers, random IDs, or a second contract schema.
+The fixture deliberately exposes mutation knobs for contract negative tests;
+it never opens a socket and never supplies caller-controlled credentials.
 """
 
 from __future__ import annotations
@@ -12,6 +12,8 @@ from dataclasses import dataclass, field
 import hashlib
 import json
 from typing import Any, Iterable, Mapping
+
+from plotpilot_plugin_sdk.canonical import canonical_bytes
 
 
 def _sha256(data: bytes) -> str:
@@ -41,7 +43,7 @@ class ScriptedTransport:
 
 @dataclass
 class MemoryHost:
-    """Small deterministic implementation of exactly the frozen Host needs."""
+    """A strict-enough fake Host with explicit response mutation hooks."""
 
     assets: dict[str, bytes] = field(default_factory=dict)
     uploads: dict[str, str] = field(default_factory=dict)
@@ -50,22 +52,37 @@ class MemoryHost:
     checkpoints: list[dict[str, Any]] = field(default_factory=list)
     job_events: list[dict[str, object]] = field(default_factory=list)
     completions: list[dict[str, object]] = field(default_factory=list)
+    core_stream_id: str = "stream-core-anthropic"
+    core_receipt_id: str = "receipt-core-anthropic"
+    core_checkpoint_ids: tuple[str, ...] = ("checkpoint-core-anthropic-1", "checkpoint-core-anthropic-2", "checkpoint-core-anthropic-3")
+    response_overrides: dict[str, dict[str, object]] = field(default_factory=dict)
+    response_drops: dict[str, set[str]] = field(default_factory=dict)
+    response_extras: dict[str, dict[str, object]] = field(default_factory=dict)
+    reject_methods: set[str] = field(default_factory=set)
 
     def seed_json_asset(self, value: Mapping[str, Any], asset_id: str = "request-asset") -> str:
-        data = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
-        self.assets[asset_id] = data
+        self.assets[asset_id] = canonical_bytes(dict(value))
         return asset_id
+
+    def _mutate(self, method: str, result: Mapping[str, object]) -> dict[str, object]:
+        if method in self.reject_methods:
+            raise AssertionError(f"deterministic Host rejection fixture: {method}")
+        value = dict(result)
+        value.update(self.response_overrides.get(method, {}))
+        for field_name in self.response_drops.get(method, set()):
+            value.pop(field_name, None)
+        value.update(self.response_extras.get(method, {}))
+        return value
 
     def call(self, method: str, params: Mapping[str, object]) -> Mapping[str, object]:
         value = dict(params)
         self.calls.append((method, value))
         if method == "host.asset.read/v1":
-            asset_id = str(value["asset_id"])
-            data = self.assets[asset_id]
+            data = self.assets[str(value["asset_id"])]
             offset = int(value.get("offset", 0))
             length = int(value.get("length", len(data)))
             chunk = data[offset:offset + length]
-            return {"base64_chunk": base64.b64encode(chunk).decode("ascii"), "next_offset": offset + len(chunk), "content_hash": _sha256(data)}
+            return self._mutate(method, {"base64_chunk": base64.b64encode(chunk).decode("ascii"), "next_offset": offset + len(chunk), "content_hash": _sha256(data)})
         if method == "host.asset.create/v1":
             data = base64.b64decode(str(value["base64_chunk"]), validate=True)
             expected = str(value["expected_hash"])
@@ -74,26 +91,28 @@ class MemoryHost:
             asset_id = f"asset-{expected[:20]}"
             self.assets[asset_id] = data
             self.uploads[str(value["upload_id"])] = asset_id
-            return {"upload_id": value["upload_id"], "accepted_bytes": len(data), "completed": True, "asset_id": asset_id}
+            return self._mutate(method, {"upload_id": value["upload_id"], "accepted_bytes": len(data), "completed": True, "asset_id": asset_id})
         if method == "host.asset.upload.status/v1":
             asset_id = self.uploads[str(value["upload_id"])]
-            return {"accepted_bytes": len(self.assets[asset_id]), "completed": True, "asset_id": asset_id}
+            return self._mutate(method, {"accepted_bytes": len(self.assets[asset_id]), "completed": True, "asset_id": asset_id})
         if method == "host.stream.commit/v1":
             asset_id = str(value["stream_prefix_asset_id"])
             data = self.assets[asset_id]
             seq = len(self.stream_prefixes) + 1
             record = {"asset_id": asset_id, "prefix_seq": seq, "prefix_hash": _sha256(data), "byte_length": len(data)}
             self.stream_prefixes.append(record)
-            return {"accepted": True, "stream_id": "mock-stream-anthropic", "acked_prefix_seq": seq, "acked_bytes": len(data), "acked_prefix_hash": record["prefix_hash"], "job_event_seq": len(self.calls)}
+            return self._mutate(method, {"accepted": True, "stream_id": self.core_stream_id, "acked_prefix_seq": seq, "acked_bytes": len(data), "acked_prefix_hash": record["prefix_hash"], "job_event_seq": len(self.calls)})
         if method == "host.checkpoint.commit/v1":
             asset_id = str(value["checkpoint_asset_id"])
             checkpoint = json.loads(self.assets[asset_id].decode("utf-8"))
             self.checkpoints.append(checkpoint)
-            return {"accepted": True, "checkpoint_id": checkpoint["checkpoint_id"], "completed_units": checkpoint["completed_units"], "total_units": checkpoint["total_units"], "job_event_seq": len(self.calls)}
+            seq = int(checkpoint["checkpoint_seq"])
+            checkpoint_id = self.core_checkpoint_ids[seq - 1] if seq <= len(self.core_checkpoint_ids) else checkpoint["checkpoint_id"]
+            return self._mutate(method, {"accepted": True, "checkpoint_id": checkpoint_id, "completed_units": checkpoint["completed_units"], "total_units": checkpoint["total_units"], "job_event_seq": len(self.calls)})
         if method == "host.job.event/v1":
             self.job_events.append(value)
-            return {"accepted": True, "job_event_seq": len(self.calls)}
+            return self._mutate(method, {"accepted": True, "job_event_seq": len(self.calls)})
         if method == "host.job.complete/v1":
             self.completions.append(value)
-            return {"accepted": True, "attempt_state": value["outcome"], "step_state": value["outcome"], "job_state": value["outcome"], "provenance_receipt_id": f"receipt-{str(value['operation_key'])[:20]}", "job_event_seq": len(self.calls), "core_event_high_water": len(self.calls)}
+            return self._mutate(method, {"accepted": True, "attempt_state": value["outcome"], "step_state": value["outcome"], "job_state": value["outcome"], "provenance_receipt_id": self.core_receipt_id, "job_event_seq": len(self.calls), "core_event_high_water": len(self.calls)})
         raise AssertionError(f"unexpected Host method: {method}")

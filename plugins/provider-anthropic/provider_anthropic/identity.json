@@ -1,0 +1,22 @@
+{
+  "schema": "provider-package-identity/v1",
+  "plugin_id": "com.plotpilot.novelagent.provider-anthropic",
+  "version": "0.1.0",
+  "package_hash": "2771aaca6a74abf266050d1b0675fdddfb34a6c0c0f86d3b4b3f569a7cff4b79",
+  "release_id": "3425ec5086efc7667735cd66828e49bf4dd15282dd549035f46270da25ecf6b8",
+  "identity_files": [
+    "backend/requirements.lock",
+    "backend/wheels/README.txt",
+    "migrations/manifest.json",
+    "plugin.json",
+    "provider_anthropic/__init__.py",
+    "provider_anthropic/contract.py",
+    "provider_anthropic/mock.py",
+    "provider_anthropic/package_identity.py",
+    "provider_anthropic/provider.py",
+    "provider_anthropic/schemas/index.json",
+    "provider_anthropic/schemas/input.schema.json",
+    "provider_anthropic/schemas/output.schema.json",
+    "pyproject.toml"
+  ]
+}

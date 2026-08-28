@@ -1,0 +1,17 @@
+{
+  "schema": "provider-schema-index/v1",
+  "plugin_id": "com.plotpilot.novelagent.provider-anthropic",
+  "capability_id": "model.provider.anthropic.invoke/v1",
+  "schemas": [
+    {
+      "schema_id": "model.provider.anthropic.invoke-request/v1",
+      "path": "schemas/input.schema.json",
+      "sha256": "f40caaffefa85fec1624b59a9fb1efa17493189937773e3079a79142bd7cdd0b"
+    },
+    {
+      "schema_id": "model.provider.anthropic.invoke-result/v1",
+      "path": "schemas/output.schema.json",
+      "sha256": "be6067402b16e6a762d5b97f60813155d7c769381807ebbb5edc4ac4105c56dd"
+    }
+  ]
+}

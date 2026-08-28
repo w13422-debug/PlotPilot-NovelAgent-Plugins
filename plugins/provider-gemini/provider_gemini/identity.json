@@ -1,0 +1,22 @@
+{
+  "schema": "provider-package-identity/v1",
+  "plugin_id": "com.plotpilot.novelagent.provider-gemini",
+  "version": "0.1.0",
+  "package_hash": "012814974aad2aea19ae89832091cc4ad66d929809fb24fac699b9be3e6ea3a5",
+  "release_id": "83ba1bfe9f3696c5bd783653af9296ed0a5a4aecc79ae47c93a140559a8cb4d5",
+  "identity_files": [
+    "backend/requirements.lock",
+    "backend/wheels/README.txt",
+    "migrations/manifest.json",
+    "plugin.json",
+    "provider_gemini/__init__.py",
+    "provider_gemini/contract.py",
+    "provider_gemini/mock.py",
+    "provider_gemini/package_identity.py",
+    "provider_gemini/provider.py",
+    "provider_gemini/schemas/index.json",
+    "provider_gemini/schemas/input.schema.json",
+    "provider_gemini/schemas/output.schema.json",
+    "pyproject.toml"
+  ]
+}

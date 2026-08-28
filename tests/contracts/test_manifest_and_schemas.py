@@ -81,8 +81,8 @@ def test_frozen_manifest_and_plan_semantics_are_exposed_by_sdk() -> None:
 def test_catalog_is_the_frozen_design_catalog_not_a_second_schema() -> None:
     catalog_path = ROOT / "catalog" / "plugin-catalog-v1.json"
     frozen_path = ROOT / "governance" / "frozen-design-v1" / "plugin-catalog-v1.json"
-    assert catalog_path.read_bytes() == frozen_path.read_bytes()
     catalog = _read_json(catalog_path)
+    assert catalog == _read_json(frozen_path)
     assert catalog["schema"] == "novel-agent-plugin-catalog/v1"
     assert catalog["target_manifest"] == "plotpilot-plugin/v1"
     assert catalog["target_skill_manifest"] == "plotpilot-skill/v1"

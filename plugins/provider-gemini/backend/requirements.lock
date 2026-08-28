@@ -1,0 +1,3 @@
+# Public PlotPilot SDK is supplied by the Core host; provider validation is fail-closed.
+jsonschema==4.26.0
+rfc8785==0.1.4

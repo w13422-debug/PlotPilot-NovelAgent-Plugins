@@ -155,7 +155,7 @@ console.log(JSON.stringify({
 '''
     result = _node("--experimental-strip-types", "--input-type=module", "--eval", script)
     assert json.loads(result.stdout) == {
-        "code_package_hash": "9577ff6df8742c8f54b922e3ccdb2348f250336ca4246ca58153201aa4fb5590",
+        "code_package_hash": "8114aadd4763a975ed3070c715128c92d36345d2e3ae8a1b70c5e2c4b3e84c26",
         "data_package_hash": "28f55a1a08e23bfd650ffab1c1c072559ef8237300566cba1ee00f03a4edfe6d",
         "skill_package_hash": "69574c04055f92f3e94136b0ecbf3abe1e16f719e61c81a9a4af7e798f56394a",
         "code_result_bundle": "nap00-demo-code-bundle",
