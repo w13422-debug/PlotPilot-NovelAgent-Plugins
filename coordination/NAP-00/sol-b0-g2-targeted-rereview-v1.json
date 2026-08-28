@@ -1,0 +1,124 @@
+{
+  "schema": "nap-b0-g2-targeted-rereview/v1",
+  "reviewed_at": "2026-08-28T11:09:34.4883137+08:00",
+  "reviewer": {
+    "agent_id": "01a045f1-b0a7-7283-9dae-b548d1a1df58",
+    "nickname": "Hegel",
+    "model": "gpt-5.6-sol",
+    "reasoning_effort": "max",
+    "same_reviewer_as_initial": true,
+    "mode": "finding-scoped-read-only-targeted-rereview",
+    "submission_id": "01a0464a-5f4f-7a83-adb3-130254877903"
+  },
+  "scope": {
+    "frozen_finding_ids": [
+      "NAP-B0-G2-F-001",
+      "NAP-B0-G2-F-002",
+      "NAP-B0-G2-F-003",
+      "NAP-B0-G2-F-004",
+      "NAP-B0-G2-F-005"
+    ],
+    "new_or_expanded_findings_forbidden": true,
+    "full_aj_rereview_performed": false
+  },
+  "identity": {
+    "branch": "codex/nap-00-b0-g2",
+    "frozen_manifest": {
+      "commit": "8aa250f46fbf7f3064d8d60cc848bce3a7d8e8a2",
+      "tree": "96a26c7dba8e70b839a651f6fd8ed2d33b279043",
+      "path": "coordination/NAP-00/sol-b0-g2-independent-review-v1.json",
+      "blob_oid": "8d8c545af9b6d6012dd7b08cad2f7f11e3b8bd06",
+      "bytes": 12646,
+      "sha256": "51ae0acacff613175c1c78afe33a198850e5a1e75217ad71c9e0cde73ffff139",
+      "unchanged_through_evidence_commit": true
+    },
+    "remediation_source": {
+      "commit": "87f2ee7cdcf5181fe731f53d18b30c97db9f15ad",
+      "tree": "12fe0ef120861eeca31527a5a52560c65e5435e7",
+      "sole_parent": "8aa250f46fbf7f3064d8d60cc848bce3a7d8e8a2",
+      "path_count": 31,
+      "evidence_path_count": 0
+    },
+    "remediation_evidence": {
+      "commit": "ef353b2522ab404197d9fe49754df07f48960a57",
+      "tree": "0d72b316b14bccfeef24cea83a39a70a452d2c19",
+      "sole_parent": "87f2ee7cdcf5181fe731f53d18b30c97db9f15ad",
+      "path_count": 2,
+      "machine_evidence_sha256": "91cba9c5df56563bdd8a4e7e11e5aba21f89aa13a434dfea824216fb40b72534"
+    },
+    "controller_report": {
+      "path": "b0-generation-2-remediation-controller-validation-v1.json",
+      "sha256": "7a7c92a23b0e71e126830352f37aa2b0a81ce6f1a3599ea7971a585b8db752f5"
+    },
+    "fresh_checkout": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-validation\\B0-G2-remediation-controller-87f2ee7-20260828-104711"
+  },
+  "finding_closure": [
+    {
+      "id": "NAP-B0-G2-F-001",
+      "status": "CLOSED",
+      "source_evidence": [
+        "sdk/typescript/verifier.ts:55-59,426-452,768-851",
+        "sdk/plotpilot_plugin_sdk/verifier.py:905-1009,1290-1327"
+      ],
+      "test_evidence": "tests/contracts/test_g2_findings_f001_f003.py:70-354; directed suite 23 passed in 2.39s; independent TypeScript negative probes PASS",
+      "rationale": "Python and TypeScript now enforce Result/Attempt snapshot fences, Bundle/item Skill anchors, no stream-backed Result references, unique incomplete-stream targets, and fail-closed Plan catalog/interpreter context parity."
+    },
+    {
+      "id": "NAP-B0-G2-F-002",
+      "status": "CLOSED",
+      "source_evidence": [
+        "sdk/typescript/canonical.ts:8-47",
+        "sdk/plotpilot_plugin_sdk/canonical.py:27-83"
+      ],
+      "test_evidence": "tests/contracts/canonical_unicode_vectors.json:1-59 and tests/contracts/test_g2_findings_f001_f003.py:356-412; included in directed 23 passed; independent surrogate probes PASS",
+      "rationale": "Both runtimes reject lone surrogate values and keys before UTF-8 identity generation while accepting equivalent valid astral input with identical canonical bytes."
+    },
+    {
+      "id": "NAP-B0-G2-F-003",
+      "status": "CLOSED",
+      "source_evidence": [
+        "sdk/plotpilot_plugin_sdk/verifier.py:549-726",
+        "sdk/typescript/verifier.ts:619-708"
+      ],
+      "test_evidence": "tests/contracts/test_g2_findings_f001_f003.py:455-506; included in directed 23 passed; independent missing/invalid authority probes PASS",
+      "rationale": "Structural Claim parsing is separated from sealing; every sealing path requires exact current and accepted Atom authority including flags, hashes, ordinal and Revision."
+    },
+    {
+      "id": "NAP-B0-G2-F-004",
+      "status": "CLOSED",
+      "source_evidence": [
+        "plugins/provider-anthropic/provider_anthropic/package_identity.py:53-132",
+        "plugins/provider-gemini/provider_gemini/package_identity.py:53-132",
+        "tools/integration/validate_b0_delivery.py:558-600",
+        "plugins/provider-anthropic/provider_anthropic/provider.py:535",
+        "plugins/provider-gemini/provider_gemini/provider.py:551"
+      ],
+      "test_evidence": "tests/providers/test_provider_contracts.py:331-418; descriptor mutation PASS; official source gate status=ok; independent 14/14 payload mutation and identity recomputation PASS",
+      "rationale": "The committed files.sha256 payload map is the sole package identity authority, includes Wheel and all 14 canonical payload files, and closes descriptor/release tampering without a second map."
+    },
+    {
+      "id": "NAP-B0-G2-F-005",
+      "status": "CLOSED",
+      "source_evidence": [
+        "plugins/provider-anthropic/provider_anthropic/provider.py:260-365",
+        "plugins/provider-gemini/provider_gemini/provider.py:260-365",
+        "plugins/provider-anthropic/provider_anthropic/mock.py:62-106",
+        "plugins/provider-gemini/provider_gemini/mock.py:56-100"
+      ],
+      "test_evidence": "tests/providers/test_provider_contracts.py:422-469; valid null EOF, multipage and skipped/backward/bad-hash/premature-null/non-progress/trailing cases all PASS within directed 23 passed",
+      "rationale": "Both providers now read contiguous pages, verify every page hash and offset, and terminate only on the Core-compliant next_offset=null EOF contract."
+    }
+  ],
+  "result": {
+    "verdict": "PASS",
+    "manifest_frozen": true,
+    "new_findings": [],
+    "closed_count": 5,
+    "open_count": 0,
+    "open_ids": [],
+    "all_findings_closed": true,
+    "b0_acceptance_eligible": true,
+    "release_NAP_01_eligible": true,
+    "review_worktrees_clean": true
+  }
+}

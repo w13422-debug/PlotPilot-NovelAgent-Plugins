@@ -1,0 +1,131 @@
+{
+  "schema": "nap-b0-g2-remediation-evidence/v1",
+  "generation_id": "NAP-B0-G2-20260828",
+  "status": "candidate_ready_for_same_sol_targeted_rereview",
+  "generated_at": "2026-08-28T10:48:25.0510299+08:00",
+  "frozen_manifest": {
+    "path": "coordination/NAP-00/sol-b0-g2-independent-review-v1.json",
+    "commit": "8aa250f46fbf7f3064d8d60cc848bce3a7d8e8a2",
+    "tree": "96a26c7dba8e70b839a651f6fd8ed2d33b279043",
+    "blob_oid": "8d8c545af9b6d6012dd7b08cad2f7f11e3b8bd06",
+    "sha256": "51ae0acacff613175c1c78afe33a198850e5a1e75217ad71c9e0cde73ffff139",
+    "byte_length": 12646,
+    "finding_ids": [
+      "NAP-B0-G2-F-001",
+      "NAP-B0-G2-F-002",
+      "NAP-B0-G2-F-003",
+      "NAP-B0-G2-F-004",
+      "NAP-B0-G2-F-005"
+    ],
+    "unchanged": true
+  },
+  "remediation_source": {
+    "branch": "codex/nap-00-b0-g2",
+    "parent": "8aa250f46fbf7f3064d8d60cc848bce3a7d8e8a2",
+    "head": "87f2ee7cdcf5181fe731f53d18b30c97db9f15ad",
+    "tree": "12fe0ef120861eeca31527a5a52560c65e5435e7",
+    "source_commit_changed_path_count": 31,
+    "source_commit_bad_path_count": 0,
+    "source_commit_evidence_path_count": 0,
+    "baseline_head": "c1b9519c7d25ce1fbef07984cdb548c89e7e1152",
+    "baseline_diff_path_count": 244,
+    "worktree_clean_after_source_commit": true
+  },
+  "finding_implementation": [
+    {
+      "id": "NAP-B0-G2-F-001",
+      "status": "implemented_self_test_only",
+      "summary": "TypeScript Result/Attempt snapshot and Skill anchors now mirror Python; incomplete-stream target uniqueness and all catalog/interpreter context combinations fail closed with differential coverage."
+    },
+    {
+      "id": "NAP-B0-G2-F-002",
+      "status": "implemented_self_test_only",
+      "summary": "TypeScript canonical/JCS recursively rejects unpaired surrogates in keys and values; shared Python/TypeScript Unicode vectors enforce identical accepted bytes and hashes."
+    },
+    {
+      "id": "NAP-B0-G2-F-003",
+      "status": "implemented_self_test_only",
+      "summary": "Claim sealing is separated from structural parsing and requires exact current+accepted Atom authority including payload, ordinal and source Revision equality."
+    },
+    {
+      "id": "NAP-B0-G2-F-004",
+      "status": "implemented_self_test_only",
+      "summary": "files.sha256 is the single canonical provider payload map passed unchanged to public digest_package; Wheel is included and generated identity/descriptor metadata is outside the non-self-referential payload."
+    },
+    {
+      "id": "NAP-B0-G2-F-005",
+      "status": "implemented_self_test_only",
+      "summary": "Both providers perform contiguous multi-page Asset reads, require per-page hashes and contract-correct next_offset=null EOF, with matching deterministic mocks and negative tests."
+    }
+  ],
+  "provider_identities": [
+    {
+      "plugin_id": "com.plotpilot.novelagent.provider-anthropic",
+      "package_hash": "3af82724299f861b3e7a962bdd19dff08cb31c25e8bd59f64b04cc167172fdb0",
+      "release_id": "4b97d23bdbe98d6b203c14889dca3ec94eef207a648190d22fc816599cfd3ad2",
+      "canonical_manifest_file_count": 14
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.provider-gemini",
+      "package_hash": "68a5bff01ab52550190644490c3cd717b17a77462b16941f4a7b7fe05a657726",
+      "release_id": "9ea791d0268435d7353e972962d84d9c8cf1b3c9f927ed5448cd83c0a175c48c",
+      "canonical_manifest_file_count": 14
+    }
+  ],
+  "validation": [
+    {
+      "id": "sdk-worker-contracts",
+      "result": "33 passed in 9.05s",
+      "exit_code": 0
+    },
+    {
+      "id": "provider-worker-suite",
+      "result": "66 passed in 7.17s",
+      "exit_code": 0
+    },
+    {
+      "id": "controller-precommit-integrated",
+      "command": "python -B -m pytest -q -p no:cacheprovider tests/contracts tests/providers tests/e2e with two commit-dependent tests deselected",
+      "result": "124 passed, 2 deselected in 23.87s",
+      "exit_code": 0
+    },
+    {
+      "id": "controller-integrated-build-checks",
+      "result": "locked TypeScript typecheck PASS; compileall PASS; deterministic provider rebuild difference count 0",
+      "exit_code": 0
+    },
+    {
+      "id": "controller-postcommit-full",
+      "command": "python -B -m pytest -q -p no:cacheprovider tests/contracts tests/providers tests/e2e",
+      "result": "126 passed in 28.52s",
+      "exit_code": 0
+    },
+    {
+      "id": "controller-exact-source-gate",
+      "command": "validate_b0_delivery.py --baseline-head c1b9519... --expected-head 87f2ee7... --expected-tree 12fe0ef... --branch codex/nap-00-b0-g2",
+      "result": "status=ok; exit 0",
+      "exit_code": 0
+    },
+    {
+      "id": "fresh-autocrlf-validation",
+      "checkout": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-validation\\B0-G2-remediation-controller-87f2ee7-20260828-104711",
+      "core_autocrlf": true,
+      "source_head": "87f2ee7cdcf5181fe731f53d18b30c97db9f15ad",
+      "source_tree": "12fe0ef120861eeca31527a5a52560c65e5435e7",
+      "gate": "status=ok; exit 0",
+      "pytest": "126 passed in 29.84s",
+      "compileall": "exit 0",
+      "clean_before": true,
+      "clean_after": true
+    }
+  ],
+  "review_gate": {
+    "reviewer_agent_id": "01a045f1-b0a7-7283-9dae-b548d1a1df58",
+    "reviewer_nickname": "Hegel",
+    "mode": "same-reviewer finding-scoped targeted rereview",
+    "new_findings_forbidden": true,
+    "status": "pending",
+    "b0_acceptance_eligible": false,
+    "release_NAP_01_eligible": false
+  }
+}

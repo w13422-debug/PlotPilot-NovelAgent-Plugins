@@ -1,0 +1,90 @@
+{
+  "schema": "nap-b0-generation-2-acceptance/v1",
+  "generation_id": "NAP-B0-G2-20260828",
+  "accepted_at": "2026-08-28T11:13:07.4372377+08:00",
+  "verdict": "PASS",
+  "scope": "NAP-00 B0 public contracts, SDK, package golden/demo artifacts and Anthropic/Gemini provider parity",
+  "frozen_manifest": {
+    "commit": "8aa250f46fbf7f3064d8d60cc848bce3a7d8e8a2",
+    "tree": "96a26c7dba8e70b839a651f6fd8ed2d33b279043",
+    "blob_oid": "8d8c545af9b6d6012dd7b08cad2f7f11e3b8bd06",
+    "sha256": "51ae0acacff613175c1c78afe33a198850e5a1e75217ad71c9e0cde73ffff139",
+    "finding_ids": [
+      "NAP-B0-G2-F-001",
+      "NAP-B0-G2-F-002",
+      "NAP-B0-G2-F-003",
+      "NAP-B0-G2-F-004",
+      "NAP-B0-G2-F-005"
+    ],
+    "manifest_frozen": true
+  },
+  "accepted_source": {
+    "branch": "codex/nap-00-b0-g2",
+    "commit": "87f2ee7cdcf5181fe731f53d18b30c97db9f15ad",
+    "tree": "12fe0ef120861eeca31527a5a52560c65e5435e7",
+    "sole_parent": "8aa250f46fbf7f3064d8d60cc848bce3a7d8e8a2",
+    "path_count": 31,
+    "evidence_path_count": 0
+  },
+  "evidence_only_commit": {
+    "commit": "ef353b2522ab404197d9fe49754df07f48960a57",
+    "tree": "0d72b316b14bccfeef24cea83a39a70a452d2c19",
+    "sole_parent": "87f2ee7cdcf5181fe731f53d18b30c97db9f15ad",
+    "merged_as_source": false,
+    "machine_evidence_sha256": "91cba9c5df56563bdd8a4e7e11e5aba21f89aa13a434dfea824216fb40b72534",
+    "delivery_note_sha256": "95e5e05b7010f6acf1a3b44c78fb8a71334e33f2a05f07af5d03980bce4405c1"
+  },
+  "controller_validation": {
+    "path": "b0-generation-2-remediation-controller-validation-v1.json",
+    "sha256": "7a7c92a23b0e71e126830352f37aa2b0a81ce6f1a3599ea7971a585b8db752f5",
+    "source_gate": "status=ok; exit 0",
+    "full_regression": "126 passed",
+    "locked_typescript": "PASS",
+    "compileall": "PASS",
+    "deterministic_provider_rebuild": "0 differences",
+    "fresh_checkout": "core.autocrlf=true; gate PASS; 126 passed; compileall PASS; clean before and after"
+  },
+  "same_sol_targeted_rereview": {
+    "reviewer_agent_id": "01a045f1-b0a7-7283-9dae-b548d1a1df58",
+    "nickname": "Hegel",
+    "model": "gpt-5.6-sol",
+    "reasoning_effort": "max",
+    "path": "sol-b0-g2-targeted-rereview-v1.json",
+    "sha256": "049924a5de39f424030da31cf01fec6d64944cff0db5724d27fbdfe4675d65f4",
+    "verdict": "PASS",
+    "closed_count": 5,
+    "open_count": 0,
+    "new_findings": [],
+    "all_findings_closed": true
+  },
+  "integration": {
+    "repository": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins",
+    "branch": "codex/nap-00-integration",
+    "method": "no-ff merge of exact Sol-PASS source HEAD",
+    "merge_commit": "3afe8ab67c752fffd0724565961e1830a1728f0b",
+    "merge_tree": "12fe0ef120861eeca31527a5a52560c65e5435e7",
+    "parents": [
+      "3cfd6619959c16d394655bda170557b96052e6c9",
+      "87f2ee7cdcf5181fe731f53d18b30c97db9f15ad"
+    ],
+    "tree_equals_accepted_source_tree": true,
+    "rejected_g1_anchor": "480d0f464b474ca2c62714803cd28f5c3595c045",
+    "rejected_g1_source_is_ancestor": false,
+    "rejected_g1_evidence_is_ancestor": false,
+    "worktree_clean_after_merge": true
+  },
+  "gate_result": {
+    "b0_acceptance_eligible": true,
+    "b0_accepted": true,
+    "release_NAP_01_eligible": true,
+    "release_NAP_01": true,
+    "next_batch": "B1",
+    "next_owner": "NAP-01"
+  },
+  "boundaries": {
+    "plotpilot_core_modified": false,
+    "novel_agent_donor_modified": false,
+    "windows_final_product_built": false,
+    "second_g2_remediation_used": false
+  }
+}
