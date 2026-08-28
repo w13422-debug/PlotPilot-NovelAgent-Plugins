@@ -1,0 +1,166 @@
+{
+  "schema": "nap-b0-g2-finding-manifest/v1",
+  "reviewer_agent_id": "01a045f1-b0a7-7283-9dae-b548d1a1df58",
+  "reviewer_nickname": "Hegel",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "max",
+  "review_scope": "fresh full A-J B0 Generation 2 review",
+  "status": "completed",
+  "verdict": "BLOCK",
+  "all_findings_closed": false,
+  "b0_acceptance_eligible": false,
+  "release_NAP_01_eligible": false,
+  "manifest_frozen": true,
+  "identities": {
+    "branch": "codex/nap-00-b0-g2",
+    "baseline_head": "c1b9519c7d25ce1fbef07984cdb548c89e7e1152",
+    "generation_parent": "3cfd6619959c16d394655bda170557b96052e6c9",
+    "source_head": "eae0b7a4b58a94ae9a5a78ca9b20349fee65217c",
+    "source_tree": "ac421d0e680e5387ba6cd1059c6f3b029b80808d",
+    "source_commit_path_count": 62,
+    "evidence_head": "2af60789f8899c9e1d5b926a28fd31533b0bdf19",
+    "evidence_tree": "4c8c0bbd939c5256c0673a8e3d7f649cd4982dc8",
+    "evidence_commit_path_count": 2,
+    "rejected_g1_source_is_ancestor": false,
+    "rejected_g1_evidence_is_ancestor": false,
+    "historical_manifest_blob_oid": "75be4d5a52f4ed60b2901df329e7b72236887ff6",
+    "historical_manifest_sha256": "13d418ebc6096210b7c866da7fc4c1da2919f06185b2ef9666b9d69557da77cb",
+    "worktrees_clean_before_and_after": true
+  },
+  "axes": {
+    "A": "BLOCK",
+    "B": "BLOCK",
+    "C": "BLOCK",
+    "D": "BLOCK",
+    "E": "BLOCK",
+    "F": "BLOCK",
+    "G": "PASS",
+    "H": "BLOCK",
+    "I": "BLOCK",
+    "J": "PASS"
+  },
+  "independent_commands": {
+    "source_path_count": 62,
+    "rejected_ancestry_exit_codes": [
+      1,
+      1
+    ],
+    "delivery_gate": "status=ok; exit 0",
+    "pytest": "107 passed in 26.65s",
+    "typescript_typecheck": "exit 0",
+    "diff_check": "parent-to-source and source-to-evidence exit 0",
+    "final_git_status": "clean"
+  },
+  "finding_count": 5,
+  "severity_counts": {
+    "P0": 0,
+    "P1": 5,
+    "P2": 0
+  },
+  "findings": [
+    {
+      "id": "NAP-B0-G2-F-001",
+      "severity": "P1",
+      "status": "open",
+      "scope": [
+        "B",
+        "D",
+        "E",
+        "I"
+      ],
+      "locations": [
+        "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-00-B0-G2\\sdk\\typescript\\verifier.ts:400-427",
+        "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-00-B0-G2\\sdk\\typescript\\verifier.ts:704-739",
+        "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-00-B0-G2\\sdk\\plotpilot_plugin_sdk\\verifier.py:832-937",
+        "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-00-B0-G2\\sdk\\plotpilot_plugin_sdk\\verifier.py:1217-1254"
+      ],
+      "evidence": "TypeScript verifyResultProfile has no snapshot-hash argument and does not validate skill_chain_result_refs against the current Bundle/item set; verifyAttemptResult cannot forward those fences. A schema-valid bundle with input_snapshot_hash changed to 64 zeroes and a foreign Bundle/item Skill reference was accepted by TypeScript while Python rejected it. Separately, an empty-data-binding Plan supplied with catalog but no interpreter map was accepted by TypeScript and rejected by Python.",
+      "impact": "TypeScript clients can accept cross-RunSnapshot results, foreign Skill anchors, or partially validated Plans that the Python/Core path rejects, breaking the required language-independent contract boundary.",
+      "required_fix": "Mirror the Python Result/Attempt context parameters and checks in TypeScript, including snapshot hash, Bundle/item Skill anchors and incomplete-stream target uniqueness; make partial catalog/interpreter validation context fail closed regardless of data-binding count.",
+      "acceptance_test": "Add directed Python/TypeScript differential cases for wrong snapshot hash, foreign/stream-backed Skill refs, duplicate incomplete-stream targets, and every catalog/interpreter argument combination for both empty and populated data_bindings."
+    },
+    {
+      "id": "NAP-B0-G2-F-002",
+      "severity": "P1",
+      "status": "open",
+      "scope": [
+        "B",
+        "C",
+        "I"
+      ],
+      "locations": [
+        "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-00-B0-G2\\sdk\\typescript\\canonical.ts:3-24",
+        "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-00-B0-G2\\sdk\\plotpilot_plugin_sdk\\canonical.py:38-43"
+      ],
+      "evidence": "TypeScript canonicalJson accepted an isolated UTF-16 high surrogate and hashJcs produced 2764166cc09846a6d36d61cd7270fbc396b08c4ba662854319ee99d193183438. Python rfc8785 rejected the identical logical value with ContractValidationError. TextEncoder silently substitutes malformed surrogate input rather than failing closed.",
+      "impact": "The same malformed JSON value can be rejected in Python but assigned a package/request/receipt hash in TypeScript, creating split identities and violating RFC 8785 parity.",
+      "required_fix": "Reject unpaired high or low surrogates in every TypeScript string and object key before canonical serialization or UTF-8 encoding.",
+      "acceptance_test": "Add shared vectors for lone high/low surrogates in values and keys, valid surrogate pairs and ordinary astral characters; Python and TypeScript must make identical accept/reject decisions and produce identical bytes/hashes for accepted vectors."
+    },
+    {
+      "id": "NAP-B0-G2-F-003",
+      "severity": "P1",
+      "status": "open",
+      "scope": [
+        "E",
+        "I"
+      ],
+      "locations": [
+        "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-00-B0-G2\\sdk\\plotpilot_plugin_sdk\\verifier.py:544-653",
+        "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-00-B0-G2\\sdk\\typescript\\verifier.ts:593-644",
+        "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-00-B0-G2\\governance\\frozen-design-v1\\Novel-Agent功能插件化吸收正式设计-2026-08-27-v1.md:59",
+        "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-00-B0-G2\\governance\\frozen-design-v1\\Novel-Agent功能插件化吸收正式设计-2026-08-27-v1.md:153-154"
+      ],
+      "evidence": "Both SDKs accept claim-input when accepted_atoms/acceptedAtoms is absent. They also accept an authority record that omits both current and accepted because only explicit false is rejected. Both buildClaimInputAsset implementations call verification without any authority input.",
+      "impact": "A rejected, superseded or otherwise non-current Atom can be deterministically sealed into the parameters Asset and RunSnapshot, so a Layer B Claim need not reverse-link to a current accepted Atom as frozen design requires.",
+      "required_fix": "Require an authoritative Atom set/resolver for Claim sealing and require current===true, accepted===true plus exact atom_id, payload_hash, acceptance_ordinal and source revision equality. Keep any purely structural parser explicitly separate from the authority-sealing API.",
+      "acceptance_test": "Reject absent authority, missing flags, false flags, unknown Atom, stale payload/ordinal and cross-Revision authority; accept only a complete exact current+accepted record and verify the resulting Asset hash remains bound to RunSnapshot.parameters_asset_id."
+    },
+    {
+      "id": "NAP-B0-G2-F-004",
+      "severity": "P1",
+      "status": "open",
+      "scope": [
+        "C",
+        "F",
+        "H",
+        "I"
+      ],
+      "locations": [
+        "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-00-B0-G2\\plugins\\provider-anthropic\\provider_anthropic\\package_identity.py:1-71",
+        "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-00-B0-G2\\plugins\\provider-anthropic\\provider_anthropic\\identity.json:1-22",
+        "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-00-B0-G2\\plugins\\provider-gemini\\provider_gemini\\package_identity.py:1-61",
+        "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-00-B0-G2\\plugins\\provider-gemini\\provider_gemini\\identity.json:1-22",
+        "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-00-B0-G2\\tools\\integration\\validate_b0_delivery.py:538-563",
+        "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-00-B0-G2\\sdk\\plotpilot_plugin_sdk\\package.py:171-207",
+        "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-00-B0-G2\\tests\\providers\\test_provider_contracts.py:311-341"
+      ],
+      "evidence": "Each files.sha256 describes 16 package files, but package_hash/release_id are calculated from a separate 13-file identity_files list. The excluded files include the executable Wheel, descriptor.json and identity.json. Anthropic declared 2771aaca... while the canonical digest of its committed full manifest is eb0b5356...; Gemini declared 01281497... versus 807fba62.... Gate and tests explicitly validate only the subset.",
+      "impact": "Installable code or descriptor bytes can change without changing the package_hash/release_id carried by Generation and provenance receipts, defeating package pinning, rollback and receipt identity.",
+      "required_fix": "Use one non-self-referential package layout in which the exact file map that generates files.sha256 also generates package_hash/release_id. Generated identity metadata must be derived or moved outside the hashed payload rather than introducing identity_files as a second authority.",
+      "acceptance_test": "Assert that digest_package(manifest_files).files_sha256 equals committed files.sha256 and its package/release values equal descriptor, Generation and receipt values. Mutating every installable payload, especially the Wheel and descriptor, must change identity or fail installation."
+    },
+    {
+      "id": "NAP-B0-G2-F-005",
+      "severity": "P1",
+      "status": "open",
+      "scope": [
+        "A",
+        "F",
+        "I"
+      ],
+      "locations": [
+        "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-00-B0-G2\\plugins\\provider-anthropic\\provider_anthropic\\provider.py:256-283",
+        "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-00-B0-G2\\plugins\\provider-gemini\\provider_gemini\\provider.py:256-283",
+        "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-00-B0-G2\\plugins\\provider-anthropic\\provider_anthropic\\mock.py:77-85",
+        "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-00-B0-G2\\plugins\\provider-gemini\\provider_gemini\\mock.py:71-79",
+        "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-00-B0-G2\\sdk\\plotpilot_plugin_sdk\\core_api.py:289-305",
+        "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-worktrees\\NAP-00-B0-G2\\contracts\\examples\\fixtures\\rpc-success.json:4-7"
+      ],
+      "evidence": "Accepted Core semantics require next_offset=null when a range reaches EOF. Both providers instead require next_offset==len(data), and both mocks always return offset+len(chunk). A Host returning the committed contract-compliant EOF response passed public RPC schema validation but both providers returned ASSET_READ_ERROR.",
+      "impact": "The request_asset_id invocation path is incompatible with a conforming Core Host; deterministic mocks hide the incompatibility, so real provider invocations can fail before schema validation or upstream execution.",
+      "required_fix": "Implement contiguous paged Asset reads following Core next_offset semantics until null, verify each chunk hash/offset, and make both mocks emit null at EOF and chunk hashes consistent with the public Asset contract.",
+      "acceptance_test": "Run both providers against the committed EOF fixture and a multi-page Asset fixture; valid null EOF must succeed, while skipped/backward offsets, premature null, bad chunk hashes and trailing pages must fail closed."
+    }
+  ]
+}
