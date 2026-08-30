@@ -1,0 +1,13 @@
+{
+  "$id":"source-evidence-item/v1",
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "type":"object","additionalProperties":false,
+  "required":["schema","evidence_id","span","parent_candidate_id"],
+  "properties":{
+    "schema":{"const":"source-evidence-item/v1"},
+    "evidence_id":{"$ref":"#/$defs/id"},
+    "span":{"$ref":"evidence-span.schema.json"},
+    "parent_candidate_id":{"anyOf":[{"$ref":"#/$defs/id"},{"type":"null"}]}
+  },
+  "$defs":{"id":{"type":"string","pattern":"^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"}}
+}

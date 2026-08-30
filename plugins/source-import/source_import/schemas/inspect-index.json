@@ -1,0 +1,17 @@
+{
+  "schema": "provider-schema-index/v1",
+  "plugin_id": "com.plotpilot.novelagent.source-import",
+  "capability_id": "source.import.inspect/v1",
+  "schemas": [
+    {
+      "schema_id": "source.import.inspect-request/v1",
+      "path": "schemas/inspect-input.schema.json",
+      "sha256": "36b20c5057a2b77d18c8588f89821b54d9079fd065163c6231c935be02026a3f"
+    },
+    {
+      "schema_id": "source.import.inspect-result/v1",
+      "path": "schemas/inspect-output.schema.json",
+      "sha256": "0df3f97eea939a7f2ce227ad61256ccae6ce54b6fbf1d9dd14d857709cc916df"
+    }
+  ]
+}

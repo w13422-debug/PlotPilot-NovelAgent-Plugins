@@ -1,0 +1,5 @@
+* text=auto eol=lf
+*.epub binary
+fixtures/import/binary.txt binary
+fixtures/import/txt_gb18030.txt binary
+fixtures/import/txt_utf8_bom_crlf.txt binary

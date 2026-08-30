@@ -1,0 +1,31 @@
+{
+  "schema": "source-cleaning-rules/v1",
+  "rules": [
+    {
+      "id": "remove-site-ad-line",
+      "name": "删除站点推广行",
+      "description": "只删除完整推广行，不删除正文中的网址。",
+      "pattern": "^请牢记最新网址：https?://[^\\s]+$",
+      "scope": "line",
+      "target": "body",
+      "input_kinds": ["all"],
+      "flags": ["multiline"],
+      "enabled": true,
+      "order": 10,
+      "tags": ["广告", "正文保护"]
+    },
+    {
+      "id": "remove-next-page-line",
+      "name": "删除翻页尾注",
+      "description": "只删除整行翻页尾注，不删除对白中的同名词。",
+      "pattern": "^本章未完，请点击下一页$",
+      "scope": "line",
+      "target": "body",
+      "input_kinds": ["txt", "epub", "paste"],
+      "flags": ["multiline"],
+      "enabled": true,
+      "order": 20,
+      "tags": ["尾注", "正文保护"]
+    }
+  ]
+}

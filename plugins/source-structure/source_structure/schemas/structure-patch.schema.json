@@ -1,0 +1,23 @@
+{
+  "$id":"source-structure-patch/v1",
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["schema","workspace_id","document_id","base_revision_id","base_canonical_text_hash","operations","nodes","structure_hash"],
+  "properties":{
+    "schema":{"const":"source-structure-patch/v1"},
+    "workspace_id":{"$ref":"#/$defs/id"},
+    "document_id":{"$ref":"#/$defs/id"},
+    "base_revision_id":{"$ref":"#/$defs/id"},
+    "base_canonical_text_hash":{"$ref":"#/$defs/hash"},
+    "operations":{"type":"array","items":{"$ref":"#/$defs/operation"}},
+    "nodes":{"type":"array","items":{"$ref":"#/$defs/node"}},
+    "structure_hash":{"$ref":"#/$defs/hash"}
+  },
+  "$defs":{
+    "id":{"type":"string","pattern":"^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"},
+    "hash":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "operation":{"$ref":"operation.schema.json"},
+    "node":{"$ref":"node.schema.json"}
+  }
+}

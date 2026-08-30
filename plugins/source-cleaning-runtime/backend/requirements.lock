@@ -1,0 +1,5 @@
+# The Core host supplies the public PlotPilot SDK and the frozen regex wheel.
+# This package deliberately has no network dependency or re/thread fallback.
+regex==2026.7.19
+jsonschema==4.26.0
+rfc8785==0.1.4

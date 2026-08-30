@@ -1,0 +1,6 @@
+{
+  "schema": "plugin-migration-manifest/v1",
+  "plugin_id": "com.plotpilot.novelagent.source-import",
+  "version": "0.1.0",
+  "migrations": []
+}

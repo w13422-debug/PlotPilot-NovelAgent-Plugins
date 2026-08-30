@@ -1,0 +1,75 @@
+{
+  "declared_gb18030.epub": {
+    "contains": [
+      "第1章　开端",
+      "　中文正文没有经过替换。"
+    ],
+    "encoding": "gb18030@xml",
+    "kind": "epub"
+  },
+  "epub_directories.epub": {
+    "contains": [
+      "目录项安全",
+      "显式目录项不应阻止 EPUB 导入"
+    ],
+    "kind": "epub"
+  },
+  "fixture_sha256": {
+    "binary.txt": "debdfc17efa1e25d16386e6d9b5114d52c9e57ac9c1535155ba8e2eb39973345",
+    "declared_gb18030.epub": "f63ef52e468086017b4ab710fd360de96d06db5402f5a7131b33fd3014a459b9",
+    "epub_bad_xml.epub": "63e17bb018b201adbb9f7389dd254e581c1a33736d36124a98208f821fd0a212",
+    "epub_bomb.epub": "f249092c7df56fcaf02d219d70ea2bce5eab5cfde8de8b74112e83df098484a8",
+    "epub_directories.epub": "81d71c869b970abe5572d185d26431e6116e1fe1ba520669b1e7394fdfdb7981",
+    "epub_invalid_bytes.epub": "f23710da061fd2f19592e31e4f6eed44adf4e33ab8d654c0bf9d3f5d434e9b91",
+    "epub_replacement.epub": "6ce733b4dae560f6785f603248d3acee51cb84327debcd3bc3454a286f1e27be",
+    "epub_traversal.epub": "2347f7000d088d9ff8bc9e2bea4fdca5c12db8a96ac2802ede6811354a8b06bb",
+    "invalid_utf8.txt": "b1cada300565725bea5d038ada77c56739a469f0d6c62215ec0363a7ee15486f",
+    "nav_relative.epub": "15a1448e914b7496e01e2680a02f52b66979d4d02149f4ae1178eea661ea61da",
+    "ordered.epub": "26d43e080abd1ee67139095c31693a7d03702659b3672e6fe20d32165ab7aa67",
+    "paste_utf8.txt": "5e5c5acb41178c055d40806e2ff2697edf4046d627ba8a90da77c9493fa7f280",
+    "txt_gb18030.txt": "fdfa593e8de48e7242fc25f5fca3c1c877f1c9d22fbb46697d2b174925b82520",
+    "txt_utf8_bom_crlf.txt": "45661f98611eab15c4221b2741ffd180753a1eef6d05b6003e9fa8a7e27adc19",
+    "zip_masquerade.txt": "65aa46a42f72cc85a84ca9f3646ab014f05ebec6b92ef60070450c6ec8cc304a"
+  },
+  "nav_relative.epub": {
+    "contains": [
+      "第1章　导航给出的章名",
+      "　标准 EPUB3 导航正文。"
+    ],
+    "kind": "epub"
+  },
+  "ordered.epub": {
+    "contains": [
+      "第1卷 卷一·起风",
+      "第1章　开端",
+      "第2章　转折",
+      "第2卷 卷二·落雨",
+      "第1章　尾声"
+    ],
+    "encoding": "utf-8@default,utf-8@xml",
+    "kind": "epub"
+  },
+  "paste_utf8.txt": {
+    "contains": [
+      "粘贴文本",
+      "emoji 😀"
+    ],
+    "encoding": "utf-8",
+    "kind": "paste"
+  },
+  "txt_gb18030.txt": {
+    "contains": [
+      "中文正文：风从窗外来。"
+    ],
+    "encoding": "gb18030",
+    "kind": "txt"
+  },
+  "txt_utf8_bom_crlf.txt": {
+    "contains": [
+      "组合 é 与 emoji 😀",
+      "正文保留 CRLF。"
+    ],
+    "encoding": "utf-8",
+    "kind": "txt"
+  }
+}

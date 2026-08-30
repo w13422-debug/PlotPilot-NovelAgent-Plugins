@@ -1,0 +1,17 @@
+{
+  "schema": "provider-schema-index/v1",
+  "plugin_id": "com.plotpilot.novelagent.source-structure",
+  "capability_id": "source.structure.revise/v1",
+  "schemas": [
+    {
+      "schema_id": "source.structure.revise-request/v1",
+      "path": "schemas/revise/input.schema.json",
+      "sha256": "b8ca00b44c2d400429d4d8c947f936fc9bb3d695b6e4fb86da5157180402957d"
+    },
+    {
+      "schema_id": "source.structure.revise-result/v1",
+      "path": "schemas/revise/result.schema.json",
+      "sha256": "0e40d105b9f64c4122c3be1ea82d95a253a30a1263708c2e84ef829a34801ffe"
+    }
+  ]
+}

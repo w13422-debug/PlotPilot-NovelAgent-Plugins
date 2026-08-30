@@ -1,0 +1,54 @@
+{
+  "schema": "source-structure-fixtures/v1",
+  "cases": [
+    {
+      "case_id": "unicode-scalar-span",
+      "workspace_id": "fixture-ws",
+      "document_id": "fixture-doc",
+      "revision_id": "fixture-rev-1",
+      "canonical_text": "序😀尾",
+      "canonical_text_hash": "6da53e2d9ff43c24d66619edc156daeb61af90ab7d4d3720775d6d328a9681ea",
+      "node": {
+        "schema": "source-structure-node/v1",
+        "node_id": "fixture-node",
+        "node_kind": "chapter",
+        "title": "fixture",
+        "start_codepoint": 0,
+        "end_codepoint": 3,
+        "body_start_codepoint": 0,
+        "body_end_codepoint": 3,
+        "parent_node_id": null,
+        "ordinal": 0,
+        "removed": false
+      },
+      "span": {
+        "schema": "evidence-span/v1",
+        "workspace_id": "fixture-ws",
+        "document_id": "fixture-doc",
+        "revision_id": "fixture-rev-1",
+        "node_id": "fixture-node",
+        "start_codepoint": 1,
+        "end_codepoint": 2,
+        "quote": "😀",
+        "quote_hash": "f0443a342c5ef54783a111b51ba56c938e474c32324d90c3a60c9c8e3a37e2d9",
+        "canonical_text_hash": "6da53e2d9ff43c24d66619edc156daeb61af90ab7d4d3720775d6d328a9681ea"
+      }
+    },
+    {
+      "case_id": "rebind-four-way",
+      "source_revision_id": "fixture-rev-1",
+      "source_canonical_text": "序😀尾",
+      "source_canonical_text_hash": "6da53e2d9ff43c24d66619edc156daeb61af90ab7d4d3720775d6d328a9681ea",
+      "target_revision_id": "fixture-rev-2",
+      "target_canonical_text": "前序😀尾后",
+      "target_canonical_text_hash": "64ce5ff98daf19602e3e5c103f77302c7356688f4d638b798eb524144412d741",
+      "expected_classifications": ["unchanged", "rebound", "needs_rerun", "orphaned"],
+      "rules": {
+        "unchanged": "same Revision and exact quote/hash/node binding",
+        "rebound": "cross Revision with one exact target occurrence inside a target Node",
+        "needs_rerun": "cross Revision with zero or multiple deterministic target bindings requiring selection",
+        "orphaned": "cross Revision with no exact target occurrence"
+      }
+    }
+  ]
+}

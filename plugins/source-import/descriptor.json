@@ -1,0 +1,17 @@
+{
+  "schema": "capability-provider/v1",
+  "capability_id": "source.import.inspect/v1",
+  "provider": {
+    "plugin_id": "com.plotpilot.novelagent.source-import",
+    "release_id": "ffab54acc6652a3f6e95c6ecdc0b736e3fd785d76582e9acf03972163956975d"
+  },
+  "input_schema": "source.import.inspect-request/v1",
+  "output_schema": "source.import.inspect-result/v1",
+  "result_contract": "artifact-bundle/v1",
+  "supports": [
+    "run",
+    "cancel"
+  ],
+  "deterministic": true,
+  "accepted_data_formats": []
+}

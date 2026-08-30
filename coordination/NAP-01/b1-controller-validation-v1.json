@@ -1,0 +1,97 @@
+{
+  "schema": "nap-b1-controller-validation/v1",
+  "batch": "B1",
+  "project": "NAP-01",
+  "status": "CONTROLLER_PASS_PENDING_FRESH_SOL",
+  "created_at": "2026-08-28T17:00:08.3885972+08:00",
+  "authorization": "进入 B1：NAP-01 Source-Import-Cleaning",
+  "protocol": {
+    "path": "b1-nap-01-protocol-v1.json",
+    "sha256": "b6755c224596838797ab4eb293eddd1199b1a80fa9aa171dc9607e9db7770b08"
+  },
+  "baseline": {
+    "accepted_prerequisite": "2f0448cba177e298dbb00cef72d7401ccfe6a749",
+    "source_head": "0a1ced6d47fb5c3622ff36f14bf09a727cb96a0b",
+    "source_tree": "ee3d0e8017068716310e114080dec8cf44261ca9",
+    "source_parent": "2f0448cba177e298dbb00cef72d7401ccfe6a749",
+    "branch": "codex/nap-01-source"
+  },
+  "packages": [
+    {
+      "plugin_id": "com.plotpilot.novelagent.source-import",
+      "package_hash": "c9bf87f728c3cff62aa0d251335d08fdc0000b4a05b2ad82623ac9a161699f16",
+      "release_id": "1516d73072736a07f05ef854360eb86cedf5f9742dce4551d40689c116a2c73e",
+      "wheel_path": "backend/plotpilot_source_import-0.1.0-py3-none-any.whl",
+      "wheel_sha256": "b573f82fdf67d4ef34260f7da4ba0b643067d6345c1a7dacfb6021feaaf7a7fa"
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.source-cleaning-runtime",
+      "package_hash": "1a142edaf589c048dfde0d0fcfa83c0c52c3abe0c47741a3b1c322b75ad627b5",
+      "release_id": "3769203e651e8bc2169a00a5c7a01d82928ad3f2521aaf0b829f26f63d30eb78",
+      "wheel_path": "backend/plotpilot_source_cleaning_runtime-0.1.0-py3-none-any.whl",
+      "wheel_sha256": "a5ab358beecbd5f8b3058fe2ac213b21b3e8ae989c7aacb02044770f6d4c814d"
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.source-structure",
+      "package_hash": "8c768a6b3693c344de1bebed4584391c64495d29c01f0cdd5929e711f12d7459",
+      "release_id": "c050fd331a5d1dddb0451333fd478d764e81e7156f56e52a522c27a7009fb807",
+      "wheel_path": "backend/plotpilot_source_structure-0.1.0-py3-none-any.whl",
+      "wheel_sha256": "9f292cba723e87ab060be83a0599efe1a42598e6a29732c4ec8131d362272a70"
+    }
+  ],
+  "data_package": {
+    "format_id": "source-cleaning-rules/v1",
+    "package_hash": "4fec46812e638b838298aa0cb41f72b6b47b1f2b4ecf75c1336be5aee35cf510",
+    "release_id": "bfaf1a733099c28234b6898bc3b523a84e7e5b11639e132dcb11a9240e7b72b1",
+    "bundle_hash": "6a84b5d804b385611939bb01aa0bf1bb0daa291256091d50730a35c4a6ed18fc"
+  },
+  "locked_dependency": {
+    "name": "regex",
+    "version": "2026.7.19",
+    "wheel_sha256": "e30d40268a28d54ce0437031750497004c22602b8e3ab891f759b795a003b312"
+  },
+  "controller_validation": {
+    "directed": {
+      "import": "27 passed",
+      "import_parse_loop_cancel": "3 passed, 24 deselected",
+      "cleaning": "28 passed, 20 subtests passed",
+      "structure": "25 passed, 20 subtests passed",
+      "e2e": "4 passed"
+    },
+    "full": "84 passed, 40 subtests passed in 13.81s",
+    "compileall": "PASS",
+    "strict_json": "62 files PASS",
+    "write_set": "131 source paths, 0 outside frozen prefixes",
+    "diff_check": "PASS",
+    "binary_staging": "all four staged wheels byte-identical to working files",
+    "staged_package_identity": "three code packages and rules data manifest PASS",
+    "deterministic_rebuild": "three plugins, two rebuilds each, 0 differences"
+  },
+  "fresh_checkout": {
+    "path": "C:\\Users\\Administrator\\Desktop\\写作资料汇总\\PlotPilot-NovelAgent-Plugins-validation\\B1-controller-0a1ced6-20260828-165605",
+    "head": "0a1ced6d47fb5c3622ff36f14bf09a727cb96a0b",
+    "tree": "ee3d0e8017068716310e114080dec8cf44261ca9",
+    "tests": "84 passed, 40 subtests passed in 14.66s",
+    "compileall": "PASS",
+    "git_status": "clean"
+  },
+  "pre_sol_observations": {
+    "formal_findings": false,
+    "import_parse_cancel": "resolved; controller 27/27 and parse-loop 3/3 PASS",
+    "outer_identity_host_mount": "B0 outer-sidecar package contract verified; actual desktop/Core installer smoke deferred to B6",
+    "cleaning_contract": "raw input, resume, stage rows, cancel terminal and identity observations resolved",
+    "structure_contract": "Asset-only, span binding, stage rows, resume, casefold and identity observations resolved"
+  },
+  "scope": {
+    "core_modified": false,
+    "donor_modified": false,
+    "desktop_build_run": false,
+    "windows_artifact_build_run": false
+  },
+  "gates": {
+    "fresh_sol_review": "pending",
+    "merge_eligible": false,
+    "release_NAP_02": false,
+    "nap00_no_ff_merge": "pending Sol PASS"
+  }
+}

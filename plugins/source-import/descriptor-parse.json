@@ -1,0 +1,18 @@
+{
+  "schema": "capability-provider/v1",
+  "capability_id": "source.import.parse/v1",
+  "provider": {
+    "plugin_id": "com.plotpilot.novelagent.source-import",
+    "release_id": "ffab54acc6652a3f6e95c6ecdc0b736e3fd785d76582e9acf03972163956975d"
+  },
+  "input_schema": "source.import.parse-request/v1",
+  "output_schema": "source.import.parse-result/v1",
+  "result_contract": "candidate-batch/v1",
+  "supports": [
+    "run",
+    "resume",
+    "cancel"
+  ],
+  "deterministic": true,
+  "accepted_data_formats": []
+}

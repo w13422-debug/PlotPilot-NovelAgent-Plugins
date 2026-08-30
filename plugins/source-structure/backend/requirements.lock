@@ -1,0 +1,2 @@
+# No third-party runtime dependencies.
+# plotpilot_plugin_sdk is supplied by the Core plugin host from the accepted B0 SDK.

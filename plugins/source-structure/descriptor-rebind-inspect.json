@@ -1,0 +1,18 @@
+{
+  "schema": "capability-provider/v1",
+  "capability_id": "source.evidence.rebind.inspect/v1",
+  "provider": {
+    "plugin_id": "com.plotpilot.novelagent.source-structure",
+    "release_id": "4e26b44e25c71494f9aed933000934b34e416fbb16e471a8f1285cade19ad9a5"
+  },
+  "input_schema": "source.evidence.rebind.inspect-request/v1",
+  "output_schema": "source.evidence.rebind.inspect-result/v1",
+  "result_contract": "diagnostic-bundle/v1",
+  "supports": [
+    "run",
+    "resume",
+    "cancel"
+  ],
+  "deterministic": true,
+  "accepted_data_formats": []
+}

@@ -1,0 +1,19 @@
+{
+  "schema": "capability-provider/v1",
+  "capability_id": "source.clean.rules.merge/v1",
+  "provider": {
+    "plugin_id": "com.plotpilot.novelagent.source-cleaning-runtime",
+    "release_id": "1bfda62b8f7f901c03e9cc27f68f9f120a5e7666d46fcc49314cd1329a8b4564"
+  },
+  "input_schema": "source.clean.rules.merge-request/v1",
+  "output_schema": "source.clean.rules.merge-result/v1",
+  "result_contract": "artifact-bundle/v1",
+  "supports": [
+    "run",
+    "validate"
+  ],
+  "deterministic": true,
+  "accepted_data_formats": [
+    "source-cleaning-rules/v1"
+  ]
+}
