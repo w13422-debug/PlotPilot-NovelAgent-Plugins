@@ -486,6 +486,62 @@ ACCEPTED_ATOM_FIELDS = frozenset(
     {"atom_id", "source_revision_id", "status", "is_current", "acceptance_ordinal",
      "payload_asset_id", "payload_hash", "evidence_spans"}
 )
+CLAIM_AUTHORITY_FIELDS = frozenset(
+    {"parameters_asset_id", "parameters_asset_hash", "snapshot_parameters_asset_id",
+     "snapshot_asset_hashes", "accepted_atoms"}
+)
+_SNAPSHOT_ASSET_HASH_FIELDS = frozenset({"asset_id", "sha256"})
+
+
+def validate_claim_authority(raw: Any) -> dict[str, Any]:
+    """Validate the closed RunSnapshot authority needed to interpret one Claim."""
+    value = _closed(raw, CLAIM_AUTHORITY_FIELDS, "Claim authority")
+    parameters_asset_id = _identifier(value["parameters_asset_id"], "parameters_asset_id")
+    parameters_asset_hash = _hash(value["parameters_asset_hash"], "parameters_asset_hash")
+    if _identifier(value["snapshot_parameters_asset_id"], "snapshot_parameters_asset_id") != parameters_asset_id:
+        raise DonorContractError("Claim parameters Asset differs from RunSnapshot authority")
+    bindings = value["snapshot_asset_hashes"]
+    if not isinstance(bindings, list) or not bindings:
+        raise DonorContractError("Claim snapshot_asset_hashes must be non-empty")
+    seen_assets: set[str] = set()
+    validated_bindings: list[dict[str, Any]] = []
+    for index, raw_binding in enumerate(bindings):
+        binding = _closed(raw_binding, _SNAPSHOT_ASSET_HASH_FIELDS, f"snapshot_asset_hashes[{index}]")
+        asset_id = _identifier(binding["asset_id"], f"snapshot_asset_hashes[{index}].asset_id")
+        _hash(binding["sha256"], f"snapshot_asset_hashes[{index}].sha256")
+        if asset_id in seen_assets:
+            raise DonorContractError("Claim snapshot Asset identity is duplicated")
+        seen_assets.add(asset_id)
+        validated_bindings.append(deepcopy(binding))
+    if {"asset_id": parameters_asset_id, "sha256": parameters_asset_hash} not in validated_bindings:
+        raise DonorContractError("Claim parameters Asset hash is absent from RunSnapshot authority")
+
+    accepted = value["accepted_atoms"]
+    if not isinstance(accepted, list) or not accepted:
+        raise DonorContractError("Claim accepted_atoms must be non-empty")
+    validated_accepted: list[dict[str, Any]] = []
+    seen_atom_ids: set[str] = set()
+    seen_ordinals: set[int] = set()
+    for index, raw_atom in enumerate(accepted):
+        atom = _closed(raw_atom, ACCEPTED_ATOM_FIELDS, f"accepted_atoms[{index}]")
+        atom_id = _identifier(atom["atom_id"], f"accepted_atoms[{index}].atom_id")
+        _identifier(atom["source_revision_id"], f"accepted_atoms[{index}].source_revision_id")
+        _identifier(atom["payload_asset_id"], f"accepted_atoms[{index}].payload_asset_id")
+        _hash(atom["payload_hash"], f"accepted_atoms[{index}].payload_hash")
+        ordinal = _integer(atom["acceptance_ordinal"], f"accepted_atoms[{index}].acceptance_ordinal", 1)
+        if atom["status"] != "accepted" or atom["is_current"] is not True:
+            raise DonorContractError("Claim authority may contain only current accepted Atoms")
+        if not isinstance(atom["evidence_spans"], list) or not atom["evidence_spans"]:
+            raise DonorContractError("Claim accepted Atom evidence must be non-empty")
+        if atom_id in seen_atom_ids or ordinal in seen_ordinals:
+            raise DonorContractError("Claim accepted Atom identity/ordinal is duplicated")
+        seen_atom_ids.add(atom_id)
+        seen_ordinals.add(ordinal)
+        validated_accepted.append(deepcopy(atom))
+    result = deepcopy(value)
+    result["snapshot_asset_hashes"] = validated_bindings
+    result["accepted_atoms"] = validated_accepted
+    return result
 
 
 def bind_current_accepted_atoms(claim_input: Mapping[str, Any], accepted_atoms: Any) -> list[dict[str, Any]]:
@@ -549,6 +605,7 @@ REREVIEW_RECORD_FIELDS = frozenset(
      "payload_asset_id", "source_revision_id", "parent_candidate_id",
      "successor_candidate_id"}
 )
+REREVIEW_CLAIM_RECORD_FIELDS = REREVIEW_RECORD_FIELDS | {"claim_authority"}
 
 
 def validate_rereview_records(raw: Any, *, source_revision_id: str, known_parent_ids: set[str]) -> list[dict[str, Any]]:
@@ -556,10 +613,15 @@ def validate_rereview_records(raw: Any, *, source_revision_id: str, known_parent
         raise DonorContractError("candidate_records must be non-empty")
     result: list[dict[str, Any]] = []; seen: set[str] = set()
     for index, child in enumerate(raw):
-        item = _closed(child, REREVIEW_RECORD_FIELDS, f"candidate_records[{index}]")
+        if not isinstance(child, Mapping):
+            raise DonorContractError(f"candidate_records[{index}] must be an object")
+        fields = REREVIEW_CLAIM_RECORD_FIELDS if child.get("candidate_kind") == "book_claim" else REREVIEW_RECORD_FIELDS
+        item = _closed(child, fields, f"candidate_records[{index}]")
         candidate_id = _identifier(item["candidate_id"], "candidate_id")
         if candidate_id in seen or item["candidate_kind"] not in {"book_atom", "book_claim"}:
             raise DonorContractError("rereview Candidate identity/kind is invalid")
+        if item["candidate_kind"] == "book_claim":
+            item["claim_authority"] = validate_claim_authority(item["claim_authority"])
         seen.add(candidate_id)
         if item["status"] not in {"pending", "accepted", "rejected", "superseded"} or not isinstance(item["is_current"], bool):
             raise DonorContractError("rereview Candidate status/current is invalid")

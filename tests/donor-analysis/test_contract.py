@@ -1,28 +1,34 @@
 from __future__ import annotations
 
-from copy import deepcopy
+import base64
 import hashlib
 import json
-from pathlib import Path
 import sys
+from copy import deepcopy
+from pathlib import Path
 
-from jsonschema import Draft202012Validator
 import pytest
-
+from jsonschema import Draft202012Validator
 
 ROOT = Path(__file__).resolve().parents[2]
+SDK_ROOT = ROOT / "sdk"
 PLUGIN_ROOT = ROOT / "plugins" / "donor-analysis"
-if str(PLUGIN_ROOT) not in sys.path:
-    sys.path.insert(0, str(PLUGIN_ROOT))
+for path in (SDK_ROOT, PLUGIN_ROOT):
+    if str(path) not in sys.path:
+        sys.path.insert(0, str(path))
 
-from donor_analysis.contract import (  # noqa: E402
+from donor_analysis import runtime as donor_runtime
+from donor_analysis.contract import (
     DonorContractError,
     EvidenceSpanError,
     bind_current_accepted_atoms,
     build_atom_provenance,
     build_evidence_span,
+    canonical_json_bytes,
+    hash_json,
     sha256_text,
     validate_atom_payload,
+    validate_claim_authority,
     validate_claim_input,
     validate_claim_payload,
     validate_evidence_span,
@@ -30,7 +36,6 @@ from donor_analysis.contract import (  # noqa: E402
     validate_rereview_diagnostics,
     validate_rereview_records,
 )
-
 
 TEXT = "A😀e\u0301Z。动作骤停。"
 TEXT_HASH = sha256_text(TEXT)
@@ -163,6 +168,21 @@ def accepted_atoms(value: dict) -> list[dict]:
     ]
 
 
+def claim_authority(value: dict | None = None) -> dict:
+    frozen = freeze_claim_input() if value is None else value
+    parameters_hash = "a" * 64
+    return {
+        "parameters_asset_id": "asset-claim-input",
+        "parameters_asset_hash": parameters_hash,
+        "snapshot_parameters_asset_id": "asset-claim-input",
+        "snapshot_asset_hashes": [
+            {"asset_id": "asset-canonical", "sha256": "b" * 64},
+            {"asset_id": "asset-claim-input", "sha256": parameters_hash},
+        ],
+        "accepted_atoms": accepted_atoms(frozen),
+    }
+
+
 def freeze_claim_input(value: dict | None = None) -> dict:
     return validate_claim_input(
         claim_input() if value is None else value,
@@ -197,6 +217,113 @@ def claim(value: dict) -> dict:
         "promotion_authorized": False,
         "authority": "candidate_only",
     }
+
+
+class BundleAuthorityHost:
+    def __init__(self, assets: dict[str, bytes]) -> None:
+        self.assets = assets
+
+    def call(self, method: str, params: dict) -> dict:
+        assert method == "host.asset.read/v1"
+        assert set(params) == {"asset_id", "offset", "length"}
+        data = self.assets[params["asset_id"]]
+        offset = params["offset"]
+        page = data[offset : offset + params["length"]]
+        return {
+            "base64_chunk": base64.b64encode(page).decode("ascii"),
+            "next_offset": (
+                None if offset + len(page) >= len(data) else offset + len(page)
+            ),
+            "content_hash": hashlib.sha256(page).hexdigest(),
+        }
+
+
+def bundle_authority_fixture(
+    *,
+    title: str = "骤停动作",
+    model_receipt_id: str = "model-receipt-1",
+) -> tuple[BundleAuthorityHost, dict, object, dict]:
+    request = {
+        "schema": "analysis.book.atom.extract-request/v1",
+        "capability_id": donor_runtime.CAPABILITY_ATOM_EXTRACT,
+        "operation_key": donor_runtime.CAPABILITY_ATOM_EXTRACT,
+        "operation": "run",
+        "job_id": "job-1",
+        "step_id": "step-1",
+        "attempt_id": "attempt-1",
+        "worker_run_id": "worker-1",
+        "lease_epoch": 1,
+        "checkpoint_ids": ["checkpoint-1"],
+        "provenance_receipt_id": "receipt-1",
+        "created_at": "2026-08-30T00:00:00Z",
+        "total_units": 1,
+        "run_snapshot_hash": "7" * 64,
+        "workspace_id": "ws-1",
+        "document_id": "doc-1",
+        "source_revision_id": "rev-1",
+        "canonical_asset_id": "asset-canonical",
+        "canonical_text_hash": TEXT_HASH,
+        "nodes": deepcopy(NODES),
+        "taxonomy_asset_id": "asset-taxonomy",
+        "taxonomy_asset_hash": "6" * 64,
+        "model_profile_revision_id": "model-profile-1",
+    }
+    request, context = donor_runtime._context(
+        request, donor_runtime.CAPABILITY_ATOM_EXTRACT
+    )
+    payload = atom()
+    payload["title"] = title
+    payload["provenance"]["model"]["receipt_id"] = model_receipt_id
+    payload_asset_id = "asset-output-atom"
+    payload_bytes = donor_runtime._json_bytes(payload)
+    host = BundleAuthorityHost(
+        {
+            "asset-canonical": TEXT.encode("utf-8"),
+            payload_asset_id: payload_bytes,
+        }
+    )
+    item = donor_runtime._candidate_item(
+        request,
+        context,
+        payload,
+        payload_asset_id,
+        "book-atom/v1",
+        0,
+    )
+    bundle = donor_runtime._bundle(
+        request,
+        donor_runtime.CAPABILITY_ATOM_EXTRACT,
+        [item],
+        "8" * 64,
+    )
+    return host, request, context, bundle
+
+
+def derive_bundle_authority(
+    fixture: tuple[BundleAuthorityHost, dict, object, dict],
+) -> tuple[str, list[str]]:
+    host, request, context, bundle = fixture
+    return donor_runtime._derive_bundle_authority(
+        host,
+        request,
+        donor_runtime.CAPABILITY_ATOM_EXTRACT,
+        context,
+        bundle,
+        "9" * 64,
+        "8" * 64,
+        code="TEST_CONTRACT_INVALID",
+    )
+
+
+def reverse_mapping_order(value):
+    if isinstance(value, dict):
+        return {
+            key: reverse_mapping_order(value[key])
+            for key in reversed(tuple(value))
+        }
+    if isinstance(value, list):
+        return [reverse_mapping_order(item) for item in value]
+    return value
 
 
 def test_unicode_scalar_half_open_span_and_combining_character_are_exact() -> None:
@@ -741,3 +868,427 @@ def test_g2_rereview_diagnostics_exactly_preserve_order_and_existing_successor(
             candidate_records=records,
             allow_successor=True,
         )
+
+
+def test_g2_f001_f002_bundle_anchor_uses_one_closed_canonical_projection(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    fixture = bundle_authority_fixture()
+    projections: list[dict] = []
+
+    def recording_hash(schema: str, value) -> str:
+        if schema == "donor-analysis-bundle-provenance/v2":
+            projections.append(deepcopy(value))
+        return hash_json(schema, value)
+
+    monkeypatch.setattr(donor_runtime, "hash_json", recording_hash)
+    digest, receipts = derive_bundle_authority(fixture)
+
+    assert receipts == ["model-receipt-1"]
+    assert len(projections) == 1
+    projection = projections[0]
+    assert set(projection) == {
+        "schema",
+        "binding_hash",
+        "bundle",
+        "payloads",
+        "model_receipt_ids",
+        "skill_chain_result_refs",
+    }
+    assert projection["schema"] == "donor-analysis-bundle-provenance/v2"
+    assert projection["bundle"] == fixture[3]
+    assert projection["model_receipt_ids"] == receipts
+    assert projection["skill_chain_result_refs"] == []
+    assert len(projection["payloads"]) == 1
+    assert set(projection["payloads"][0]) == {"asset_id", "content_hash", "payload"}
+    assert digest == hash_json("donor-analysis-bundle-provenance/v2", projection)
+
+    reordered = reverse_mapping_order(projection)
+    assert canonical_json_bytes(reordered) == canonical_json_bytes(projection)
+    assert hash_json("donor-analysis-bundle-provenance/v2", reordered) == digest
+
+
+@pytest.mark.parametrize(
+    ("label", "mutate"),
+    [
+        ("missing-bundle-field", lambda bundle: bundle.pop("producer")),
+        ("open-bundle", lambda bundle: bundle.update(trusted=True)),
+        ("missing-item-field", lambda bundle: bundle["items"][0].pop("target")),
+        ("open-item", lambda bundle: bundle["items"][0].update(trusted=True)),
+        (
+            "open-source-ref",
+            lambda bundle: bundle["items"][0]["source_refs"][0].update(trusted=True),
+        ),
+    ],
+)
+def test_g2_f001_f002_bundle_anchor_rejects_missing_or_open_envelope(
+    label: str,
+    mutate,
+) -> None:
+    fixture = bundle_authority_fixture()
+    mutate(fixture[3])
+    with pytest.raises(donor_runtime.DonorAnalysisWorkerError, match="."):
+        derive_bundle_authority(fixture)
+
+
+def test_g2_f001_bundle_anchor_accepts_only_executed_empty_skill_chain_control() -> None:
+    fixture = bundle_authority_fixture()
+    _digest, receipts = derive_bundle_authority(fixture)
+    assert receipts == ["model-receipt-1"]
+    assert fixture[3]["skill_chain_result_refs"] == []
+
+    fixture[3]["skill_chain_result_refs"] = [
+        {
+            "schema": "skill-chain-ref/v1",
+            "chain_result_id": "chain-unexecuted",
+            "asset_id": None,
+            "asset_hash": None,
+            "result_bundle_id": fixture[3]["bundle_id"],
+            "result_item_id": fixture[3]["items"][0]["item_id"],
+            "stream_id": None,
+            "acked_prefix_hash": None,
+        }
+    ]
+    with pytest.raises(
+        donor_runtime.DonorAnalysisWorkerError,
+        match="unexecuted Skill-chain",
+    ):
+        derive_bundle_authority(fixture)
+
+
+@pytest.mark.parametrize(
+    "changed_fixture",
+    [
+        pytest.param(
+            lambda: bundle_authority_fixture(title="另一合法标题"),
+            id="result-semantics",
+        ),
+        pytest.param(
+            lambda: bundle_authority_fixture(model_receipt_id="model-receipt-2"),
+            id="model-provenance",
+        ),
+    ],
+)
+def test_g2_f001_f002_bundle_anchor_hash_changes_for_any_legal_semantic_change(
+    changed_fixture,
+) -> None:
+    baseline_hash, _baseline_receipts = derive_bundle_authority(
+        bundle_authority_fixture()
+    )
+    changed_hash, _changed_receipts = derive_bundle_authority(changed_fixture())
+    assert changed_hash != baseline_hash
+
+
+def test_g2_f002_bundle_anchor_is_stable_under_mapping_key_reordering() -> None:
+    fixture = bundle_authority_fixture()
+    baseline_hash, baseline_receipts = derive_bundle_authority(fixture)
+    host, request, context, bundle = fixture
+    reordered_fixture = (
+        host,
+        reverse_mapping_order(request),
+        context,
+        reverse_mapping_order(bundle),
+    )
+    reordered_hash, reordered_receipts = derive_bundle_authority(reordered_fixture)
+    assert reordered_hash == baseline_hash
+    assert reordered_receipts == baseline_receipts
+
+
+@pytest.mark.parametrize(
+    ("label", "mutate"),
+    [
+        ("missing-title", lambda value: value.pop("title")),
+        ("unknown-field", lambda value: value.update(trusted=False)),
+        ("wrong-schema", lambda value: value.update(schema="book-claim/v2")),
+        ("wrong-authority", lambda value: value.update(authority="published")),
+        ("empty-title", lambda value: value.update(title="")),
+        ("empty-claim", lambda value: value.update(claim="")),
+        ("invalid-category", lambda value: value.update(category=1)),
+        ("invalid-scope", lambda value: value.update(scope=None)),
+        ("invalid-applicability", lambda value: value.update(applicability=None)),
+        ("invalid-counterexample", lambda value: value.update(counterexamples=[1])),
+        ("invalid-conflict", lambda value: value.update(conflicts=[False])),
+        ("invalid-confidence", lambda value: value.update(interpretation_confidence="certain")),
+        ("unknown-atom", lambda value: value.update(ordered_atom_ids=["atom-unknown", "atom-2"])),
+        ("reordered-atoms", lambda value: value["ordered_atom_ids"].reverse()),
+        ("empty-evidence", lambda value: value.update(evidence_spans=[])),
+        ("drifted-evidence", lambda value: value["evidence_spans"][0].update(quote_hash="0" * 64)),
+        ("invalid-method-name", lambda value: value["analysis_method"].update(name="other")),
+        ("invalid-method-version", lambda value: value["analysis_method"].update(version="2")),
+        ("open-method", lambda value: value["analysis_method"].update(extra=True)),
+        ("prompt-enabled", lambda value: value.update(prompt_eligible=True)),
+        ("promotion-enabled", lambda value: value.update(promotion_authorized=True)),
+    ],
+)
+def test_g2_f003_full_claim_validator_rejects_every_authority_or_payload_drift(
+    label: str,
+    mutate,
+) -> None:
+    frozen = freeze_claim_input()
+    value = claim(frozen)
+    mutate(value)
+    with pytest.raises(DonorContractError, match="."):
+        validate_claim_payload(value, claim_input=frozen)
+
+
+@pytest.mark.parametrize(
+    ("label", "mutate"),
+    [
+        ("missing-title", lambda value: value.pop("title")),
+        ("unknown-field", lambda value: value.update(trusted=False)),
+        ("wrong-schema", lambda value: value.update(schema="book-claim/v2")),
+        ("empty-title", lambda value: value.update(title="")),
+        ("empty-claim", lambda value: value.update(claim="")),
+        ("invalid-category", lambda value: value.update(category=1)),
+        ("invalid-scope", lambda value: value.update(scope=None)),
+        ("invalid-applicability", lambda value: value.update(applicability=None)),
+        ("invalid-counterexample", lambda value: value.update(counterexamples=[1])),
+        ("invalid-conflict", lambda value: value.update(conflicts=[False])),
+        ("invalid-confidence", lambda value: value.update(interpretation_confidence="certain")),
+        ("empty-atom-list", lambda value: value.update(ordered_atom_ids=[])),
+        ("duplicate-atom", lambda value: value.update(ordered_atom_ids=["atom-1", "atom-1"])),
+        ("empty-evidence", lambda value: value.update(evidence_spans=[])),
+        ("invalid-method-name", lambda value: value["analysis_method"].update(name="other")),
+        ("invalid-method-version", lambda value: value["analysis_method"].update(version="2")),
+        ("open-method", lambda value: value["analysis_method"].update(extra=True)),
+        ("prompt-enabled", lambda value: value.update(prompt_eligible=True)),
+        ("promotion-enabled", lambda value: value.update(promotion_authorized=True)),
+        ("wrong-authority", lambda value: value.update(authority="published")),
+    ],
+)
+def test_g2_f003_book_claim_schema_is_required_closed_and_candidate_only(
+    label: str,
+    mutate,
+) -> None:
+    frozen = freeze_claim_input()
+    value = claim(frozen)
+    schema = json.loads(
+        (PLUGIN_ROOT / "donor_analysis" / "schemas" / "book-claim.schema.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    Draft202012Validator.check_schema(schema)
+    validator = Draft202012Validator(schema)
+    validator.validate(value)
+    mutate(value)
+    assert list(validator.iter_errors(value)), label
+
+
+def test_g2_f003_claim_authority_accepts_only_exact_run_snapshot_and_current_atoms() -> None:
+    frozen = freeze_claim_input()
+    authority = claim_authority(frozen)
+    validated = validate_claim_authority(authority)
+    assert validated == authority
+    assert validated is not authority
+    assert validated["snapshot_asset_hashes"] is not authority["snapshot_asset_hashes"]
+    assert validated["accepted_atoms"] is not authority["accepted_atoms"]
+    assert bind_current_accepted_atoms(frozen, validated["accepted_atoms"]) == accepted_atoms(frozen)
+
+
+@pytest.mark.parametrize(
+    "field",
+    [
+        "parameters_asset_id",
+        "parameters_asset_hash",
+        "snapshot_parameters_asset_id",
+        "snapshot_asset_hashes",
+        "accepted_atoms",
+    ],
+)
+def test_g2_f003_claim_authority_requires_every_closed_top_level_field(field: str) -> None:
+    authority = claim_authority()
+    authority.pop(field)
+    with pytest.raises(DonorContractError, match="closed"):
+        validate_claim_authority(authority)
+
+
+@pytest.mark.parametrize(
+    ("label", "mutate"),
+    [
+        ("unknown-top-level", lambda value: value.update(trusted=True)),
+        ("parameters-id-mismatch", lambda value: value.update(snapshot_parameters_asset_id="asset-other")),
+        ("parameters-hash-invalid", lambda value: value.update(parameters_asset_hash="0")),
+        ("parameters-binding-missing", lambda value: value["snapshot_asset_hashes"].pop()),
+        ("empty-snapshot-bindings", lambda value: value.update(snapshot_asset_hashes=[])),
+        ("duplicate-snapshot-binding", lambda value: value["snapshot_asset_hashes"].append(deepcopy(value["snapshot_asset_hashes"][0]))),
+        ("open-snapshot-binding", lambda value: value["snapshot_asset_hashes"][0].update(size=1)),
+        ("invalid-snapshot-hash", lambda value: value["snapshot_asset_hashes"][0].update(sha256="A" * 64)),
+        ("empty-accepted-atoms", lambda value: value.update(accepted_atoms=[])),
+        ("not-current", lambda value: value["accepted_atoms"][0].update(is_current=False)),
+        ("not-accepted", lambda value: value["accepted_atoms"][0].update(status="superseded")),
+        ("invalid-atom-id", lambda value: value["accepted_atoms"][0].update(atom_id="?")),
+        ("invalid-revision-id", lambda value: value["accepted_atoms"][0].update(source_revision_id="?")),
+        ("invalid-payload-asset-id", lambda value: value["accepted_atoms"][0].update(payload_asset_id="?")),
+        ("invalid-payload-hash", lambda value: value["accepted_atoms"][0].update(payload_hash="A" * 64)),
+        ("invalid-acceptance-ordinal", lambda value: value["accepted_atoms"][0].update(acceptance_ordinal=0)),
+        ("empty-accepted-evidence", lambda value: value["accepted_atoms"][0].update(evidence_spans=[])),
+        ("open-accepted-atom", lambda value: value["accepted_atoms"][0].update(publication_id="pub-1")),
+        ("duplicate-atom-id", lambda value: value["accepted_atoms"][1].update(atom_id="atom-1")),
+        ("duplicate-acceptance-ordinal", lambda value: value["accepted_atoms"][1].update(acceptance_ordinal=7)),
+    ],
+)
+def test_g2_f003_claim_authority_rejects_snapshot_or_current_atom_drift(
+    label: str,
+    mutate,
+) -> None:
+    authority = claim_authority()
+    mutate(authority)
+    with pytest.raises(DonorContractError, match="."):
+        validate_claim_authority(authority)
+
+
+def claim_rereview_record() -> dict:
+    record = deepcopy(rereview_records()[0])
+    record.update(
+        candidate_id="successor-claim-1",
+        candidate_kind="book_claim",
+        parent_candidate_id="parent-claim-1",
+        successor_candidate_id="successor-claim-1",
+        claim_authority=claim_authority(),
+    )
+    return record
+
+
+def rereview_schema_request(operation: str, records: list[dict]) -> dict:
+    value = {
+        "schema": "analysis.book.rereview-request/v1",
+        "capability_id": "analysis.book.rereview/v1",
+        "operation_key": "analysis.book.rereview/v1",
+        "operation": operation,
+        "job_id": "job-1",
+        "step_id": "step-1",
+        "attempt_id": "attempt-1",
+        "worker_run_id": "worker-1",
+        "lease_epoch": 1,
+        "checkpoint_ids": ["checkpoint-1"],
+        "provenance_receipt_id": "receipt-1",
+        "created_at": "2026-08-30T00:00:00Z",
+        "total_units": 1,
+        "run_snapshot_hash": "7" * 64,
+        "workspace_id": "ws-1",
+        "document_id": "doc-1",
+        "source_revision_id": "rev-1",
+        "canonical_asset_id": "asset-canonical",
+        "canonical_text_hash": TEXT_HASH,
+        "nodes": deepcopy(NODES),
+        "candidate_records": deepcopy(records),
+        "known_parent_candidate_ids": [
+            record["parent_candidate_id"] for record in records
+        ],
+        "allow_successor": True,
+        "model_profile_revision_id": "model-profile-1",
+    }
+    if operation == "resume":
+        value.update(
+            resume_checkpoint_asset_id="asset-checkpoint",
+            resume_checkpoint_asset_hash="5" * 64,
+            resume_state_asset_id="asset-state",
+            resume_state_asset_hash="6" * 64,
+        )
+    return value
+
+
+def rereview_schema_validator() -> Draft202012Validator:
+    schema = json.loads(
+        (
+            PLUGIN_ROOT
+            / "donor_analysis"
+            / "schemas"
+            / "rereview"
+            / "input.schema.json"
+        ).read_text(encoding="utf-8")
+    )
+    Draft202012Validator.check_schema(schema)
+    return Draft202012Validator(schema)
+
+
+def test_g2_f003_mixed_rereview_records_require_claim_authority_only_for_claims() -> None:
+    atom_record = rereview_records()[0]
+    claim_record = claim_rereview_record()
+    records = [atom_record, claim_record]
+    validated = validate_rereview_records(
+        records,
+        source_revision_id="rev-1",
+        known_parent_ids={"parent-1", "parent-claim-1"},
+    )
+    assert [item["candidate_kind"] for item in validated] == ["book_atom", "book_claim"]
+    assert "claim_authority" not in validated[0]
+    assert validated[1]["claim_authority"] == claim_record["claim_authority"]
+
+
+@pytest.mark.parametrize("variant", ["claim-missing", "atom-injected", "claim-invalid"])
+def test_g2_f003_rereview_claim_authority_is_closed_by_candidate_kind(variant: str) -> None:
+    record = claim_rereview_record() if variant != "atom-injected" else rereview_records()[0]
+    if variant == "claim-missing":
+        record.pop("claim_authority")
+    elif variant == "atom-injected":
+        record["claim_authority"] = claim_authority()
+    else:
+        record["claim_authority"]["accepted_atoms"][0]["is_current"] = False
+    with pytest.raises(DonorContractError, match="."):
+        validate_rereview_records(
+            [record],
+            source_revision_id="rev-1",
+            known_parent_ids={record["parent_candidate_id"]},
+        )
+
+
+@pytest.mark.parametrize("operation", ["run", "resume", "cancel"])
+def test_g2_f003_rereview_schema_preserves_atom_only_backward_control(
+    operation: str,
+) -> None:
+    rereview_schema_validator().validate(
+        rereview_schema_request(operation, [rereview_records()[0]])
+    )
+
+
+@pytest.mark.parametrize("operation", ["run", "resume", "cancel"])
+def test_g2_f003_rereview_schema_accepts_claim_authority_forward_control(
+    operation: str,
+) -> None:
+    rereview_schema_validator().validate(
+        rereview_schema_request(operation, [claim_rereview_record()])
+    )
+
+
+@pytest.mark.parametrize("operation", ["run", "resume", "cancel"])
+@pytest.mark.parametrize("variant", ["claim-missing", "atom-injected"])
+def test_g2_f003_rereview_schema_closes_authority_by_candidate_kind(
+    operation: str,
+    variant: str,
+) -> None:
+    record = claim_rereview_record() if variant == "claim-missing" else rereview_records()[0]
+    if variant == "claim-missing":
+        record.pop("claim_authority")
+    else:
+        record["claim_authority"] = claim_authority()
+    value = rereview_schema_request(operation, [record])
+    assert list(rereview_schema_validator().iter_errors(value)), (operation, variant)
+
+
+@pytest.mark.parametrize(
+    ("label", "mutate"),
+    [
+        ("open-authority", lambda value: value.update(trusted=True)),
+        ("missing-parameters-id", lambda value: value.pop("parameters_asset_id")),
+        ("invalid-parameters-hash", lambda value: value.update(parameters_asset_hash="A" * 64)),
+        ("empty-snapshot-bindings", lambda value: value.update(snapshot_asset_hashes=[])),
+        ("open-snapshot-binding", lambda value: value["snapshot_asset_hashes"][0].update(size=1)),
+        ("invalid-snapshot-id", lambda value: value["snapshot_asset_hashes"][0].update(asset_id="?")),
+        ("empty-accepted-atoms", lambda value: value.update(accepted_atoms=[])),
+        ("open-accepted-atom", lambda value: value["accepted_atoms"][0].update(publication_id="pub-1")),
+        ("not-current", lambda value: value["accepted_atoms"][0].update(is_current=False)),
+        ("not-accepted", lambda value: value["accepted_atoms"][0].update(status="superseded")),
+        ("invalid-acceptance-ordinal", lambda value: value["accepted_atoms"][0].update(acceptance_ordinal=0)),
+        ("empty-accepted-evidence", lambda value: value["accepted_atoms"][0].update(evidence_spans=[])),
+        ("open-accepted-evidence", lambda value: value["accepted_atoms"][0]["evidence_spans"][0].update(utf16_offset=1)),
+    ],
+)
+def test_g2_f003_rereview_schema_rejects_claim_authority_shape_drift(
+    label: str,
+    mutate,
+) -> None:
+    record = claim_rereview_record()
+    mutate(record["claim_authority"])
+    value = rereview_schema_request("run", [record])
+    assert list(rereview_schema_validator().iter_errors(value)), label

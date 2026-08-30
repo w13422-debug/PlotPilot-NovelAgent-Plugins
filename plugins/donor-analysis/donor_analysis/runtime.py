@@ -11,10 +11,11 @@ import threading
 from typing import Any, Mapping, Protocol
 
 from .contract import (
-    ATOM_FIELDS, ATOM_KINDS, CLAIM_FIELDS, EVIDENCE_FIELDS, HASH_RE, DonorContractError,
-    bind_current_accepted_atoms, build_atom_provenance, canonical_json_bytes,
-    hash_json, sha256_text, validate_atom_payload, validate_claim_input,
-    validate_claim_payload, validate_evidence_span, validate_nodes,
+    ATOM_FIELDS, ATOM_KINDS, CLAIM_AUTHORITY_FIELDS, EVIDENCE_FIELDS, HASH_RE,
+    REREVIEW_RECORD_FIELDS, DonorContractError, bind_current_accepted_atoms,
+    build_atom_provenance, hash_json, sha256_text, validate_atom_payload,
+    validate_claim_authority, validate_claim_input, validate_claim_payload,
+    validate_nodes,
     validate_rereview_diagnostics, validate_rereview_records,
 )
 from .capability_spec import (
@@ -255,6 +256,22 @@ def _binding_hash(request: Mapping[str, Any], capability: str) -> str:
     return hash_json(capability + "-binding/v1", _binding_projection(request))
 
 
+def _result_request_hash(request: Mapping[str, Any], capability: str) -> str:
+    """Return the initial run request hash for both run and resume transports."""
+    return _request_hash(_binding_projection(request), capability)
+
+
+def _claim_authority_projection(value: Mapping[str, Any]) -> dict[str, Any]:
+    return {field: deepcopy(value[field]) for field in CLAIM_AUTHORITY_FIELDS}
+
+
+def _validate_claim_authority_projection(value: Mapping[str, Any], *, code: str) -> dict[str, Any]:
+    try:
+        return validate_claim_authority(_claim_authority_projection(value))
+    except (KeyError, DonorContractError) as exc:
+        raise DonorAnalysisWorkerError(code, str(exc)) from exc
+
+
 def _capability_fields(capability: str) -> frozenset[str]:
     group = SPEC_BY_CAPABILITY[capability].request_fields_group
     return {
@@ -300,22 +317,11 @@ def _validate_context(request: Mapping[str, Any], capability: str) -> dict[str, 
     if capability == CAPABILITY_ATOM_MANUAL:
         _id(value["actor_id"], "actor_id")
         if not isinstance(value["atom_payload"], Mapping): raise DonorAnalysisWorkerError("INPUT_INVALID", "atom_payload must be an object")
-    if capability == CAPABILITY_CLAIM_GENERATE and not isinstance(value["accepted_atoms"], list):
-        raise DonorAnalysisWorkerError("INPUT_INVALID", "accepted_atoms must be an array")
     if capability == CAPABILITY_CLAIM_GENERATE:
-        _id(value["snapshot_parameters_asset_id"], "snapshot_parameters_asset_id")
-        rows = value["snapshot_asset_hashes"]
-        if not isinstance(rows, list) or not rows:
-            raise DonorAnalysisWorkerError("INPUT_INVALID", "snapshot_asset_hashes must be non-empty")
-        seen_assets: set[str] = set(); bindings: set[tuple[str, str]] = set()
-        for index, row in enumerate(rows):
-            if not isinstance(row, Mapping) or set(row) != {"asset_id", "sha256"}:
-                raise DonorAnalysisWorkerError("INPUT_INVALID", f"snapshot_asset_hashes[{index}] is not closed")
-            asset_id = _id(row["asset_id"], "snapshot asset_id"); content_hash = _hash(row["sha256"], "snapshot sha256")
-            if asset_id in seen_assets: raise DonorAnalysisWorkerError("INPUT_INVALID", "snapshot Asset identity is duplicated")
-            seen_assets.add(asset_id); bindings.add((asset_id, content_hash))
-        if value["snapshot_parameters_asset_id"] != value["parameters_asset_id"] or (value["parameters_asset_id"], value["parameters_asset_hash"]) not in bindings:
-            raise DonorAnalysisWorkerError("CLAIM_AUTHORITY_INVALID", "parameters Asset is not exactly bound by RunSnapshot parameters_asset_id/asset_hashes")
+        _validate_claim_authority_projection(
+            value,
+            code="RESUME_INVALID" if operation == "resume" else "CLAIM_AUTHORITY_INVALID",
+        )
     if capability == CAPABILITY_REREVIEW:
         if not isinstance(value["candidate_records"], list) or not isinstance(value["known_parent_candidate_ids"], list):
             raise DonorAnalysisWorkerError("INPUT_INVALID", "rereview records/parents must be arrays")
@@ -344,25 +350,30 @@ def _load_source(value: Mapping[str, Any], host: HostPort | None) -> tuple[str, 
     return text, nodes
 
 
-def _upload(host: HostPort | None, context: _RunContext, data: bytes, mime: str, suffix: str) -> str:
-    expected_hash = _hash_bytes(data); upload_id = context.request_hash + "-upload-" + suffix
+def _upload(
+    host: HostPort | None, context: _RunContext, data: bytes, mime: str, suffix: str,
+    *, operation_key: str | None = None, upload_id: str | None = None,
+) -> str:
+    expected_hash = _hash_bytes(data)
+    durable_operation_key = operation_key or context.request_hash
+    durable_upload_id = upload_id or context.request_hash + "-upload-" + suffix
     chunks = [b""] if not data else [data[offset:offset+_PAGE_SIZE] for offset in range(0, len(data), _PAGE_SIZE)]
     accepted = 0; asset_id: str | None = None
     for index, chunk in enumerate(chunks):
         final = index == len(chunks)-1
         response = _host_call(host, "host.asset.create/v1", {
-            "operation_key": context.request_hash, "upload_id": upload_id,
+            "operation_key": durable_operation_key, "upload_id": durable_upload_id,
             "offset": accepted, "mime": mime, "total_size": len(data),
             "expected_hash": expected_hash, "chunk_hash": _hash_bytes(chunk),
             "base64_chunk": base64.b64encode(chunk).decode("ascii"), "final": final,
         })
-        if response.get("upload_id") != upload_id or response.get("accepted_bytes") != accepted+len(chunk) or response.get("completed") is not final:
+        if response.get("upload_id") != durable_upload_id or response.get("accepted_bytes") != accepted+len(chunk) or response.get("completed") is not final:
             raise DonorAnalysisWorkerError("ASSET_CREATE_ERROR", "Asset upload acknowledgement is not contiguous")
         raw_id = response.get("asset_id")
         if final: asset_id = _id(raw_id, "Host final asset_id")
         elif raw_id is not None: raise DonorAnalysisWorkerError("ASSET_CREATE_ERROR", "non-final upload returned Asset ID")
         accepted += len(chunk)
-    status = _host_call(host, "host.asset.upload.status/v1", {"upload_id": upload_id, "expected_hash": expected_hash})
+    status = _host_call(host, "host.asset.upload.status/v1", {"upload_id": durable_upload_id, "expected_hash": expected_hash})
     if status.get("accepted_bytes") != len(data) or status.get("completed") is not True or status.get("asset_id") != asset_id:
         raise DonorAnalysisWorkerError("ASSET_UPLOAD_ERROR", "upload status differs from completed Asset")
     assert asset_id is not None; return asset_id
@@ -392,7 +403,7 @@ def _bundle(request: Mapping[str, Any], capability: str, items: list[dict[str, A
     spec = SPEC_BY_CAPABILITY[capability]
     contract_id, bundle_type = (("diagnostic-bundle/v1", "diagnostic") if partial else
                                 (spec.result_contract, spec.bundle_type))
-    request_hash = _request_hash(request, capability)
+    request_hash = _result_request_hash(request, capability)
     bundle = {
         "schema": "result-bundle/v1", "contract_id": contract_id,
         "bundle_id": _derived_id("bundle", request_hash, contract_id), "bundle_type": bundle_type,
@@ -418,6 +429,17 @@ def _derived_id(prefix: str, *parts: str) -> str:
     return f"{prefix}:{digest[:48]}"
 
 
+def _upload_result_bundle(
+    host: HostPort | None, context: _RunContext, data: bytes,
+) -> str:
+    """Publish/reassert Result bytes through one durable run-bound upload slot."""
+    return _upload(
+        host, context, data, "application/json", "result-bundle",
+        operation_key=_derived_id("result-upload-operation", context.binding_hash),
+        upload_id=_derived_id("result-upload", context.binding_hash),
+    )
+
+
 def _source_ref(request: Mapping[str, Any], source_id: str | None = None, revision_or_hash: str | None = None) -> dict[str, Any]:
     return {"workspace_id": request["workspace_id"], "source_type": "canonical_revision",
             "source_id": source_id or request["document_id"],
@@ -431,7 +453,8 @@ def _model_receipt_ref(request: Mapping[str, Any], receipt_id: str) -> dict[str,
 
 
 def _candidate_item(request: Mapping[str, Any], context: _RunContext, payload: Mapping[str, Any], payload_asset_id: str, payload_schema: str, ordinal: int, *, parent_ids: list[str] | None = None) -> dict[str, Any]:
-    payload_hash = _hash_bytes(_json_bytes(payload)); item_id = _derived_id("candidate", context.request_hash, str(ordinal), payload_hash)
+    result_hash = _result_request_hash(request, request["capability_id"])
+    payload_hash = _hash_bytes(_json_bytes(payload)); item_id = _derived_id("candidate", result_hash, str(ordinal), payload_hash)
     entity_id = ("book-atom:" if payload_schema == "book-atom/v1" else "book-claim:") + item_id.split(":",1)[1]
     base_hash = request.get("canonical_text_hash", request.get("parameters_asset_hash"))
     assert isinstance(base_hash, str)
@@ -448,12 +471,34 @@ def _candidate_item(request: Mapping[str, Any], context: _RunContext, payload: M
     }
 
 
-def _diagnostic_item(request: Mapping[str, Any], context: _RunContext, ordinal: int, *, severity: str, code: str, message: str, details: Mapping[str, Any], host: HostPort | None, status: str = "complete", include_source_ref: bool = True) -> dict[str, Any]:
-    data = _json_bytes(details); asset_id = _upload(host, context, data, "application/json", f"diagnostic-{ordinal}")
-    return {"schema": "diagnostic-item/v1", "item_id": _derived_id("diagnostic", context.request_hash, str(ordinal), code),
+def _diagnostic_envelope(
+    request: Mapping[str, Any], ordinal: int, *, severity: str, code: str,
+    message: str, details_asset_id: str, details_hash: str, status: str = "complete",
+    include_source_ref: bool = True, model_receipt_id: str | None = None,
+) -> dict[str, Any]:
+    refs = [_source_ref(request)] if include_source_ref else []
+    if model_receipt_id is not None:
+        refs.append(_model_receipt_ref(request, model_receipt_id))
+    result_hash = _result_request_hash(request, request["capability_id"])
+    return {"schema": "diagnostic-item/v1", "item_id": _derived_id("diagnostic", result_hash, str(ordinal), code),
             "severity": severity, "code": code, "message": message,
-            "details_asset_id": asset_id, "details_hash": _hash_bytes(data),
-            "source_refs": [_source_ref(request)] if include_source_ref else [], "status": status}
+            "details_asset_id": details_asset_id, "details_hash": details_hash,
+            "source_refs": refs, "status": status}
+
+
+def _diagnostic_item(
+    request: Mapping[str, Any], context: _RunContext, ordinal: int, *, severity: str,
+    code: str, message: str, details: Mapping[str, Any], host: HostPort | None,
+    status: str = "complete", include_source_ref: bool = True,
+    model_receipt_id: str | None = None,
+) -> dict[str, Any]:
+    data = _json_bytes(details)
+    asset_id = _upload(host, context, data, "application/json", f"diagnostic-{ordinal}")
+    return _diagnostic_envelope(
+        request, ordinal, severity=severity, code=code, message=message,
+        details_asset_id=asset_id, details_hash=_hash_bytes(data), status=status,
+        include_source_ref=include_source_ref, model_receipt_id=model_receipt_id,
+    )
 
 
 def _stage(host: HostPort | None, request: Mapping[str, Any], context: _RunContext,
@@ -703,11 +748,22 @@ def _validate_accepted_payload(payload: Any, snapshot: Mapping[str, Any], reques
 
 def _load_claim_authority(
     request: Mapping[str, Any], host: HostPort | None,
+    authority: Mapping[str, Any] | None = None, *,
+    canonical_text: str | None = None,
+    nodes: list[dict[str, Any]] | None = None,
 ) -> tuple[str, list[dict[str, Any]], dict[str, Any]]:
-    """Load the sole authoritative Claim input and revalidate every accepted Atom."""
-    canonical_text, nodes = _load_source(request, host)
+    """Load one authoritative Claim input and revalidate every accepted Atom."""
+    if canonical_text is None or nodes is None:
+        canonical_text, nodes = _load_source(request, host)
+    try:
+        authority_value = validate_claim_authority(
+            _claim_authority_projection(request) if authority is None else authority
+        )
+    except (KeyError, DonorContractError) as exc:
+        raise DonorAnalysisWorkerError("CLAIM_AUTHORITY_INVALID", str(exc)) from exc
     raw_input = _load_json_asset(
-        host, request["parameters_asset_id"], request["parameters_asset_hash"]
+        host, authority_value["parameters_asset_id"],
+        authority_value["parameters_asset_hash"],
     )
     try:
         claim_input = validate_claim_input(
@@ -716,7 +772,9 @@ def _load_claim_authority(
             source_revision_id=request["source_revision_id"],
             canonical_text_hash=request["canonical_text_hash"],
         )
-        accepted = bind_current_accepted_atoms(claim_input, request["accepted_atoms"])
+        accepted = bind_current_accepted_atoms(
+            claim_input, authority_value["accepted_atoms"]
+        )
     except DonorContractError as exc:
         raise DonorAnalysisWorkerError("CLAIM_AUTHORITY_INVALID", str(exc)) from exc
 
@@ -744,9 +802,57 @@ def _load_claim_authority(
     return canonical_text, nodes, claim_input
 
 
+def _rereview_model_record(record: Mapping[str, Any]) -> dict[str, Any]:
+    return {field: deepcopy(record[field]) for field in REREVIEW_RECORD_FIELDS}
+
+
+def _load_rereview_authority(
+    request: Mapping[str, Any], host: HostPort | None, *, code: str,
+) -> tuple[str, list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
+    """Re-read every rereview Candidate and enforce its full source contract."""
+    try:
+        canonical_text, nodes = _load_source(request, host)
+        records = validate_rereview_records(
+            request["candidate_records"],
+            source_revision_id=request["source_revision_id"],
+            known_parent_ids=set(request["known_parent_candidate_ids"]),
+        )
+        payloads: list[dict[str, Any]] = []
+        for record in records:
+            payload = _strict_json(_read_asset(
+                host, record["payload_asset_id"], record["payload_hash"]
+            ))
+            if not isinstance(payload, Mapping):
+                raise DonorContractError("rereview Candidate payload must be an object")
+            if record["candidate_kind"] == "book_atom":
+                provenance = payload.get("provenance")
+                mode = provenance.get("mode") if isinstance(provenance, Mapping) else None
+                if mode not in {"model", "manual"}:
+                    raise DonorContractError("rereview Atom lacks closed provenance")
+                validated = validate_atom_payload(
+                    payload, canonical_text=canonical_text, nodes=nodes,
+                    workspace_id=request["workspace_id"], document_id=request["document_id"],
+                    revision_id=request["source_revision_id"],
+                    canonical_text_hash=request["canonical_text_hash"],
+                    expected_mode=mode, allowed_atom_kinds=ATOM_KINDS,
+                )
+            else:
+                _text, _nodes, claim_input = _load_claim_authority(
+                    request, host, record["claim_authority"],
+                    canonical_text=canonical_text, nodes=nodes,
+                )
+                validated = validate_claim_payload(payload, claim_input=claim_input)
+            payloads.append(validated)
+        return canonical_text, nodes, records, payloads
+    except DonorAnalysisWorkerError as exc:
+        raise DonorAnalysisWorkerError(code, str(exc)) from exc
+    except DonorContractError as exc:
+        raise DonorAnalysisWorkerError(code, str(exc)) from exc
+
+
 _REREVIEW_DETAIL_FIELDS = frozenset({
-    "schema", "candidate_id", "recommendation", "successor", "lineage",
-    "mutation_staged",
+    "schema", "candidate_id", "severity", "code", "message", "recommendation",
+    "successor", "lineage", "mutation_staged",
 })
 
 
@@ -771,6 +877,10 @@ def _validate_rereview_detail_authority(
         }
         if (set(item) != _REREVIEW_DETAIL_FIELDS
                 or item.get("schema") != "book-rereview-diagnostic/v1"
+                or item.get("severity") not in {"info", "warning", "error"}
+                or not isinstance(item.get("code"), str) or not item["code"]
+                or not isinstance(item.get("message"), str)
+                or not isinstance(item.get("recommendation"), str)
                 or item.get("mutation_staged") is not False
                 or item.get("lineage") != {
                     "predecessor_candidate_id": predecessor,
@@ -778,170 +888,211 @@ def _validate_rereview_detail_authority(
                 }
                 or item.get("successor") != expected_successor):
             raise DonorAnalysisWorkerError(
-                code, f"rereview diagnostic lineage changed at input position {index}"
+                code, f"rereview diagnostic content/lineage changed at input position {index}"
             )
 
 
-def _bundle_payload_provenance(
+def _item_model_receipts(
+    request: Mapping[str, Any], item: Mapping[str, Any], *, code: str,
+) -> list[str]:
+    refs = item.get("source_refs")
+    if not isinstance(refs, list) or not refs or refs[0] != _source_ref(request):
+        raise DonorAnalysisWorkerError(code, "Bundle canonical source Revision changed")
+    receipts: list[str] = []
+    for ref in refs[1:]:
+        if (not isinstance(ref, Mapping) or set(ref) != {
+                "workspace_id", "source_type", "source_id", "revision_or_hash"
+            } or ref.get("workspace_id") is not None
+            or ref.get("source_type") != "model_receipt"
+            or ref.get("revision_or_hash") != request.get("model_profile_revision_id")):
+            raise DonorAnalysisWorkerError(code, "Bundle model provenance ref changed")
+        receipt_id = _id(ref.get("source_id"), "Bundle model receipt_id")
+        if receipt_id in receipts:
+            raise DonorAnalysisWorkerError(code, "Bundle model receipt is duplicated")
+        receipts.append(receipt_id)
+    return receipts
+
+
+def _derive_bundle_authority(
     host: HostPort | None, request: Mapping[str, Any], capability: str,
-    bundle: Mapping[str, Any], package_hash: str, release_id: str,
-) -> tuple[str, list[str] | None]:
-    """Re-read Bundle payloads and derive provenance without trusting resume state."""
-    projection: dict[str, Any] = {
-        "schema": "donor-analysis-bundle-provenance/v1",
-        "producer": deepcopy(bundle.get("producer")),
-        "input_snapshot_hash": bundle.get("input_snapshot_hash"),
-        "provenance_receipt_id": bundle.get("provenance_receipt_id"),
-        "items": [],
-    }
-    atom_receipts: list[str] = []
-    bundle_model_receipts: list[str] = []
-    saw_atom = False
+    context: _RunContext, bundle: Mapping[str, Any], package_hash: str,
+    release_id: str, *, code: str,
+) -> tuple[str, list[str]]:
+    """Rebuild the full Result envelope from canonical payload authority."""
     canonical_text: str | None = None
     nodes: list[dict[str, Any]] | None = None
     claim_input: dict[str, Any] | None = None
     rereview_records: list[dict[str, Any]] = []
-    rereview_details: list[Mapping[str, Any]] = []
     if capability == CAPABILITY_CLAIM_GENERATE:
-        try:
-            canonical_text, nodes, claim_input = _load_claim_authority(request, host)
-        except DonorAnalysisWorkerError as exc:
-            raise DonorAnalysisWorkerError(
-                "RESUME_INVALID", f"Claim resume authority validation failed: {exc}"
-            ) from exc
+        canonical_text, nodes, claim_input = _load_claim_authority(request, host)
     elif capability == CAPABILITY_REREVIEW:
-        try:
-            rereview_records = validate_rereview_records(
-                request["candidate_records"],
-                source_revision_id=request["source_revision_id"],
-                known_parent_ids=set(request["known_parent_candidate_ids"]),
-            )
-        except DonorContractError as exc:
-            raise DonorAnalysisWorkerError(
-                "RESUME_INVALID", f"rereview request authority changed: {exc}"
-            ) from exc
-    for index, raw_item in enumerate(bundle.get("items", [])):
+        canonical_text, nodes, rereview_records, _payloads = _load_rereview_authority(
+            request, host, code=code
+        )
+
+    raw_items = bundle.get("items")
+    if not isinstance(raw_items, list) or not raw_items:
+        raise DonorAnalysisWorkerError(code, "Result Bundle items are unavailable")
+    expected_items: list[dict[str, Any]] = []
+    payload_projection: list[dict[str, Any]] = []
+    atom_receipts: list[str] = []
+    bundle_receipt_rows: list[list[str]] = []
+    rereview_rows: list[tuple[dict[str, Any], Mapping[str, Any], str, str, str]] = []
+
+    for index, raw_item in enumerate(raw_items):
         if not isinstance(raw_item, Mapping):
-            raise DonorAnalysisWorkerError("RESUME_INVALID", "Bundle item is not an object")
+            raise DonorAnalysisWorkerError(code, "Bundle item is not an object")
         item = dict(raw_item)
-        item_projection: dict[str, Any] = {
-            "item_id": item.get("item_id"),
-            "source_refs": deepcopy(item.get("source_refs")),
-            "status": item.get("status"),
-        }
-        source_refs = item.get("source_refs")
-        if not isinstance(source_refs, list) or not source_refs or source_refs[0] != _source_ref(request):
-            raise DonorAnalysisWorkerError("RESUME_INVALID", "Bundle canonical source Revision changed")
-        for ref in source_refs[1:]:
-            if (not isinstance(ref, Mapping) or set(ref) != {
-                    "workspace_id", "source_type", "source_id", "revision_or_hash"
-                } or ref.get("workspace_id") is not None
-                or ref.get("source_type") != "model_receipt"
-                or ref.get("revision_or_hash") != request.get("model_profile_revision_id")):
-                raise DonorAnalysisWorkerError("RESUME_INVALID", "Bundle model provenance ref changed")
-            receipt_id = _id(ref.get("source_id"), "Bundle model receipt_id")
-            if receipt_id not in bundle_model_receipts:
-                bundle_model_receipts.append(receipt_id)
-        if item.get("schema") == "candidate-item/v1":
+        item_receipts = _item_model_receipts(request, item, code=code)
+        if capability in {CAPABILITY_ATOM_EXTRACT, CAPABILITY_CLAIM_GENERATE}:
+            if item.get("schema") != "candidate-item/v1":
+                raise DonorAnalysisWorkerError(code, "Result item profile differs from capability")
             mutation = item.get("mutation")
             if not isinstance(mutation, Mapping):
-                raise DonorAnalysisWorkerError("RESUME_INVALID", "Candidate mutation is unavailable")
+                raise DonorAnalysisWorkerError(code, "Candidate mutation is unavailable")
             payload_hash = _hash(mutation.get("payload_hash"), "Candidate payload_hash")
             payload_asset_id = _id(item.get("payload_asset_id"), "Candidate payload_asset_id")
-            payload = _strict_json(_read_asset(host, payload_asset_id, payload_hash))
-            if not isinstance(payload, Mapping):
-                raise DonorAnalysisWorkerError("RESUME_INVALID", "Candidate payload is not an object")
-            payload_schema = mutation.get("payload_schema")
-            if payload_schema != payload.get("schema"):
-                raise DonorAnalysisWorkerError("RESUME_INVALID", "Candidate payload schema changed")
+            payload_bytes = _read_asset(host, payload_asset_id, payload_hash)
+            payload = _strict_json(payload_bytes)
+            if not isinstance(payload, Mapping) or payload_bytes != _json_bytes(payload):
+                raise DonorAnalysisWorkerError(code, "Candidate payload is not canonical JSON")
+            expected_schema = (
+                "book-atom/v1" if capability == CAPABILITY_ATOM_EXTRACT
+                else "book-claim/v1"
+            )
+            if mutation.get("payload_schema") != expected_schema or payload.get("schema") != expected_schema:
+                raise DonorAnalysisWorkerError(code, "Candidate payload schema differs from capability")
             if canonical_text is None or nodes is None:
                 canonical_text, nodes = _load_source(request, host)
-            item_projection.update({
-                "payload_asset_id": payload_asset_id,
-                "payload_hash": payload_hash,
-                "payload_schema": payload_schema,
-                "base": deepcopy(item.get("base")),
-                "write_set": deepcopy(item.get("write_set")),
-                "parent_candidate_ids": deepcopy(item.get("parent_candidate_ids")),
-            })
-            if payload_schema == "book-atom/v1":
-                saw_atom = True
+
+            if capability == CAPABILITY_ATOM_EXTRACT:
+                if item_receipts:
+                    raise DonorAnalysisWorkerError(code, "Atom Candidate duplicated model provenance")
                 provenance = payload.get("provenance")
-                if not isinstance(provenance, Mapping):
-                    raise DonorAnalysisWorkerError("RESUME_INVALID", "Atom provenance is unavailable")
-                mode = provenance.get("mode")
-                model = provenance.get("model")
-                model_receipt_id = None
-                if mode == "model":
-                    if not isinstance(model, Mapping):
-                        raise DonorAnalysisWorkerError("RESUME_INVALID", "model Atom receipt is unavailable")
-                    if model.get("profile_revision_id") != request.get("model_profile_revision_id"):
-                        raise DonorAnalysisWorkerError("RESUME_INVALID", "Atom model profile changed")
-                    model_receipt_id = _id(model.get("receipt_id"), "Atom model receipt_id")
-                    if model_receipt_id not in atom_receipts:
-                        atom_receipts.append(model_receipt_id)
-                expected = _trusted_atom_provenance(
-                    request, mode=str(mode),
-                    analysis_method=payload.get("analysis_method", {}),
+                model = provenance.get("model") if isinstance(provenance, Mapping) else None
+                if not isinstance(model, Mapping):
+                    raise DonorAnalysisWorkerError(code, "model Atom receipt is unavailable")
+                if model.get("profile_revision_id") != request.get("model_profile_revision_id"):
+                    raise DonorAnalysisWorkerError(code, "Atom model profile changed")
+                model_receipt_id = _id(model.get("receipt_id"), "Atom model receipt_id")
+                expected_provenance = _trusted_atom_provenance(
+                    request, mode="model", analysis_method=payload.get("analysis_method", {}),
                     package_hash=package_hash, release_id=release_id,
                     model_receipt_id=model_receipt_id,
                 )
-                if provenance != expected:
-                    raise DonorAnalysisWorkerError("RESUME_INVALID", "Atom provenance binding changed")
-                try:
-                    validate_atom_payload(
-                        payload, canonical_text=canonical_text, nodes=nodes,
-                        workspace_id=request["workspace_id"], document_id=request["document_id"],
-                        revision_id=request["source_revision_id"],
-                        canonical_text_hash=request["canonical_text_hash"],
-                        expected_mode=str(mode), allowed_atom_kinds=ATOM_KINDS,
-                        expected_provenance=expected,
-                    )
-                except DonorContractError as exc:
-                    raise DonorAnalysisWorkerError("RESUME_INVALID", str(exc)) from exc
-                item_projection["payload_provenance"] = deepcopy(expected)
-            elif payload_schema == "book-claim/v1":
-                if capability != CAPABILITY_CLAIM_GENERATE or claim_input is None:
-                    raise DonorAnalysisWorkerError(
-                        "RESUME_INVALID", "Claim payload is not owned by Claim generation"
-                    )
-                try:
-                    claim = validate_claim_payload(payload, claim_input=claim_input)
-                except DonorContractError as exc:
-                    raise DonorAnalysisWorkerError(
-                        "RESUME_INVALID", f"resumed Claim differs from authoritative input: {exc}"
-                    ) from exc
-                item_projection["payload_provenance"] = {
-                    "ordered_atom_ids": deepcopy(claim["ordered_atom_ids"]),
-                    "evidence_spans": deepcopy(claim["evidence_spans"]),
-                    "analysis_method": deepcopy(claim["analysis_method"]),
-                }
+                if provenance != expected_provenance:
+                    raise DonorAnalysisWorkerError(code, "Atom provenance binding changed")
+                validated_payload = validate_atom_payload(
+                    payload, canonical_text=canonical_text, nodes=nodes,
+                    workspace_id=request["workspace_id"], document_id=request["document_id"],
+                    revision_id=request["source_revision_id"],
+                    canonical_text_hash=request["canonical_text_hash"],
+                    expected_mode="model", allowed_atom_kinds=ATOM_KINDS,
+                    expected_provenance=expected_provenance,
+                )
+                atom_receipts.append(model_receipt_id)
             else:
-                raise DonorAnalysisWorkerError("RESUME_INVALID", "Candidate payload schema is unknown")
-        elif item.get("schema") == "diagnostic-item/v1":
-            details_hash = _hash(item.get("details_hash"), "diagnostic details_hash")
-            details_asset_id = _id(item.get("details_asset_id"), "diagnostic details_asset_id")
-            details = _strict_json(_read_asset(host, details_asset_id, details_hash))
-            if not isinstance(details, Mapping):
-                raise DonorAnalysisWorkerError("RESUME_INVALID", "diagnostic details are not an object")
-            if capability == CAPABILITY_REREVIEW:
-                rereview_details.append(details)
-            item_projection.update({
-                "details_asset_id": details_asset_id,
-                "details_hash": details_hash,
-                "details": deepcopy(details),
+                if claim_input is None or len(item_receipts) != 1:
+                    raise DonorAnalysisWorkerError(code, "Claim Candidate model provenance is not exact")
+                validated_payload = validate_claim_payload(payload, claim_input=claim_input)
+                bundle_receipt_rows.append(item_receipts)
+
+            expected = _candidate_item(
+                request, context, validated_payload, payload_asset_id,
+                expected_schema, index,
+            )
+            if capability == CAPABILITY_CLAIM_GENERATE:
+                expected["source_refs"].append(
+                    _model_receipt_ref(request, item_receipts[0])
+                )
+            if item != expected:
+                raise DonorAnalysisWorkerError(
+                    code, f"Candidate envelope changed at output position {index}"
+                )
+            expected_items.append(expected)
+            payload_projection.append({
+                "asset_id": payload_asset_id,
+                "content_hash": payload_hash,
+                "payload": deepcopy(validated_payload),
             })
         else:
-            raise DonorAnalysisWorkerError("RESUME_INVALID", "Bundle item schema is unknown")
-        projection["items"].append(item_projection)
+            if item.get("schema") != "diagnostic-item/v1" or len(item_receipts) != 1:
+                raise DonorAnalysisWorkerError(code, "rereview diagnostic model provenance is not exact")
+            details_hash = _hash(item.get("details_hash"), "diagnostic details_hash")
+            details_asset_id = _id(item.get("details_asset_id"), "diagnostic details_asset_id")
+            details_bytes = _read_asset(host, details_asset_id, details_hash)
+            details = _strict_json(details_bytes)
+            if not isinstance(details, Mapping) or details_bytes != _json_bytes(details):
+                raise DonorAnalysisWorkerError(code, "diagnostic details are not canonical JSON")
+            bundle_receipt_rows.append(item_receipts)
+            rereview_rows.append((item, details, details_asset_id, details_hash, item_receipts[0]))
+
+    if capability == CAPABILITY_ATOM_EXTRACT:
+        if not atom_receipts or len(set(atom_receipts)) != 1:
+            raise DonorAnalysisWorkerError(code, "Atom outputs do not share one executed model receipt")
+        model_receipt_ids = [atom_receipts[0]]
+    else:
+        flattened = [receipt for row in bundle_receipt_rows for receipt in row]
+        if (len(bundle_receipt_rows) != len(raw_items) or not flattened
+                or len(set(flattened)) != 1):
+            raise DonorAnalysisWorkerError(code, "Result outputs do not share one executed model receipt")
+        model_receipt_ids = [flattened[0]]
+
     if capability == CAPABILITY_REREVIEW:
-        _validate_rereview_detail_authority(
-            rereview_records, rereview_details, code="RESUME_INVALID"
+        details = [row[1] for row in rereview_rows]
+        _validate_rereview_detail_authority(rereview_records, details, code=code)
+        for index, (item, detail, details_asset_id, details_hash, receipt_id) in enumerate(rereview_rows):
+            expected = _diagnostic_envelope(
+                request, index, severity=detail["severity"], code=detail["code"],
+                message=detail["message"], details_asset_id=details_asset_id,
+                details_hash=details_hash, model_receipt_id=receipt_id,
+            )
+            if item != expected:
+                raise DonorAnalysisWorkerError(
+                    code, f"diagnostic envelope changed at output position {index}"
+                )
+            expected_items.append(expected)
+            payload_projection.append({
+                "asset_id": details_asset_id,
+                "content_hash": details_hash,
+                "details": deepcopy(detail),
+            })
+
+    # This runtime has no Skill execution RPC.  Therefore its only authoritative
+    # executed chain is the exact empty sequence; a non-empty ref is fabricated.
+    if bundle.get("skill_chain_result_refs") != []:
+        raise DonorAnalysisWorkerError(code, "Bundle contains an unexecuted Skill-chain reference")
+    expected_bundle = _bundle(request, capability, expected_items, release_id)
+    if dict(bundle) != expected_bundle:
+        raise DonorAnalysisWorkerError(code, "complete Result Bundle envelope changed")
+    projection = {
+        "schema": "donor-analysis-bundle-provenance/v2",
+        "binding_hash": context.binding_hash,
+        "bundle": deepcopy(expected_bundle),
+        "payloads": payload_projection,
+        "model_receipt_ids": model_receipt_ids,
+        "skill_chain_result_refs": [],
+    }
+    return hash_json("donor-analysis-bundle-provenance/v2", projection), model_receipt_ids
+
+
+def _bundle_payload_provenance(
+    host: HostPort | None, request: Mapping[str, Any], capability: str,
+    context: _RunContext, bundle: Mapping[str, Any], package_hash: str,
+    release_id: str,
+) -> tuple[str, list[str]]:
+    code = "RESUME_INVALID" if request.get("operation") == "resume" else "RESULT_CONTRACT_ERROR"
+    try:
+        return _derive_bundle_authority(
+            host, request, capability, context, bundle, package_hash, release_id,
+            code=code,
         )
-    if saw_atom and bundle_model_receipts:
-        raise DonorAnalysisWorkerError("RESUME_INVALID", "Atom Bundle duplicated model provenance")
-    derived_receipts = atom_receipts if saw_atom else (bundle_model_receipts or None)
-    return hash_json("donor-analysis-bundle-provenance/v1", projection), derived_receipts
+    except DonorAnalysisWorkerError as exc:
+        if exc.code == code:
+            raise
+        raise DonorAnalysisWorkerError(code, str(exc)) from exc
+    except DonorContractError as exc:
+        raise DonorAnalysisWorkerError(code, str(exc)) from exc
 
 
 _RESUME_STATE_FIELDS = frozenset({
@@ -959,7 +1110,7 @@ def _validate_resume_binding(
     request: Mapping[str, Any], capability: str, context: _RunContext,
     checkpoint: Mapping[str, Any], state: Mapping[str, Any], bundle: Mapping[str, Any],
     package_hash: str, release_id: str, bundle_provenance_hash: str,
-    derived_model_receipt_ids: list[str] | None,
+    derived_model_receipt_ids: list[str],
     receipt: Mapping[str, Any] | None = None,
 ) -> None:
     """Central exact fence for every durable object participating in resume."""
@@ -1038,7 +1189,7 @@ def _validate_resume_binding(
     if (not isinstance(model_receipt_ids, list)
             or len(model_receipt_ids) != len(set(model_receipt_ids))
             or any(not isinstance(item, str) or _ID_RE.fullmatch(item) is None for item in model_receipt_ids)
-            or (derived_model_receipt_ids is not None and model_receipt_ids != derived_model_receipt_ids)):
+            or model_receipt_ids != derived_model_receipt_ids):
         raise DonorAnalysisWorkerError("RESUME_INVALID", "Bundle payload model provenance changed")
     if state.get("skill_chain_result_refs") != bundle.get("skill_chain_result_refs"):
         raise DonorAnalysisWorkerError("RESUME_INVALID", "Bundle Skill provenance changed")
@@ -1153,38 +1304,14 @@ class DonorAnalysisPlugin:
 
     def rereview(self, request: Mapping[str, Any], host: HostPort | None = None) -> dict[str, Any]:
         value, context = _context(request, CAPABILITY_REREVIEW)
-        text, nodes = _load_source(value, host)
-        try: records = validate_rereview_records(value["candidate_records"], source_revision_id=value["source_revision_id"], known_parent_ids=set(value["known_parent_candidate_ids"]))
-        except DonorContractError as exc: raise DonorAnalysisWorkerError("REREVIEW_INVALID", str(exc)) from exc
-        # Re-read and revalidate every payload against the exact canonical Revision.
-        for record in records:
-            payload = _strict_json(_read_asset(host, record["payload_asset_id"], record["payload_hash"]))
-            try:
-                if record["candidate_kind"] == "book_atom":
-                    provenance = payload.get("provenance") if isinstance(payload, Mapping) else None
-                    mode = provenance.get("mode") if isinstance(provenance, Mapping) else None
-                    if mode not in {"model", "manual"}:
-                        raise DonorContractError("rereview Atom lacks closed provenance")
-                    validate_atom_payload(payload, canonical_text=text, nodes=nodes, workspace_id=value["workspace_id"],
-                        document_id=value["document_id"], revision_id=value["source_revision_id"],
-                        canonical_text_hash=value["canonical_text_hash"], expected_mode=mode, allowed_atom_kinds=ATOM_KINDS)
-                else:
-                    if not isinstance(payload, Mapping) or set(payload) != set(CLAIM_FIELDS) or payload.get("schema") != "book-claim/v1" or payload.get("authority") != "candidate_only":
-                        raise DonorContractError("rereview Claim payload is not closed")
-                    atom_ids = payload.get("ordered_atom_ids")
-                    if not isinstance(atom_ids, list) or not atom_ids or len(atom_ids) != len(set(atom_ids)):
-                        raise DonorContractError("rereview Claim Atom order is invalid")
-                    spans = payload.get("evidence_spans")
-                    if not isinstance(spans, list): raise DonorContractError("rereview Claim evidence is not an array")
-                    for span in spans:
-                        validate_evidence_span(span, text, nodes, workspace_id=value["workspace_id"], document_id=value["document_id"],
-                            revision_id=value["source_revision_id"], canonical_text_hash=value["canonical_text_hash"])
-            except DonorContractError as exc:
-                raise DonorAnalysisWorkerError("REREVIEW_INVALID", str(exc)) from exc
+        _canonical_text, nodes, records, _payloads = _load_rereview_authority(
+            value, host, code="REREVIEW_INVALID"
+        )
         model_request = {"schema": "analysis.book.rereview-model-request/v1", "workspace_id": value["workspace_id"],
             "document_id": value["document_id"], "source_revision_id": value["source_revision_id"],
             "canonical_asset_id": value["canonical_asset_id"], "canonical_text_hash": value["canonical_text_hash"],
-            "nodes": nodes, "candidate_records": records, "allow_successor": value["allow_successor"],
+            "nodes": nodes, "candidate_records": [_rereview_model_record(record) for record in records],
+            "allow_successor": value["allow_successor"],
             "output_schema": "analysis.book.rereview-model-response/v1"}
         output, receipt_id = _invoke_model(host, value, context, CAPABILITY_REREVIEW, model_request)
         self.last_model_receipt_ids = [receipt_id]
@@ -1199,7 +1326,9 @@ class DonorAnalysisPlugin:
         for raw, record in zip(raw_items, records, strict=True):
             successor = raw["successor_candidate_id"]
             details = {"schema": "book-rereview-diagnostic/v1", "candidate_id": record["candidate_id"],
-                "recommendation": raw["recommendation"], "successor": None if successor is None else {
+                "severity": raw["severity"], "code": raw["code"], "message": raw["message"],
+                "recommendation": raw["recommendation"],
+                "successor": None if successor is None else {
                     "mode": "existing_idempotent", "predecessor_candidate_id": record["parent_candidate_id"],
                     "successor_candidate_id": successor},
                 "lineage": {
@@ -1212,22 +1341,30 @@ class DonorAnalysisPlugin:
         )
         diagnostics: list[dict[str, Any]] = []
         for index, (raw, details) in enumerate(zip(raw_items, detail_rows, strict=True)):
-            diagnostics.append(_diagnostic_item(value, context, index, severity=raw["severity"], code=str(raw["code"]),
-                message=str(raw["message"]), details=details, host=host))
+            diagnostics.append(_diagnostic_item(
+                value, context, index, severity=raw["severity"], code=str(raw["code"]),
+                message=str(raw["message"]), details=details, host=host,
+                model_receipt_id=receipt_id,
+            ))
         return _bundle(value, CAPABILITY_REREVIEW, diagnostics, self.release_id)
+
 
     def _finalize(self, request: Mapping[str, Any], capability: str, context: _RunContext,
                   bundle: dict[str, Any], host: HostPort | None, active: _ActiveRun | None) -> dict[str, Any] | None:
         data = _json_bytes(bundle); bundle_hash = _hash_bytes(data)
-        bundle_asset_id = _upload(host, context, data, "application/json", "result-bundle")
-        _event(host, context, "donor-analysis.result", bundle_asset_id, 2)
         is_async = capability in {CAPABILITY_ATOM_EXTRACT, CAPABILITY_CLAIM_GENERATE, CAPABILITY_REREVIEW}
         if is_async:
             provenance_hash, derived_model_receipts = _bundle_payload_provenance(
-                host, request, capability, bundle, self.package_hash, self.release_id,
+                host, request, capability, context, bundle,
+                self.package_hash, self.release_id,
             )
-            if derived_model_receipts is not None and derived_model_receipts != self.last_model_receipt_ids:
+            if derived_model_receipts != self.last_model_receipt_ids:
                 raise DonorAnalysisWorkerError("RESULT_CONTRACT_ERROR", "Bundle payload provenance differs from model receipt")
+            bundle_asset_id = _upload_result_bundle(host, context, data)
+        else:
+            bundle_asset_id = _upload(host, context, data, "application/json", "result-bundle")
+        _event(host, context, "donor-analysis.result", bundle_asset_id, 2)
+        if is_async:
             state = _state(
                 request, context, bundle, bundle_asset_id, bundle_hash, "ready",
                 self.last_model_receipt_ids, self.package_hash, self.release_id,
@@ -1267,15 +1404,26 @@ class DonorAnalysisPlugin:
         state = _load_json_asset(host, request["resume_state_asset_id"], request["resume_state_asset_hash"])
         if not isinstance(state, dict) or set(state) != _RESUME_STATE_FIELDS:
             raise DonorAnalysisWorkerError("RESUME_INVALID", "resume state is not closed")
-        bundle = _load_json_asset(host, _id(state["result_bundle_asset_id"], "result_bundle_asset_id"), _hash(state["result_bundle_hash"], "result_bundle_hash"))
-        if not isinstance(bundle, dict): raise DonorAnalysisWorkerError("RESUME_INVALID", "resume bundle is not an object")
+        bundle_asset_id = _id(state["result_bundle_asset_id"], "result_bundle_asset_id")
+        bundle_expected_hash = _hash(state["result_bundle_hash"], "result_bundle_hash")
+        bundle_bytes = _read_asset(host, bundle_asset_id, bundle_expected_hash)
+        bundle = _strict_json(bundle_bytes, code="RESUME_INVALID")
+        if (not isinstance(bundle, dict) or bundle_bytes != _json_bytes(bundle)):
+            raise DonorAnalysisWorkerError("RESUME_INVALID", "resume Bundle must be canonical JSON")
         _require_sdk(); assert _verify_result_bundle_sdk is not None
         try: _verify_result_bundle_sdk(bundle, snapshot_workspace_id=request["workspace_id"] if bundle.get("contract_id") == "candidate-batch/v1" else None,
             snapshot_hash_value=request["run_snapshot_hash"], known_parent_ids=set(request.get("known_parent_candidate_ids", [])))
         except Exception as exc: raise DonorAnalysisWorkerError("RESUME_INVALID", f"result Bundle binding failed: {exc}") from exc
         provenance_hash, derived_model_receipts = _bundle_payload_provenance(
-            host, request, capability, bundle, self.package_hash, self.release_id,
+            host, request, capability, context, bundle,
+            self.package_hash, self.release_id,
         )
+        try:
+            _upload_result_bundle(host, context, bundle_bytes)
+        except DonorAnalysisWorkerError as exc:
+            raise DonorAnalysisWorkerError(
+                "RESUME_INVALID", "Result Bundle differs from the durable original upload"
+            ) from exc
         _validate_resume_binding(
             request, capability, context, checkpoint, state, bundle,
             self.package_hash, self.release_id, provenance_hash,
@@ -1285,7 +1433,7 @@ class DonorAnalysisPlugin:
         context.last_checkpoint_seq = checkpoint_seq
         model_receipt_ids = list(state["model_receipt_ids"])
         skill_chain_result_refs = list(state["skill_chain_result_refs"])
-        bundle_content_hash = _hash_bytes(_json_bytes(bundle))
+        bundle_content_hash = _hash_bytes(bundle_bytes)
         _event(host, context, "donor-analysis.result", state["result_bundle_asset_id"], 2)
         if active.cancelled.is_set():
             self.last_receipt = _receipt(

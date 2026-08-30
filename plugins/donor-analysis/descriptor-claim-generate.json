@@ -3,7 +3,7 @@
   "capability_id": "analysis.book.claim.generate/v1",
   "provider": {
     "plugin_id": "com.plotpilot.novelagent.donor-analysis",
-    "release_id": "8fc7a1c48b823b09041a450267aea752556f3c2442ca9b01beecaff289197a77"
+    "release_id": "80dc50b850b3e16a7609a39cffbb91c9624d709e5da547ecf00f73afe19e4b53"
   },
   "input_schema": "analysis.book.claim.generate-request/v1",
   "output_schema": "analysis.book.claim.generate-result/v1",

@@ -6,7 +6,7 @@
     {
       "schema_id": "analysis.book.rereview-request/v1",
       "path": "schemas/rereview/input.schema.json",
-      "sha256": "75fd5f58c2331ce6b05cc52287c83dd34db8ccfc54eecb6cada87778ce245a06"
+      "sha256": "b5b3670ad83ba7daf290e97d335a2bbe27df384ca5980adf35e5fe0bed41bd6d"
     },
     {
       "schema_id": "analysis.book.rereview-result/v1",

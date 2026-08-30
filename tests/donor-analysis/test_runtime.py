@@ -964,14 +964,23 @@ def test_f006_stage_stop_resume_reuses_exact_operation_key_and_model_provenance(
         first_plugin.run(request, host)
     assert len(host.stage_calls) == 1 and len(host.logical_stage_results) == 1
     resume = _resume_request(request, first_plugin, host)
+    state = json.loads(host.assets[resume["resume_state_asset_id"]].decode("utf-8"))
+    expected_bundle = json.loads(
+        host.assets[state["result_bundle_asset_id"]].decode("utf-8")
+    )
+    model_before = _g2_call_count(host, "host.model.invoke/v1")
     resumed_plugin = DonorAnalysisPlugin()
     bundle = resumed_plugin.run(resume, host)
-    assert bundle is not None and bundle["contract_id"] == "candidate-batch/v1"
+    assert bundle == expected_bundle
+    assert bundle["contract_id"] == "candidate-batch/v1"
+    assert _g2_call_count(host, "host.model.invoke/v1") == model_before
     assert len(host.stage_calls) == 2
     assert host.stage_calls[0]["operation_key"] == host.stage_calls[1]["operation_key"]
     assert len(host.logical_stage_results) == 1
     assert resumed_plugin.last_receipt["model_receipt_ids"] == ["model-receipt-1"]
-    assert resumed_plugin.last_receipt["skill_chain_result_refs"] == bundle["skill_chain_result_refs"]
+    assert resumed_plugin.last_receipt["skill_chain_result_refs"] == []
+    assert bundle["skill_chain_result_refs"] == []
+    assert host.completion_calls[-1]["outcome"] == "succeeded"
 
 
 def _g2_call_count(host: Host, method: str) -> int:
@@ -1516,6 +1525,9 @@ def test_g2_legal_cancel_then_resume_has_no_stale_cancellation() -> None:
     resumed = DonorAnalysisPlugin().run(resume, host)
     assert resumed is not None and resumed["contract_id"] == "candidate-batch/v1"
     assert _g2_call_count(host, "host.model.invoke/v1") == model_before
+    assert len(host.stage_calls) == 1
+    assert len(host.logical_stage_results) == 1
+    assert resumed["skill_chain_result_refs"] == []
     assert host.completion_calls[-1]["outcome"] == "succeeded"
     assert [call["outcome"] for call in host.completion_calls[-2:]] == [
         "cancelled", "succeeded",
@@ -1784,3 +1796,673 @@ def test_g2_resume_claim_rejects_rebound_atom_binding_drift(variant: str) -> Non
     assert len(host.stage_calls) == stage_before
     assert len(host.logical_stage_results) == logical_stage_before
     assert host.completion_calls[-1]["outcome"] == "failed"
+
+
+def _g2_complete_bundle_provenance_hash(
+    host: Host,
+    request: dict,
+    bundle: dict,
+) -> str:
+    """Recompute the complete v2 projection without trusting the original state."""
+    payloads: list[dict] = []
+    model_receipt_ids: list[str] = []
+    for item in bundle["items"]:
+        if item["schema"] == "candidate-item/v1":
+            payload = json.loads(
+                host.assets[item["payload_asset_id"]].decode("utf-8")
+            )
+            payloads.append(
+                {
+                    "asset_id": item["payload_asset_id"],
+                    "content_hash": item["mutation"]["payload_hash"],
+                    "payload": payload,
+                }
+            )
+            if payload["schema"] == "book-atom/v1":
+                receipt_id = payload["provenance"]["model"]["receipt_id"]
+                if receipt_id not in model_receipt_ids:
+                    model_receipt_ids.append(receipt_id)
+            else:
+                assert payload["schema"] == "book-claim/v1"
+        else:
+            assert item["schema"] == "diagnostic-item/v1"
+            details = json.loads(
+                host.assets[item["details_asset_id"]].decode("utf-8")
+            )
+            payloads.append(
+                {
+                    "asset_id": item["details_asset_id"],
+                    "content_hash": item["details_hash"],
+                    "details": details,
+                }
+            )
+        for ref in item["source_refs"]:
+            if ref["source_type"] == "model_receipt":
+                receipt_id = ref["source_id"]
+                if receipt_id not in model_receipt_ids:
+                    model_receipt_ids.append(receipt_id)
+    projection = {
+        "schema": "donor-analysis-bundle-provenance/v2",
+        "binding_hash": _g2_resume_binding_hash(request),
+        "bundle": deepcopy(bundle),
+        "payloads": payloads,
+        "model_receipt_ids": model_receipt_ids,
+        "skill_chain_result_refs": deepcopy(bundle["skill_chain_result_refs"]),
+    }
+    return hash_json("donor-analysis-bundle-provenance/v2", projection)
+
+
+def _g2_execution_fence(host: Host) -> dict:
+    return {
+        "calls": len(host.calls),
+        "model": _g2_call_count(host, "host.model.invoke/v1"),
+        "stage": len(host.stage_calls),
+        "logical_stage": len(host.logical_stage_results),
+        "checkpoint": len(host.checkpoint_calls),
+        "completion": len(host.completion_calls),
+    }
+
+
+def _g2_assert_resume_rejected_without_execution(
+    host: Host,
+    failed: dict | None,
+    before: dict,
+) -> None:
+    assert failed is not None
+    assert _g2_failure_details(host, failed)["code"] == "RESUME_INVALID"
+    assert _g2_call_count(host, "host.model.invoke/v1") == before["model"]
+    assert len(host.stage_calls) == before["stage"]
+    assert len(host.logical_stage_results) == before["logical_stage"]
+    assert len(host.checkpoint_calls) == before["checkpoint"]
+    assert len(host.completion_calls) == before["completion"] + 1
+    assert host.completion_calls[-1]["outcome"] == "failed"
+    forbidden = {"host.model.invoke/v1", "host.candidate.stage/v1"}
+    assert not [
+        method
+        for method, _params in host.calls[before["calls"] :]
+        if method in forbidden
+    ]
+
+
+def _g2_replace_exact_string(value, old: str, new: str) -> int:
+    replacements = 0
+    if isinstance(value, dict):
+        for key, child in list(value.items()):
+            if child == old:
+                value[key] = new
+                replacements += 1
+            else:
+                replacements += _g2_replace_exact_string(child, old, new)
+    elif isinstance(value, list):
+        for index, child in enumerate(value):
+            if child == old:
+                value[index] = new
+                replacements += 1
+            else:
+                replacements += _g2_replace_exact_string(child, old, new)
+    return replacements
+
+
+def _g2_substitute_all_model_receipt_carriers(
+    host: Host,
+    resume: dict,
+    checkpoint: dict,
+    state: dict,
+    bundle: dict,
+    *,
+    replacement: str,
+    suffix: str,
+) -> int:
+    original = "model-receipt-1"
+    replacements = 0
+    request_hash = hash_json(
+        resume["capability_id"] + "-request/v1",
+        {
+            **{
+                key: deepcopy(value)
+                for key, value in resume.items()
+                if not key.startswith("resume_")
+            },
+            "operation": "run",
+        },
+    )
+    for ordinal, item in enumerate(bundle["items"]):
+        if item["schema"] == "candidate-item/v1":
+            payload = json.loads(
+                host.assets[item["payload_asset_id"]].decode("utf-8")
+            )
+            payload_replacements = _g2_replace_exact_string(
+                payload, original, replacement
+            )
+            replacements += payload_replacements
+            if payload_replacements:
+                payload_id, payload_hash = host.seed_json(
+                    f"asset-g2-model-receipt-payload-{suffix}-{ordinal}", payload
+                )
+                item["payload_asset_id"] = payload_id
+                item["mutation"]["payload_hash"] = payload_hash
+                item_id = _g2_derived_id(
+                    "candidate", request_hash, str(ordinal), payload_hash
+                )
+                old_item_id = item["item_id"]
+                item["item_id"] = item_id
+                old_entity_id = (
+                    "book-atom:" + old_item_id.split(":", 1)[1]
+                    if payload["schema"] == "book-atom/v1"
+                    else "book-claim:" + old_item_id.split(":", 1)[1]
+                )
+                new_entity_id = (
+                    "book-atom:" + item_id.split(":", 1)[1]
+                    if payload["schema"] == "book-atom/v1"
+                    else "book-claim:" + item_id.split(":", 1)[1]
+                )
+                if item["target"]["entity_id"] == old_entity_id:
+                    item["target"]["entity_id"] = new_entity_id
+                for write in item["write_set"]:
+                    if write["entity_id"] == old_entity_id:
+                        write["entity_id"] = new_entity_id
+        else:
+            details = json.loads(
+                host.assets[item["details_asset_id"]].decode("utf-8")
+            )
+            detail_replacements = _g2_replace_exact_string(
+                details, original, replacement
+            )
+            replacements += detail_replacements
+            if detail_replacements:
+                details_id, details_hash = host.seed_json(
+                    f"asset-g2-model-receipt-details-{suffix}-{ordinal}", details
+                )
+                item["details_asset_id"] = details_id
+                item["details_hash"] = details_hash
+
+    replacements += _g2_replace_exact_string(bundle, original, replacement)
+    replacements += _g2_replace_exact_string(state, original, replacement)
+    replacements += _g2_replace_exact_string(checkpoint, original, replacement)
+    return replacements
+
+
+def _g2_request_for_resume_capability(host: Host, capability: str) -> dict:
+    if capability == "atom":
+        return atom_extract_request()
+    if capability == "claim":
+        return claim_request(host)
+    assert capability == "rereview"
+    return rereview_request(host)
+
+
+@pytest.mark.parametrize("capability", ["atom", "claim", "rereview"])
+def test_g2_f001_resume_rejects_synchronized_model_receipt_substitution(
+    capability: str,
+) -> None:
+    host = Host()
+    request = _g2_request_for_resume_capability(host, capability)
+    plugin = DonorAnalysisPlugin()
+    assert plugin.run(request, host) is not None
+    resume, checkpoint, state, bundle = _g2_ready_resume(
+        host, request, plugin
+    )
+
+    replacements = _g2_substitute_all_model_receipt_carriers(
+        host,
+        resume,
+        checkpoint,
+        state,
+        bundle,
+        replacement="model-receipt-unexecuted",
+        suffix=capability,
+    )
+    assert replacements >= 1
+    _g2_rebind_result_bundle(
+        host,
+        resume,
+        checkpoint,
+        state,
+        bundle,
+        provenance_hash=_g2_complete_bundle_provenance_hash(host, resume, bundle),
+        suffix=f"model-receipt-{capability}",
+    )
+    before = _g2_execution_fence(host)
+
+    failed = DonorAnalysisPlugin().run(resume, host)
+
+    _g2_assert_resume_rejected_without_execution(host, failed, before)
+
+
+@pytest.mark.parametrize("capability", ["atom", "claim", "rereview"])
+def test_g2_f001_resume_rejects_structurally_valid_unexecuted_skill_chain_ref(
+    capability: str,
+) -> None:
+    host = Host()
+    request = _g2_request_for_resume_capability(host, capability)
+    plugin = DonorAnalysisPlugin()
+    assert plugin.run(request, host) is not None
+    resume, checkpoint, state, bundle = _g2_ready_resume(
+        host, request, plugin
+    )
+    fake_ref = {
+        "schema": "skill-chain-ref/v1",
+        "chain_result_id": "chain-unexecuted",
+        "asset_id": None,
+        "asset_hash": None,
+        "result_bundle_id": bundle["bundle_id"],
+        "result_item_id": bundle["items"][0]["item_id"],
+        "stream_id": None,
+        "acked_prefix_hash": None,
+    }
+    bundle["skill_chain_result_refs"] = [deepcopy(fake_ref)]
+    state["skill_chain_result_refs"] = [deepcopy(fake_ref)]
+    _g2_rebind_result_bundle(
+        host,
+        resume,
+        checkpoint,
+        state,
+        bundle,
+        provenance_hash=_g2_complete_bundle_provenance_hash(host, resume, bundle),
+        suffix=f"unexecuted-skill-{capability}",
+    )
+    before = _g2_execution_fence(host)
+
+    failed = DonorAnalysisPlugin().run(resume, host)
+
+    _g2_assert_resume_rejected_without_execution(host, failed, before)
+
+
+@pytest.mark.parametrize(
+    "variant",
+    [
+        "bundle-id",
+        "item-id",
+        "item-kind",
+        "target",
+        "mutation-mode",
+        "base",
+        "write-set",
+        "parents",
+        "status-partial",
+        "warnings",
+    ],
+)
+def test_g2_f002_resume_rejects_synchronized_candidate_bundle_authority_mutation(
+    variant: str,
+) -> None:
+    host = Host()
+    if variant == "parents":
+        second = deepcopy(
+            host.model_outputs[
+                "analysis.book.atom.extract-model-response/v1"
+            ]["items"][0]
+        )
+        second["title"] = "第二个动作骤停"
+        second["observation"] = "第二个动作也突然停止"
+        host.model_outputs[
+            "analysis.book.atom.extract-model-response/v1"
+        ]["items"].append(second)
+    request = atom_extract_request()
+    plugin = DonorAnalysisPlugin()
+    assert plugin.run(request, host) is not None
+    resume, checkpoint, state, bundle = _g2_ready_resume(
+        host, request, plugin
+    )
+    item = bundle["items"][0]
+
+    if variant == "bundle-id":
+        bundle["bundle_id"] = _g2_derived_id("bundle", "forged")
+    elif variant == "item-id":
+        item["item_id"] = _g2_derived_id("candidate", "forged")
+    elif variant in {"item-kind", "mutation-mode"}:
+        item["item_kind"] = "document"
+        item["target"]["entity_kind"] = "document"
+        item["write_set"][0]["entity_kind"] = "document"
+        item["mutation"]["mode"] = (
+            "replace" if variant == "item-kind" else "append_text"
+        )
+    elif variant == "target":
+        item["target"]["entity_id"] = "document-victim"
+        item["write_set"][0]["entity_id"] = "document-victim"
+    elif variant == "base":
+        item["base"]["revision_id"] = "rev-forged"
+        item["write_set"][0]["revision_id"] = "rev-forged"
+    elif variant == "write-set":
+        item["write_set"].append(
+            {
+                "workspace_id": "ws-1",
+                "entity_kind": "relation_set",
+                "entity_id": "book-atom:additional-write",
+                "revision_id": "rev-1",
+                "content_hash": TEXT_HASH,
+            }
+        )
+    elif variant == "parents":
+        assert len(bundle["items"]) == 2
+        bundle["items"][1]["parent_candidate_ids"] = [item["item_id"]]
+    elif variant == "status-partial":
+        item["status"] = "partial"
+        bundle["partial"] = True
+    else:
+        bundle["warnings"] = [
+            {
+                "code": "forged_warning",
+                "message": "structurally valid warning not emitted by the run",
+                "details_asset_id": None,
+            }
+        ]
+
+    _g2_rebind_result_bundle(
+        host,
+        resume,
+        checkpoint,
+        state,
+        bundle,
+        provenance_hash=_g2_complete_bundle_provenance_hash(host, resume, bundle),
+        suffix=f"candidate-authority-{variant}",
+    )
+    before = _g2_execution_fence(host)
+
+    failed = DonorAnalysisPlugin().run(resume, host)
+
+    _g2_assert_resume_rejected_without_execution(host, failed, before)
+
+
+@pytest.mark.parametrize(
+    "variant",
+    ["severity", "code", "message", "details", "item-id", "order"],
+)
+def test_g2_f002_resume_rejects_synchronized_rereview_diagnostic_mutation(
+    variant: str,
+) -> None:
+    host = Host()
+    request = _two_record_rereview(host)
+    plugin = DonorAnalysisPlugin()
+    assert plugin.run(request, host) is not None
+    resume, checkpoint, state, bundle = _g2_ready_resume(
+        host, request, plugin
+    )
+    item = bundle["items"][0]
+
+    if variant == "severity":
+        item["severity"] = "error"
+    elif variant == "code":
+        item["code"] = "forged_diagnostic"
+    elif variant == "message":
+        item["message"] = "forged diagnostic content"
+    elif variant == "details":
+        details = json.loads(
+            host.assets[item["details_asset_id"]].decode("utf-8")
+        )
+        details["recommendation"] = "forged_but_structurally_closed"
+        details_id, details_hash = host.seed_json(
+            "asset-g2-forged-rereview-details", details
+        )
+        item["details_asset_id"] = details_id
+        item["details_hash"] = details_hash
+    elif variant == "item-id":
+        item["item_id"] = _g2_derived_id("diagnostic", "forged")
+    else:
+        bundle["items"].reverse()
+
+    _g2_rebind_result_bundle(
+        host,
+        resume,
+        checkpoint,
+        state,
+        bundle,
+        provenance_hash=_g2_complete_bundle_provenance_hash(host, resume, bundle),
+        suffix=f"rereview-authority-{variant}",
+    )
+    before = _g2_execution_fence(host)
+
+    failed = DonorAnalysisPlugin().run(resume, host)
+
+    _g2_assert_resume_rejected_without_execution(host, failed, before)
+
+
+def _g2_mixed_atom_claim_rereview(host: Host) -> dict:
+    request = rereview_request(host)
+    accepted_atoms: list[dict] = []
+    ordered_atoms: list[dict] = []
+    for ordinal, atom_id in enumerate(
+        ["atom-rereview-accepted-1", "atom-rereview-accepted-2"]
+    ):
+        payload = atom_payload()
+        payload["title"] = f"复审动作 {ordinal + 1}"
+        payload["observation"] = f"复审动作证据 {ordinal + 1}"
+        payload["provenance"] = trusted_atom_provenance()
+        payload_asset_id, payload_hash = host.seed_json(
+            f"asset-rereview-accepted-atom-{ordinal + 1}", payload
+        )
+        acceptance_ordinal = 21 + ordinal
+        accepted_atoms.append(
+            {
+                "atom_id": atom_id,
+                "source_revision_id": "rev-1",
+                "status": "accepted",
+                "is_current": True,
+                "acceptance_ordinal": acceptance_ordinal,
+                "payload_asset_id": payload_asset_id,
+                "payload_hash": payload_hash,
+                "evidence_spans": [evidence()],
+            }
+        )
+        ordered_atoms.append(
+            {
+                "ordinal": ordinal,
+                "atom_id": atom_id,
+                "payload_hash": payload_hash,
+                "acceptance_ordinal": acceptance_ordinal,
+                "evidence_spans": [evidence()],
+            }
+        )
+
+    claim_input_value = {
+        "schema": "claim-input/v1",
+        "source_revision_id": "rev-1",
+        "ordered_atoms": ordered_atoms,
+    }
+    parameters_asset_id, parameters_hash = host.seed_json(
+        "asset-rereview-claim-input", claim_input_value
+    )
+    claim = claim_payload(claim_input_value)
+    claim_asset_id, claim_hash = host.seed_json(
+        "asset-rereview-claim-candidate", claim
+    )
+    claim_authority = {
+        "parameters_asset_id": parameters_asset_id,
+        "parameters_asset_hash": parameters_hash,
+        "snapshot_parameters_asset_id": parameters_asset_id,
+        "snapshot_asset_hashes": [
+            {"asset_id": parameters_asset_id, "sha256": parameters_hash}
+        ],
+        "accepted_atoms": accepted_atoms,
+    }
+    request["known_parent_candidate_ids"].append("candidate-parent-claim")
+    request["candidate_records"].append(
+        {
+            "candidate_id": "candidate-successor-claim",
+            "candidate_kind": "book_claim",
+            "status": "pending",
+            "is_current": False,
+            "payload_hash": claim_hash,
+            "payload_asset_id": claim_asset_id,
+            "source_revision_id": "rev-1",
+            "parent_candidate_id": "candidate-parent-claim",
+            "successor_candidate_id": "candidate-successor-claim",
+            "claim_authority": claim_authority,
+        }
+    )
+    host.model_outputs["analysis.book.rereview-model-response/v1"]["items"].append(
+        {
+            "candidate_id": "candidate-successor-claim",
+            "severity": "info",
+            "code": "claim_authority_ok",
+            "message": "Claim authority is exact",
+            "recommendation": "retain",
+            "successor_candidate_id": "candidate-successor-claim",
+        }
+    )
+    return request
+
+
+def _g2_alternate_evidence() -> dict:
+    return build_evidence_span(
+        workspace_id="ws-1",
+        document_id="doc-1",
+        revision_id="rev-1",
+        node_id="node-1",
+        start_codepoint=4,
+        end_codepoint=5,
+        canonical_text=TEXT,
+    )
+
+
+def _g2_mutate_rereview_claim_authority(
+    host: Host,
+    request: dict,
+    variant: str,
+) -> None:
+    record = request["candidate_records"][1]
+    payload = json.loads(host.assets[record["payload_asset_id"]].decode("utf-8"))
+    payload_changed = True
+    if variant == "claim-evidence-drift":
+        payload["evidence_spans"][0] = _g2_alternate_evidence()
+    elif variant == "claim-evidence-empty":
+        payload["evidence_spans"] = []
+    elif variant == "unknown-atom-id":
+        payload["ordered_atom_ids"][1] = "atom-unknown"
+    elif variant == "reordered-atom-ids":
+        payload["ordered_atom_ids"].reverse()
+    elif variant == "empty-title":
+        payload["title"] = ""
+    elif variant == "invalid-confidence":
+        payload["interpretation_confidence"] = "forged"
+    elif variant == "invalid-method":
+        payload["analysis_method"] = {
+            "name": "book-claim-generate",
+            "version": "2",
+        }
+    elif variant == "invalid-counterexamples":
+        payload["counterexamples"] = [{"not": "a string"}]
+    elif variant == "invalid-conflicts":
+        payload["conflicts"] = [1]
+    elif variant == "prompt-eligible":
+        payload["prompt_eligible"] = True
+    elif variant == "promotion-authorized":
+        payload["promotion_authorized"] = True
+    else:
+        payload_changed = False
+        authority = record["claim_authority"]
+        accepted = authority["accepted_atoms"][1]
+        if variant == "accepted-evidence-drift":
+            accepted["evidence_spans"] = [_g2_alternate_evidence()]
+        elif variant == "accepted-evidence-empty":
+            accepted["evidence_spans"] = []
+        elif variant == "payload-hash-drift":
+            first = authority["accepted_atoms"][0]
+            accepted["payload_asset_id"] = first["payload_asset_id"]
+            accepted["payload_hash"] = first["payload_hash"]
+        elif variant == "acceptance-ordinal-drift":
+            accepted["acceptance_ordinal"] = 99
+        elif variant == "current-drift":
+            accepted["is_current"] = False
+        elif variant == "status-drift":
+            accepted["status"] = "superseded"
+        else:
+            assert variant == "revision-drift"
+            accepted["source_revision_id"] = "rev-other"
+
+    if payload_changed:
+        payload_asset_id, payload_hash = host.seed_json(
+            f"asset-g2-invalid-rereview-claim-{variant}", payload
+        )
+        record["payload_asset_id"] = payload_asset_id
+        record["payload_hash"] = payload_hash
+
+
+@pytest.mark.parametrize(
+    "variant",
+    [
+        "claim-evidence-drift",
+        "claim-evidence-empty",
+        "accepted-evidence-drift",
+        "accepted-evidence-empty",
+        "unknown-atom-id",
+        "reordered-atom-ids",
+        "payload-hash-drift",
+        "acceptance-ordinal-drift",
+        "current-drift",
+        "status-drift",
+        "revision-drift",
+        "empty-title",
+        "invalid-confidence",
+        "invalid-method",
+        "invalid-counterexamples",
+        "invalid-conflicts",
+        "prompt-eligible",
+        "promotion-authorized",
+    ],
+)
+def test_g2_f003_rereview_rejects_invalid_claim_authority_before_model(
+    variant: str,
+) -> None:
+    host = Host()
+    request = _g2_mixed_atom_claim_rereview(host)
+    _g2_mutate_rereview_claim_authority(host, request, variant)
+    before = _g2_execution_fence(host)
+
+    failed = DonorAnalysisPlugin().run(request, host)
+
+    assert failed is not None
+    assert _g2_failure_details(host, failed)["code"] == "REREVIEW_INVALID"
+    assert _g2_call_count(host, "host.model.invoke/v1") == 0
+    assert host.stage_calls == []
+    assert host.logical_stage_results == {}
+    assert host.checkpoint_calls == []
+    assert len(host.completion_calls) == before["completion"] + 1
+    assert host.completion_calls[-1]["outcome"] == "failed"
+    assert not [
+        method
+        for method, _params in host.calls
+        if method in {"host.model.invoke/v1", "host.candidate.stage/v1"}
+    ]
+
+
+def test_g2_f003_legal_ordered_mixed_atom_claim_rereview_run_and_resume_is_diagnostic_only() -> None:
+    host = Host()
+    request = _g2_mixed_atom_claim_rereview(host)
+    plugin = DonorAnalysisPlugin()
+
+    original = plugin.run(request, host)
+
+    assert original is not None and original["contract_id"] == "diagnostic-bundle/v1"
+    assert original["partial"] is False
+    expected_candidate_ids = [
+        record["candidate_id"] for record in request["candidate_records"]
+    ]
+    details = [
+        json.loads(host.assets[item["details_asset_id"]].decode("utf-8"))
+        for item in original["items"]
+    ]
+    assert [item["candidate_id"] for item in details] == expected_candidate_ids
+    assert [item["lineage"] for item in details] == [
+        {
+            "predecessor_candidate_id": record["parent_candidate_id"],
+            "successor_candidate_id": record["successor_candidate_id"],
+        }
+        for record in request["candidate_records"]
+    ]
+    assert all(item["mutation_staged"] is False for item in details)
+    assert _g2_call_count(host, "host.model.invoke/v1") == 1
+    assert host.stage_calls == []
+    assert host.logical_stage_results == {}
+
+    resume = _resume_request(request, plugin, host)
+    model_before = _g2_call_count(host, "host.model.invoke/v1")
+    stage_before = len(host.stage_calls)
+    logical_stage_before = len(host.logical_stage_results)
+    resumed = DonorAnalysisPlugin().run(resume, host)
+
+    assert resumed == original
+    assert _g2_call_count(host, "host.model.invoke/v1") == model_before
+    assert len(host.stage_calls) == stage_before == 0
+    assert len(host.logical_stage_results) == logical_stage_before == 0
+    assert host.completion_calls[-1]["outcome"] == "succeeded"
