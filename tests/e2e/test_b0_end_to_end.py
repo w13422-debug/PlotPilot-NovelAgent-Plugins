@@ -276,17 +276,19 @@ def test_package_manifests_reject_crlf_and_missing_final_lf(
 
 
 def _source_candidate_from_current_history() -> str:
-    head = _git(ROOT, "rev-parse", "HEAD")
-    paths = set(_git(ROOT, "diff-tree", "--no-commit-id", "--name-only", "-r", head).splitlines())
-    evidence_paths = {
-        "coordination/NAP-00/b0-remediation-v1.md",
-        "docs/deliveries/NAP-00-B0-remediation-candidate.md",
-        "coordination/NAP-00/b0-generation-2-evidence-v1.json",
-        "docs/deliveries/NAP-00-B0-G2-candidate.md",
-        "coordination/NAP-00/b0-generation-2-remediation-evidence-v1.json",
-        "docs/deliveries/NAP-00-B0-G2-remediation-candidate.md",
-    }
-    return _git(ROOT, "rev-parse", "HEAD^") if paths and paths <= evidence_paths else head
+    # Downstream no-ff integrations make HEAD (and HEAD^) unrelated to the
+    # frozen B0 Generation-2 source. Locate that source by its immutable
+    # single-parent boundary instead of guessing from the latest commit.
+    candidates = []
+    for commit in _git(ROOT, "rev-list", "--topo-order", "HEAD").splitlines():
+        parents = _git(ROOT, "show", "-s", "--format=%P", commit).split()
+        if parents == [gate.GENERATION_PARENT] and commit not in {
+            gate.REJECTED_SOURCE,
+            gate.REJECTED_EVIDENCE,
+        }:
+            candidates.append(commit)
+    assert len(candidates) == 1, f"expected one accepted B0 G2 source, got {candidates}"
+    return candidates[0]
 
 
 def test_exact_source_gate_passes_fresh_checkout_with_windows_autocrlf(tmp_path: Path) -> None:
