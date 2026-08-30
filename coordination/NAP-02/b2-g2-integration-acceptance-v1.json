@@ -1,0 +1,81 @@
+{
+  "schema": "nap-b2-g2-integration-acceptance/v1",
+  "project_id": "NAP-02",
+  "batch": "B2",
+  "generation_id": "NAP-B2-G2-20260830",
+  "accepted_at": "2026-08-30T16:44:29+08:00",
+  "model_policy": {
+    "implementation": "gpt-5.6-sol/high",
+    "formal_review": "gpt-5.6-sol/max",
+    "speed": "fast_1.5x",
+    "service_tier": "priority",
+    "fast_is_not_low": true
+  },
+  "review_acceptance": {
+    "reviewer_agent_id": "01a05181-0294-7a00-add1-66b0f6be810d",
+    "reviewer": "Maxwell",
+    "verdict": "PASS",
+    "manifest_frozen": true,
+    "closed_ids": [
+      "NAP-B2-G2-F-001",
+      "NAP-B2-G2-F-002",
+      "NAP-B2-G2-F-003"
+    ],
+    "open_ids": [],
+    "new_finding_ids": [],
+    "source_merge_eligible": true,
+    "nap00_integration_eligible": true,
+    "result_anchor_head": "9a1efebdca7ab83050d34a2e73e5c289d635601b",
+    "result_path": "coordination/NAP-02/b2-g2-sol-targeted-recheck-v1.json",
+    "result_sha256": "dbee9c601f041eb541d2da50b2fdc795b40fb1cbdb709ae3382bf502f767b276"
+  },
+  "source": {
+    "head": "437193e149808687777f5f745bba9738da42cd7e",
+    "tree": "e926335736234ed33d244b07eb36a5cc08afead4",
+    "parent": "bc2bacf45a13bd7d0d52583cd4188cd8560acb43",
+    "changed_path_count_from_b1": 70,
+    "out_of_set_count": 0
+  },
+  "integration": {
+    "repository_branch": "codex/nap-00-integration",
+    "previous_head": "b7f950cb310b0e17c9092d8fbe18761d26049c58",
+    "no_ff_merge_commit": "baba74a9571902b20a643ef7687669bb656d5a98",
+    "merge_tree": "e926335736234ed33d244b07eb36a5cc08afead4",
+    "parents": [
+      "b7f950cb310b0e17c9092d8fbe18761d26049c58",
+      "437193e149808687777f5f745bba9738da42cd7e"
+    ],
+    "merge_tree_equals_reviewed_source_tree": true,
+    "excluded_evidence_heads": [
+      "cb7e7cd863b85033f9b8195cb22bae2266e2dfa8",
+      "9a1efebdca7ab83050d34a2e73e5c289d635601b",
+      "3f9a5a18db5df4327433ae2d2674e2d9a78f8671"
+    ],
+    "excluded_rejected_g1_head": "f8cc571ce4881e7174e26044248a6fba86a5ac40"
+  },
+  "integrated_validation": {
+    "donor_analysis": "424 passed in 46.38s",
+    "source_and_e2e": "126 passed in 45.29s",
+    "contracts": "39 passed in 10.73s",
+    "typescript": "5.8.3 exact package-lock",
+    "ruff_fatal": "PASS E9/F63/F7/F82",
+    "compileall": "PASS with external pycache",
+    "strict_cumulative_json": "44 PASS",
+    "deterministic_rebuild": "66 Code/Data/Skill files; first rebuild 0 differences; second rebuild 0 differences",
+    "repository_cache_count_after_cleanup": 0,
+    "worktree_clean": true
+  },
+  "package_identity": {
+    "code_package_hash": "fd37052d50f88dd7519eab641e283cc53521e07cbfa3eed07d06eea861517cf2",
+    "code_release_id": "80dc50b850b3e16a7609a39cffbb91c9624d709e5da547ecf00f73afe19e4b53",
+    "data_package_hash": "bc00ec1e98ed00f944372546ad410feaaa771040bd0637abbe53c738f61f9e25",
+    "data_release_id": "02a807a6026e127d1c6f543c65d71f02899299ef1a5e3746ccdc8b3ecd5b758f",
+    "atomic_skill_release_id": "ed9fad4c3287f8a71c47b01344d1099862578de98289e5cecaf9b890a1c8bcfa",
+    "claim_skill_release_id": "328257c271e2a32b791e2c50a43fdb213e79a1252a99e8ecd7351eedb2c381b4"
+  },
+  "decision": {
+    "b2_accepted": true,
+    "release_NAP_03_04_05": true,
+    "windows_product_built": false
+  }
+}
