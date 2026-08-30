@@ -1,0 +1,133 @@
+{
+  "schema": "nap-b1-integration-acceptance/v1",
+  "batch": "B1",
+  "source_project": "NAP-01",
+  "integrator": "NAP-00",
+  "status": "PASS",
+  "accepted_at": "2026-08-30T12:27:38.519534+08:00",
+  "model_policy": {
+    "concurrent_model": "gpt-5.6-sol",
+    "implementation_and_validation_reasoning": "high",
+    "formal_review_reasoning": "max",
+    "speed": "fast_1.5x",
+    "service_tier": "priority",
+    "fast_is_not_low": true
+  },
+  "frozen_review": {
+    "manifest_commit": "64bc8cea6b5afcb1e6eb2d1729787186a3133cdc",
+    "manifest_sha256": "916ffbec1449889438510f4412eda41dd60cd9659e0dc1e5c0f1287a0929be08",
+    "finding_ids": [
+      "NAP-B1-F-001",
+      "NAP-B1-F-002",
+      "NAP-B1-F-003",
+      "NAP-B1-F-004",
+      "NAP-B1-F-005"
+    ]
+  },
+  "same_sol_targeted_rereview": {
+    "reviewer_agent_id": "01a0479b-7bea-7e81-b652-061a3aea61a0",
+    "reviewer": "Wegener",
+    "model": "gpt-5.6-sol",
+    "reasoning_effort": "max",
+    "speed": "fast_1.5x",
+    "verdict": "PASS",
+    "closed_finding_ids": [
+      "NAP-B1-F-001",
+      "NAP-B1-F-002",
+      "NAP-B1-F-003",
+      "NAP-B1-F-004",
+      "NAP-B1-F-005"
+    ],
+    "open_finding_ids": [],
+    "no_new_finding_ids": true,
+    "scope_expanded": false,
+    "nap01_evidence_commit": "64e12b664347bbabb806e3c9d4c2d87429338ac0",
+    "result_path": "coordination/NAP-01/b1-sol-targeted-rereview-v1.json",
+    "result_committed_sha256": "22a13c05486c9e262b16ecfed9183ff7f791afc1b9821678c5179b33313e851d",
+    "acceptance_path": "coordination/NAP-01/b1-acceptance-v1.json",
+    "acceptance_committed_sha256": "574c6f3d1233e3d5c6c9e3bb3da5b7aedfa3deb54ecd066309718da3938b49de"
+  },
+  "integration": {
+    "baseline_head": "2f0448cba177e298dbb00cef72d7401ccfe6a749",
+    "source_head": "63e7bc4df32bd0b2ede75d05a97bffe5238302a9",
+    "source_tree": "dba22c500bad0a131155eecbe17db539353b5bee",
+    "source_parent": "64bc8cea6b5afcb1e6eb2d1729787186a3133cdc",
+    "merge_commit": "4cfe41209f85d787b5d7adbb2481670dbeb73454",
+    "merge_tree": "dba22c500bad0a131155eecbe17db539353b5bee",
+    "merge_first_parent": "2f0448cba177e298dbb00cef72d7401ccfe6a749",
+    "merge_second_parent": "63e7bc4df32bd0b2ede75d05a97bffe5238302a9",
+    "no_ff": true,
+    "integration_changed_path_count": 136,
+    "out_of_set_count": 0,
+    "supplemental_evidence_head": "90fe45469d87836f442a4491192181bb5f240c25",
+    "supplemental_evidence_head_merged": false,
+    "nap01_acceptance_evidence_head_merged": false,
+    "integration_harness_fix_commit": "0ecff4e1ab7e7e51d2e5a20b67b6b6fbdbaee51b",
+    "integration_harness_fix_parent": "4cfe41209f85d787b5d7adbb2481670dbeb73454",
+    "integration_harness_fix_paths": [
+      "tests/e2e/test_b0_end_to_end.py"
+    ],
+    "integration_harness_fix_reason": "Locate the immutable B0 G2 source in history after downstream no-ff merges instead of treating current HEAD as B0 source."
+  },
+  "validation": {
+    "initial_broad_run": {
+      "result": "124 passed, 68 subtests, 2 failed",
+      "classification": "B0 test-harness history locator defect; no B1 runtime or package test failed",
+      "failed_tests": [
+        "tests/e2e/test_b0_end_to_end.py::test_generation_two_source_has_exact_parent_and_excludes_rejected_generation",
+        "tests/e2e/test_b0_end_to_end.py::test_exact_source_gate_passes_fresh_checkout_with_windows_autocrlf"
+      ]
+    },
+    "harness_directed_after_fix": "2 passed",
+    "final_integrated_pytest": {
+      "command": "python -m pytest -q tests/source tests/e2e",
+      "result": "126 passed, 68 subtests in 37.53s",
+      "exit_code": 0
+    },
+    "compileall": {
+      "scope": "sdk plugins/source-import plugins/source-cleaning-runtime plugins/source-structure tests/source tests/e2e",
+      "result": "PASS"
+    },
+    "strict_json": {
+      "total": 64,
+      "result": "PASS",
+      "counts": {
+        "plugins/source-import": 12,
+        "plugins/source-cleaning-runtime": 16,
+        "plugins/source-structure": 27,
+        "data/source-cleaning": 7,
+        "coordination/NAP-01": 2
+      }
+    },
+    "git_clean_after": true,
+    "windows_artifact_build_run": false
+  },
+  "package_identities": {
+    "com.plotpilot.novelagent.source-import": {
+      "package_hash": "137fe5f10c89b99fb665986572978792e9bf0fa7721fbb4fba8541fbb33185d0",
+      "release_id": "ffab54acc6652a3f6e95c6ecdc0b736e3fd785d76582e9acf03972163956975d",
+      "wheel_sha256": "7051ef6f4485e616263d83b2fce75329e610eb4df219d1eb832b0270630ce88b"
+    },
+    "com.plotpilot.novelagent.source-cleaning-runtime": {
+      "package_hash": "a085eda46879d088c002e6ed16c8d7b50a9615a161b538a321c10aced6037934",
+      "release_id": "1bfda62b8f7f901c03e9cc27f68f9f120a5e7666d46fcc49314cd1329a8b4564",
+      "wheel_sha256": "337fe9acaf3375c1953e3a0c40c70b027cee31979339c8ef70310da11ad4f220",
+      "regex_wheel_sha256": "e30d40268a28d54ce0437031750497004c22602b8e3ab891f759b795a003b312"
+    },
+    "com.plotpilot.novelagent.source-structure": {
+      "package_hash": "9dd509a71cbfbe14a8534b9290f9dce95db31ce22a20b1777e31d73236b2fe8d",
+      "release_id": "4e26b44e25c71494f9aed933000934b34e416fbb16e471a8f1285cade19ad9a5",
+      "wheel_sha256": "91a553b65ce45d4c41444005195aada2dc2a8c6a8643375127711e07b5130575"
+    }
+  },
+  "gates": {
+    "b1_accepted": true,
+    "all_findings_closed": true,
+    "source_merge_eligible": true,
+    "integrated_validation_pass": true,
+    "release_NAP_02_eligible": true,
+    "release_NAP_02": true,
+    "next_batch": "B2",
+    "next_project": "NAP-02"
+  }
+}
