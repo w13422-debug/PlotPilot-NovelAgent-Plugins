@@ -1,0 +1,72 @@
+{
+  "$id": "https://plotpilot.local/data/book-analysis-taxonomy-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "keyLabel": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "key": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+        "label_zh": {"type": "string", "minLength": 1}
+      },
+      "required": ["key", "label_zh"]
+    },
+    "metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "key": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+        "label_zh": {"type": "string", "minLength": 1},
+        "value_type": {"enum": ["ratio_0_1", "ordered_curve", "categorical_sequence", "text_profile", "categorical", "codepoint_distribution"]},
+        "allowed_values": {
+          "type": "array",
+          "items": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+          "uniqueItems": true
+        }
+      },
+      "required": ["key", "label_zh", "value_type", "allowed_values"]
+    },
+    "rubric": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "criterion_id": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+        "label_zh": {"type": "string", "minLength": 1},
+        "applies_to": {"enum": ["atom", "claim", "both"]},
+        "requirement": {"type": "string", "minLength": 1},
+        "failure_code": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"}
+      },
+      "required": ["criterion_id", "label_zh", "applies_to", "requirement", "failure_code"]
+    },
+    "interpreter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "format_id": {"const": "book-analysis-taxonomy/v1"},
+        "plugin_id": {"const": "com.plotpilot.novelagent.donor-analysis"},
+        "capability_id": {"enum": ["analysis.book.atom.extract/v1", "analysis.book.atom.manual/v1", "analysis.book.claim.generate/v1", "analysis.book.rereview/v1"]},
+        "direction": {"enum": ["format_to_capability", "capability_to_format"]}
+      },
+      "required": ["format_id", "plugin_id", "capability_id", "direction"]
+    }
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "book-analysis-taxonomy/v1"},
+    "format_id": {"const": "book-analysis-taxonomy/v1"},
+    "taxonomy_id": {"const": "com.plotpilot.novelagent.book-analysis-taxonomy"},
+    "version": {"const": "1.0.0"},
+    "atom_kinds": {"type": "array", "items": {"$ref": "#/$defs/keyLabel"}, "minItems": 1, "uniqueItems": true},
+    "description_types": {"type": "array", "items": {"$ref": "#/$defs/keyLabel"}, "minItems": 1, "uniqueItems": true},
+    "narration_techniques": {"type": "array", "items": {"$ref": "#/$defs/keyLabel"}, "minItems": 1, "uniqueItems": true},
+    "ratio_metrics": {"type": "array", "items": {"$ref": "#/$defs/metric"}, "minItems": 1, "uniqueItems": true},
+    "rhythm_emotion_metrics": {"type": "array", "items": {"$ref": "#/$defs/metric"}, "minItems": 1, "uniqueItems": true},
+    "language_metrics": {"type": "array", "items": {"$ref": "#/$defs/metric"}, "minItems": 1, "uniqueItems": true},
+    "structure_metrics": {"type": "array", "items": {"$ref": "#/$defs/metric"}, "minItems": 1, "uniqueItems": true},
+    "review_rubric": {"type": "array", "items": {"$ref": "#/$defs/rubric"}, "minItems": 1, "uniqueItems": true},
+    "interpreter_mappings": {"type": "array", "items": {"$ref": "#/$defs/interpreter"}, "minItems": 8, "maxItems": 8, "uniqueItems": true}
+  },
+  "required": ["schema", "format_id", "taxonomy_id", "version", "atom_kinds", "description_types", "narration_techniques", "ratio_metrics", "rhythm_emotion_metrics", "language_metrics", "structure_metrics", "review_rubric", "interpreter_mappings"]
+}
+

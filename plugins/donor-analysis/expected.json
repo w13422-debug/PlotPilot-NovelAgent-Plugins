@@ -1,0 +1,281 @@
+{
+  "schema": "donor-analysis-package-expected/v1",
+  "plugin_id": "com.plotpilot.novelagent.donor-analysis",
+  "version": "0.1.0",
+  "package_files": [
+    "backend/plotpilot_donor_analysis-0.1.0-py3-none-any.whl",
+    "backend/requirements.lock",
+    "backend/wheels/README.txt",
+    "descriptor-atom-manual.json",
+    "descriptor-claim-generate.json",
+    "descriptor-rereview.json",
+    "descriptor.json",
+    "donor_analysis/__init__.py",
+    "donor_analysis/build_backend.py",
+    "donor_analysis/capability_spec.py",
+    "donor_analysis/contract.py",
+    "donor_analysis/identity.json",
+    "donor_analysis/package_identity.py",
+    "donor_analysis/runtime.py",
+    "donor_analysis/schemas/atom-extract/index.json",
+    "donor_analysis/schemas/atom-extract/input.schema.json",
+    "donor_analysis/schemas/atom-extract/result.schema.json",
+    "donor_analysis/schemas/atom-manual/index.json",
+    "donor_analysis/schemas/atom-manual/input.schema.json",
+    "donor_analysis/schemas/atom-manual/result.schema.json",
+    "donor_analysis/schemas/book-atom.schema.json",
+    "donor_analysis/schemas/book-claim.schema.json",
+    "donor_analysis/schemas/claim-generate/index.json",
+    "donor_analysis/schemas/claim-generate/input.schema.json",
+    "donor_analysis/schemas/claim-generate/result.schema.json",
+    "donor_analysis/schemas/claim-input.schema.json",
+    "donor_analysis/schemas/evidence-span.schema.json",
+    "donor_analysis/schemas/node.schema.json",
+    "donor_analysis/schemas/rereview/index.json",
+    "donor_analysis/schemas/rereview/input.schema.json",
+    "donor_analysis/schemas/rereview/result.schema.json",
+    "files.sha256",
+    "migrations/manifest.json",
+    "plugin.json",
+    "pyproject.toml",
+    "rebuild_package.py",
+    "ui/metadata-only.json"
+  ],
+  "files_sha256": "2c610024d7714a642966468544674bf8eadc8400e7f80e50e9c5710a57dea413  backend/plotpilot_donor_analysis-0.1.0-py3-none-any.whl\n81e7990ffd51938ca4231ec67ef4d862ec0e15fa91dc85f3b7828bbbc1fd7ff8  backend/requirements.lock\neecd0446ffde39404825cb19cf4bb8198fa9c435b4ad03b92b61832c22b93ded  backend/wheels/README.txt\n108d53a93ff6c51d419cf8a630f7a2dd096f2a7260c57e491e03bba327110c03  donor_analysis/__init__.py\n540ba99a5b5640e7b21da36f4aabb956a4470f8640961b06474936c3f99baebd  donor_analysis/build_backend.py\n8997abff42cfe58435bf47cd5c697abf304b8d46fc6698771b0574b75d6f4055  donor_analysis/capability_spec.py\ncc376f0f2dad238d59f94361ee0d05d9b64a5b65eada510ea4a983699b05cf76  donor_analysis/contract.py\n45c7ba13036651a0bbeec0980081164e7d8b94a177ab0b360daa09fa6bb0adcb  donor_analysis/package_identity.py\n7305e382349910c9d44a64296346e1f7e909569189e5704f07ca3806bc5b7dc2  donor_analysis/runtime.py\n71eb4fcb217748d6e505422a2a6fd8549805774dabfd5fab814707aac6f98f19  donor_analysis/schemas/atom-extract/index.json\n8b7cd67e806f0e7968893da2a04aa1dbf2e07ab5ef65d23df45546a47cf78fcc  donor_analysis/schemas/atom-extract/input.schema.json\n47d851f44a3839fc9117dad135478d27de6d9d642950ae4e91bafd843ea3f0c8  donor_analysis/schemas/atom-extract/result.schema.json\n4f6ba50528b5886b269ccd3256173008df4ce73cb6b13ba4ab066b53e54d3653  donor_analysis/schemas/atom-manual/index.json\n9d8d0cc4997ff1695d3ee6b38fa3b2f03459b0a4993b8e34fddfedf5073b0b6a  donor_analysis/schemas/atom-manual/input.schema.json\n3bb391a7d22d89e6782be6bb17d7e315af92bb10fdd91667b2ae07a27edf306b  donor_analysis/schemas/atom-manual/result.schema.json\na004b73f1f408a62ad7e72bb7ba29ea3ef3e542aa5fcc1810f769890331f1f99  donor_analysis/schemas/book-atom.schema.json\n8c7de1d692a7ae937d116bd0a246bdcdcb527a67460c8958db30c670a00aeb74  donor_analysis/schemas/book-claim.schema.json\nfd524bc43a0522836c43acb297bf51809eab1693df02686521cc5d2b72614382  donor_analysis/schemas/claim-generate/index.json\n30dfafadac162b0aac948e61f74a0aa86d23d9fc201e46029a22d51a2b45ce44  donor_analysis/schemas/claim-generate/input.schema.json\n53ec45e4ed6fe41bbb0200eee622d54a4a3250fa2f78ae1d848f0eac3b04f72e  donor_analysis/schemas/claim-generate/result.schema.json\n7f814b590bb4c4a4eedcf51e076a7c48e37748100666d0ff046034ad90f0f856  donor_analysis/schemas/claim-input.schema.json\nc36afff82ad4c5af13254697d40845e6c5881d7dee4dd7118e679b0902704f9e  donor_analysis/schemas/evidence-span.schema.json\n068b34efb6047ed530f4f346c2468b915cd577bac65ca661dbdb1ae510ced092  donor_analysis/schemas/node.schema.json\n924014f9161d420eb2399acf4ca696910d3536b673bb3f8cacac211b329e5e43  donor_analysis/schemas/rereview/index.json\n75fd5f58c2331ce6b05cc52287c83dd34db8ccfc54eecb6cada87778ce245a06  donor_analysis/schemas/rereview/input.schema.json\n638f08d19a1db4cf8f4b710cd0b31d9627a56e752743293eb36d8be61aeba33d  donor_analysis/schemas/rereview/result.schema.json\n3ef6895ed1e7897844c867e12504d2bf151d779e283367acc885680420caa43e  migrations/manifest.json\n716a73b51003b6455beac2e01e80d3351538a1289d70763fe1e42a2c43272a24  plugin.json\n8f806062e1bbded1d284a36e45fd62de7a005d7460b0f55987177071e2221432  pyproject.toml\nee067df28ed876298c45a05b8f22a14bcb3959ce28b6941347169db247611205  rebuild_package.py\nb14e1e63403e57990f0a496a19a44df111e17cf9c1c468962c88df566eef1277  ui/metadata-only.json\n",
+  "package_hash": "d79272369de07ad6bd0062a91395b6f1adffbcb1caa42888d96d11ccc8c33c25",
+  "release_id": "8fc7a1c48b823b09041a450267aea752556f3c2442ca9b01beecaff289197a77",
+  "provider_identity": {
+    "schema": "donor-analysis-package-identity/v1",
+    "plugin_id": "com.plotpilot.novelagent.donor-analysis",
+    "version": "0.1.0",
+    "package_hash": "d79272369de07ad6bd0062a91395b6f1adffbcb1caa42888d96d11ccc8c33c25",
+    "release_id": "8fc7a1c48b823b09041a450267aea752556f3c2442ca9b01beecaff289197a77"
+  },
+  "capability_projection": [
+    {
+      "capability_id": "analysis.book.atom.extract/v1",
+      "descriptor_path": "descriptor.json",
+      "schema_index_path": "donor_analysis/schemas/atom-extract/index.json",
+      "input_schema": "analysis.book.atom.extract-request/v1",
+      "output_schema": "analysis.book.atom.extract-result/v1",
+      "result_contract": "candidate-batch/v1",
+      "bundle_type": "candidate_batch",
+      "supports": [
+        "run",
+        "resume",
+        "cancel"
+      ],
+      "deterministic": false,
+      "request_fields_group": "source",
+      "accepted_data_formats": [
+        "book-analysis-taxonomy/v1"
+      ],
+      "ui_contributions": [
+        {
+          "contribution_id": "nap-ui-analysis-book-atom-extract-v1-donors-analysis-configure",
+          "slot": "donors.analysis.configure"
+        },
+        {
+          "contribution_id": "nap-ui-analysis-book-atom-extract-v1-job-drawer-detail",
+          "slot": "job.drawer.detail"
+        }
+      ]
+    },
+    {
+      "capability_id": "analysis.book.atom.manual/v1",
+      "descriptor_path": "descriptor-atom-manual.json",
+      "schema_index_path": "donor_analysis/schemas/atom-manual/index.json",
+      "input_schema": "analysis.book.atom.manual-request/v1",
+      "output_schema": "analysis.book.atom.manual-result/v1",
+      "result_contract": "candidate-batch/v1",
+      "bundle_type": "candidate_batch",
+      "supports": [
+        "run",
+        "validate"
+      ],
+      "deterministic": true,
+      "request_fields_group": "manual",
+      "accepted_data_formats": [
+        "book-analysis-taxonomy/v1"
+      ],
+      "ui_contributions": [
+        {
+          "contribution_id": "nap-ui-analysis-book-atom-manual-v1-donors-analysis-review",
+          "slot": "donors.analysis.review"
+        }
+      ]
+    },
+    {
+      "capability_id": "analysis.book.claim.generate/v1",
+      "descriptor_path": "descriptor-claim-generate.json",
+      "schema_index_path": "donor_analysis/schemas/claim-generate/index.json",
+      "input_schema": "analysis.book.claim.generate-request/v1",
+      "output_schema": "analysis.book.claim.generate-result/v1",
+      "result_contract": "candidate-batch/v1",
+      "bundle_type": "candidate_batch",
+      "supports": [
+        "run",
+        "resume",
+        "cancel"
+      ],
+      "deterministic": false,
+      "request_fields_group": "claim",
+      "accepted_data_formats": [
+        "book-analysis-taxonomy/v1"
+      ],
+      "ui_contributions": [
+        {
+          "contribution_id": "nap-ui-analysis-book-claim-generate-v1-donors-analysis-review",
+          "slot": "donors.analysis.review"
+        }
+      ]
+    },
+    {
+      "capability_id": "analysis.book.rereview/v1",
+      "descriptor_path": "descriptor-rereview.json",
+      "schema_index_path": "donor_analysis/schemas/rereview/index.json",
+      "input_schema": "analysis.book.rereview-request/v1",
+      "output_schema": "analysis.book.rereview-result/v1",
+      "result_contract": "diagnostic-bundle/v1",
+      "bundle_type": "diagnostic",
+      "supports": [
+        "run",
+        "resume",
+        "cancel"
+      ],
+      "deterministic": false,
+      "request_fields_group": "rereview",
+      "accepted_data_formats": [
+        "book-analysis-taxonomy/v1"
+      ],
+      "ui_contributions": [
+        {
+          "contribution_id": "nap-ui-analysis-book-rereview-v1-donors-analysis-review",
+          "slot": "donors.analysis.review"
+        },
+        {
+          "contribution_id": "nap-ui-analysis-book-rereview-v1-donors-evidence-inspector",
+          "slot": "donors.evidence.inspector"
+        }
+      ]
+    }
+  ],
+  "capability_projection_sha256": "23ffa845b6ede62b33bd5aaa68a1e4bc7b7c2217498ff254749884f2011ac8cb",
+  "descriptor_paths": [
+    "descriptor.json",
+    "descriptor-atom-manual.json",
+    "descriptor-claim-generate.json",
+    "descriptor-rereview.json"
+  ],
+  "descriptor_sha256": {
+    "descriptor.json": "131dfcf8d18250720bbc9fc3d63d8f96bdac7183ff72d356327538eacd209ace",
+    "descriptor-atom-manual.json": "34381b253daa3b7e3a23456cf6fe6966e6493a9e2246467986dc8eed94d916af",
+    "descriptor-claim-generate.json": "84821b31d0bbd4a9d85bad55c27a4556ca19f8ce60fe750a07b9eff8037e1f6a",
+    "descriptor-rereview.json": "1652a0d5e1cd61aab9dc31aca69fa559fcee0cc8698c5070193af29b7086e49d"
+  },
+  "descriptor_provider_identity": {
+    "descriptor.json": {
+      "plugin_id": "com.plotpilot.novelagent.donor-analysis",
+      "release_id": "8fc7a1c48b823b09041a450267aea752556f3c2442ca9b01beecaff289197a77"
+    },
+    "descriptor-atom-manual.json": {
+      "plugin_id": "com.plotpilot.novelagent.donor-analysis",
+      "release_id": "8fc7a1c48b823b09041a450267aea752556f3c2442ca9b01beecaff289197a77"
+    },
+    "descriptor-claim-generate.json": {
+      "plugin_id": "com.plotpilot.novelagent.donor-analysis",
+      "release_id": "8fc7a1c48b823b09041a450267aea752556f3c2442ca9b01beecaff289197a77"
+    },
+    "descriptor-rereview.json": {
+      "plugin_id": "com.plotpilot.novelagent.donor-analysis",
+      "release_id": "8fc7a1c48b823b09041a450267aea752556f3c2442ca9b01beecaff289197a77"
+    }
+  },
+  "schema_index_paths": {
+    "analysis.book.atom.extract/v1": "donor_analysis/schemas/atom-extract/index.json",
+    "analysis.book.atom.manual/v1": "donor_analysis/schemas/atom-manual/index.json",
+    "analysis.book.claim.generate/v1": "donor_analysis/schemas/claim-generate/index.json",
+    "analysis.book.rereview/v1": "donor_analysis/schemas/rereview/index.json"
+  },
+  "schema_index_path_list": [
+    "donor_analysis/schemas/atom-extract/index.json",
+    "donor_analysis/schemas/atom-manual/index.json",
+    "donor_analysis/schemas/claim-generate/index.json",
+    "donor_analysis/schemas/rereview/index.json"
+  ],
+  "schema_index_sha256": {
+    "donor_analysis/schemas/atom-extract/index.json": "71eb4fcb217748d6e505422a2a6fd8549805774dabfd5fab814707aac6f98f19",
+    "donor_analysis/schemas/atom-manual/index.json": "4f6ba50528b5886b269ccd3256173008df4ce73cb6b13ba4ab066b53e54d3653",
+    "donor_analysis/schemas/claim-generate/index.json": "fd524bc43a0522836c43acb297bf51809eab1693df02686521cc5d2b72614382",
+    "donor_analysis/schemas/rereview/index.json": "924014f9161d420eb2399acf4ca696910d3536b673bb3f8cacac211b329e5e43"
+  },
+  "schema_artifacts": {
+    "donor_analysis/schemas/atom-extract/index.json": [
+      {
+        "schema_id": "analysis.book.atom.extract-request/v1",
+        "path": "schemas/atom-extract/input.schema.json",
+        "sha256": "8b7cd67e806f0e7968893da2a04aa1dbf2e07ab5ef65d23df45546a47cf78fcc"
+      },
+      {
+        "schema_id": "analysis.book.atom.extract-result/v1",
+        "path": "schemas/atom-extract/result.schema.json",
+        "sha256": "47d851f44a3839fc9117dad135478d27de6d9d642950ae4e91bafd843ea3f0c8"
+      }
+    ],
+    "donor_analysis/schemas/atom-manual/index.json": [
+      {
+        "schema_id": "analysis.book.atom.manual-request/v1",
+        "path": "schemas/atom-manual/input.schema.json",
+        "sha256": "9d8d0cc4997ff1695d3ee6b38fa3b2f03459b0a4993b8e34fddfedf5073b0b6a"
+      },
+      {
+        "schema_id": "analysis.book.atom.manual-result/v1",
+        "path": "schemas/atom-manual/result.schema.json",
+        "sha256": "3bb391a7d22d89e6782be6bb17d7e315af92bb10fdd91667b2ae07a27edf306b"
+      }
+    ],
+    "donor_analysis/schemas/claim-generate/index.json": [
+      {
+        "schema_id": "analysis.book.claim.generate-request/v1",
+        "path": "schemas/claim-generate/input.schema.json",
+        "sha256": "30dfafadac162b0aac948e61f74a0aa86d23d9fc201e46029a22d51a2b45ce44"
+      },
+      {
+        "schema_id": "analysis.book.claim.generate-result/v1",
+        "path": "schemas/claim-generate/result.schema.json",
+        "sha256": "53ec45e4ed6fe41bbb0200eee622d54a4a3250fa2f78ae1d848f0eac3b04f72e"
+      }
+    ],
+    "donor_analysis/schemas/rereview/index.json": [
+      {
+        "schema_id": "analysis.book.rereview-request/v1",
+        "path": "schemas/rereview/input.schema.json",
+        "sha256": "75fd5f58c2331ce6b05cc52287c83dd34db8ccfc54eecb6cada87778ce245a06"
+      },
+      {
+        "schema_id": "analysis.book.rereview-result/v1",
+        "path": "schemas/rereview/result.schema.json",
+        "sha256": "638f08d19a1db4cf8f4b710cd0b31d9627a56e752743293eb36d8be61aeba33d"
+      }
+    ]
+  },
+  "schema_artifact_sha256": {
+    "donor_analysis/schemas/atom-extract/input.schema.json": "8b7cd67e806f0e7968893da2a04aa1dbf2e07ab5ef65d23df45546a47cf78fcc",
+    "donor_analysis/schemas/atom-extract/result.schema.json": "47d851f44a3839fc9117dad135478d27de6d9d642950ae4e91bafd843ea3f0c8",
+    "donor_analysis/schemas/atom-manual/input.schema.json": "9d8d0cc4997ff1695d3ee6b38fa3b2f03459b0a4993b8e34fddfedf5073b0b6a",
+    "donor_analysis/schemas/atom-manual/result.schema.json": "3bb391a7d22d89e6782be6bb17d7e315af92bb10fdd91667b2ae07a27edf306b",
+    "donor_analysis/schemas/book-atom.schema.json": "a004b73f1f408a62ad7e72bb7ba29ea3ef3e542aa5fcc1810f769890331f1f99",
+    "donor_analysis/schemas/book-claim.schema.json": "8c7de1d692a7ae937d116bd0a246bdcdcb527a67460c8958db30c670a00aeb74",
+    "donor_analysis/schemas/claim-generate/input.schema.json": "30dfafadac162b0aac948e61f74a0aa86d23d9fc201e46029a22d51a2b45ce44",
+    "donor_analysis/schemas/claim-generate/result.schema.json": "53ec45e4ed6fe41bbb0200eee622d54a4a3250fa2f78ae1d848f0eac3b04f72e",
+    "donor_analysis/schemas/claim-input.schema.json": "7f814b590bb4c4a4eedcf51e076a7c48e37748100666d0ff046034ad90f0f856",
+    "donor_analysis/schemas/evidence-span.schema.json": "c36afff82ad4c5af13254697d40845e6c5881d7dee4dd7118e679b0902704f9e",
+    "donor_analysis/schemas/node.schema.json": "068b34efb6047ed530f4f346c2468b915cd577bac65ca661dbdb1ae510ced092",
+    "donor_analysis/schemas/rereview/input.schema.json": "75fd5f58c2331ce6b05cc52287c83dd34db8ccfc54eecb6cada87778ce245a06",
+    "donor_analysis/schemas/rereview/result.schema.json": "638f08d19a1db4cf8f4b710cd0b31d9627a56e752743293eb36d8be61aeba33d"
+  },
+  "wheel_path": "backend/plotpilot_donor_analysis-0.1.0-py3-none-any.whl",
+  "wheel_import": "donor_analysis",
+  "plugin_path": "plugin.json",
+  "identity_path": "donor_analysis/identity.json"
+}

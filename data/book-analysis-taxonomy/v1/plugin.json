@@ -1,0 +1,21 @@
+{
+  "schema": "plotpilot-plugin/v1",
+  "plugin_id": "com.plotpilot.novelagent.book-analysis-taxonomy",
+  "version": "1.0.0",
+  "display_name": "Novel-Agent 拆书分析分类与审核量表",
+  "compatibility": {
+    "core_api": ">=1.0 <2.0",
+    "plugin_rpc": "1",
+    "ui_host": "1",
+    "python": "3.12.*"
+  },
+  "capabilities": [],
+  "settings": null,
+  "needs": [],
+  "kind": "data",
+  "data": {
+    "format": "book-analysis-taxonomy/v1",
+    "root": "data/taxonomy.json"
+  }
+}
+

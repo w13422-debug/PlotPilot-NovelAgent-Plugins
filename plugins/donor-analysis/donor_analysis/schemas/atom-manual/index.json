@@ -1,0 +1,17 @@
+{
+  "schema": "provider-schema-index/v1",
+  "plugin_id": "com.plotpilot.novelagent.donor-analysis",
+  "capability_id": "analysis.book.atom.manual/v1",
+  "schemas": [
+    {
+      "schema_id": "analysis.book.atom.manual-request/v1",
+      "path": "schemas/atom-manual/input.schema.json",
+      "sha256": "9d8d0cc4997ff1695d3ee6b38fa3b2f03459b0a4993b8e34fddfedf5073b0b6a"
+    },
+    {
+      "schema_id": "analysis.book.atom.manual-result/v1",
+      "path": "schemas/atom-manual/result.schema.json",
+      "sha256": "3bb391a7d22d89e6782be6bb17d7e315af92bb10fdd91667b2ae07a27edf306b"
+    }
+  ]
+}

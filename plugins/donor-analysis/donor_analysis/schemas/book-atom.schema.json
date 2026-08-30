@@ -1,0 +1,504 @@
+{
+  "$id": "book-atom/v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "atom_kind",
+    "title",
+    "observation",
+    "interpretation",
+    "applicability",
+    "limitations",
+    "source_category",
+    "observation_confidence",
+    "interpretation_confidence",
+    "evidence_spans",
+    "tags",
+    "analysis_method",
+    "provenance",
+    "prompt_eligible",
+    "promotion_authorized",
+    "authority"
+  ],
+  "properties": {
+    "schema": {
+      "const": "book-atom/v1"
+    },
+    "atom_kind": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "observation": {
+      "type": "string",
+      "minLength": 1
+    },
+    "interpretation": {
+      "type": "string"
+    },
+    "applicability": {
+      "type": "string"
+    },
+    "limitations": {
+      "type": "string"
+    },
+    "source_category": {
+      "enum": [
+        "original_observation",
+        "user_annotation",
+        "inferred_candidate"
+      ]
+    },
+    "observation_confidence": {
+      "enum": [
+        "confirmed",
+        "uncertain",
+        "conflict"
+      ]
+    },
+    "interpretation_confidence": {
+      "enum": [
+        "inferred",
+        "uncertain",
+        "conflict"
+      ]
+    },
+    "evidence_spans": {
+      "type": "array",
+      "items": {
+        "$id": "evidence-span/v1",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "workspace_id",
+          "document_id",
+          "revision_id",
+          "node_id",
+          "start_codepoint",
+          "end_codepoint",
+          "quote",
+          "quote_hash",
+          "canonical_text_hash"
+        ],
+        "properties": {
+          "schema": {
+            "const": "evidence-span/v1"
+          },
+          "workspace_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+          },
+          "document_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+          },
+          "revision_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+          },
+          "node_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+          },
+          "start_codepoint": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "end_codepoint": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "quote": {
+            "type": "string",
+            "minLength": 1
+          },
+          "quote_hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "canonical_text_hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      },
+      "minItems": 1
+    },
+    "tags": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "analysis_method": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "version"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "mode",
+        "method",
+        "model",
+        "skill",
+        "plugin",
+        "run",
+        "run_snapshot_hash",
+        "source_revision",
+        "manual_annotation",
+        "created_at"
+      ],
+      "properties": {
+        "schema": {
+          "const": "book-atom-provenance/v1"
+        },
+        "mode": {
+          "enum": [
+            "model",
+            "manual"
+          ]
+        },
+        "method": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "version"
+          ],
+          "properties": {
+            "name": {
+              "enum": [
+                "book-atom-extract",
+                "book-atom-manual"
+              ]
+            },
+            "version": {
+              "const": "1"
+            }
+          }
+        },
+        "model": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "profile_revision_id",
+                "receipt_id"
+              ],
+              "properties": {
+                "profile_revision_id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+                },
+                "receipt_id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+                }
+              }
+            }
+          ]
+        },
+        "skill": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "skill_id",
+            "package_hash",
+            "release_id"
+          ],
+          "properties": {
+            "skill_id": {
+              "const": "com.plotpilot.skill.donor.atomic-breakdown"
+            },
+            "package_hash": {
+              "const": "27930699e02a937e4f56cf5f90202adf6770cbe8a58391ced3e6801ee39b5339"
+            },
+            "release_id": {
+              "const": "ed9fad4c3287f8a71c47b01344d1099862578de98289e5cecaf9b890a1c8bcfa"
+            }
+          }
+        },
+        "plugin": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "plugin_id",
+            "package_hash",
+            "release_id",
+            "capability_id"
+          ],
+          "properties": {
+            "plugin_id": {
+              "const": "com.plotpilot.novelagent.donor-analysis"
+            },
+            "package_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "release_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "capability_id": {
+              "enum": [
+                "analysis.book.atom.extract/v1",
+                "analysis.book.atom.manual/v1"
+              ]
+            }
+          }
+        },
+        "run": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "job_id",
+            "step_id",
+            "attempt_id",
+            "worker_run_id",
+            "lease_epoch",
+            "provenance_receipt_id"
+          ],
+          "properties": {
+            "job_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+            },
+            "step_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+            },
+            "attempt_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+            },
+            "worker_run_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+            },
+            "lease_epoch": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "provenance_receipt_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+            }
+          }
+        },
+        "run_snapshot_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "source_revision": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "workspace_id",
+            "document_id",
+            "revision_id",
+            "canonical_text_hash"
+          ],
+          "properties": {
+            "workspace_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+            },
+            "document_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+            },
+            "revision_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+            },
+            "canonical_text_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "manual_annotation": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "actor_id",
+                "asset_id",
+                "asset_hash"
+              ],
+              "properties": {
+                "actor_id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+                },
+                "asset_id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+                },
+                "asset_hash": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                }
+              }
+            }
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "model"
+              }
+            },
+            "required": [
+              "mode"
+            ]
+          },
+          "then": {
+            "properties": {
+              "method": {
+                "properties": {
+                  "name": {
+                    "const": "book-atom-extract"
+                  }
+                }
+              },
+              "model": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "profile_revision_id",
+                  "receipt_id"
+                ],
+                "properties": {
+                  "profile_revision_id": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+                  },
+                  "receipt_id": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+                  }
+                }
+              },
+              "manual_annotation": {
+                "type": "null"
+              },
+              "plugin": {
+                "properties": {
+                  "capability_id": {
+                    "const": "analysis.book.atom.extract/v1"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "manual"
+              }
+            },
+            "required": [
+              "mode"
+            ]
+          },
+          "then": {
+            "properties": {
+              "method": {
+                "properties": {
+                  "name": {
+                    "const": "book-atom-manual"
+                  }
+                }
+              },
+              "model": {
+                "type": "null"
+              },
+              "manual_annotation": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "actor_id",
+                  "asset_id",
+                  "asset_hash"
+                ],
+                "properties": {
+                  "actor_id": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+                  },
+                  "asset_id": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+                  },
+                  "asset_hash": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$"
+                  }
+                }
+              },
+              "plugin": {
+                "properties": {
+                  "capability_id": {
+                    "const": "analysis.book.atom.manual/v1"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "prompt_eligible": {
+      "const": false
+    },
+    "promotion_authorized": {
+      "const": false
+    },
+    "authority": {
+      "const": "candidate_only"
+    }
+  }
+}

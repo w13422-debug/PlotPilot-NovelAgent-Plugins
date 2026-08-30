@@ -1,0 +1,20 @@
+{
+  "schema": "capability-provider/v1",
+  "capability_id": "analysis.book.rereview/v1",
+  "provider": {
+    "plugin_id": "com.plotpilot.novelagent.donor-analysis",
+    "release_id": "8fc7a1c48b823b09041a450267aea752556f3c2442ca9b01beecaff289197a77"
+  },
+  "input_schema": "analysis.book.rereview-request/v1",
+  "output_schema": "analysis.book.rereview-result/v1",
+  "result_contract": "diagnostic-bundle/v1",
+  "supports": [
+    "run",
+    "resume",
+    "cancel"
+  ],
+  "deterministic": false,
+  "accepted_data_formats": [
+    "book-analysis-taxonomy/v1"
+  ]
+}

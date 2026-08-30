@@ -1,0 +1,116 @@
+{
+  "$id": "claim-input/v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "source_revision_id",
+    "ordered_atoms"
+  ],
+  "properties": {
+    "schema": {
+      "const": "claim-input/v1"
+    },
+    "source_revision_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "ordered_atoms": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ordinal",
+          "atom_id",
+          "payload_hash",
+          "acceptance_ordinal",
+          "evidence_spans"
+        ],
+        "properties": {
+          "ordinal": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "atom_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+          },
+          "payload_hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "acceptance_ordinal": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "evidence_spans": {
+            "type": "array",
+            "items": {
+              "$id": "evidence-span/v1",
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "schema",
+                "workspace_id",
+                "document_id",
+                "revision_id",
+                "node_id",
+                "start_codepoint",
+                "end_codepoint",
+                "quote",
+                "quote_hash",
+                "canonical_text_hash"
+              ],
+              "properties": {
+                "schema": {
+                  "const": "evidence-span/v1"
+                },
+                "workspace_id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+                },
+                "document_id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+                },
+                "revision_id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+                },
+                "node_id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+                },
+                "start_codepoint": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "end_codepoint": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "quote": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "quote_hash": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "canonical_text_hash": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                }
+              }
+            },
+            "minItems": 1
+          }
+        }
+      }
+    }
+  }
+}

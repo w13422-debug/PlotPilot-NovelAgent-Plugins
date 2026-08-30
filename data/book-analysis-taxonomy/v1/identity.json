@@ -1,0 +1,10 @@
+{
+  "schema": "book-analysis-taxonomy-package-identity/v1",
+  "package_kind": "data",
+  "plugin_id": "com.plotpilot.novelagent.book-analysis-taxonomy",
+  "format_id": "book-analysis-taxonomy/v1",
+  "version": "1.0.0",
+  "package_hash": "bc00ec1e98ed00f944372546ad410feaaa771040bd0637abbe53c738f61f9e25",
+  "release_id": "02a807a6026e127d1c6f543c65d71f02899299ef1a5e3746ccdc8b3ecd5b758f",
+  "separate_from_code_plugin_id": "com.plotpilot.novelagent.donor-analysis"
+}

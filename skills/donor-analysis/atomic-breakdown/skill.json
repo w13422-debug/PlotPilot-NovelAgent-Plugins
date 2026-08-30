@@ -1,0 +1,9 @@
+{
+  "schema": "plotpilot-skill/v1",
+  "skill_id": "com.plotpilot.skill.donor.atomic-breakdown",
+  "version": "1.0.0",
+  "display_name": "供体原子证据拆解",
+  "stage": "analysis",
+  "actions": ["extract", "classify"]
+}
+

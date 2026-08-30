@@ -1,0 +1,19 @@
+{
+  "schema": "capability-provider/v1",
+  "capability_id": "analysis.book.atom.manual/v1",
+  "provider": {
+    "plugin_id": "com.plotpilot.novelagent.donor-analysis",
+    "release_id": "8fc7a1c48b823b09041a450267aea752556f3c2442ca9b01beecaff289197a77"
+  },
+  "input_schema": "analysis.book.atom.manual-request/v1",
+  "output_schema": "analysis.book.atom.manual-result/v1",
+  "result_contract": "candidate-batch/v1",
+  "supports": [
+    "run",
+    "validate"
+  ],
+  "deterministic": true,
+  "accepted_data_formats": [
+    "book-analysis-taxonomy/v1"
+  ]
+}
