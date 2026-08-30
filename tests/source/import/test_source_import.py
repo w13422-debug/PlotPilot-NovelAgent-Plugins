@@ -15,6 +15,7 @@ import time
 import zipfile
 
 import pytest
+from jsonschema import Draft202012Validator, ValidationError
 
 ROOT = Path(__file__).resolve().parents[3]
 PLUGIN = ROOT / "plugins" / "source-import"
@@ -41,6 +42,18 @@ def child_pythonpath(*roots: str | Path) -> str:
     if inherited:
         parts.append(inherited)
     return os.pathsep.join(parts)
+
+
+def schema_validator(capability: str, direction: str) -> Draft202012Validator:
+    stem = "inspect" if capability.endswith("inspect/v1") or capability.endswith("inspect") else "parse"
+    path = PLUGIN / "source_import" / "schemas" / f"{stem}-{direction}.schema.json"
+    schema = json.loads(path.read_text(encoding="utf-8"))
+    Draft202012Validator.check_schema(schema)
+    return Draft202012Validator(schema)
+
+
+def assert_runtime_output_schema(capability: str, value: object) -> None:
+    schema_validator(capability, "output").validate(value)
 
 
 def test_package_identity_and_closed_descriptors() -> None:
@@ -408,6 +421,50 @@ def _request(capability: str, source: bytes, *, kind: str = "paste", **extra: ob
     }
     request.update(extra)
     return request
+
+
+@pytest.mark.parametrize("capability", ["source.import.inspect/v1", "source.import.parse/v1"])
+def test_f001_closed_runtime_inputs_match_descriptor_schemas(capability: str) -> None:
+    source = b"f001-closed-input\n"
+    extra: dict[str, object] = {
+        "checkpoint_id": "checkpoint-1",
+        "checkpoint_ids": ["checkpoint-1"],
+    }
+    if capability == "source.import.parse/v1":
+        extra.update({
+            "target": {"workspace_id": "workspace-1", "entity_kind": "document", "entity_id": "document-1"},
+            "base": {"revision_id": "revision-1", "content_hash": "b" * 64},
+        })
+    request = _request(capability, source, **extra)
+    validator = schema_validator(capability, "input")
+    validator.validate(request)
+
+    schema_only_resume = dict(request)
+    schema_only_resume.update({
+        "resume_checkpoint_asset_id": "core-checkpoint-asset",
+        "resume_checkpoint_asset_hash": "c" * 64,
+        "resume_state_asset_id": "core-state-asset",
+        "resume_state_asset_hash": "d" * 64,
+    })
+    validator.validate(schema_only_resume)
+
+    legal_host = FakeHost({"asset-source": source}, page_limit=8)
+    legal = SourceImportPlugin().run(request, legal_host)
+    assert legal["status"] == "succeeded"
+    assert_runtime_output_schema(capability, legal)
+
+    undeclared = dict(request)
+    undeclared["undeclared_f001"] = "must-fail-closed"
+    with pytest.raises(ValidationError):
+        validator.validate(undeclared)
+    rejected_host = FakeHost({"asset-source": source}, page_limit=8)
+    rejected = SourceImportPlugin().run(undeclared, rejected_host)
+    assert rejected["status"] == "failed"
+    assert rejected["error"]["code"] == "INPUT_INVALID"
+    assert rejected_host.read_calls == 0
+    assert rejected_host.last_complete is not None
+    assert rejected_host.last_complete["outcome"] == "failed"
+    assert_runtime_output_schema(capability, rejected)
 
 
 @pytest.mark.parametrize(("capability", "bad_schema"), [

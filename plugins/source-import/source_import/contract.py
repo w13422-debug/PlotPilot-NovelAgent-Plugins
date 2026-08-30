@@ -16,6 +16,20 @@ REQUEST_SCHEMAS = {
     INSPECT_CAPABILITY: "source.import.inspect-request/v1",
     PARSE_CAPABILITY: "source.import.parse-request/v1",
 }
+_COMMON_REQUEST_FIELDS = frozenset({
+    "schema", "capability_id", "worker_run_id", "job_id", "step_id", "attempt_id",
+    "lease_epoch", "run_snapshot_hash", "source_asset_id", "source_asset_hash",
+    "source_kind", "source_name", "encoding", "page_size", "checkpoint_id",
+    "checkpoint_ids", "resume_checkpoint_asset_id", "resume_checkpoint_asset_hash",
+    "resume_state_asset_id", "resume_state_asset_hash", "provenance_receipt_id",
+    "created_at",
+})
+_REQUEST_FIELDS = {
+    INSPECT_CAPABILITY: _COMMON_REQUEST_FIELDS,
+    PARSE_CAPABILITY: _COMMON_REQUEST_FIELDS | {
+        "target", "base", "structure_target", "structure_base",
+    },
+}
 RAW_RECEIPT_SCHEMA = "source-import-raw-receipt/v1"
 DECODER_RECEIPT_SCHEMA = "source-import-decoder-receipt/v1"
 PROVISIONAL_RECEIPT_SCHEMA = "source-import-provisional-receipt/v1"
@@ -112,8 +126,14 @@ def validate_request_common(request: Mapping[str, Any], *, capability: str) -> N
         raise ContractError(f"request is missing fields: {sorted(missing)}")
     try:
         expected_schema = REQUEST_SCHEMAS[capability]
+        allowed_fields = _REQUEST_FIELDS[capability]
     except KeyError as exc:
         raise ContractError("request capability is not declared by this plugin") from exc
+    if any(not isinstance(field, str) for field in request):
+        raise ContractError("request field names must be strings")
+    unexpected = set(request) - allowed_fields
+    if unexpected:
+        raise ContractError(f"request contains undeclared fields: {sorted(unexpected)}")
     if "capability_id" in request and request["capability_id"] != capability:
         raise ContractError("request capability_id does not match descriptor")
     if request["schema"] != expected_schema:
@@ -133,8 +153,32 @@ def validate_request_common(request: Mapping[str, Any], *, capability: str) -> N
     if forbidden.intersection(request):
         raise ContractError("request may contain only Core Asset identity, never host/path/raw input")
     if "page_size" in request:
-        if isinstance(request["page_size"], bool) or not isinstance(request["page_size"], int) or request["page_size"] <= 0:
-            raise ContractError("page_size must be a positive integer")
+        if (
+            isinstance(request["page_size"], bool)
+            or not isinstance(request["page_size"], int)
+            or not 1 <= request["page_size"] <= 1048576
+        ):
+            raise ContractError("page_size must be an integer from 1 through 1048576")
+    if "encoding" in request and (
+        not isinstance(request["encoding"], str)
+        or not 1 <= len(request["encoding"]) <= 32
+    ):
+        raise ContractError("encoding must be a string from 1 through 32 characters")
+    for field in (
+        "checkpoint_id", "resume_checkpoint_asset_id", "resume_state_asset_id",
+    ):
+        if field in request:
+            _id(request[field], field)
+    for field in ("resume_checkpoint_asset_hash", "resume_state_asset_hash"):
+        if field in request:
+            _hash(request[field], field)
+    if "checkpoint_ids" in request:
+        checkpoint_ids = request["checkpoint_ids"]
+        if not isinstance(checkpoint_ids, list):
+            raise ContractError("checkpoint_ids must be an array")
+        validated_ids = [_id(value, "checkpoint_ids item") for value in checkpoint_ids]
+        if len(set(validated_ids)) != len(validated_ids):
+            raise ContractError("checkpoint_ids must be unique")
     if capability == PARSE_CAPABILITY:
         for field in ("target",):
             target = request.get(field)
@@ -142,7 +186,7 @@ def validate_request_common(request: Mapping[str, Any], *, capability: str) -> N
                 raise ContractError("parse request target must be a closed Core target")
             _id(target["workspace_id"], "target.workspace_id")
             _id(target["entity_id"], "target.entity_id")
-            if target["entity_kind"] not in {"document", "node_structure", "relation_set"}:
+            if target["entity_kind"] not in {"document", "node_structure"}:
                 raise ContractError("target.entity_kind is invalid")
         base = request.get("base")
         if not isinstance(base, Mapping) or set(base) != {"revision_id", "content_hash"}:

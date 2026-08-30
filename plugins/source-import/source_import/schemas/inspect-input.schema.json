@@ -16,7 +16,15 @@
     "source_asset_id": {"$ref": "#/$defs/id"},
     "source_asset_hash": {"$ref": "#/$defs/hash"},
     "source_kind": {"enum": ["txt", "epub", "paste"]},
-    "source_name": {"anyOf": [{"type": "string", "minLength": 1, "maxLength": 240}, {"type": "null"}]},
+    "source_name": {
+      "anyOf": [
+        {
+          "type": "string", "minLength": 1, "maxLength": 240,
+          "not": {"anyOf": [{"enum": [".", ".."]}, {"pattern": "[\\\\/\\u0000]"}, {"pattern": "[ .]$"}]}
+        },
+        {"type": "null"}
+      ]
+    },
     "encoding": {"type": "string", "minLength": 1, "maxLength": 32},
     "page_size": {"type": "integer", "minimum": 1, "maximum": 1048576},
     "checkpoint_id": {"$ref": "#/$defs/id"},

@@ -20,6 +20,7 @@ import importlib
 import importlib.metadata
 import time
 import unicodedata
+from _thread import allocate_lock
 from collections.abc import Callable, Mapping, Sequence
 from copy import deepcopy
 from dataclasses import dataclass
@@ -211,6 +212,7 @@ class _RunContext:
     # object rows intact; provenance-receipt/v1 receives only their item_id
     # references, as required by the public SDK contract.
     stage_response: dict[str, object] | None = None
+    terminal_outcome: str | None = None
 
 
 class _Cancelled(RuntimeError):
@@ -473,7 +475,13 @@ def _validate_context(request: Mapping[str, Any], host: HostPort, *, capability:
         raise ContractError("INPUT_KIND_INVALID", "unsupported input_kind")
     source_hash = _hash(data["source_asset_hash"], "request.source_asset_hash")
     _hash(data["base_content_hash"], "request.base_content_hash")
-    source_bytes = _read_asset(host, data["source_asset_id"], source_hash)
+    limits = validate_limits(data["limits"])
+    source_bytes = _read_asset(
+        host,
+        data["source_asset_id"],
+        source_hash,
+        max_bytes=limits["max_snapshot_bytes"],
+    )
     try:
         text = source_bytes.decode("utf-8", errors="strict")
     except UnicodeDecodeError as exc:
@@ -494,7 +502,6 @@ def _validate_context(request: Mapping[str, Any], host: HostPort, *, capability:
     )
     if profile != expected_profile:
         raise ContractError("HASH_BINDING_INVALID", "profile does not bind rules, release, package, and exclusions")
-    limits = validate_limits(data["limits"])
     body_ranges = validate_ranges(data["body_ranges"], text_length=len(text), path="request.body_ranges")
     title_ranges = validate_ranges(data["title_ranges"], text_length=len(text), path="request.title_ranges")
     if not body_ranges:
@@ -861,7 +868,7 @@ def _host_call(host: HostPort, method: str, params: Mapping[str, object]) -> dic
     return dict(result)
 
 
-def _read_asset(host: HostPort, asset_id: str, expected_hash: str) -> bytes:
+def _read_asset(host: HostPort, asset_id: str, expected_hash: str, *, max_bytes: int | None = None) -> bytes:
     """Read a Core Asset as contiguous, per-page authenticated UTF-8 input."""
 
     _id(asset_id, "asset_id")
@@ -869,10 +876,18 @@ def _read_asset(host: HostPort, asset_id: str, expected_hash: str) -> bytes:
     offset = 0
     chunks: list[bytes] = []
     for _ in range(_MAX_ASSET_READ_PAGES):
+        if max_bytes is not None:
+            _integer(max_bytes, "max_bytes", minimum=1)
+            remaining = max_bytes - offset
+            if remaining < 0:
+                raise ContractError("LIMIT_EXCEEDED", "source Asset exceeds max_snapshot_bytes")
+            requested_length = min(_ASSET_READ_LENGTH, remaining + 1)
+        else:
+            requested_length = _ASSET_READ_LENGTH
         response = _host_call(
             host,
             "host.asset.read/v1",
-            {"asset_id": asset_id, "offset": offset, "length": _ASSET_READ_LENGTH},
+            {"asset_id": asset_id, "offset": offset, "length": requested_length},
         )
         encoded = response.get("base64_chunk")
         if not isinstance(encoded, str):
@@ -881,12 +896,14 @@ def _read_asset(host: HostPort, asset_id: str, expected_hash: str) -> bytes:
             chunk = base64.b64decode(encoded, validate=True)
         except Exception as exc:
             raise HostBindingError("host.asset.read/v1 returned invalid base64 source data") from exc
-        if len(chunk) > _ASSET_READ_LENGTH:
+        if len(chunk) > requested_length:
             raise HostBindingError("host.asset.read/v1 returned a page larger than requested")
         if response.get("content_hash") != _sha256(chunk):
             raise HostBindingError("host.asset.read/v1 page content_hash mismatch")
         next_offset = response.get("next_offset")
         expected_next = offset + len(chunk)
+        if max_bytes is not None and expected_next > max_bytes:
+            raise ContractError("LIMIT_EXCEEDED", "source Asset exceeds max_snapshot_bytes")
         if next_offset is None:
             if not chunk:
                 raise HostBindingError("host.asset.read/v1 made no progress at EOF")
@@ -1081,6 +1098,7 @@ _APPLY_STATE_KEYS = {
     "job_id",
     "step_id",
     "attempt_id",
+    "worker_run_id",
     "lease_epoch",
     "run_snapshot_hash",
     "workspace_id",
@@ -1117,6 +1135,7 @@ def _apply_state_body(
         "job_id": data["job_id"],
         "step_id": data["step_id"],
         "attempt_id": data["attempt_id"],
+        "worker_run_id": data["worker_run_id"],
         "lease_epoch": data["lease_epoch"],
         "run_snapshot_hash": data["run_snapshot_hash"],
         "workspace_id": data["workspace_id"],
@@ -1240,7 +1259,7 @@ def _resume_apply_state(
     context: _RunContext,
     host: HostPort,
     review: Mapping[str, Any],
-) -> dict[str, Any]:
+) -> dict[str, Any] | None:
     checkpoint_raw, checkpoint = _read_json_asset(
         host,
         data["resume_checkpoint_asset_id"],
@@ -1263,7 +1282,7 @@ def _resume_apply_state(
         or context.checkpoint_ids[checkpoint_seq - 1] != checkpoint_id
     ):
         raise ContractError("CHECKPOINT_INVALID", "resume checkpoint identity is not issued for this request")
-    for field in ("job_id", "step_id", "source_attempt_id", "run_snapshot_hash", "created_at"):
+    for field in ("job_id", "step_id", "source_attempt_id", "lease_epoch", "run_snapshot_hash", "created_at"):
         expected = data["attempt_id"] if field == "source_attempt_id" else data[field]
         if checkpoint.get(field) != expected:
             raise ContractError("CHECKPOINT_INVALID", f"resume checkpoint {field} is not bound to the request")
@@ -1281,11 +1300,11 @@ def _resume_apply_state(
         raise ContractError("CHECKPOINT_INVALID", "resume state Asset hash or closed shape is invalid")
     expected_bindings = {
         "schema": _APPLY_STATE_SCHEMA,
-        "state_kind": "candidate",
         "request_hash": context.request_hash,
         "job_id": data["job_id"],
         "step_id": data["step_id"],
         "attempt_id": data["attempt_id"],
+        "worker_run_id": data["worker_run_id"],
         "lease_epoch": data["lease_epoch"],
         "run_snapshot_hash": data["run_snapshot_hash"],
         "workspace_id": data["workspace_id"],
@@ -1307,10 +1326,15 @@ def _resume_apply_state(
     for field, expected in expected_bindings.items():
         if state.get(field) != expected:
             raise ContractError("CHECKPOINT_INVALID", f"resume state {field} is not bound to the request")
-    item = state.get("candidate_item")
-    if not isinstance(item, Mapping):
-        raise ContractError("CHECKPOINT_INVALID", "resume state does not contain a candidate item")
     context.last_checkpoint_seq = checkpoint_seq
+    state_kind = state.get("state_kind")
+    item = state.get("candidate_item")
+    if state_kind == "cancelled":
+        if item is not None:
+            raise ContractError("CHECKPOINT_INVALID", "cancelled resume state must not contain a candidate item")
+        return None
+    if state_kind != "candidate" or not isinstance(item, Mapping):
+        raise ContractError("CHECKPOINT_INVALID", "resume state does not contain a valid candidate item")
     return _validate_resume_candidate_item(data, host, item)
 
 
@@ -1412,12 +1436,13 @@ def _provenance_receipt(
     ]
     if len(staged_item_ids) != len(set(staged_item_ids)):
         raise ContractError("STAGED_ITEM_DUPLICATE", "provenance staged item IDs must be unique")
+    verified_identity = load_identity()
     receipt: dict[str, Any] = {
         "schema": "provenance-receipt/v1",
         "receipt_id": data["provenance_receipt_id"],
         "plugin_id": PLUGIN_ID,
-        "release_id": load_identity()["release_id"],
-        "package_hash": load_identity()["package_hash"],
+        "release_id": verified_identity["release_id"],
+        "package_hash": verified_identity["package_hash"],
         "capability_id": capability,
         "job_id": data["job_id"],
         "step_id": data["step_id"],
@@ -1448,6 +1473,8 @@ def _complete(
     candidate_stage_operation_key: str | None,
     local_seq: int,
 ) -> None:
+    if context.terminal_outcome is not None:
+        raise ContractError("TERMINAL_ALREADY_COMMITTED", "worker run already committed a terminal outcome")
     response = _host_call(
         host,
         "host.job.complete/v1",
@@ -1461,6 +1488,9 @@ def _complete(
             "local_seq": local_seq,
         },
     )
+    # A returned response proves the Host observed this terminal RPC.  Never
+    # issue a second completion merely because its acknowledgement is invalid.
+    context.terminal_outcome = outcome
     _accepted(response, "host.job.complete/v1")
     if (
         response.get("provenance_receipt_id") != request["provenance_receipt_id"]
@@ -1679,6 +1709,8 @@ def _cancel_terminal(host: HostPort, request: Mapping[str, Any], context: _RunCo
 def _failure_terminal(host: HostPort, request: Mapping[str, Any], context: _RunContext, *, capability: str, error: BaseException) -> dict[str, Any] | None:
     """Attempt a diagnostic-only terminal result; never stage a Candidate."""
 
+    if context.terminal_outcome is not None:
+        return None
     try:
         error_body = {"code": type(error).__name__, "message": str(error)[:1024]}
         detail_bytes = _canonical(error_body)
@@ -1836,18 +1868,26 @@ def _run_apply(
             return None
         if data["operation"] == "resume":
             item = _resume_apply_state(data, context, host, review)
-            _event(host, context, "source-cleaning.resumed", item["payload_asset_id"], context.last_checkpoint_seq + 1)
-            return _finalize(
-                data,
+            _event(
+                host,
                 context,
-                capability=CAPABILITY_APPLY,
-                contract_id="candidate-batch/v1",
-                items=[item],
-                host=host,
-                stage_candidate=True,
-                local_seq=context.last_checkpoint_seq + 2,
+                "source-cleaning.resumed",
+                item["payload_asset_id"] if item is not None else None,
+                context.last_checkpoint_seq + 1,
             )
-        _event(host, context, "source-cleaning.started", None, 1)
+            if item is not None:
+                return _finalize(
+                    data,
+                    context,
+                    capability=CAPABILITY_APPLY,
+                    contract_id="candidate-batch/v1",
+                    items=[item],
+                    host=host,
+                    stage_candidate=True,
+                    local_seq=context.last_checkpoint_seq + 2,
+                )
+        else:
+            _event(host, context, "source-cleaning.started", None, 1)
         payload = _execute_cleaning(data, normalized_rules, limits, engine=engine, cancelled=cancelled)
         current_review = build_review_context(payload)
         if current_review != review:
@@ -1879,13 +1919,15 @@ def _run_apply(
             state_kind="candidate",
             candidate_item=item,
         )
-        _event(host, context, "source-cleaning.payload", item["payload_asset_id"], 2)
+        payload_local_seq = context.last_checkpoint_seq + 2
+        _event(host, context, "source-cleaning.payload", item["payload_asset_id"], payload_local_seq)
         _checkpoint(
             host,
             data,
             context,
             state_asset_id=state_asset_id,
             state_asset_hash=state_asset_hash,
+            sequence=context.last_checkpoint_seq + 1,
         )
         return _finalize(
             data,
@@ -1895,7 +1937,7 @@ def _run_apply(
             items=[item],
             host=host,
             stage_candidate=True,
-            local_seq=3,
+            local_seq=payload_local_seq + 1,
         )
     except _Cancelled:
         _cancel_terminal(host, request, context, capability=CAPABILITY_APPLY)
@@ -2073,59 +2115,142 @@ def _validate_cancel_request(request: Mapping[str, Any], *, capability: str) -> 
 
 
 def cancel(request: Mapping[str, Any], host: HostPort) -> None:
-    """Complete a preview/apply cancellation without producing or staging output."""
+    """Signal the default worker owner, or terminalize only when no worker is active."""
 
     capability = request.get("operation_key") if isinstance(request, Mapping) else None
     if capability not in {CAPABILITY_PREVIEW, CAPABILITY_APPLY}:
         raise ContractError("CAPABILITY_INVALID", "only preview and apply expose cancellation")
-    data, context = _validate_cancel_request(request, capability=capability)
-    _cancel_terminal(host, data, context, capability=capability)
+    _DEFAULT_RUNTIME._cancel_request(request, host, capability=str(capability))
+
+
+@dataclass
+class _ActiveRun:
+    request_hash: str
+    capability: str
+    cancel_requested: bool = False
+
+
+@dataclass(frozen=True)
+class _TerminalReservation:
+    request_hash: str
+    capability: str
+
+
+@dataclass(frozen=True)
+class _CompletedRun:
+    request_hash: str
+    outcome: str
 
 
 class SourceCleaningRuntime:
-    """B0-style worker facade with cooperative cancellation by worker_run_id."""
+    """B0-style facade where an active worker exclusively owns its terminal RPC."""
 
     def __init__(self) -> None:
-        self._cancelled: set[str] = set()
+        self._lock = allocate_lock()
+        self._active: dict[str, _ActiveRun] = {}
+        self._terminal_reservations: dict[str, _TerminalReservation] = {}
+        self._completed: dict[str, _CompletedRun] = {}
+
+    def _remember_completed(self, run_id: str, request_hash: str, outcome: str) -> None:
+        self._completed[run_id] = _CompletedRun(request_hash, outcome)
+        while len(self._completed) > 1024:
+            self._completed.pop(next(iter(self._completed)))
 
     def cancel(self, run_id_or_request: str | Mapping[str, Any]) -> bool:
         run_id = run_id_or_request if isinstance(run_id_or_request, str) else str(run_id_or_request.get("worker_run_id") or "")
         if not run_id:
             return False
-        was_new = run_id not in self._cancelled
-        self._cancelled.add(run_id)
-        return was_new
+        with self._lock:
+            active = self._active.get(run_id)
+            if active is None:
+                return False
+            if not isinstance(run_id_or_request, str):
+                capability = run_id_or_request.get("operation_key")
+                if capability != active.capability:
+                    raise ContractError("CANCEL_BINDING_INVALID", "cancel capability is not bound to the active worker run")
+                cancel_hash = _context_for_request(run_id_or_request, capability=str(capability)).request_hash
+                if cancel_hash != active.request_hash:
+                    raise ContractError("CANCEL_BINDING_INVALID", "cancel request is not bound to the active worker run")
+            was_new = not active.cancel_requested
+            active.cancel_requested = True
+            return was_new
+
+    def _cancel_request(self, request: Mapping[str, Any], host: HostPort, *, capability: str) -> None:
+        data, context = _validate_cancel_request(request, capability=capability)
+        run_id = str(data["worker_run_id"])
+        reservation = _TerminalReservation(context.request_hash, capability)
+        with self._lock:
+            active = self._active.get(run_id)
+            if active is not None:
+                if active.capability != capability or active.request_hash != context.request_hash:
+                    raise ContractError("CANCEL_BINDING_INVALID", "cancel request is not bound to the active worker run")
+                active.cancel_requested = True
+                return
+            existing_reservation = self._terminal_reservations.get(run_id)
+            if existing_reservation is not None:
+                if existing_reservation != reservation:
+                    raise ContractError("CANCEL_BINDING_INVALID", "cancel request conflicts with the reserved terminal owner")
+                return
+            completed = self._completed.get(run_id)
+            if completed is not None:
+                if completed.request_hash == context.request_hash:
+                    return
+                del self._completed[run_id]
+            self._terminal_reservations[run_id] = reservation
+        try:
+            _cancel_terminal(host, data, context, capability=capability)
+        finally:
+            with self._lock:
+                if self._terminal_reservations.get(run_id) is reservation:
+                    del self._terminal_reservations[run_id]
+                self._remember_completed(run_id, context.request_hash, context.terminal_outcome or "failed")
 
     def run(self, request: Mapping[str, Any], host: HostPort, *, engine: Any | None = None) -> dict[str, Any] | None:
         capability = request.get("operation_key") if isinstance(request, Mapping) else None
         operation = request.get("operation") if isinstance(request, Mapping) else None
         if operation == "cancel":
-            self.cancel(request)
-            cancel(request, host)
+            if capability not in {CAPABILITY_PREVIEW, CAPABILITY_APPLY}:
+                raise ContractError("CAPABILITY_INVALID", "only preview and apply expose cancellation")
+            self._cancel_request(request, host, capability=str(capability))
             return None
-        if capability == CAPABILITY_PREVIEW:
-            return _run_preview(
-                request,
-                host,
-                engine=engine,
-                cancelled=lambda: str(request.get("worker_run_id") or "") in self._cancelled,
-            )
-        if capability == CAPABILITY_APPLY:
-            return _run_apply(
-                request,
-                host,
-                engine=engine,
-                cancelled=lambda: str(request.get("worker_run_id") or "") in self._cancelled,
-            )
-        if capability == CAPABILITY_MERGE:
-            if operation not in {"run", "validate"}:
-                raise ContractError("OPERATION_INVALID", "source.clean.rules.merge/v1 supports run and validate only")
-            return _run_merge(
-                request,
-                host,
-                cancelled=lambda: str(request.get("worker_run_id") or "") in self._cancelled,
-            )
-        raise ContractError("CAPABILITY_INVALID", "unknown source-cleaning capability")
+        if capability not in {CAPABILITY_PREVIEW, CAPABILITY_APPLY, CAPABILITY_MERGE}:
+            raise ContractError("CAPABILITY_INVALID", "unknown source-cleaning capability")
+        if capability == CAPABILITY_MERGE and operation not in {"run", "validate"}:
+            raise ContractError("OPERATION_INVALID", "source.clean.rules.merge/v1 supports run and validate only")
+
+        context = _context_for_request(request, capability=str(capability))
+        run_id = str(request["worker_run_id"])
+        control = _ActiveRun(context.request_hash, str(capability))
+        with self._lock:
+            reservation = self._terminal_reservations.get(run_id)
+            if reservation is not None:
+                raise ContractError("WORKER_RUN_TERMINAL_RESERVED", "worker_run_id has a reserved terminal owner")
+            if run_id in self._active:
+                raise ContractError("WORKER_RUN_ACTIVE", "worker_run_id already has an active owner")
+            self._completed.pop(run_id, None)
+            self._active[run_id] = control
+        outcome = "failed"
+        try:
+            if capability == CAPABILITY_PREVIEW:
+                result = _run_preview(request, host, engine=engine, cancelled=lambda: self._is_cancelled(run_id, control))
+            elif capability == CAPABILITY_APPLY:
+                result = _run_apply(request, host, engine=engine, cancelled=lambda: self._is_cancelled(run_id, control))
+            else:
+                result = _run_merge(request, host, cancelled=lambda: self._is_cancelled(run_id, control))
+            outcome = "cancelled" if result is None else "succeeded"
+            return result
+        finally:
+            with self._lock:
+                if self._active.get(run_id) is control:
+                    del self._active[run_id]
+                self._remember_completed(run_id, context.request_hash, outcome)
+
+    def _is_cancelled(self, run_id: str, control: _ActiveRun) -> bool:
+        with self._lock:
+            return self._active.get(run_id) is control and control.cancel_requested
+
+
+_DEFAULT_RUNTIME = SourceCleaningRuntime()
 
 
 def make_cleaning_request(
@@ -2275,20 +2400,7 @@ def make_merge_request(
 
 
 def dispatch(request: Mapping[str, Any], host: Any, *, engine: Any | None = None) -> dict[str, Any] | None:
-    operation_key = request.get("operation_key") if isinstance(request, Mapping) else None
-    operation = request.get("operation") if isinstance(request, Mapping) else None
-    if operation == "cancel":
-        if operation_key not in {CAPABILITY_PREVIEW, CAPABILITY_APPLY}:
-            raise ContractError("OPERATION_INVALID", "source.clean.rules.merge/v1 does not expose cancel")
-        cancel(request, host)
-        return None
-    if operation_key == CAPABILITY_PREVIEW:
-        return preview(request, host, engine=engine)
-    if operation_key == CAPABILITY_APPLY:
-        return apply(request, host, engine=engine)
-    if operation_key == CAPABILITY_MERGE:
-        return merge_rules(request, host)
-    raise ContractError("CAPABILITY_INVALID", "unknown source-cleaning capability")
+    return _DEFAULT_RUNTIME.run(request, host, engine=engine)
 
 
 def capability_descriptor(capability_id: str | None = None) -> dict[str, Any]:

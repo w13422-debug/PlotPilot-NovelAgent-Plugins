@@ -3,7 +3,7 @@
   "capability_id": "source.clean.preview/v1",
   "provider": {
     "plugin_id": "com.plotpilot.novelagent.source-cleaning-runtime",
-    "release_id": "3769203e651e8bc2169a00a5c7a01d82928ad3f2521aaf0b829f26f63d30eb78"
+    "release_id": "1bfda62b8f7f901c03e9cc27f68f9f120a5e7666d46fcc49314cd1329a8b4564"
   },
   "input_schema": "source.clean.preview-request/v1",
   "output_schema": "source.clean.preview-result/v1",

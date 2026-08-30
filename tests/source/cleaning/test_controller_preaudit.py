@@ -264,9 +264,7 @@ class ControllerPreauditTests(unittest.TestCase):
         code = "import json; from source_cleaning_runtime.package_identity import load_identity; print(json.dumps(load_identity(), sort_keys=True))"
         with tempfile.TemporaryDirectory() as directory:
             install_root = Path(directory)
-            with zipfile.ZipFile(wheel) as archive:
-                archive.extractall(install_root)
-            shutil.copyfile(sidecar, install_root / expected["wheel_import"] / "identity.json")
+            shutil.copytree(PLUGIN, install_root, dirs_exist_ok=True)
             env["PYTHONPATH"] = str(install_root) + ";" + env["PYTHONPATH"]
             result = subprocess.run([sys.executable, "-c", code], cwd=str(ROOT), env=env, capture_output=True, text=True, check=True)
             installed = json.loads(result.stdout)
@@ -283,24 +281,14 @@ class ControllerPreauditTests(unittest.TestCase):
             self.assertIn("identity artifact is unavailable", missing.stderr)
 
         with tempfile.TemporaryDirectory() as directory:
-            tampered_root = Path(directory)
+            missing_manifest_root = Path(directory)
             with zipfile.ZipFile(wheel) as archive:
-                archive.extractall(tampered_root)
-            tampered = dict(outer_identity)
-            tampered["release_id"] = "0" * 64
-            (tampered_root / expected["wheel_import"] / "identity.json").write_text(
-                json.dumps(tampered), encoding="utf-8"
-            )
-            expected_json = json.dumps(outer_identity, sort_keys=True)
-            tamper_code = (
-                "import json; from source_cleaning_runtime.package_identity import load_identity; "
-                f"actual=load_identity(); expected=json.loads({expected_json!r}); "
-                "assert actual == expected, 'installed identity does not match outer sidecar'"
-            )
-            env["PYTHONPATH"] = str(tampered_root) + ";" + ";".join([str(ROOT / "sdk"), r"C:\Users\Administrator\AppData\Local\Temp\nap-b1-pydeps"])
-            tampered_result = subprocess.run([sys.executable, "-c", tamper_code], cwd=str(ROOT), env=env, capture_output=True, text=True)
-            self.assertNotEqual(tampered_result.returncode, 0)
-            self.assertIn("installed identity does not match outer sidecar", tampered_result.stderr)
+                archive.extractall(missing_manifest_root)
+            shutil.copyfile(sidecar, missing_manifest_root / expected["wheel_import"] / "identity.json")
+            env["PYTHONPATH"] = str(missing_manifest_root) + ";" + ";".join([str(ROOT / "sdk"), r"C:\Users\Administrator\AppData\Local\Temp\nap-b1-pydeps"])
+            missing_manifest = subprocess.run([sys.executable, "-c", code], cwd=str(ROOT), env=env, capture_output=True, text=True)
+            self.assertNotEqual(missing_manifest.returncode, 0)
+            self.assertIn("package manifest is unavailable", missing_manifest.stderr)
 
     def test_production_uses_frozen_rpc_host_reads_complete_asset_without_request_text(self) -> None:
         case = _case()

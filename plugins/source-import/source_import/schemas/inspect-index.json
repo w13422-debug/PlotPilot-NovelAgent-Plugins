@@ -6,12 +6,12 @@
     {
       "schema_id": "source.import.inspect-request/v1",
       "path": "schemas/inspect-input.schema.json",
-      "sha256": "d8b8aa14699aa6daf2b3fa4cfef3e9502490ad79fb49c5d1faf1480b42f0d2a4"
+      "sha256": "36b20c5057a2b77d18c8588f89821b54d9079fd065163c6231c935be02026a3f"
     },
     {
       "schema_id": "source.import.inspect-result/v1",
       "path": "schemas/inspect-output.schema.json",
-      "sha256": "6360045fec9fa6a6efeceb382f1ddf6910df455c6e3586843550cf1bb6045f76"
+      "sha256": "0df3f97eea939a7f2ce227ad61256ccae6ce54b6fbf1d9dd14d857709cc916df"
     }
   ]
 }

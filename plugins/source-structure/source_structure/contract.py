@@ -493,20 +493,42 @@ def rebind_evidence(
 
     target_revision = target_revision_id or source_revision
     _id(target_revision,"target_revision_id")
-    if source_revision == target_revision and source_hash == target_hash:
-        target_node = next((node for node in target_list if node["node_id"] == source_span["node_id"]),None)
-        if target_node is not None:
-            validate_evidence_span(
-                source_span,
-                target,
-                _node_range(target_node),
-                expected_workspace_id=source_workspace,
-                expected_document_id=source_document,
-                expected_revision_id=target_revision,
-                expected_node_id=target_node["node_id"],
-                expected_canonical_text_hash=target_hash,
+    if source_revision == target_revision:
+        if source_hash != target_hash:
+            raise EvidenceSpanError(
+                "same Revision cannot change canonical_text_hash"
             )
-            return {"schema":"source-evidence-rebind-item/v1","evidence_id":evidence_id,"classification":"unchanged","source_span":copy.deepcopy(dict(source_span)),"target_span":copy.deepcopy(dict(source_span)),"reason":"same_revision_exact_noop","match_count":1,"candidate_eligible":False}
+        if source != target:
+            raise EvidenceSpanError(
+                "same Revision cannot change canonical text"
+            )
+        if source_list != target_list:
+            raise EvidenceSpanError(
+                "same Revision cannot change the canonical Node binding"
+            )
+        target_node = next(
+            (
+                node
+                for node in target_list
+                if node["node_id"] == source_span["node_id"]
+            ),
+            None,
+        )
+        if target_node is None:
+            raise EvidenceSpanError(
+                "same Revision lost the EvidenceSpan Node binding"
+            )
+        validate_evidence_span(
+            source_span,
+            target,
+            _node_range(target_node),
+            expected_workspace_id=source_workspace,
+            expected_document_id=source_document,
+            expected_revision_id=target_revision,
+            expected_node_id=target_node["node_id"],
+            expected_canonical_text_hash=target_hash,
+        )
+        return {"schema":"source-evidence-rebind-item/v1","evidence_id":evidence_id,"classification":"unchanged","source_span":copy.deepcopy(dict(source_span)),"target_span":copy.deepcopy(dict(source_span)),"reason":"same_revision_exact_noop","match_count":1,"candidate_eligible":False}
 
     quote = source_span["quote"]
     positions:list[int] = []
@@ -549,6 +571,35 @@ def rebind_evidence(
     return {"schema":"source-evidence-rebind-item/v1","evidence_id":evidence_id,"classification":"rebound","source_span":copy.deepcopy(dict(source_span)),"target_span":target_span,"reason":"unique_exact_quote_with_containment","match_count":1,"candidate_eligible":True}
 
 
+def _validate_rebind_revision_gate(
+    source_revision_id:str,
+    source_canonical_text_hash:str,
+    target_revision_id:str,
+    target_canonical_text_hash:str,
+    items:Sequence[Mapping[str,Any]],
+) -> None:
+    same_revision = source_revision_id == target_revision_id
+    if same_revision and source_canonical_text_hash != target_canonical_text_hash:
+        raise StructureContractError(
+            "same Revision rebind report cannot change canonical_text_hash"
+        )
+    for item in items:
+        classification = item["classification"]
+        if same_revision:
+            if classification != "unchanged":
+                raise StructureContractError(
+                    "same Revision rebind report may only contain unchanged"
+                )
+            if item["source_span"] != item["target_span"]:
+                raise StructureContractError(
+                    "same Revision unchanged spans must be an exact no-op"
+                )
+        elif classification == "unchanged":
+            raise StructureContractError(
+                "unchanged classification requires the same Revision"
+            )
+
+
 def build_rebind_report(*, workspace_id:str, document_id:str, source_revision_id:str, source_canonical_text_hash:str, target_revision_id:str, target_canonical_text_hash:str, items:Iterable[Mapping[str,Any]]) -> dict[str,Any]:
     for value,label in ((workspace_id,"workspace_id"),(document_id,"document_id"),(source_revision_id,"source_revision_id"),(target_revision_id,"target_revision_id")): _id(value,label)
     _hash(source_canonical_text_hash,"source_canonical_text_hash"); _hash(target_canonical_text_hash,"target_canonical_text_hash")
@@ -571,6 +622,7 @@ def build_rebind_report(*, workspace_id:str, document_id:str, source_revision_id
             validate_evidence_span(item["target_span"],expected_workspace_id=workspace_id,expected_document_id=document_id,expected_revision_id=target_revision_id,expected_canonical_text_hash=target_canonical_text_hash)
         ids.append(item["evidence_id"])
     if len(ids) != len(set(ids)): raise StructureContractError("rebind evidence IDs must be unique")
+    _validate_rebind_revision_gate(source_revision_id,source_canonical_text_hash,target_revision_id,target_canonical_text_hash,normalized)
     counts = {name:0 for name in CLASSIFICATIONS}
     for item in normalized: counts[item["classification"]] += 1
     body = {"schema":"source-evidence-rebind-report/v1","workspace_id":workspace_id,"document_id":document_id,"source_revision_id":source_revision_id,"source_canonical_text_hash":source_canonical_text_hash,"target_revision_id":target_revision_id,"target_canonical_text_hash":target_canonical_text_hash,"items":normalized,"counts":counts}
@@ -584,6 +636,7 @@ def validate_rebind_report(report:Mapping[str,Any]) -> dict[str,Any]:
     counts = {name:0 for name in CLASSIFICATIONS}
     for item in value["items"]: counts[item["classification"]] += 1
     if value["counts"] != counts: raise StructureContractError("rebind report counts do not match items")
+    _validate_rebind_revision_gate(value["source_revision_id"],value["source_canonical_text_hash"],value["target_revision_id"],value["target_canonical_text_hash"],value["items"])
     _hash(value["report_hash"],"report_hash")
     body = dict(value); del body["report_hash"]
     if value["report_hash"] != hash_json("source-evidence-rebind-report/v1",body): raise StructureContractError("rebind report hash mismatch")

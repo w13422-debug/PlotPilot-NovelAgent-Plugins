@@ -2,6 +2,6 @@
   "schema": "source-structure-package-identity/v1",
   "plugin_id": "com.plotpilot.novelagent.source-structure",
   "version": "0.1.0",
-  "package_hash": "8c768a6b3693c344de1bebed4584391c64495d29c01f0cdd5929e711f12d7459",
-  "release_id": "c050fd331a5d1dddb0451333fd478d764e81e7156f56e52a522c27a7009fb807"
+  "package_hash": "9dd509a71cbfbe14a8534b9290f9dce95db31ce22a20b1777e31d73236b2fe8d",
+  "release_id": "4e26b44e25c71494f9aed933000934b34e416fbb16e471a8f1285cade19ad9a5"
 }
