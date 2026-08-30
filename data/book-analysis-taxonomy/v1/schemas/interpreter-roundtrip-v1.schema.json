@@ -1,0 +1,27 @@
+{
+  "$id": "https://plotpilot.local/data/book-analysis-taxonomy-interpreter-roundtrip-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "book-analysis-taxonomy-interpreter-roundtrip/v1"},
+    "format_id": {"const": "book-analysis-taxonomy/v1"},
+    "plugin_id": {"const": "com.plotpilot.novelagent.donor-analysis"},
+    "capabilities": {
+      "type": "array",
+      "prefixItems": [
+        {"const": "analysis.book.atom.extract/v1"},
+        {"const": "analysis.book.atom.manual/v1"},
+        {"const": "analysis.book.claim.generate/v1"},
+        {"const": "analysis.book.rereview/v1"}
+      ],
+      "items": false,
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "forward_direction": {"const": "format_to_capability"},
+    "reverse_direction": {"const": "capability_to_format"}
+  },
+  "required": ["schema", "format_id", "plugin_id", "capabilities", "forward_direction", "reverse_direction"]
+}
+

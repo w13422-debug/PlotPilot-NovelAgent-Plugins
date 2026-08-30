@@ -1,0 +1,92 @@
+{
+  "schema": "book-analysis-taxonomy/v1",
+  "format_id": "book-analysis-taxonomy/v1",
+  "taxonomy_id": "com.plotpilot.novelagent.book-analysis-taxonomy",
+  "version": "1.0.0",
+  "atom_kinds": [
+    {"key": "action", "label_zh": "动作"},
+    {"key": "character_voice", "label_zh": "人物声音"},
+    {"key": "climax", "label_zh": "高潮"},
+    {"key": "concealment", "label_zh": "隐瞒"},
+    {"key": "conflict", "label_zh": "冲突"},
+    {"key": "decision", "label_zh": "决定"},
+    {"key": "description", "label_zh": "描写"},
+    {"key": "dialogue", "label_zh": "对话"},
+    {"key": "emotion", "label_zh": "情绪"},
+    {"key": "foreshadow", "label_zh": "伏笔"},
+    {"key": "hook", "label_zh": "钩子"},
+    {"key": "inner_monologue", "label_zh": "内心活动"},
+    {"key": "other", "label_zh": "其他"},
+    {"key": "payoff", "label_zh": "回收"},
+    {"key": "promise", "label_zh": "承诺"},
+    {"key": "relationship_change", "label_zh": "关系变化"},
+    {"key": "rhythm", "label_zh": "节奏"},
+    {"key": "scene_turn", "label_zh": "场景转折"},
+    {"key": "setup", "label_zh": "铺垫"},
+    {"key": "signature_action", "label_zh": "标志动作"},
+    {"key": "suspense", "label_zh": "悬念"}
+  ],
+  "description_types": [
+    {"key": "scenery", "label_zh": "景色"},
+    {"key": "appearance", "label_zh": "人物外貌"},
+    {"key": "action", "label_zh": "动作"},
+    {"key": "combat", "label_zh": "打斗"},
+    {"key": "psychology", "label_zh": "心理"},
+    {"key": "environment", "label_zh": "环境"},
+    {"key": "object", "label_zh": "物品"}
+  ],
+  "narration_techniques": [
+    {"key": "line_drawing", "label_zh": "白描"},
+    {"key": "fine_detail", "label_zh": "细描"},
+    {"key": "stream_of_consciousness", "label_zh": "意识流"},
+    {"key": "symbolism", "label_zh": "象征"},
+    {"key": "metaphor", "label_zh": "隐喻"},
+    {"key": "contrast", "label_zh": "对比"}
+  ],
+  "ratio_metrics": [
+    {"key": "action_ratio", "label_zh": "动作比例", "value_type": "ratio_0_1", "allowed_values": []},
+    {"key": "psychology_ratio", "label_zh": "心理比例", "value_type": "ratio_0_1", "allowed_values": []},
+    {"key": "scenery_ratio", "label_zh": "景物比例", "value_type": "ratio_0_1", "allowed_values": []}
+  ],
+  "rhythm_emotion_metrics": [
+    {"key": "chapter_rhythm", "label_zh": "章节节奏", "value_type": "ordered_curve", "allowed_values": []},
+    {"key": "emotion_curve", "label_zh": "情绪曲线", "value_type": "ordered_curve", "allowed_values": []},
+    {"key": "climax_buffer_sequence", "label_zh": "高潮/缓冲", "value_type": "categorical_sequence", "allowed_values": ["climax", "buffer"]}
+  ],
+  "language_metrics": [
+    {"key": "lexicon_and_idiom", "label_zh": "词语和惯用表达", "value_type": "text_profile", "allowed_values": []},
+    {"key": "viewpoint", "label_zh": "视角", "value_type": "categorical", "allowed_values": ["internal", "external", "omniscient", "mixed"]},
+    {"key": "grammatical_person", "label_zh": "人称", "value_type": "categorical", "allowed_values": ["first", "second", "third", "mixed"]},
+    {"key": "tense", "label_zh": "时态", "value_type": "categorical", "allowed_values": ["past", "present", "mixed", "not_applicable"]}
+  ],
+  "structure_metrics": [
+    {"key": "chapter_ending", "label_zh": "章节结尾方式", "value_type": "categorical", "allowed_values": ["hook", "cliffhanger", "resolution", "revelation", "transition", "open"]},
+    {"key": "sentence_length", "label_zh": "句式长短", "value_type": "codepoint_distribution", "allowed_values": []},
+    {"key": "paragraph_length", "label_zh": "段落长度", "value_type": "codepoint_distribution", "allowed_values": []},
+    {"key": "segmentation", "label_zh": "断句习惯", "value_type": "text_profile", "allowed_values": []},
+    {"key": "punctuation_habits", "label_zh": "标点习惯", "value_type": "text_profile", "allowed_values": []}
+  ],
+  "review_rubric": [
+    {"criterion_id": "exact_evidence", "label_zh": "精确证据", "applies_to": "atom", "requirement": "每个事实性 Atom 至少引用一个 exact Revision 的 Unicode code-point EvidenceSpan；quote、quote_hash、canonical_text_hash 必须可重算。", "failure_code": "evidence_not_exact"},
+    {"criterion_id": "atomicity", "label_zh": "最小可判断性", "applies_to": "atom", "requirement": "一个 Atom 只表达一个可独立接受或拒绝的观察或技法。", "failure_code": "not_atomic"},
+    {"criterion_id": "taxonomy_fit", "label_zh": "分类闭合", "applies_to": "atom", "requirement": "atom_kind、描写类型、叙述方式及量化字段只能取本 taxonomy 声明的键和值。", "failure_code": "taxonomy_mismatch"},
+    {"criterion_id": "observation_interpretation_split", "label_zh": "观察与解释分离", "applies_to": "atom", "requirement": "observation 只陈述证据可见内容；interpretation 单独标记推断置信度。", "failure_code": "observation_interpretation_mixed"},
+    {"criterion_id": "applicability_limits", "label_zh": "适用性与限制", "applies_to": "both", "requirement": "结论说明适用主体或章节、适用范围和已知限制，不把局部样本外推为全书真理。", "failure_code": "scope_or_limits_missing"},
+    {"criterion_id": "provenance_complete", "label_zh": "运行来源完整", "applies_to": "both", "requirement": "保留生成 Skill、模型、Code plugin、RunSnapshot 和 exact Source Revision 反链；人工 Atom 仍需 producer_kind=human 的零模型 provenance。", "failure_code": "provenance_incomplete"},
+    {"criterion_id": "accepted_current_atoms_only", "label_zh": "仅接受当前 Atom", "applies_to": "claim", "requirement": "Claim 只能按冻结顺序引用同一 Source Revision 上 accepted 且 current 的 Atom、payload_hash、acceptance_ordinal 和 EvidenceSpan。", "failure_code": "atom_authority_invalid"},
+    {"criterion_id": "claim_input_order", "label_zh": "Claim 输入顺序闭合", "applies_to": "claim", "requirement": "claim-input/v1 ordinal 从 0 连续，禁止缺失、重复、重排、跨 Revision 或 Asset/hash 漂移。", "failure_code": "claim_input_invalid"},
+    {"criterion_id": "counterevidence", "label_zh": "反例与冲突", "applies_to": "claim", "requirement": "Claim 显式保存 counterexamples、conflicts 和 interpretation_confidence；冲突不得被综合成无来源真相。", "failure_code": "counterevidence_omitted"},
+    {"criterion_id": "rereview_non_mutating", "label_zh": "复审不直改当前权威", "applies_to": "both", "requirement": "re-review 只产生 diagnostic-bundle/v1；任何修订必须另建 Candidate 并由 Core 决策和 Publication。", "failure_code": "rereview_mutated_authority"}
+  ],
+  "interpreter_mappings": [
+    {"format_id": "book-analysis-taxonomy/v1", "plugin_id": "com.plotpilot.novelagent.donor-analysis", "capability_id": "analysis.book.atom.extract/v1", "direction": "format_to_capability"},
+    {"format_id": "book-analysis-taxonomy/v1", "plugin_id": "com.plotpilot.novelagent.donor-analysis", "capability_id": "analysis.book.atom.extract/v1", "direction": "capability_to_format"},
+    {"format_id": "book-analysis-taxonomy/v1", "plugin_id": "com.plotpilot.novelagent.donor-analysis", "capability_id": "analysis.book.atom.manual/v1", "direction": "format_to_capability"},
+    {"format_id": "book-analysis-taxonomy/v1", "plugin_id": "com.plotpilot.novelagent.donor-analysis", "capability_id": "analysis.book.atom.manual/v1", "direction": "capability_to_format"},
+    {"format_id": "book-analysis-taxonomy/v1", "plugin_id": "com.plotpilot.novelagent.donor-analysis", "capability_id": "analysis.book.claim.generate/v1", "direction": "format_to_capability"},
+    {"format_id": "book-analysis-taxonomy/v1", "plugin_id": "com.plotpilot.novelagent.donor-analysis", "capability_id": "analysis.book.claim.generate/v1", "direction": "capability_to_format"},
+    {"format_id": "book-analysis-taxonomy/v1", "plugin_id": "com.plotpilot.novelagent.donor-analysis", "capability_id": "analysis.book.rereview/v1", "direction": "format_to_capability"},
+    {"format_id": "book-analysis-taxonomy/v1", "plugin_id": "com.plotpilot.novelagent.donor-analysis", "capability_id": "analysis.book.rereview/v1", "direction": "capability_to_format"}
+  ]
+}
+

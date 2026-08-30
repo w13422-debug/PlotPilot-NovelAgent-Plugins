@@ -1,0 +1,28 @@
+{
+  "schema": "donor-skill-package-expected/v1",
+  "package_kind": "skill",
+  "skill_id": "com.plotpilot.skill.donor.atomic-breakdown",
+  "version": "1.0.0",
+  "manifest_path": "skill.json",
+  "method_path": "method.json",
+  "package_files": [
+    "method.json",
+    "method.schema.json",
+    "prompt.txt",
+    "skill.json"
+  ],
+  "files_sha256": "d339bac04265110ba472bc3016e44a837dba1d8289826a1797a26c63b7ea09fb  method.json\n3183427f65f0c5524fa47b8526727613e1febb8dfbae829963b21b43a7d27950  method.schema.json\n44c5a6e08bb16c10697438bdbd87348d1c300e1a49a59447ec49d2b97e764b72  prompt.txt\nf88052edd9f08da82e1e8d7ecd4bcdc508eebe8baa96811bab3b94df54eb35db  skill.json\n",
+  "fixture_hashes": {
+    "method.json": "d339bac04265110ba472bc3016e44a837dba1d8289826a1797a26c63b7ea09fb",
+    "prompt.txt": "44c5a6e08bb16c10697438bdbd87348d1c300e1a49a59447ec49d2b97e764b72",
+    "method.schema.json": "3183427f65f0c5524fa47b8526727613e1febb8dfbae829963b21b43a7d27950"
+  },
+  "skill_package_hash": "27930699e02a937e4f56cf5f90202adf6770cbe8a58391ced3e6801ee39b5339",
+  "skill_release_id": "ed9fad4c3287f8a71c47b01344d1099862578de98289e5cecaf9b890a1c8bcfa",
+  "identity_path": "identity.json",
+  "identity_domains": {
+    "skill": "plotpilot-skill-release/v1",
+    "data_or_code": "plotpilot-release/v1",
+    "code_plugin_id": "com.plotpilot.novelagent.donor-analysis"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "schema": "donor-analysis-package-identity/v1",
+  "plugin_id": "com.plotpilot.novelagent.donor-analysis",
+  "version": "0.1.0",
+  "package_hash": "fd37052d50f88dd7519eab641e283cc53521e07cbfa3eed07d06eea861517cf2",
+  "release_id": "80dc50b850b3e16a7609a39cffbb91c9624d709e5da547ecf00f73afe19e4b53"
+}

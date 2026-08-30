@@ -1,0 +1,17 @@
+{
+  "schema": "provider-schema-index/v1",
+  "plugin_id": "com.plotpilot.novelagent.donor-analysis",
+  "capability_id": "analysis.book.atom.extract/v1",
+  "schemas": [
+    {
+      "schema_id": "analysis.book.atom.extract-request/v1",
+      "path": "schemas/atom-extract/input.schema.json",
+      "sha256": "8b7cd67e806f0e7968893da2a04aa1dbf2e07ab5ef65d23df45546a47cf78fcc"
+    },
+    {
+      "schema_id": "analysis.book.atom.extract-result/v1",
+      "path": "schemas/atom-extract/result.schema.json",
+      "sha256": "47d851f44a3839fc9117dad135478d27de6d9d642950ae4e91bafd843ea3f0c8"
+    }
+  ]
+}

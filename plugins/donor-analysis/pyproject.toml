@@ -1,0 +1,11 @@
+[build-system]
+requires = []
+build-backend = "donor_analysis.build_backend"
+backend-path = ["."]
+
+[project]
+name = "plotpilot-donor-analysis"
+version = "0.1.0"
+description = "PlotPilot Novel-Agent exact Atom, Claim and rereview plugin"
+requires-python = ">=3.12,<3.13"
+dependencies = []

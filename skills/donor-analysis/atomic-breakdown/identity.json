@@ -1,0 +1,10 @@
+{
+  "schema": "donor-skill-package-identity/v1",
+  "package_kind": "skill",
+  "skill_id": "com.plotpilot.skill.donor.atomic-breakdown",
+  "version": "1.0.0",
+  "skill_package_hash": "27930699e02a937e4f56cf5f90202adf6770cbe8a58391ced3e6801ee39b5339",
+  "skill_release_id": "ed9fad4c3287f8a71c47b01344d1099862578de98289e5cecaf9b890a1c8bcfa",
+  "separate_from_data_plugin_id": "com.plotpilot.novelagent.book-analysis-taxonomy",
+  "separate_from_code_plugin_id": "com.plotpilot.novelagent.donor-analysis"
+}

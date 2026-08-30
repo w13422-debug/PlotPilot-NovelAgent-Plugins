@@ -1,0 +1,11 @@
+{
+  "schema": "plugin-ui-metadata/v1",
+  "plugin_id": "com.plotpilot.novelagent.donor-analysis",
+  "implementation": "host-projected-metadata-only",
+  "slots": [
+    "donors.analysis.configure",
+    "job.drawer.detail",
+    "donors.analysis.review",
+    "donors.evidence.inspector"
+  ]
+}

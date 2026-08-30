@@ -1,0 +1,18 @@
+{
+  "schema": "donor-skill-method/v1",
+  "skill_id": "com.plotpilot.skill.donor.claim-synthesis",
+  "input_format_id": "book-analysis-taxonomy/v1",
+  "capability_ids": [
+    "analysis.book.claim.generate/v1"
+  ],
+  "result_contract": "candidate-batch/v1",
+  "rules": [
+    "accepted_current_atoms_only",
+    "ordered_claim_input",
+    "payload_and_evidence_hashes_frozen",
+    "counterexamples_and_conflicts_visible",
+    "candidate_only_no_publication"
+  ],
+  "authority": "candidate_only"
+}
+

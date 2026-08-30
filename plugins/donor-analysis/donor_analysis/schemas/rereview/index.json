@@ -1,0 +1,17 @@
+{
+  "schema": "provider-schema-index/v1",
+  "plugin_id": "com.plotpilot.novelagent.donor-analysis",
+  "capability_id": "analysis.book.rereview/v1",
+  "schemas": [
+    {
+      "schema_id": "analysis.book.rereview-request/v1",
+      "path": "schemas/rereview/input.schema.json",
+      "sha256": "b5b3670ad83ba7daf290e97d335a2bbe27df384ca5980adf35e5fe0bed41bd6d"
+    },
+    {
+      "schema_id": "analysis.book.rereview-result/v1",
+      "path": "schemas/rereview/result.schema.json",
+      "sha256": "638f08d19a1db4cf8f4b710cd0b31d9627a56e752743293eb36d8be61aeba33d"
+    }
+  ]
+}
