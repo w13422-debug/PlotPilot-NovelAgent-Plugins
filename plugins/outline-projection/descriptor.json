@@ -3,7 +3,7 @@
   "capability_id": "outline.projection.render/v1",
   "provider": {
     "plugin_id": "com.plotpilot.novelagent.outline-projection",
-    "release_id": "5d74ee44c2b433f373198579e001ccb3248ec59a76239cc83708a1911d8f206d"
+    "release_id": "31d75c8c77d3c6ff9cc7571cc05e00bd376093272f813f794f8447dc9274215f"
   },
   "input_schema": "outline.projection.render-request/v1",
   "output_schema": "outline.projection.render-result/v1",

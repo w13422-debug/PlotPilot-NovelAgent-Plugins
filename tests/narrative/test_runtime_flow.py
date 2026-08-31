@@ -604,13 +604,51 @@ def projection_values(host: Host) -> tuple[dict, dict, dict, dict]:
         "broker_children": [child],
     }
     synthesis_id, synthesis_hash = host.seed_json("asset-synthesis-1", synthesis)
+    narrative_identity = json.loads(
+        (ROOT / "plugins" / "narrative-analysis" / "narrative_analysis" / "identity.json").read_text(encoding="utf-8")
+    )
+    parent_item = {
+        "schema": "candidate-item/v1",
+        "item_id": "narrative-synthesis-candidate-1",
+        "item_kind": "relation_set",
+        "target": {"workspace_id": "ws-1", "entity_kind": "relation_set", "entity_id": "narrative-synthesis-relation-1"},
+        "mutation": {"mode": "relation_patch", "payload_schema": "narrative-synthesis/v1", "payload_hash": synthesis_hash},
+        "payload_asset_id": synthesis_id,
+        "base": {"revision_id": "rev-1", "content_hash": TEXT_HASH},
+        "write_set": [{"workspace_id": "ws-1", "entity_kind": "relation_set", "entity_id": "narrative-synthesis-relation-1", "revision_id": "rev-1", "content_hash": TEXT_HASH}],
+        "parent_candidate_ids": [],
+        "source_refs": [{"workspace_id": "ws-1", "source_type": "canonical_revision", "source_id": "doc-1", "revision_or_hash": "rev-1"}],
+        "status": "complete",
+    }
+    parent_bundle = {
+        "schema": "result-bundle/v1",
+        "contract_id": "candidate-batch/v1",
+        "bundle_id": "narrative-result-bundle-1",
+        "bundle_type": "candidate_batch",
+        "producer": {
+            "plugin_id": narrative_identity["plugin_id"],
+            "release_id": narrative_identity["release_id"],
+            "capability_id": CAPABILITY_SYNTHESIZE,
+            "job_id": "job-synthesis-1",
+            "step_id": "step-synthesis-1",
+            "attempt_id": "attempt-synthesis-1",
+            "lease_epoch": 1,
+        },
+        "input_snapshot_hash": SNAPSHOT_HASH,
+        "items": [parent_item],
+        "warnings": [],
+        "partial": False,
+        "provenance_receipt_id": "source-receipt-1",
+        "skill_chain_result_refs": [],
+    }
+    parent_bundle_id, parent_bundle_hash = host.seed_json("asset-source-bundle-1", parent_bundle)
     request = {
         "schema": "outline.projection.render-request/v1", "capability_id": "outline.projection.render/v1",
         "operation_key": "outline.projection.render/v1", "operation": "run", "job_id": "job-projection-1",
         "step_id": "step-projection-1", "attempt_id": "attempt-projection-1", "worker_run_id": "worker-projection-1",
         "lease_epoch": 1, "checkpoint_ids": ["projection-checkpoint-1"], "provenance_receipt_id": "receipt-test",
         "created_at": "2026-08-30T00:00:00Z", "total_units": 1, "run_snapshot_hash": SNAPSHOT_HASH,
-        "workspace_id": "ws-1", "source_bundle_asset_id": synthesis_id, "source_bundle_hash": synthesis_hash,
+        "workspace_id": "ws-1", "source_bundle_asset_id": parent_bundle_id, "source_bundle_hash": parent_bundle_hash,
         "narrative_unit_assets": [{"asset_id": unit_id, "asset_hash": unit_hash}],
         "views": ["tree", "card", "timeline", "relation"],
     }
@@ -641,23 +679,22 @@ def test_outline_runtime_emits_artifact_and_preserves_cross_capability_receipts(
 
 
 def _seed_source_receipt(host: Host, request: dict, synthesis: dict) -> tuple[str, str]:
+    parent_bundle = json.loads(host.assets[request["source_bundle_asset_id"]].decode("utf-8"))
+    producer = parent_bundle["producer"]
     receipt = {
         "schema": "provenance-receipt/v1",
         "receipt_id": "source-receipt-1",
         "plugin_id": "com.plotpilot.novelagent.narrative-analysis",
-        "release_id": json.loads((ROOT / "plugins" / "narrative-analysis" / "narrative_analysis" / "identity.json").read_text(encoding="utf-8"))["release_id"],
+        "release_id": producer["release_id"],
         "package_hash": json.loads((ROOT / "plugins" / "narrative-analysis" / "narrative_analysis" / "identity.json").read_text(encoding="utf-8"))["package_hash"],
         "capability_id": CAPABILITY_SYNTHESIZE,
-        "job_id": "job-synthesis-1",
-        "step_id": "step-synthesis-1",
-        "attempt_id": "attempt-synthesis-1",
-        "lease_epoch": 1,
+        "job_id": producer["job_id"],
+        "step_id": producer["step_id"],
+        "attempt_id": producer["attempt_id"],
+        "lease_epoch": producer["lease_epoch"],
         "run_snapshot_hash": request["run_snapshot_hash"],
-        # Outline consumes the immutable synthesis payload Asset directly in
-        # this fixture; the parent receipt must therefore bind that exact
-        # Asset identity and its canonical synthesis hash.
-        "bundle_id": request["source_bundle_asset_id"],
-        "bundle_hash": hash_jcs("narrative-synthesis/v1", synthesis),
+        "bundle_id": parent_bundle["bundle_id"],
+        "bundle_hash": hash_jcs("result-bundle/v1", parent_bundle),
         "parent_receipt_ids": [],
         "model_receipt_ids": [],
         "skill_chain_result_refs": [],
@@ -855,6 +892,8 @@ def test_outline_formal_main_cancel_and_terminal_receipts_are_verified() -> None
     assert host.checkpoint_entered.wait(timeout=5)
     cancel = deepcopy(request)
     cancel["operation"] = "cancel"
+    for field in ("source_receipt_id", "source_receipt_asset_id", "source_receipt_asset_hash"):
+        cancel.pop(field, None)
     assert outline_main(cancel, host) == {"accepted": True, "worker_run_id": "worker-projection-1"}
     host.checkpoint_release.set()
     thread.join(timeout=5)
@@ -882,3 +921,273 @@ def test_outline_formal_main_cancel_and_terminal_receipts_are_verified() -> None
         snapshot_workspace_id="ws-1",
         snapshot_hash_value=SNAPSHOT_HASH,
     )
+
+
+@pytest.mark.parametrize("tamper", ["purpose", "beat", "constraints", "replacement"])
+def test_template_semantic_replacement_fails_before_model_or_stage(tamper: str) -> None:
+    """The installed Narrative code must not treat caller bytes as Data authority."""
+    host = Host()
+    template = deepcopy(DATA_TEMPLATE)
+    selected = template["templates"][0]
+    if tamper == "purpose":
+        selected["beats"][0]["purpose"] = "篡改后的目的"
+    elif tamper == "beat":
+        selected["beats"][0]["beat_id"] = "foreign-beat"
+    elif tamper == "constraints":
+        selected["constraints"]["ordered"] = False
+    else:
+        template["templates"] = [
+            {
+                **selected,
+                "template_id": "foreign-template",
+            }
+        ]
+    asset_id, asset_hash = host.seed_json("asset-template-tampered", template)
+    request = unit_request()
+    request["plot_template_asset_id"] = asset_id
+    request["plot_template_asset_hash"] = asset_hash
+
+    failed = NarrativeAnalysisPlugin().run(request, host)
+
+    assert failed is not None and failed["contract_id"] == "diagnostic-bundle/v1"
+    assert failed["items"][0]["code"] == "TEMPLATE_INVALID"
+    # Validation happens before host.model.invoke/v1 and before any candidate
+    # stage; a failure Result is still emitted through the public terminal path.
+    assert host.model_requests == []
+    assert host.stage_calls == []
+    assert host.completion_calls[-1]["outcome"] == "failed"
+
+
+def _valid_plan_compile_request(host: Host, *, template_binding: dict | None = None) -> dict:
+    """Build a schema-valid four-level plan request for identity negatives."""
+    bindings: list[dict[str, str]] = []
+    for index in range(1, 5):
+        unit = valid_unit()
+        unit["unit_id"] = f"unit-template-{index}"
+        unit["order"] = index - 1
+        unit["evidence_spans"][0]["evidence_span_id"] = f"span-template-{index}"
+        unit["source_attributions"][0]["attribution_id"] = f"attribution-template-{index}"
+        unit["source_attributions"][0]["evidence_span_ids"] = [f"span-template-{index}"]
+        asset_id, asset_hash = host.seed_json(f"asset-template-unit-{index}", unit)
+        bindings.append({"asset_id": asset_id, "asset_hash": asset_hash})
+    return {
+        "schema": "analysis.narrative.plan.compile-request/v1",
+        "capability_id": CAPABILITY_PLAN_COMPILE,
+        "operation_key": CAPABILITY_PLAN_COMPILE,
+        "operation": "validate",
+        "job_id": "job-template-negative",
+        "step_id": "step-template-negative",
+        "attempt_id": "attempt-template-negative",
+        "worker_run_id": "worker-template-negative",
+        "lease_epoch": 1,
+        "checkpoint_ids": ["checkpoint-template-negative"],
+        "provenance_receipt_id": "receipt-test",
+        "created_at": "2026-08-30T00:00:00Z",
+        "total_units": 4,
+        "run_snapshot_hash": SNAPSHOT_HASH,
+        "workspace_id": "ws-1",
+        "document_id": "doc-1",
+        "source_revision_id": "rev-1",
+        "canonical_asset_id": "asset-canonical",
+        "canonical_text_hash": TEXT_HASH,
+        "nodes": deepcopy(NODES),
+        "narrative_unit_assets": bindings,
+        "template_asset_id": "asset-template",
+        "template_asset_hash": hashlib.sha256(host.assets["asset-template"]).hexdigest(),
+        "template_binding": deepcopy(TEMPLATE_BINDING if template_binding is None else template_binding),
+        "plan_id": "plan-template-negative",
+        "plan_version": 1,
+        "hierarchy": [
+            {"node_id": "book-template", "parent_node_id": None, "level": "book", "title": "全书", "unit_ids": ["unit-template-1"], "order": 0},
+            {"node_id": "volume-template", "parent_node_id": "book-template", "level": "volume", "title": "第一卷", "unit_ids": ["unit-template-2"], "order": 1},
+            {"node_id": "chapter-template", "parent_node_id": "volume-template", "level": "chapter", "title": "第一章", "unit_ids": ["unit-template-3"], "order": 2},
+            {"node_id": "plot-unit-template", "parent_node_id": "chapter-template", "level": "plot_unit", "title": "第一单元", "unit_ids": ["unit-template-4"], "order": 3},
+        ],
+    }
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("data_release_id", "a" * 64),
+        ("package_hash", "b" * 64),
+        ("data_plugin_id", "com.foreign.plot-template"),
+        ("template_id", "foreign-template"),
+    ],
+)
+def test_plan_rejects_foreign_template_identity_before_candidate_stage(field: str, value: str) -> None:
+    host = Host()
+    binding = deepcopy(TEMPLATE_BINDING)
+    binding[field] = value
+    failed = NarrativeAnalysisPlugin().run(_valid_plan_compile_request(host, template_binding=binding), host)
+
+    assert failed is not None and failed["contract_id"] == "diagnostic-bundle/v1"
+    assert failed["items"][0]["code"] == "TEMPLATE_INVALID"
+    assert host.stage_calls == []
+    assert host.completion_calls[-1]["outcome"] == "failed"
+
+
+def test_outline_main_cancel_ignores_run_only_receipt_and_rejects_every_foreign_binding() -> None:
+    """A schema-valid cancel must match the live run, not merely its worker ID."""
+    host = Host()
+    request, _, synthesis, _ = projection_values(host)
+    source_id, source_hash = _seed_source_receipt(host, request, synthesis)
+    request.update({
+        "source_receipt_id": "source-receipt-1",
+        "source_receipt_asset_id": source_id,
+        "source_receipt_asset_hash": source_hash,
+    })
+    host.block_checkpoint = True
+    host.checkpoint_release.clear()
+    outcome: dict[str, object] = {}
+
+    def worker() -> None:
+        outcome["bundle"] = outline_main(request, host)
+
+    thread = threading.Thread(target=worker)
+    thread.start()
+    assert host.checkpoint_entered.wait(timeout=5)
+
+    cancel = deepcopy(request)
+    cancel["operation"] = "cancel"
+    for field in ("source_receipt_id", "source_receipt_asset_id", "source_receipt_asset_hash"):
+        cancel.pop(field, None)
+    assert outline_main(cancel) == {"accepted": True, "worker_run_id": request["worker_run_id"]}
+
+    foreign_cases = [
+        ("job_id", "foreign-job"),
+        ("step_id", "foreign-step"),
+        ("attempt_id", "foreign-attempt"),
+        ("lease_epoch", 2),
+        ("run_snapshot_hash", "2" * 64),
+        ("checkpoint_ids", ["foreign-checkpoint"]),
+        ("provenance_receipt_id", "foreign-receipt"),
+        ("source_bundle_asset_id", "foreign-source"),
+        ("source_bundle_hash", "3" * 64),
+        ("views", ["card"]),
+    ]
+    for field, value in foreign_cases:
+        foreign = deepcopy(cancel)
+        foreign[field] = value
+        assert outline_main(foreign) == {"accepted": False, "worker_run_id": request["worker_run_id"]}
+
+    host.checkpoint_release.set()
+    thread.join(timeout=5)
+    assert not thread.is_alive()
+    assert outcome["bundle"] is None
+    assert host.stage_calls == []
+    assert len(host.completion_calls) == 1
+    assert host.completion_calls[0]["outcome"] == "cancelled"
+    assert host.completion_calls[0]["result_bundle_asset_id"] is None
+
+
+def test_outline_main_rejects_cancel_after_terminal_and_keeps_single_success() -> None:
+    host = Host()
+    request, _, synthesis, _ = projection_values(host)
+    source_id, source_hash = _seed_source_receipt(host, request, synthesis)
+    request.update({
+        "source_receipt_id": "source-receipt-1",
+        "source_receipt_asset_id": source_id,
+        "source_receipt_asset_hash": source_hash,
+    })
+    bundle = outline_main(request, host)
+    assert bundle is not None
+    cancel = deepcopy(request)
+    cancel["operation"] = "cancel"
+    for field in ("source_receipt_id", "source_receipt_asset_id", "source_receipt_asset_hash"):
+        cancel.pop(field, None)
+    assert outline_main(cancel) == {"accepted": False, "worker_run_id": request["worker_run_id"]}
+    assert len(host.completion_calls) == 1
+    assert host.completion_calls[0]["outcome"] == "succeeded"
+    assert host.completion_calls[0]["result_bundle_asset_id"] is not None
+
+
+@pytest.mark.parametrize("tamper", ["release_id", "package_hash"])
+def test_outline_rejects_foreign_narrative_receipt_identity(tamper: str) -> None:
+    host = Host()
+    request, _, synthesis, _ = projection_values(host)
+    receipt_id, _ = _seed_source_receipt(host, request, synthesis)
+    receipt = json.loads(host.assets[receipt_id].decode("utf-8"))
+    receipt[tamper] = "e" * 64
+    receipt["receipt_hash"] = hash_jcs("provenance-receipt/v1", receipt)
+    receipt_id, receipt_hash = host.seed_json("asset-foreign-narrative-receipt", receipt)
+    request.update({
+        "source_receipt_id": "source-receipt-1",
+        "source_receipt_asset_id": receipt_id,
+        "source_receipt_asset_hash": receipt_hash,
+    })
+    failed = OutlineProjectionPlugin().run(request, host)
+    assert failed is not None and failed["contract_id"] == "diagnostic-bundle/v1"
+    assert failed["items"][0]["code"] == "SOURCE_CLOSURE_MISSING"
+    assert host.completion_calls[-1]["outcome"] == "failed"
+
+
+def test_outline_rejects_synthesis_payload_masquerading_as_result_bundle() -> None:
+    host = Host()
+    request, _, synthesis, _ = projection_values(host)
+    receipt_id, receipt_hash = _seed_source_receipt(host, request, synthesis)
+    request.update({
+        "source_receipt_id": "source-receipt-1",
+        "source_receipt_asset_id": receipt_id,
+        "source_receipt_asset_hash": receipt_hash,
+        "source_bundle_asset_id": "asset-synthesis-1",
+        "source_bundle_hash": hashlib.sha256(host.assets["asset-synthesis-1"]).hexdigest(),
+    })
+    failed = OutlineProjectionPlugin().run(request, host)
+    assert failed is not None and failed["contract_id"] == "diagnostic-bundle/v1"
+    assert failed["items"][0]["code"] == "SOURCE_CLOSURE_MISSING"
+    assert host.completion_calls[-1]["outcome"] == "failed"
+
+
+def test_outline_rejects_foreign_producer_and_payload_bindings() -> None:
+    for tamper in ("producer", "payload"):
+        host = Host()
+        request, _, synthesis, _ = projection_values(host)
+        bundle = json.loads(host.assets[request["source_bundle_asset_id"]].decode("utf-8"))
+        if tamper == "producer":
+            bundle["producer"]["plugin_id"] = "com.foreign.narrative"
+        else:
+            # Keep a valid Bundle envelope but make its Candidate point at a
+            # payload whose declared hash cannot be read as that Asset.
+            bundle["items"][0]["mutation"]["payload_hash"] = "f" * 64
+        source_id, source_hash = host.seed_json(f"asset-foreign-{tamper}-bundle", bundle)
+        request["source_bundle_asset_id"] = source_id
+        request["source_bundle_hash"] = source_hash
+        receipt_id, receipt_hash = _seed_source_receipt(host, request, synthesis)
+        request.update({
+            "source_receipt_id": "source-receipt-1",
+            "source_receipt_asset_id": receipt_id,
+            "source_receipt_asset_hash": receipt_hash,
+        })
+        failed = OutlineProjectionPlugin().run(request, host)
+        assert failed is not None and failed["contract_id"] == "diagnostic-bundle/v1"
+        assert failed["items"][0]["code"] in {"SOURCE_CLOSURE_MISSING", "ASSET_HASH_MISMATCH"}
+        assert host.completion_calls[-1]["outcome"] == "failed"
+
+
+def test_outline_accepts_receipt_from_actual_narrative_runtime_result_bundle() -> None:
+    """The cross-capability seam must accept the runtime's real Bundle/receipt."""
+    host = Host()
+    narrative_request = synthesis_request(host)
+    narrative_plugin = NarrativeAnalysisPlugin()
+    narrative_bundle = narrative_plugin.run(narrative_request, host)
+    assert narrative_bundle is not None and narrative_plugin.last_receipt is not None
+    narrative_raw = canonical_bytes(narrative_bundle)
+    narrative_hash = hashlib.sha256(narrative_raw).hexdigest()
+    narrative_asset_id = "asset-" + narrative_hash[:40]
+    assert host.assets[narrative_asset_id] == narrative_raw
+
+    request, _, synthesis, _ = projection_values(host)
+    request["source_bundle_asset_id"] = narrative_asset_id
+    request["source_bundle_hash"] = narrative_hash
+    receipt_id, receipt_hash = host.seed_json("asset-runtime-narrative-receipt", narrative_plugin.last_receipt)
+    request.update({
+        "source_receipt_id": narrative_plugin.last_receipt["receipt_id"],
+        "source_receipt_asset_id": receipt_id,
+        "source_receipt_asset_hash": receipt_hash,
+    })
+
+    outline_bundle = OutlineProjectionPlugin().run(request, host)
+
+    assert outline_bundle is not None and outline_bundle["contract_id"] == "artifact-bundle/v1"
+    assert host.completion_calls[-1]["outcome"] == "succeeded"

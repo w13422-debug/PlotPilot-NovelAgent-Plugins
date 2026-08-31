@@ -20,6 +20,7 @@ MODULE = "outline_projection"
 DIST_INFO = f"{NAME}-{VERSION}.dist-info"
 WHEEL_NAME = f"{NAME}-{VERSION}-py3-none-any.whl"
 INDEX_PATH = f"{MODULE}/schemas/render/index.json"
+PARENT_IDENTITY_PATH = f"{MODULE}/narrative_parent_identity.json"
 
 
 def _entry(name: str) -> zipfile.ZipInfo:
@@ -99,6 +100,38 @@ def _payload(root: Path) -> dict[str, bytes]:
     return result
 
 
+def _narrative_parent_identity(root: Path) -> dict[str, str]:
+    """Materialize the Narrative synthesis identity into the Outline wheel.
+
+    The two code plugins remain independently importable; this is a build-time
+    JSON seam, not a plugin-to-plugin Python import.  Installed wheels replay
+    the sidecar without needing a repository checkout.
+    """
+    source = root.parent / "narrative-analysis" / "narrative_analysis" / "identity.json"
+    sidecar = root / PARENT_IDENTITY_PATH
+    candidate = source if source.is_file() else sidecar
+    if not candidate.is_file():
+        raise ValueError("Narrative parent identity sidecar is missing")
+    value = json.loads(candidate.read_text(encoding="utf-8"))
+    if source == candidate:
+        value = {
+            "schema": "narrative-parent-identity/v1",
+            "plugin_id": value.get("plugin_id"),
+            "capability_id": "analysis.narrative.synthesize/v1",
+            "package_hash": value.get("package_hash"),
+            "release_id": value.get("release_id"),
+        }
+    if set(value) != {"schema", "plugin_id", "capability_id", "package_hash", "release_id"} or value.get("schema") != "narrative-parent-identity/v1":
+        raise ValueError("Narrative parent identity sidecar is not closed")
+    if value.get("plugin_id") != "com.plotpilot.novelagent.narrative-analysis" or value.get("capability_id") != "analysis.narrative.synthesize/v1":
+        raise ValueError("Narrative parent identity owner/capability differs")
+    for field in ("package_hash", "release_id"):
+        value[field] = str(value[field])
+        if len(value[field]) != 64 or any(char not in "0123456789abcdef" for char in value[field]):
+            raise ValueError("Narrative parent identity hash is invalid")
+    return {key: value[key] for key in ("schema", "plugin_id", "capability_id", "package_hash", "release_id")}
+
+
 def rebuild_package() -> dict[str, object]:
     root = Path(__file__).resolve().parents[1]
     sdk = root.parents[1] / "sdk"
@@ -106,6 +139,7 @@ def rebuild_package() -> dict[str, object]:
         sys.path.insert(0, str(sdk))
     from plotpilot_plugin_sdk.package import digest_package
 
+    _json(root / PARENT_IDENTITY_PATH, _narrative_parent_identity(root))
     _json(root / "plugin.json", plugin_manifest())
     _json(root / "ui" / "metadata-only.json", ui_metadata())
     schemas = []

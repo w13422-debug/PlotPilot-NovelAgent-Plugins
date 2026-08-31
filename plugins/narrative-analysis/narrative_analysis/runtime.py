@@ -6,7 +6,6 @@ from copy import deepcopy
 from dataclasses import dataclass, field
 import hashlib
 import json
-from pathlib import Path
 import re
 import threading
 from typing import Any, Mapping, Protocol, Sequence
@@ -67,6 +66,17 @@ _TIME_RE = re.compile(r"^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2
 _PAGE_SIZE = 8_388_608
 _MAX_PAGES = 4096
 _DATA_PLUGIN_ID = "com.plotpilot.novelagent.plot-structure-template"
+_DATA_FORMAT_ID = "plot-structure-template/v1"
+_DATA_VERSION = "1.0.0"
+# The Data package is intentionally a separate immutable package.  The code
+# wheel therefore carries the release binding as frozen constants rather than
+# reaching back into a checkout at runtime.  The canonical digest accepts
+# either raw or JCS-normalized Host Assets while rejecting every semantic
+# replacement (beat, purpose, constraints, mappings, or template set).
+_DATA_PACKAGE_HASH = "fa96f117e9ce134c05911c377615c2cdeb2719f99914e329f0140773d80a2c06"
+_DATA_RELEASE_ID = "cabac87f1ed3ea74a6766093c0a9f3a912e38957fc9037ec6c3df1d5c238a3e3"
+_TEMPLATE_CANONICAL_HASH = "434c008b059e6c34b4c9b5840f3cea776f7ad226a7ed355427f7a0b2b963a107"
+_TEMPLATE_ID = "general-longform-seven-beat"
 
 
 class NarrativeAnalysisWorkerError(RuntimeError):
@@ -247,7 +257,18 @@ def _read_asset(host: HostPort | None, asset_id: str, expected_hash: str | None)
 
 
 def _load_json_asset(host: HostPort | None, asset_id: str, expected_hash: str | None) -> Any:
-    return _strict_json(_read_asset(host, asset_id, expected_hash))
+    return _load_json_asset_with_raw(host, asset_id, expected_hash)[0]
+
+
+def _load_json_asset_with_raw(host: HostPort | None, asset_id: str, expected_hash: str | None) -> tuple[Any, bytes]:
+    """Read strict JSON and retain the exact immutable Asset bytes.
+
+    Template validation needs the bytes in addition to the decoded object: a
+    caller-controlled expected hash must never be allowed to become the
+    template's identity authority.
+    """
+    raw = _read_asset(host, asset_id, expected_hash)
+    return _strict_json(raw), raw
 
 
 def _derived_id(prefix: str, *parts: str) -> str:
@@ -544,52 +565,43 @@ def _source_refs_from_attributions(attrs: Sequence[Mapping[str, Any]]) -> list[d
     return result
 
 
-def _validate_template_asset(raw: Any, binding: Mapping[str, Any] | None = None) -> Mapping[str, Any]:
+def _validate_template_asset(raw: Any, binding: Mapping[str, Any] | None = None, *, raw_bytes: bytes | None = None) -> Mapping[str, Any]:
     if not isinstance(raw, Mapping) or set(raw) != {"schema", "format_id", "template_set_id", "version", "templates", "interpreter_mappings", "mergeable"}:
         raise NarrativeAnalysisWorkerError("TEMPLATE_INVALID", "plot template root is not closed")
-    if raw["schema"] != "plot-structure-template/v1" or raw["format_id"] != "plot-structure-template/v1" or raw["template_set_id"] != _DATA_PLUGIN_ID or raw["version"] != "1.0.0" or raw["mergeable"] is not False:
+    if raw["schema"] != _DATA_FORMAT_ID or raw["format_id"] != _DATA_FORMAT_ID or raw["template_set_id"] != _DATA_PLUGIN_ID or raw["version"] != _DATA_VERSION or raw["mergeable"] is not False:
         raise NarrativeAnalysisWorkerError("TEMPLATE_INVALID", "plot template identity/policy differs")
     if not isinstance(raw["templates"], list) or not raw["templates"] or not isinstance(raw["interpreter_mappings"], list):
         raise NarrativeAnalysisWorkerError("TEMPLATE_INVALID", "plot template arrays are invalid")
-    # When the frozen Data package is co-located (the source checkout and the
-    # deterministic test Host), bind the decoded Asset to those exact
-    # immutable bytes.  A caller must not be able to keep the package identity
-    # while silently changing a beat, constraint or interpreter mapping.  An
-    # installed code wheel does not carry the separate Data package, so the
-    # request Asset/hash remains the only available source there.
-    canonical_template_path = Path(__file__).resolve().parents[3] / "data" / "plot-structure" / "v1" / "data" / "templates.json"
-    if canonical_template_path.is_file():
-        try:
-            canonical_template = _strict_json(canonical_template_path.read_bytes(), code="TEMPLATE_INVALID")
-        except NarrativeAnalysisWorkerError:
-            raise
-        if raw != canonical_template:
-            raise NarrativeAnalysisWorkerError("TEMPLATE_INVALID", "template Asset bytes differ from the frozen Data release")
-    # Unit extraction has no plan binding field.  When the immutable Data
-    # package is co-located (the source checkout) we bind its exact release
-    # and package hashes; an installed code wheel may legitimately not carry
-    # the separate Data package, so in that case the closed template bytes and
-    # the request Asset hash remain the authority.  Plan compilation always
-    # supplies ``binding`` and therefore takes the strict branch below.
+    # The request supplies an Asset/hash pair, but that pair is not an
+    # authority.  Bind the decoded bytes to the frozen Data release digest so
+    # installed wheels (which do not contain the separate Data directory) are
+    # just as strict as a source checkout.  JCS normalization makes this
+    # compatible with Host Assets while any semantic edit changes the digest.
+    try:
+        if raw_bytes is not None and _strict_json(raw_bytes, code="TEMPLATE_INVALID") != raw:
+            raise NarrativeAnalysisWorkerError("TEMPLATE_INVALID", "template Asset decoding differs from supplied value")
+        canonical_hash = _hash_bytes(_json_bytes(raw))
+    except NarrativeAnalysisWorkerError:
+        raise
+    except Exception as exc:
+        raise NarrativeAnalysisWorkerError("TEMPLATE_INVALID", "template Asset cannot be canonicalized") from exc
+    if canonical_hash != _TEMPLATE_CANONICAL_HASH:
+        raise NarrativeAnalysisWorkerError("TEMPLATE_INVALID", "template bytes differ from the frozen Data release")
+    expected_binding = {
+        "data_plugin_id": _DATA_PLUGIN_ID,
+        "data_release_id": _DATA_RELEASE_ID,
+        "package_hash": _DATA_PACKAGE_HASH,
+        "format_id": _DATA_FORMAT_ID,
+        "template_id": _TEMPLATE_ID,
+    }
     if binding is None:
-        identity_path = Path(__file__).resolve().parents[3] / "data" / "plot-structure" / "v1" / "identity.json"
-        if identity_path.is_file():
-            try:
-                identity = json.loads(identity_path.read_text(encoding="utf-8"))
-                binding = {"data_plugin_id": identity.get("plugin_id"), "data_release_id": identity.get("release_id"), "package_hash": identity.get("package_hash"), "format_id": "plot-structure-template/v1", "template_id": "general-longform-seven-beat"}
-            except Exception as exc:
-                raise NarrativeAnalysisWorkerError("TEMPLATE_INVALID", "template identity sidecar is invalid") from exc
-    if binding is not None:
-        if not isinstance(binding, Mapping) or set(binding) != {"data_plugin_id", "data_release_id", "package_hash", "format_id", "template_id"}:
-            raise NarrativeAnalysisWorkerError("TEMPLATE_INVALID", "template binding is not closed")
-        if binding["data_plugin_id"] != _DATA_PLUGIN_ID or binding["format_id"] != "plot-structure-template/v1":
-            raise NarrativeAnalysisWorkerError("TEMPLATE_INVALID", "template binding owner/format differs")
-        _hash(binding["data_release_id"], "data_release_id")
-        _hash(binding["package_hash"], "package_hash")
-        _id(binding["template_id"], "template_id")
-    else:
-        # The no-binding unit path still selects the canonical template below.
-        binding = {"template_id": "general-longform-seven-beat"}
+        # Unit extraction has no public binding field; the frozen identity is
+        # still enforced by the constants above and this selected template.
+        binding = expected_binding
+    if not isinstance(binding, Mapping) or set(binding) != set(expected_binding):
+        raise NarrativeAnalysisWorkerError("TEMPLATE_INVALID", "template binding is not closed")
+    if dict(binding) != expected_binding:
+        raise NarrativeAnalysisWorkerError("TEMPLATE_INVALID", "template Data release identity differs")
     selected: Mapping[str, Any] | None = None
     template_ids: set[str] = set()
     for item in raw["templates"]:
@@ -623,18 +635,6 @@ def _validate_template_asset(raw: Any, binding: Mapping[str, Any] | None = None)
         beat_orders.append(beat["order"])
     if beat_orders != sorted(set(beat_orders)):
         raise NarrativeAnalysisWorkerError("TEMPLATE_INVALID", "template beat ordering is invalid")
-    # If the canonical Data package is co-located, bind release/package exactly;
-    # installed wheels without the Data package still retain non-zero hashes.
-    identity_path = Path(__file__).resolve().parents[3] / "data" / "plot-structure" / "v1" / "identity.json"
-    if identity_path.is_file() and set(binding) == {"data_plugin_id", "data_release_id", "package_hash", "format_id", "template_id"}:
-        try:
-            identity = json.loads(identity_path.read_text(encoding="utf-8"))
-            if binding["data_release_id"] != identity.get("release_id") or binding["package_hash"] != identity.get("package_hash"):
-                raise NarrativeAnalysisWorkerError("TEMPLATE_INVALID", "template release/package identity differs")
-        except NarrativeAnalysisWorkerError:
-            raise
-        except Exception as exc:
-            raise NarrativeAnalysisWorkerError("TEMPLATE_INVALID", "template identity sidecar is invalid") from exc
     return selected
 
 
@@ -667,8 +667,8 @@ class NarrativeAnalysisPlugin:
     def unit_extract(self, request: Mapping[str, Any], context: _RunContext, host: HostPort | None) -> dict[str, Any]:
         text, nodes = _load_source(request, host)
         taxonomy = _load_json_asset(host, request["taxonomy_asset_id"], request["taxonomy_asset_hash"])
-        template = _load_json_asset(host, request["plot_template_asset_id"], request["plot_template_asset_hash"])
-        _validate_template_asset(template)
+        template, template_bytes = _load_json_asset_with_raw(host, request["plot_template_asset_id"], request["plot_template_asset_hash"])
+        _validate_template_asset(template, raw_bytes=template_bytes)
         model_request = {"schema": "analysis.narrative.unit.extract-model-request/v1", "workspace_id": request["workspace_id"], "document_id": request["document_id"], "source_revision_id": request["source_revision_id"], "canonical_text_hash": request["canonical_text_hash"], "canonical_text": text, "nodes": nodes, "taxonomy": taxonomy, "plot_structure_template": template, "output_schema": "analysis.narrative.unit.extract-model-response/v1"}
         output, receipt = _invoke_model(host, request, context, CAPABILITY_UNIT_EXTRACT, model_request)
         self.last_model_receipt_ids = [receipt]
@@ -691,8 +691,8 @@ class NarrativeAnalysisPlugin:
 
     def plan_compile(self, request: Mapping[str, Any], context: _RunContext, host: HostPort | None) -> dict[str, Any]:
         text, nodes = _load_source(request, host)
-        template_raw = _load_json_asset(host, request["template_asset_id"], request["template_asset_hash"])
-        selected_template = _validate_template_asset(template_raw, request["template_binding"])
+        template_raw, template_bytes = _load_json_asset_with_raw(host, request["template_asset_id"], request["template_asset_hash"])
+        selected_template = _validate_template_asset(template_raw, request["template_binding"], raw_bytes=template_bytes)
         refs: list[dict[str, Any]] = []
         units: list[dict[str, Any]] = []
         source_refs: list[dict[str, Any]] = []
@@ -992,6 +992,15 @@ class NarrativeAnalysisPlugin:
         return bundle
 
     def _resume(self, request: Mapping[str, Any], capability: str, context: _RunContext, host: HostPort | None, active: _ActiveRun) -> dict[str, Any] | None:
+        # Resume is still a request for the same immutable inputs.  Re-read and
+        # validate the plot Data Asset for unit extraction so a Host cannot
+        # silently replace/tamper the template between the original run and a
+        # resumed stage, even though no model call is made on this path.
+        if capability == CAPABILITY_UNIT_EXTRACT:
+            template, template_bytes = _load_json_asset_with_raw(
+                host, request["plot_template_asset_id"], request["plot_template_asset_hash"]
+            )
+            _validate_template_asset(template, raw_bytes=template_bytes)
         checkpoint = _load_json_asset(host, request["resume_checkpoint_asset_id"], request["resume_checkpoint_asset_hash"])
         state = _load_json_asset(host, request["resume_state_asset_id"], request["resume_state_asset_hash"])
         assert _verify_checkpoint_sdk is not None

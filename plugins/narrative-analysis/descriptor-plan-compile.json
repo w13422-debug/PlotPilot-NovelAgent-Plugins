@@ -3,7 +3,7 @@
   "capability_id": "analysis.narrative.plan.compile/v1",
   "provider": {
     "plugin_id": "com.plotpilot.novelagent.narrative-analysis",
-    "release_id": "e85d0cdc25b757acbf3514c8175745f64c4ca9761fc2dd488d31a91fd00dad5b"
+    "release_id": "46e1ba9f430c0ca78fa2f3acba30c53d1ca3ad2978b4f6d53deafbc3ec8eedc3"
   },
   "input_schema": "analysis.narrative.plan.compile-request/v1",
   "output_schema": "analysis.narrative.plan.compile-result/v1",

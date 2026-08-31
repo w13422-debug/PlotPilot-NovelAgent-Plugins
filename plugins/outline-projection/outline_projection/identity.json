@@ -2,6 +2,6 @@
   "schema": "outline-projection-package-identity/v1",
   "plugin_id": "com.plotpilot.novelagent.outline-projection",
   "version": "0.1.0",
-  "package_hash": "e33b8d546b251b99b3c0dd7d493a9234b58b08d9da3330638f331f96e390b7a1",
-  "release_id": "5d74ee44c2b433f373198579e001ccb3248ec59a76239cc83708a1911d8f206d"
+  "package_hash": "1e1ff2dd034e8e0d70890005b8eebe9c600f18121aabf77cbe249ecb4414a69d",
+  "release_id": "31d75c8c77d3c6ff9cc7571cc05e00bd376093272f813f794f8447dc9274215f"
 }

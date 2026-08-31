@@ -47,6 +47,7 @@ _LEVELS = ("book", "volume", "chapter", "plot_unit")
 _LEVEL_INDEX = {name: index for index, name in enumerate(_LEVELS)}
 _CHILD_CONTRACTS = {"candidate-batch/v1", "artifact-bundle/v1", "diagnostic-bundle/v1"}
 _DATA_PLUGIN_ID = "com.plotpilot.novelagent.plot-structure-template"
+_SOURCE_RECEIPT_FIELDS = frozenset({"source_receipt_id", "source_receipt_asset_id", "source_receipt_asset_hash"})
 _PAGE_SIZE = 8_388_608
 _MAX_PAGES = 4096
 
@@ -83,6 +84,15 @@ class _Context:
     source_receipt: dict[str, Any] | None = None
 
 
+@dataclass(frozen=True)
+class _NarrativeParentClosure:
+    receipt: dict[str, Any]
+    result_bundle: dict[str, Any]
+    synthesis: dict[str, Any]
+    synthesis_asset_id: str
+    synthesis_asset_hash: str
+
+
 @dataclass
 class _Active:
     worker_run_id: str
@@ -109,7 +119,15 @@ class _Dispatcher:
     def cancel(self, worker_run_id: str, binding_hash: str) -> _Active | None:
         with self._lock:
             active = self._active.get(worker_run_id)
-            if active is None or active.binding_hash != binding_hash:
+            # A cancellation is accepted only while the matching run is still
+            # active and before its terminal fence is set.  Without this
+            # check a cancel racing just after a successful terminal RPC could
+            # be reported as accepted even though the run had already
+            # produced a successful artifact.  The context is attached before
+            # the run is exposed to callers, so this decision is atomic with
+            # respect to the dispatcher lock.
+            if (active is None or active.binding_hash != binding_hash
+                    or (active.context is not None and active.context.terminal)):
                 return None
             active.cancelled.set()
             return active
@@ -179,6 +197,22 @@ def _hash_json(prefix: str, value: Any) -> str:
     _sdk()
     assert hash_jcs is not None
     return str(hash_jcs(prefix, value))
+
+
+def _binding_projection(value: Mapping[str, Any]) -> dict[str, Any]:
+    """Build the stable identity shared by run and schema-valid cancel.
+
+    The source receipt fields are run-only evidence.  A cancel control message
+    may omit them, but all job/step/attempt, lease, snapshot and source
+    binding fields remain part of the hash and therefore must match exactly.
+    """
+    binding = {
+        key: deepcopy(item)
+        for key, item in value.items()
+        if key not in _SOURCE_RECEIPT_FIELDS and key != "operation"
+    }
+    binding["operation"] = "run"
+    return binding
 
 
 def _closed(value: Any, fields: set[str], label: str) -> dict[str, Any]:
@@ -257,6 +291,24 @@ def _read_json(host: HostPort, asset_id: str, expected_hash: str) -> dict[str, A
     if not isinstance(value, dict):
         raise ProjectionError("INVALID_SOURCE", "source Asset must contain an object")
     return value
+
+
+def _narrative_parent_identity() -> dict[str, str]:
+    """Load the immutable Narrative parent identity bundled with this wheel."""
+    path = Path(__file__).resolve().with_name("narrative_parent_identity.json")
+    try:
+        raw = path.read_bytes()
+        value = json.loads(raw.decode("utf-8", "strict"), object_pairs_hook=_reject_duplicate, parse_constant=lambda item: (_ for _ in ()).throw(ValueError(item)))
+    except Exception as exc:
+        raise ProjectionError("SOURCE_CLOSURE_MISSING", "Narrative parent identity sidecar is invalid") from exc
+    fields = {"schema", "plugin_id", "capability_id", "package_hash", "release_id"}
+    if not isinstance(value, Mapping) or set(value) != fields or value.get("schema") != "narrative-parent-identity/v1":
+        raise ProjectionError("SOURCE_CLOSURE_MISSING", "Narrative parent identity sidecar is not closed")
+    if value.get("plugin_id") != "com.plotpilot.novelagent.narrative-analysis" or value.get("capability_id") != "analysis.narrative.synthesize/v1":
+        raise ProjectionError("SOURCE_CLOSURE_MISSING", "Narrative parent identity owner/capability differs")
+    _hash(value.get("package_hash"), "narrative package_hash")
+    _hash(value.get("release_id"), "narrative release_id")
+    return {key: str(value[key]) for key in fields if key != "schema"}
 
 
 def _upload(host: HostPort, raw: bytes, *, operation_key: str, suffix: str, mime: str = "application/json") -> tuple[str, str]:
@@ -523,18 +575,55 @@ def _source_refs(request: Mapping[str, Any]) -> list[dict[str, Any]]:
     return [{"workspace_id": request["workspace_id"], "source_type": "asset", "source_id": request["source_bundle_asset_id"], "revision_or_hash": request["source_bundle_hash"]}]
 
 
-def _verify_source_receipt(host: HostPort, context: _Context, synthesis: Mapping[str, Any], source_bundle_hash: str) -> dict[str, Any]:
-    """Verify and bind the immediate Narrative synthesis parent receipt.
+def _verify_source_receipt(
+    host: HostPort,
+    context: _Context,
+    result_bundle: Mapping[str, Any],
+    source_bundle_hash: str,
+) -> _NarrativeParentClosure:
+    """Verify the complete Narrative synthesis parent chain.
 
-    Outline projection is a downstream capability: a successful (or failed)
-    attempt must be attributable to the *exact* synthesis Bundle it read.
-    Therefore all three receipt binding fields are mandatory for a run and the
-    receipt's Bundle ID/JCS hash must match the decoded source Bundle, not just
-    the current snapshot.  The verified object is retained on the Context so
-    cancellation/failure paths cannot copy an untrusted ID.
+    The input Asset is required to be the public Narrative Result Bundle.  A
+    raw ``narrative-synthesis/v1`` payload is never a valid parent: the
+    receipt must bind the Result Bundle's ID/JCS hash and its producer, and the
+    Bundle's sole synthesis Candidate must in turn bind the exact payload
+    Asset/hash that Outline decodes.
     """
     request = context.request
-    receipt_fields = {"source_receipt_id", "source_receipt_asset_id", "source_receipt_asset_hash"}
+    if not isinstance(result_bundle, Mapping):
+        raise ProjectionError("SOURCE_CLOSURE_MISSING", "Narrative parent is not an object")
+    # Reject payload masquerading before any receipt is trusted.  The public
+    # verifier additionally checks the complete candidate-batch/item profile.
+    if (result_bundle.get("schema") != "result-bundle/v1"
+            or result_bundle.get("contract_id") != "candidate-batch/v1"
+            or result_bundle.get("bundle_type") != "candidate_batch"):
+        raise ProjectionError("SOURCE_CLOSURE_MISSING", "Narrative parent must be a candidate Result Bundle")
+    _sdk()
+    assert verify_result_bundle is not None
+    try:
+        verify_result_bundle(
+            result_bundle,
+            snapshot_workspace_id=request["workspace_id"],
+            snapshot_hash_value=request["run_snapshot_hash"],
+        )
+    except Exception as exc:
+        raise ProjectionError("SOURCE_CLOSURE_MISSING", f"Narrative Result Bundle is invalid: {exc}") from exc
+    try:
+        producer = _closed(
+            result_bundle.get("producer"),
+            {"plugin_id", "release_id", "capability_id", "job_id", "step_id", "attempt_id", "lease_epoch"},
+            "narrative_result_bundle.producer",
+        )
+    except ProjectionError as exc:
+        raise ProjectionError("SOURCE_CLOSURE_MISSING", str(exc)) from exc
+    parent_identity = _narrative_parent_identity()
+    if (producer["plugin_id"] != parent_identity["plugin_id"]
+            or producer["release_id"] != parent_identity["release_id"]
+            or producer["capability_id"] != parent_identity["capability_id"]):
+        raise ProjectionError("SOURCE_CLOSURE_MISSING", "Narrative Result Bundle producer identity differs")
+    if result_bundle.get("input_snapshot_hash") != request["run_snapshot_hash"]:
+        raise ProjectionError("SOURCE_CLOSURE_MISSING", "Narrative Result Bundle snapshot differs")
+    receipt_fields = _SOURCE_RECEIPT_FIELDS
     if not receipt_fields.issubset(request):
         raise ProjectionError("SOURCE_CLOSURE_MISSING", "immediate synthesis provenance receipt is required")
     receipt = _read_json(host, request["source_receipt_asset_id"], request["source_receipt_asset_hash"])
@@ -544,29 +633,79 @@ def _verify_source_receipt(host: HostPort, context: _Context, synthesis: Mapping
         verify_provenance_receipt(receipt)
     except Exception as exc:
         raise ProjectionError("SOURCE_CLOSURE_MISSING", f"source provenance receipt is invalid: {exc}") from exc
-    # The current NAP-03 seam passes the immutable Narrative Synthesis payload
-    # Asset directly (``source_bundle_asset_id`` is the Core Asset identity),
-    # while some Hosts expose the surrounding result Bundle.  Bind either
-    # representation to the exact bytes actually read; never accept an
-    # unrelated caller-supplied Bundle ID/hash.  The raw Asset hash is the
-    # strongest binding for the payload form, and the JCS hash covers the
-    # public Result Bundle form.
-    expected_ids = {request["source_bundle_asset_id"]}
-    if isinstance(synthesis.get("bundle_id"), str):
-        expected_ids.add(synthesis["bundle_id"])
-    expected_hashes = {source_bundle_hash, _hash_json("narrative-synthesis/v1", synthesis), _hash_json("result-bundle/v1", synthesis)}
-    if (receipt.get("receipt_id") != request["source_receipt_id"]
-            or receipt.get("run_snapshot_hash") != request["run_snapshot_hash"]
-            or receipt.get("plugin_id") != "com.plotpilot.novelagent.narrative-analysis"
-            or receipt.get("capability_id") != "analysis.narrative.synthesize/v1"
-            or receipt.get("bundle_id") not in expected_ids
-            or receipt.get("bundle_hash") not in expected_hashes):
-        raise ProjectionError("SOURCE_CLOSURE_MISSING", "source provenance receipt is not bound to the exact synthesis Bundle")
+    expected_bundle_hash = _hash_json("result-bundle/v1", result_bundle)
+    expected_receipt = {
+        "receipt_id": request["source_receipt_id"],
+        "plugin_id": parent_identity["plugin_id"],
+        "release_id": parent_identity["release_id"],
+        "package_hash": parent_identity["package_hash"],
+        "capability_id": parent_identity["capability_id"],
+        "job_id": producer["job_id"],
+        "step_id": producer["step_id"],
+        "attempt_id": producer["attempt_id"],
+        "lease_epoch": producer["lease_epoch"],
+        "run_snapshot_hash": request["run_snapshot_hash"],
+        "bundle_id": result_bundle["bundle_id"],
+        "bundle_hash": expected_bundle_hash,
+    }
+    for field, expected in expected_receipt.items():
+        if receipt.get(field) != expected:
+            raise ProjectionError("SOURCE_CLOSURE_MISSING", f"source receipt {field} is not bound to the Narrative Result Bundle")
+    if result_bundle.get("provenance_receipt_id") != receipt["receipt_id"]:
+        raise ProjectionError("SOURCE_CLOSURE_MISSING", "Narrative Result Bundle receipt ID differs")
+    items = result_bundle.get("items")
+    if not isinstance(items, list) or len(items) != 1:
+        raise ProjectionError("SOURCE_CLOSURE_MISSING", "Narrative synthesis Result Bundle must contain one Candidate")
+    item = items[0]
+    try:
+        candidate = _closed(
+            item,
+            {"schema", "item_id", "item_kind", "target", "mutation", "payload_asset_id", "base", "write_set", "parent_candidate_ids", "source_refs", "status"},
+            "narrative_result_bundle.item",
+        )
+        mutation = _closed(candidate.get("mutation"), {"mode", "payload_schema", "payload_hash"}, "narrative_result_bundle.item.mutation")
+    except ProjectionError as exc:
+        raise ProjectionError("SOURCE_CLOSURE_MISSING", str(exc)) from exc
+    if candidate["schema"] != "candidate-item/v1" or mutation["mode"] != "relation_patch" or mutation["payload_schema"] != "narrative-synthesis/v1":
+        raise ProjectionError("SOURCE_CLOSURE_MISSING", "Narrative Result Bundle payload is not a synthesis Candidate")
+    synthesis_asset_id = _id(candidate["payload_asset_id"], "synthesis payload_asset_id")
+    synthesis_asset_hash = _hash(mutation["payload_hash"], "synthesis payload_hash")
+    synthesis_raw = _read_asset(host, synthesis_asset_id, synthesis_asset_hash)
+    try:
+        synthesis = json.loads(
+            synthesis_raw.decode("utf-8", "strict"),
+            object_pairs_hook=_reject_duplicate,
+            parse_constant=lambda item: (_ for _ in ()).throw(ValueError(item)),
+        )
+    except Exception as exc:
+        raise ProjectionError("SOURCE_CLOSURE_MISSING", "synthesis payload is not strict UTF-8 JSON") from exc
+    if not isinstance(synthesis, dict) or synthesis.get("schema") != "narrative-synthesis/v1":
+        raise ProjectionError("SOURCE_CLOSURE_MISSING", "Candidate payload is not narrative-synthesis/v1")
+    if _hash_bytes(synthesis_raw) != synthesis_asset_hash:
+        raise ProjectionError("SOURCE_CLOSURE_MISSING", "synthesis payload hash differs from Candidate binding")
     context.source_receipt = deepcopy(receipt)
-    return receipt
+    return _NarrativeParentClosure(
+        receipt=deepcopy(receipt),
+        result_bundle=dict(result_bundle),
+        synthesis=synthesis,
+        synthesis_asset_id=synthesis_asset_id,
+        synthesis_asset_hash=synthesis_asset_hash,
+    )
 
 
-def _projection(synthesis: Mapping[str, Any], plan: Mapping[str, Any], units: Sequence[tuple[str, str, Mapping[str, Any]]], *, source_asset_id: str, source_asset_hash: str, views: Sequence[str], canonical_text: str | None = None, verify_asset_hash: bool = True) -> dict[str, Any]:
+def _projection(
+    synthesis: Mapping[str, Any],
+    plan: Mapping[str, Any],
+    units: Sequence[tuple[str, str, Mapping[str, Any]]],
+    *,
+    source_asset_id: str,
+    source_asset_hash: str,
+    views: Sequence[str],
+    canonical_text: str | None = None,
+    verify_asset_hash: bool = True,
+    source_bundle_asset_id: str | None = None,
+    source_bundle_hash: str | None = None,
+) -> dict[str, Any]:
     clean_synthesis = _validate_synthesis(synthesis, canonical_text=canonical_text)
     clean_plan = _validate_plan(plan, clean_synthesis["plan_ref"]["plan_id"])
     expected_refs = {ref["unit_id"]: ref for ref in clean_plan["unit_refs"]}
@@ -649,6 +788,10 @@ def _projection(synthesis: Mapping[str, Any], plan: Mapping[str, Any], units: Se
     payloads = {"tree": {"schema": "outline-tree-projection/v1", "nodes": tree_nodes}, "card": {"schema": "outline-card-projection/v1", "cards": cards}, "timeline": {"schema": "outline-timeline-projection/v1", "events": timeline}, "relation": {"schema": "outline-relation-projection/v1", "relations": relations}}
     source = {"asset_id": source_asset_id, "asset_hash": source_asset_hash, "schema": "narrative-synthesis/v1", "synthesis_id": clean_synthesis["synthesis_id"], "plan_id": clean_plan["plan_id"]}
     closure = {"source": source, "plan": clean_plan, "units": sorted(unit_identity, key=lambda item: item["unit_id"]), "synthesis": {"synthesis_id": clean_synthesis["synthesis_id"], "sections": clean_synthesis["sections"], "evidence_spans": clean_synthesis["evidence_spans"], "source_attributions": clean_synthesis["source_attributions"], "broker_children": clean_synthesis["broker_children"]}, "views": requested}
+    if source_bundle_asset_id is not None or source_bundle_hash is not None:
+        if source_bundle_asset_id is None or source_bundle_hash is None:
+            raise ProjectionError("SOURCE_CLOSURE_MISSING", "Result Bundle identity must be all-present")
+        closure["result_bundle"] = {"asset_id": _id(source_bundle_asset_id, "source_bundle_asset_id"), "asset_hash": _hash(source_bundle_hash, "source_bundle_hash")}
     return {"schema": "outline-projection/v1", "projection_id": "projection-" + _hash_json("outline-projection-source/v1", closure)[:40], "source": source, "views": [{"mode": mode, "payload": payloads[mode]} for mode in requested], "evidence_spans": deepcopy(clean_synthesis["evidence_spans"]), "source_attributions": deepcopy(clean_synthesis["source_attributions"]), "broker_children": deepcopy(clean_synthesis["broker_children"]), "authority": {"mode": "read_only_projection", "authoritative_source": "narrative-synthesis/v1", "creates_second_authority": False, "free_form_canvas": False}}
 
 
@@ -697,9 +840,8 @@ def _context(request: Mapping[str, Any]) -> _Context:
     views = _array(value["views"], "views", minimum=1, maximum=4)
     if len(views) != len(set(views)) or any(item not in _VIEWS for item in views):
         raise ProjectionError("INVALID_INPUT", "views must be a unique subset of declared modes")
-    receipt_fields = {"source_receipt_id", "source_receipt_asset_id", "source_receipt_asset_hash"}
-    if set(value) & receipt_fields:
-        if not receipt_fields.issubset(value):
+    if set(value) & _SOURCE_RECEIPT_FIELDS:
+        if not _SOURCE_RECEIPT_FIELDS.issubset(value):
             raise ProjectionError("INVALID_INPUT", "source receipt binding must be all-present")
         _id(value["source_receipt_id"], "source_receipt_id")
         _id(value["source_receipt_asset_id"], "source_receipt_asset_id")
@@ -710,8 +852,7 @@ def _context(request: Mapping[str, Any]) -> _Context:
         _id(value["source_canonical_asset_id"], "source_canonical_asset_id")
         _hash(value["source_canonical_asset_hash"], "source_canonical_asset_hash")
     request_hash = _hash_json(INPUT_SCHEMA, value)
-    binding = {key: deepcopy(item) for key, item in value.items() if key != "operation"}
-    binding["operation"] = "run"
+    binding = _binding_projection(value)
     binding_hash = _hash_json(CAPABILITY_ID + "-binding/v1", binding)
     return _Context(value, request_hash, binding_hash, tuple(checkpoints))
 
@@ -878,8 +1019,9 @@ class OutlineProjectionPlugin:
             if active.cancelled.is_set():
                 self._cancelled(host, context, active)
                 return None
-            synthesis_raw = _read_json(host, context.request["source_bundle_asset_id"], context.request["source_bundle_hash"])
-            _verify_source_receipt(host, context, synthesis_raw, context.request["source_bundle_hash"])
+            result_bundle = _read_json(host, context.request["source_bundle_asset_id"], context.request["source_bundle_hash"])
+            parent = _verify_source_receipt(host, context, result_bundle, context.request["source_bundle_hash"])
+            synthesis = parent.synthesis
             canonical_text = None
             if "source_canonical_asset_id" in context.request:
                 canonical_raw = _read_asset(host, context.request["source_canonical_asset_id"], context.request["source_canonical_asset_hash"])
@@ -887,14 +1029,24 @@ class OutlineProjectionPlugin:
                     canonical_text = canonical_raw.decode("utf-8", "strict")
                 except UnicodeDecodeError as exc:
                     raise ProjectionError("INVALID_SOURCE", "canonical source Asset is not UTF-8") from exc
-            synthesis = _validate_synthesis(synthesis_raw, canonical_text=canonical_text)
+            synthesis = _validate_synthesis(synthesis, canonical_text=canonical_text)
             plan = _validate_plan(_read_json(host, synthesis["plan_ref"]["payload_asset_id"], synthesis["plan_ref"]["payload_hash"]), synthesis["plan_ref"]["plan_id"])
             if plan["created_from_snapshot_hash"] != context.request["run_snapshot_hash"]:
                 raise ProjectionError("SOURCE_CLOSURE_MISSING", "plan snapshot differs from projection snapshot")
             loaded_units: list[tuple[str, str, Mapping[str, Any]]] = []
             for ref in context.request["narrative_unit_assets"]:
                 loaded_units.append((ref["asset_id"], ref["asset_hash"], _read_json(host, ref["asset_id"], ref["asset_hash"])))
-            projection = _projection(synthesis, plan, loaded_units, source_asset_id=context.request["source_bundle_asset_id"], source_asset_hash=context.request["source_bundle_hash"], views=context.request["views"], canonical_text=canonical_text)
+            projection = _projection(
+                synthesis,
+                plan,
+                loaded_units,
+                source_asset_id=parent.synthesis_asset_id,
+                source_asset_hash=parent.synthesis_asset_hash,
+                source_bundle_asset_id=context.request["source_bundle_asset_id"],
+                source_bundle_hash=context.request["source_bundle_hash"],
+                views=context.request["views"],
+                canonical_text=canonical_text,
+            )
             projection_raw = _canonical(projection)
             projection_hash = _hash_bytes(projection_raw)
             checkpoint = _checkpoint(host, context, source_hash=context.request["source_bundle_hash"], projection_hash=projection_hash, completed_units=len(loaded_units))

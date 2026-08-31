@@ -13,6 +13,7 @@
     "outline_projection/capability_spec.py",
     "outline_projection/contract.py",
     "outline_projection/identity.json",
+    "outline_projection/narrative_parent_identity.json",
     "outline_projection/package_identity.py",
     "outline_projection/runtime.py",
     "outline_projection/schemas/outline-projection.schema.json",
@@ -24,15 +25,15 @@
     "rebuild_package.py",
     "ui/metadata-only.json"
   ],
-  "files_sha256": "bfdc0f9a0198f6438a25b9163a1935ff09a4b159f04214933cf0eaf33733c556  backend/requirements.lock\n2e2110dcc7e4a1f013e8e9927d7b765408556e8a8b6af615411e7760075dd84f  backend/wheels/README.txt\ne0ea35cfc3927b3e422d411280895b16708b469f173ff3f4f02487646b0f4037  migrations/manifest.json\n6cb13555dcec9ee15b7ae84c4a97967254b0b27333bd03b88fd08309907911dd  outline_projection/__init__.py\n9b9bd4183b7b7293e30e82c256267b63c81362c87f24b774a089d0e554258b85  outline_projection/build_backend.py\n6da6347a4b7f07e350904601213952f540b80ec13e4433f3d8bc2459e56c6b87  outline_projection/capability_spec.py\na1c53ff5c4e81b0213f8f58ffba57c6e3d65e9a81f1518138179334b76659bba  outline_projection/contract.py\n7ba9e640c09b9f9e1450edab4e7fff2946a5391a21111004e259f732547d00c6  outline_projection/package_identity.py\n18e03f4f1f3e471926105bd841ca07def544ed5fcb858d162b94eabea45d6a2a  outline_projection/runtime.py\na88ffda1d88d9118b01cd278dd6451f7ed28a4d2effcb24902abd36f792fc398  outline_projection/schemas/outline-projection.schema.json\n6e5f2c8ef6e2d6a94f32df299f341e3c71898a91e76da2d1d82b39ef30927990  outline_projection/schemas/render/index.json\nce3b1fbb7b01fc214340a94c592c73d26e3d5d3bd3405fd3ad4df76ccda8ab26  outline_projection/schemas/render/input.schema.json\nf9e1eb457ee3cefbfc105632603ed3c727ebab54eb759a74fc52b3b1a5ae752a  outline_projection/schemas/render/result.schema.json\nc5f098915c514dcb0c4907501d8129d5bd48a5e24dccd5011621dd9851f8174c  plugin.json\na1eccd2c43b8c193c094696aede3259210725776ea4bfa2b0eef39c27804e2d4  pyproject.toml\n5211ee707c025d7c501dc03943f931709b42b71f9ba5d1c700c5c8a2194a1897  rebuild_package.py\n9afa55d7d5b710e983ad1a36f5fa1f8847b0e09269befe34d1157b82551add84  ui/metadata-only.json\n",
-  "package_hash": "e33b8d546b251b99b3c0dd7d493a9234b58b08d9da3330638f331f96e390b7a1",
-  "release_id": "5d74ee44c2b433f373198579e001ccb3248ec59a76239cc83708a1911d8f206d",
+  "files_sha256": "bfdc0f9a0198f6438a25b9163a1935ff09a4b159f04214933cf0eaf33733c556  backend/requirements.lock\n2e2110dcc7e4a1f013e8e9927d7b765408556e8a8b6af615411e7760075dd84f  backend/wheels/README.txt\ne0ea35cfc3927b3e422d411280895b16708b469f173ff3f4f02487646b0f4037  migrations/manifest.json\n6cb13555dcec9ee15b7ae84c4a97967254b0b27333bd03b88fd08309907911dd  outline_projection/__init__.py\na5fc14c5f5f7a8ca838742024fd6da3475b863912672b032a06cf3c1b45acf22  outline_projection/build_backend.py\n6da6347a4b7f07e350904601213952f540b80ec13e4433f3d8bc2459e56c6b87  outline_projection/capability_spec.py\na1c53ff5c4e81b0213f8f58ffba57c6e3d65e9a81f1518138179334b76659bba  outline_projection/contract.py\na1b872456f541babb733029cb131bed415d1c32bbd5a0a93d1f887395f4084e5  outline_projection/narrative_parent_identity.json\n7ba9e640c09b9f9e1450edab4e7fff2946a5391a21111004e259f732547d00c6  outline_projection/package_identity.py\n2aa92d7f5c6c4dd9168a8508024d7410899f66f18e4638e69014370cefc830cc  outline_projection/runtime.py\na88ffda1d88d9118b01cd278dd6451f7ed28a4d2effcb24902abd36f792fc398  outline_projection/schemas/outline-projection.schema.json\n6e5f2c8ef6e2d6a94f32df299f341e3c71898a91e76da2d1d82b39ef30927990  outline_projection/schemas/render/index.json\nce3b1fbb7b01fc214340a94c592c73d26e3d5d3bd3405fd3ad4df76ccda8ab26  outline_projection/schemas/render/input.schema.json\nf9e1eb457ee3cefbfc105632603ed3c727ebab54eb759a74fc52b3b1a5ae752a  outline_projection/schemas/render/result.schema.json\nc5f098915c514dcb0c4907501d8129d5bd48a5e24dccd5011621dd9851f8174c  plugin.json\na1eccd2c43b8c193c094696aede3259210725776ea4bfa2b0eef39c27804e2d4  pyproject.toml\n5211ee707c025d7c501dc03943f931709b42b71f9ba5d1c700c5c8a2194a1897  rebuild_package.py\n9afa55d7d5b710e983ad1a36f5fa1f8847b0e09269befe34d1157b82551add84  ui/metadata-only.json\n",
+  "package_hash": "1e1ff2dd034e8e0d70890005b8eebe9c600f18121aabf77cbe249ecb4414a69d",
+  "release_id": "31d75c8c77d3c6ff9cc7571cc05e00bd376093272f813f794f8447dc9274215f",
   "provider_identity": {
     "schema": "outline-projection-package-identity/v1",
     "plugin_id": "com.plotpilot.novelagent.outline-projection",
     "version": "0.1.0",
-    "package_hash": "e33b8d546b251b99b3c0dd7d493a9234b58b08d9da3330638f331f96e390b7a1",
-    "release_id": "5d74ee44c2b433f373198579e001ccb3248ec59a76239cc83708a1911d8f206d"
+    "package_hash": "1e1ff2dd034e8e0d70890005b8eebe9c600f18121aabf77cbe249ecb4414a69d",
+    "release_id": "31d75c8c77d3c6ff9cc7571cc05e00bd376093272f813f794f8447dc9274215f"
   },
   "capability_projection": [
     {
@@ -66,12 +67,12 @@
     "descriptor.json"
   ],
   "descriptor_sha256": {
-    "descriptor.json": "847c13aeb5df98431c0746fc61e0b6dac184721c3dcf5c3de2c56917ecfa7dae"
+    "descriptor.json": "8646556ea0bef4079c90b658c24d086fe8626aa06265405887397bc47cfebfbc"
   },
   "descriptor_provider_identity": {
     "descriptor.json": {
       "plugin_id": "com.plotpilot.novelagent.outline-projection",
-      "release_id": "5d74ee44c2b433f373198579e001ccb3248ec59a76239cc83708a1911d8f206d"
+      "release_id": "31d75c8c77d3c6ff9cc7571cc05e00bd376093272f813f794f8447dc9274215f"
     }
   },
   "schema_index_paths": {
