@@ -1,0 +1,33 @@
+{
+  "schema": "character-archetype-expected/v1",
+  "package_kind": "data",
+  "plugin_id": "com.plotpilot.novelagent.character-archetype",
+  "format_id": "character-archetype/v1",
+  "version": "1.0.0",
+  "manifest_path": "plugin.json",
+  "root_path": "data/archetypes.json",
+  "package_files": [
+    "data/archetypes.json",
+    "fixtures/interpreter-mappings.json",
+    "fixtures/interpreter-roundtrip.json",
+    "plugin.json",
+    "schemas/character-archetype-v1.schema.json",
+    "schemas/interpreter-roundtrip-v1.schema.json"
+  ],
+  "files_sha256": "01f1118d7eb66ace44e8964ddae682be2363a69f6b951c4acdca076e4a6c81ec  data/archetypes.json\n14b9d56ba0b0e84985d4105c3c360611021f03cb3c5048e555b0b5b8d81818f2  fixtures/interpreter-mappings.json\nfa86fee258415fee8dd8aba9842337509bd2aca8a3e63be9d1811e20bc7bc6a6  fixtures/interpreter-roundtrip.json\n2223af090f5cd194d9e47b81dccd7e820a76429b5fe3c86cf198948af21302f6  plugin.json\n96700f17bb3ce2c4acacf52e44887a357bb38220f93b52cb9bced0de9f290122  schemas/character-archetype-v1.schema.json\n064794a47a3dc993f150635ea3c89e4d3d7d37c351b00e87f2c8790e0e237d39  schemas/interpreter-roundtrip-v1.schema.json\n",
+  "fixture_hashes": {
+    "fixtures/interpreter-mappings.json": "14b9d56ba0b0e84985d4105c3c360611021f03cb3c5048e555b0b5b8d81818f2",
+    "fixtures/interpreter-roundtrip.json": "fa86fee258415fee8dd8aba9842337509bd2aca8a3e63be9d1811e20bc7bc6a6",
+    "schemas/character-archetype-v1.schema.json": "96700f17bb3ce2c4acacf52e44887a357bb38220f93b52cb9bced0de9f290122",
+    "schemas/interpreter-roundtrip-v1.schema.json": "064794a47a3dc993f150635ea3c89e4d3d7d37c351b00e87f2c8790e0e237d39"
+  },
+  "package_hash": "a2801a9d7f821f5bc3c6734473e72a3551a1a38a2b9f205584eeec655940250a",
+  "release_id": "11514ed264d0872fa61c029f63b8733782b1d35742259da5e201e304368612dd",
+  "bundle_hash": "8406dfb514d5c7b6e3c6e209a0c9daf9c79b6b5da4cf5ff7fbd499007787ffac",
+  "identity_path": "identity.json",
+  "identity_domains": {
+    "data_or_code": "plotpilot-release/v1",
+    "skill": "plotpilot-skill-release/v1",
+    "code_plugin_id": "com.plotpilot.novelagent.character-distillation"
+  }
+}

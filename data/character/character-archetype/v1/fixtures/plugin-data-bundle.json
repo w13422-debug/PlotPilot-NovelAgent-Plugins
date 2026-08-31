@@ -1,0 +1,19 @@
+{
+  "schema": "plugin-data-bundle/v1",
+  "bundle_id": "character-archetype-v1-bundle",
+  "data_plugin_id": "com.plotpilot.novelagent.character-archetype",
+  "data_release_id": "11514ed264d0872fa61c029f63b8733782b1d35742259da5e201e304368612dd",
+  "package_hash": "a2801a9d7f821f5bc3c6734473e72a3551a1a38a2b9f205584eeec655940250a",
+  "format_id": "character-archetype/v1",
+  "root_path": "data/archetypes.json",
+  "files": [
+    {
+      "path": "data/archetypes.json",
+      "asset_id": "asset-character-archetype-v1",
+      "sha256": "01f1118d7eb66ace44e8964ddae682be2363a69f6b951c4acdca076e4a6c81ec",
+      "mime": "application/json",
+      "size": 5347
+    }
+  ],
+  "bundle_hash": "8406dfb514d5c7b6e3c6e209a0c9daf9c79b6b5da4cf5ff7fbd499007787ffac"
+}

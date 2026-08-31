@@ -1,0 +1,4 @@
+# NAP-04 G3: canonical LF checkout for Character tests.
+* text=auto eol=lf
+*.json text eol=lf
+*.py text eol=lf

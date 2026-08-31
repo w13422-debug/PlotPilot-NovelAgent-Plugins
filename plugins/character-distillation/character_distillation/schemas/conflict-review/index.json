@@ -1,0 +1,17 @@
+{
+  "schema": "provider-schema-index/v1",
+  "plugin_id": "com.plotpilot.novelagent.character-distillation",
+  "capability_id": "analysis.character.conflict.review/v1",
+  "schemas": [
+    {
+      "schema_id": "analysis.character.conflict.review-request/v1",
+      "path": "schemas/conflict-review/input.schema.json",
+      "sha256": "c501950495d4e9bd8121cd200667e9316401901259cdac662587de71c235dcf8"
+    },
+    {
+      "schema_id": "analysis.character.conflict.review-result/v1",
+      "path": "schemas/conflict-review/result.schema.json",
+      "sha256": "1e0f95040c778e804bc5da5254ca56869b361a17e553a6c672fc3810b228c414"
+    }
+  ]
+}

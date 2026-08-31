@@ -1,0 +1,6 @@
+# NAP-04 G3: canonical LF checkout for immutable Skill files.
+* text=auto eol=lf
+*.json text eol=lf
+*.py text eol=lf
+*.txt text eol=lf
+*.sha256 text eol=lf

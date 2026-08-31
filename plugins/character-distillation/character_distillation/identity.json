@@ -1,0 +1,7 @@
+{
+  "schema": "character-distillation-package-identity/v1",
+  "plugin_id": "com.plotpilot.novelagent.character-distillation",
+  "version": "0.1.0",
+  "package_hash": "a9f2b878e27aea50639ccb580b44248f8de273d2638ed84ee5887f54e5d1dd95",
+  "release_id": "0eae2c7c905d2493937f2f7949c8c4e8cb5d49bf9799632f419035b1c9d8e02f"
+}

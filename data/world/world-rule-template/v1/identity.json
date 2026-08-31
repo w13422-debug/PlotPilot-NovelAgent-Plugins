@@ -1,0 +1,10 @@
+{
+  "schema": "world-rule-template-package-identity/v1",
+  "package_kind": "data",
+  "plugin_id": "com.plotpilot.novelagent.world-rule-template",
+  "format_id": "world-rule-template/v1",
+  "version": "1.0.0",
+  "package_hash": "6e047e5fc172e6fa685432097b0788b17c4c82a37a52eb3562a6d17d63a9961a",
+  "release_id": "e43d6c183c75f35ada1b683da496fc4220f76f566eb9819679754bb61688b9f3",
+  "separate_from_code_plugin_id": "com.plotpilot.novelagent.asset-derivation"
+}

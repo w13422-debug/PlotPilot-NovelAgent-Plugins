@@ -1,0 +1,103 @@
+{
+  "schema": "plotpilot-plugin/v1",
+  "plugin_id": "com.plotpilot.novelagent.character-distillation",
+  "version": "0.1.0",
+  "display_name": "Novel-Agent Character Distillation",
+  "compatibility": {
+    "core_api": ">=1.0 <2.0",
+    "plugin_rpc": "1",
+    "ui_host": "1",
+    "python": "3.12.*"
+  },
+  "capabilities": [
+    {
+      "capability_id": "analysis.character.atom.extract/v1",
+      "operations": [
+        "run",
+        "resume",
+        "cancel"
+      ],
+      "result_contract": "candidate-batch/v1"
+    },
+    {
+      "capability_id": "analysis.character.card.generate/v1",
+      "operations": [
+        "run",
+        "resume",
+        "cancel"
+      ],
+      "result_contract": "candidate-batch/v1"
+    },
+    {
+      "capability_id": "analysis.character.conflict.review/v1",
+      "operations": [
+        "run"
+      ],
+      "result_contract": "diagnostic-bundle/v1"
+    },
+    {
+      "capability_id": "analysis.character.conflict.apply/v1",
+      "operations": [
+        "run",
+        "validate"
+      ],
+      "result_contract": "candidate-batch/v1"
+    }
+  ],
+  "settings": null,
+  "needs": [
+    "host.asset.read/v1",
+    "host.asset.create/v1",
+    "host.asset.upload.status/v1",
+    "host.job.event/v1",
+    "host.job.complete/v1",
+    "host.checkpoint.commit/v1",
+    "host.model.invoke/v1",
+    "host.candidate.stage/v1"
+  ],
+  "kind": "code",
+  "backend": {
+    "entrypoint": "character_distillation.runtime:main",
+    "wheel": "backend/plotpilot_character_distillation-0.1.0-py3-none-any.whl",
+    "requirements_lock": "backend/requirements.lock",
+    "wheelhouse": "backend/wheels",
+    "max_concurrency": 1
+  },
+  "storage": {
+    "schema_version": 1,
+    "migration_policy": "transactional-shadow",
+    "migration_manifest": "migrations/manifest.json"
+  },
+  "ui": {
+    "entry": "ui/metadata-only.json",
+    "runtime": "worker-ui/v1",
+    "contributions": [
+      {
+        "contribution_id": "nap-ui-analysis-character-atom-extract-v1-donors-analysis-review",
+        "slot": "donors.analysis.review",
+        "capability_id": "analysis.character.atom.extract/v1"
+      },
+      {
+        "contribution_id": "nap-ui-analysis-character-card-generate-v1-donors-analysis-review",
+        "slot": "donors.analysis.review",
+        "capability_id": "analysis.character.card.generate/v1"
+      },
+      {
+        "contribution_id": "nap-ui-analysis-character-card-generate-v1-donors-asset-derivation",
+        "slot": "donors.asset.derivation",
+        "capability_id": "analysis.character.card.generate/v1"
+      },
+      {
+        "contribution_id": "nap-ui-analysis-character-conflict-review-v1-donors-analysis-review",
+        "slot": "donors.analysis.review",
+        "capability_id": "analysis.character.conflict.review/v1"
+      },
+      {
+        "contribution_id": "nap-ui-analysis-character-conflict-apply-v1-donors-analysis-review",
+        "slot": "donors.analysis.review",
+        "capability_id": "analysis.character.conflict.apply/v1"
+      }
+    ]
+  },
+  "data": null
+}

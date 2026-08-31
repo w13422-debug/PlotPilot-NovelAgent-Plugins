@@ -1,0 +1,20 @@
+{
+  "schema": "plotpilot-plugin/v1",
+  "plugin_id": "com.plotpilot.novelagent.character-archetype",
+  "version": "1.0.0",
+  "display_name": "Novel-Agent Character Archetype Data",
+  "compatibility": {
+    "core_api": ">=1.0 <2.0",
+    "plugin_rpc": "1",
+    "ui_host": "1",
+    "python": "3.12.*"
+  },
+  "capabilities": [],
+  "settings": null,
+  "needs": [],
+  "kind": "data",
+  "data": {
+    "format": "character-archetype/v1",
+    "root": "data/archetypes.json"
+  }
+}

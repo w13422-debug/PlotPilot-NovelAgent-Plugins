@@ -1,0 +1,90 @@
+{
+  "schema": "character-archetype-interpreter-mappings/v1",
+  "format_id": "character-archetype/v1",
+  "mappings": [
+    {
+      "format_id": "character-archetype/v1",
+      "plugin_id": "com.plotpilot.novelagent.character-distillation",
+      "capability_id": "analysis.character.atom.extract/v1",
+      "direction": "format_to_capability"
+    },
+    {
+      "format_id": "character-archetype/v1",
+      "plugin_id": "com.plotpilot.novelagent.character-distillation",
+      "capability_id": "analysis.character.atom.extract/v1",
+      "direction": "capability_to_format"
+    },
+    {
+      "format_id": "character-archetype/v1",
+      "plugin_id": "com.plotpilot.novelagent.character-distillation",
+      "capability_id": "analysis.character.card.generate/v1",
+      "direction": "format_to_capability"
+    },
+    {
+      "format_id": "character-archetype/v1",
+      "plugin_id": "com.plotpilot.novelagent.character-distillation",
+      "capability_id": "analysis.character.card.generate/v1",
+      "direction": "capability_to_format"
+    },
+    {
+      "format_id": "character-archetype/v1",
+      "plugin_id": "com.plotpilot.novelagent.character-distillation",
+      "capability_id": "analysis.character.conflict.review/v1",
+      "direction": "format_to_capability"
+    },
+    {
+      "format_id": "character-archetype/v1",
+      "plugin_id": "com.plotpilot.novelagent.character-distillation",
+      "capability_id": "analysis.character.conflict.review/v1",
+      "direction": "capability_to_format"
+    },
+    {
+      "format_id": "character-archetype/v1",
+      "plugin_id": "com.plotpilot.novelagent.character-distillation",
+      "capability_id": "analysis.character.conflict.apply/v1",
+      "direction": "format_to_capability"
+    },
+    {
+      "format_id": "character-archetype/v1",
+      "plugin_id": "com.plotpilot.novelagent.character-distillation",
+      "capability_id": "analysis.character.conflict.apply/v1",
+      "direction": "capability_to_format"
+    },
+    {
+      "format_id": "character-archetype/v1",
+      "plugin_id": "com.plotpilot.novelagent.asset-derivation",
+      "capability_id": "asset.template.derive/v1",
+      "direction": "format_to_capability"
+    },
+    {
+      "format_id": "character-archetype/v1",
+      "plugin_id": "com.plotpilot.novelagent.asset-derivation",
+      "capability_id": "asset.template.derive/v1",
+      "direction": "capability_to_format"
+    },
+    {
+      "format_id": "character-archetype/v1",
+      "plugin_id": "com.plotpilot.novelagent.writing-context",
+      "capability_id": "writing.context.assemble/v1",
+      "direction": "format_to_capability"
+    },
+    {
+      "format_id": "character-archetype/v1",
+      "plugin_id": "com.plotpilot.novelagent.writing-context",
+      "capability_id": "writing.context.assemble/v1",
+      "direction": "capability_to_format"
+    },
+    {
+      "format_id": "character-archetype/v1",
+      "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+      "capability_id": "writing.chapter.draft/v1",
+      "direction": "format_to_capability"
+    },
+    {
+      "format_id": "character-archetype/v1",
+      "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+      "capability_id": "writing.chapter.draft/v1",
+      "direction": "capability_to_format"
+    }
+  ]
+}

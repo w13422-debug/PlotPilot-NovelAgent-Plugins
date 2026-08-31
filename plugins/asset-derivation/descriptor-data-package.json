@@ -1,0 +1,17 @@
+{
+  "schema": "capability-provider/v1",
+  "capability_id": "asset.data-plugin.package/v1",
+  "provider": {
+    "plugin_id": "com.plotpilot.novelagent.asset-derivation",
+    "release_id": "251455bb34c68e8a19762ad750148cf6bb53b86100a74508ae8ea39e2a532f58"
+  },
+  "input_schema": "asset.data-plugin.package-request/v1",
+  "output_schema": "asset.data-plugin.package-result/v1",
+  "result_contract": "artifact-bundle/v1",
+  "supports": [
+    "run",
+    "validate"
+  ],
+  "deterministic": true,
+  "accepted_data_formats": []
+}

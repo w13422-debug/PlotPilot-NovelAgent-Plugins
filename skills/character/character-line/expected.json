@@ -1,0 +1,27 @@
+{
+  "schema": "character-skill-expected/v1",
+  "package_kind": "skill",
+  "skill_id": "com.plotpilot.skill.donor.character-line",
+  "version": "1.0.0",
+  "manifest_path": "skill.json",
+  "package_files": [
+    "method.json",
+    "method.schema.json",
+    "prompt.txt",
+    "skill.json"
+  ],
+  "files_sha256": "79b94698c42c30773e68c77779fdb54a30712b402c5f036396336ba21d5bff3d  method.json\nb4ba710b0960a6bb61077c15d498672704f36b81f398aba7ce63ec3b333ba0f2  method.schema.json\ndedd600146904669e80a58af3f6936d46febaaab787c6207815a4607442d6afb  prompt.txt\nf8c33d93593a516776c8f3dda78693259f5ec832befdb1f823ac1eb8f3c7d1f1  skill.json\n",
+  "skill_package_hash": "c39a93bee6972379fc74b4384673e1d347cbae766966f0befcb0ea14032a1959",
+  "skill_release_id": "8bc11715021cf9c38a41457af65cd102abf8b0f2d5ce0b2647f2f9848bd51eff",
+  "identity_path": "identity.json",
+  "fixture_hashes": {
+    "method.json": "79b94698c42c30773e68c77779fdb54a30712b402c5f036396336ba21d5bff3d",
+    "method.schema.json": "b4ba710b0960a6bb61077c15d498672704f36b81f398aba7ce63ec3b333ba0f2"
+  },
+  "identity_domains": {
+    "data_or_code": "plotpilot-release/v1",
+    "skill": "plotpilot-skill-release/v1",
+    "code_plugin_id": "com.plotpilot.novelagent.character-distillation",
+    "data_plugin_id": "com.plotpilot.novelagent.character-archetype"
+  }
+}

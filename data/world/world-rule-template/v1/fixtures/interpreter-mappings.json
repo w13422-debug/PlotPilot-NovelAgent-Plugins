@@ -1,0 +1,78 @@
+{
+  "schema": "world-rule-template-interpreter-mappings/v1",
+  "format_id": "world-rule-template/v1",
+  "mappings": [
+    {
+      "format_id": "world-rule-template/v1",
+      "plugin_id": "com.plotpilot.novelagent.asset-derivation",
+      "capability_id": "asset.template.derive/v1",
+      "direction": "format_to_capability"
+    },
+    {
+      "format_id": "world-rule-template/v1",
+      "plugin_id": "com.plotpilot.novelagent.asset-derivation",
+      "capability_id": "asset.template.derive/v1",
+      "direction": "capability_to_format"
+    },
+    {
+      "format_id": "world-rule-template/v1",
+      "plugin_id": "com.plotpilot.novelagent.consistency-audit",
+      "capability_id": "quality.consistency.audit/v1",
+      "direction": "format_to_capability"
+    },
+    {
+      "format_id": "world-rule-template/v1",
+      "plugin_id": "com.plotpilot.novelagent.consistency-audit",
+      "capability_id": "quality.consistency.audit/v1",
+      "direction": "capability_to_format"
+    },
+    {
+      "format_id": "world-rule-template/v1",
+      "plugin_id": "com.plotpilot.novelagent.story-state",
+      "capability_id": "story.chapter.settle/v1",
+      "direction": "format_to_capability"
+    },
+    {
+      "format_id": "world-rule-template/v1",
+      "plugin_id": "com.plotpilot.novelagent.story-state",
+      "capability_id": "story.chapter.settle/v1",
+      "direction": "capability_to_format"
+    },
+    {
+      "format_id": "world-rule-template/v1",
+      "plugin_id": "com.plotpilot.novelagent.story-state",
+      "capability_id": "story.state.derive/v1",
+      "direction": "format_to_capability"
+    },
+    {
+      "format_id": "world-rule-template/v1",
+      "plugin_id": "com.plotpilot.novelagent.story-state",
+      "capability_id": "story.state.derive/v1",
+      "direction": "capability_to_format"
+    },
+    {
+      "format_id": "world-rule-template/v1",
+      "plugin_id": "com.plotpilot.novelagent.writing-context",
+      "capability_id": "writing.context.assemble/v1",
+      "direction": "format_to_capability"
+    },
+    {
+      "format_id": "world-rule-template/v1",
+      "plugin_id": "com.plotpilot.novelagent.writing-context",
+      "capability_id": "writing.context.assemble/v1",
+      "direction": "capability_to_format"
+    },
+    {
+      "format_id": "world-rule-template/v1",
+      "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+      "capability_id": "writing.chapter.draft/v1",
+      "direction": "format_to_capability"
+    },
+    {
+      "format_id": "world-rule-template/v1",
+      "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+      "capability_id": "writing.chapter.draft/v1",
+      "direction": "capability_to_format"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+[build-system]
+requires = []
+build-backend = "asset_derivation.build_backend"
+backend-path = ["."]
+
+[project]
+name = "plotpilot-asset-derivation"
+version = "0.1.0"
+description = "PlotPilot Asset Derivation"
+requires-python = ">=3.12,<3.13"
+dependencies = []

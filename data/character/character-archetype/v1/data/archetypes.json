@@ -1,0 +1,194 @@
+{
+  "schema": "character-archetype/v1",
+  "format_id": "character-archetype/v1",
+  "archetype_id": "com.plotpilot.novelagent.character-archetype.default",
+  "version": "1.0.0",
+  "dimensions": [
+    {
+      "dimension_id": "identity",
+      "label": "Identity",
+      "description": "Stable identity and role",
+      "required": true,
+      "allowed_values": []
+    },
+    {
+      "dimension_id": "goal",
+      "label": "Goal",
+      "description": "Character objective",
+      "required": true,
+      "allowed_values": []
+    },
+    {
+      "dimension_id": "motivation",
+      "label": "Motivation",
+      "description": "Reason for pursuing goal",
+      "required": true,
+      "allowed_values": []
+    },
+    {
+      "dimension_id": "fear",
+      "label": "Fear",
+      "description": "Primary fear or risk",
+      "required": true,
+      "allowed_values": []
+    },
+    {
+      "dimension_id": "ability",
+      "label": "Ability",
+      "description": "Capabilities and resources",
+      "required": true,
+      "allowed_values": []
+    },
+    {
+      "dimension_id": "flaw",
+      "label": "Flaw",
+      "description": "Limitations and defects",
+      "required": true,
+      "allowed_values": []
+    },
+    {
+      "dimension_id": "arc_stage",
+      "label": "Arc stage",
+      "description": "Current arc stage",
+      "required": true,
+      "allowed_values": [
+        "setup",
+        "pressure",
+        "turning_point",
+        "crisis",
+        "resolution"
+      ]
+    }
+  ],
+  "atom_kinds": [
+    "identity",
+    "goal",
+    "motivation",
+    "fear",
+    "ability",
+    "flaw",
+    "relationship",
+    "conflict",
+    "arc",
+    "event",
+    "voice",
+    "behavior"
+  ],
+  "card_fields": [
+    "identity",
+    "goals",
+    "motivations",
+    "fears",
+    "abilities",
+    "flaws",
+    "relationships",
+    "conflicts",
+    "arc",
+    "key_events",
+    "speech_habits",
+    "behavior_evidence"
+  ],
+  "relation_kinds": [
+    "ally",
+    "enemy",
+    "family",
+    "mentor",
+    "rival",
+    "romantic",
+    "professional",
+    "unknown"
+  ],
+  "arc_stages": [
+    "setup",
+    "pressure",
+    "turning_point",
+    "crisis",
+    "resolution"
+  ],
+  "interpreter_mappings": [
+    {
+      "format_id": "character-archetype/v1",
+      "plugin_id": "com.plotpilot.novelagent.character-distillation",
+      "capability_id": "analysis.character.atom.extract/v1",
+      "direction": "format_to_capability"
+    },
+    {
+      "format_id": "character-archetype/v1",
+      "plugin_id": "com.plotpilot.novelagent.character-distillation",
+      "capability_id": "analysis.character.atom.extract/v1",
+      "direction": "capability_to_format"
+    },
+    {
+      "format_id": "character-archetype/v1",
+      "plugin_id": "com.plotpilot.novelagent.character-distillation",
+      "capability_id": "analysis.character.card.generate/v1",
+      "direction": "format_to_capability"
+    },
+    {
+      "format_id": "character-archetype/v1",
+      "plugin_id": "com.plotpilot.novelagent.character-distillation",
+      "capability_id": "analysis.character.card.generate/v1",
+      "direction": "capability_to_format"
+    },
+    {
+      "format_id": "character-archetype/v1",
+      "plugin_id": "com.plotpilot.novelagent.character-distillation",
+      "capability_id": "analysis.character.conflict.review/v1",
+      "direction": "format_to_capability"
+    },
+    {
+      "format_id": "character-archetype/v1",
+      "plugin_id": "com.plotpilot.novelagent.character-distillation",
+      "capability_id": "analysis.character.conflict.review/v1",
+      "direction": "capability_to_format"
+    },
+    {
+      "format_id": "character-archetype/v1",
+      "plugin_id": "com.plotpilot.novelagent.character-distillation",
+      "capability_id": "analysis.character.conflict.apply/v1",
+      "direction": "format_to_capability"
+    },
+    {
+      "format_id": "character-archetype/v1",
+      "plugin_id": "com.plotpilot.novelagent.character-distillation",
+      "capability_id": "analysis.character.conflict.apply/v1",
+      "direction": "capability_to_format"
+    },
+    {
+      "format_id": "character-archetype/v1",
+      "plugin_id": "com.plotpilot.novelagent.asset-derivation",
+      "capability_id": "asset.template.derive/v1",
+      "direction": "format_to_capability"
+    },
+    {
+      "format_id": "character-archetype/v1",
+      "plugin_id": "com.plotpilot.novelagent.asset-derivation",
+      "capability_id": "asset.template.derive/v1",
+      "direction": "capability_to_format"
+    },
+    {
+      "format_id": "character-archetype/v1",
+      "plugin_id": "com.plotpilot.novelagent.writing-context",
+      "capability_id": "writing.context.assemble/v1",
+      "direction": "format_to_capability"
+    },
+    {
+      "format_id": "character-archetype/v1",
+      "plugin_id": "com.plotpilot.novelagent.writing-context",
+      "capability_id": "writing.context.assemble/v1",
+      "direction": "capability_to_format"
+    },
+    {
+      "format_id": "character-archetype/v1",
+      "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+      "capability_id": "writing.chapter.draft/v1",
+      "direction": "format_to_capability"
+    },
+    {
+      "format_id": "character-archetype/v1",
+      "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+      "capability_id": "writing.chapter.draft/v1",
+      "direction": "capability_to_format"
+    }
+  ]
+}
