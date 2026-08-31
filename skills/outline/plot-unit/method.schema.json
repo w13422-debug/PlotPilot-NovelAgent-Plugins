@@ -1,0 +1,17 @@
+{
+  "$id": "https://plotpilot.local/skills/outline-skill-method-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "outline-skill-method/v1"},
+    "skill_id": {"enum": ["com.plotpilot.skill.donor.narrative-unit", "com.plotpilot.skill.outline.book", "com.plotpilot.skill.outline.volume", "com.plotpilot.skill.outline.chapter", "com.plotpilot.skill.outline.plot-unit"]},
+    "input_format_id": {"const": "plot-structure-template/v1"},
+    "capability_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["analysis.narrative.unit.extract/v1", "analysis.narrative.plan.compile/v1"]}},
+    "result_contract": {"const": "candidate-batch/v1"},
+    "rules": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"}},
+    "authority": {"const": "candidate_only"},
+    "immutable": {"const": true}
+  },
+  "required": ["schema", "skill_id", "input_format_id", "capability_ids", "result_contract", "rules", "authority", "immutable"]
+}

@@ -1,0 +1,21 @@
+{
+  "schema": "capability-provider/v1",
+  "capability_id": "analysis.narrative.unit.extract/v1",
+  "provider": {
+    "plugin_id": "com.plotpilot.novelagent.narrative-analysis",
+    "release_id": "e85d0cdc25b757acbf3514c8175745f64c4ca9761fc2dd488d31a91fd00dad5b"
+  },
+  "input_schema": "analysis.narrative.unit.extract-request/v1",
+  "output_schema": "analysis.narrative.unit.extract-result/v1",
+  "result_contract": "candidate-batch/v1",
+  "supports": [
+    "run",
+    "resume",
+    "cancel"
+  ],
+  "deterministic": false,
+  "accepted_data_formats": [
+    "book-analysis-taxonomy/v1",
+    "plot-structure-template/v1"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "schema": "plugin-ui-metadata/v1",
+  "plugin_id": "com.plotpilot.novelagent.outline-projection",
+  "implementation": "host-projected-metadata-only",
+  "slots": [
+    "outline.visualization.panel",
+    "donors.analysis.review"
+  ]
+}

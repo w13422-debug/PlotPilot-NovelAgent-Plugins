@@ -1,0 +1,224 @@
+{
+  "schema": "narrative-analysis-package-expected/v1",
+  "plugin_id": "com.plotpilot.novelagent.narrative-analysis",
+  "version": "0.1.0",
+  "package_files": [
+    "backend/requirements.lock",
+    "backend/wheels/README.txt",
+    "descriptor-plan-compile.json",
+    "descriptor-synthesize.json",
+    "descriptor.json",
+    "files.sha256",
+    "fixtures/broker-child-record.json",
+    "fixtures/narrative-plan.json",
+    "fixtures/narrative-synthesis.json",
+    "fixtures/narrative-unit.json",
+    "migrations/manifest.json",
+    "narrative_analysis/__init__.py",
+    "narrative_analysis/build_backend.py",
+    "narrative_analysis/capability_spec.py",
+    "narrative_analysis/contract.py",
+    "narrative_analysis/identity.json",
+    "narrative_analysis/package_identity.py",
+    "narrative_analysis/runtime.py",
+    "narrative_analysis/schemas/evidence-span.schema.json",
+    "narrative_analysis/schemas/narrative-plan.schema.json",
+    "narrative_analysis/schemas/narrative-synthesis.schema.json",
+    "narrative_analysis/schemas/narrative-unit.schema.json",
+    "narrative_analysis/schemas/plan-compile/index.json",
+    "narrative_analysis/schemas/plan-compile/input.schema.json",
+    "narrative_analysis/schemas/plan-compile/result.schema.json",
+    "narrative_analysis/schemas/synthesize/index.json",
+    "narrative_analysis/schemas/synthesize/input.schema.json",
+    "narrative_analysis/schemas/synthesize/result.schema.json",
+    "narrative_analysis/schemas/unit-extract/index.json",
+    "narrative_analysis/schemas/unit-extract/input.schema.json",
+    "narrative_analysis/schemas/unit-extract/result.schema.json",
+    "plugin.json",
+    "pyproject.toml",
+    "rebuild_package.py",
+    "ui/metadata-only.json"
+  ],
+  "files_sha256": "81e7990ffd51938ca4231ec67ef4d862ec0e15fa91dc85f3b7828bbbc1fd7ff8  backend/requirements.lock\neecd0446ffde39404825cb19cf4bb8198fa9c435b4ad03b92b61832c22b93ded  backend/wheels/README.txt\nf4dfef04191ccdb90d687e223ce3f9b1a60e0076794c7fc3ec6e43d6c1134510  fixtures/broker-child-record.json\n9bf43aa249409b17d4afbce74b2a375909ed2a55b12fe0daef2184a47478d976  fixtures/narrative-plan.json\n0035b7efdc88bf18ddfee7948bd101d181895c0b8caf870e990c8f9ee0d74d2c  fixtures/narrative-synthesis.json\nfda6b4659281a81dc57152eb9fc276371e529b0d3adbc2e54950aaa757dfe364  fixtures/narrative-unit.json\nf087daeb58f44404f0693780824799774c0da618b6f91b53560b1f1f141d57c6  migrations/manifest.json\nf446a414da382075b835c46473b44c2dbb7b4d2510104e58413f1efd575d899a  narrative_analysis/__init__.py\ne66946283d486b83bd0a6bf29d430b0b99a3f7fcad27c8103639a328bdf574c8  narrative_analysis/build_backend.py\n80350d2320cb9efedd052a93e750546464d52fc5e802c1a38d1ccee2aca4842f  narrative_analysis/capability_spec.py\n213b249e0f7db5001d05696ec1aee85282c5e5ad4012711e9928eef64a10f13d  narrative_analysis/contract.py\n8918610842c312a682593e309abbfa6742f5406c6871d4a3c48e223b90a90bd3  narrative_analysis/package_identity.py\n757414443d0c857baaac76e467d0add880681d8c55ea7130f7d48480bf629d3d  narrative_analysis/runtime.py\n62e91392e4017f914a5c58cf3ba61602aeee125ad86a29dfb2b87a542f528045  narrative_analysis/schemas/evidence-span.schema.json\nc10107e723c3ce8b2d7ddae6c627c72c29a8b7b07a8772f8c03ab1ab1be18e2f  narrative_analysis/schemas/narrative-plan.schema.json\n55242537099074c1b0aaacd988007aa0ab39b9c8954c8884f5007a4458e69ac4  narrative_analysis/schemas/narrative-synthesis.schema.json\n0037bf9fe47ef9f8bfab2d4a4e2f25af45a35e2ed87fba42f19afb7a421a9951  narrative_analysis/schemas/narrative-unit.schema.json\n3ca083bf1c14658fdee740bfee8b73cf64d1b393467558b8f8fd46255626dc62  narrative_analysis/schemas/plan-compile/index.json\nf110680e18f8a251525b2a2febaf5263da02db7f6c83d139d017c29654172c5b  narrative_analysis/schemas/plan-compile/input.schema.json\n8bef54258de01035150429d57830cc638c077cdfb7dc7928a13a622d3f61b622  narrative_analysis/schemas/plan-compile/result.schema.json\n03bd19061d1961680096316da8d8f073efa1ae4dc8908eb11215047f41415f16  narrative_analysis/schemas/synthesize/index.json\n7a4e83b22b1ddf87264046c760ccc6d88b7955f5fb275c3e56200269552fbacb  narrative_analysis/schemas/synthesize/input.schema.json\n4f526d9fe3979555b4edc95c054a847bdd939cb084c2e8b9e5497f8686a1ffd5  narrative_analysis/schemas/synthesize/result.schema.json\n728c71018a337daed845c6ca027fdf16e0da3230b6e9a330d4757a05ffd9db02  narrative_analysis/schemas/unit-extract/index.json\n832af892204e62d86ef8b745f8c778826bc37ff07659fcda28eb0654bf14de76  narrative_analysis/schemas/unit-extract/input.schema.json\nd012093f91d832744adf3f4a78195834879fd186f055460a840c7ec62796df99  narrative_analysis/schemas/unit-extract/result.schema.json\n645b1635227ed185ac4fe75484ccfc3fed1baa9cb0717c10152f9ec01ed5e71c  plugin.json\n919f83be2b47764d745b2835be5247682bce3e298f28e6f5a4f2abf5fddf2923  pyproject.toml\na47c6aa968b9fe0aca1d7ac1c131dc5bbaa7150bf93bd5108c667d448de82cbb  rebuild_package.py\ncea428c01475b4d9d69974132036a9384eb155c0327e295c6e2ea0601d5d4d91  ui/metadata-only.json\n",
+  "package_hash": "f50dbdd9f2346030cd983020de19127bce6596e8f7843971d819407282955e6f",
+  "release_id": "e85d0cdc25b757acbf3514c8175745f64c4ca9761fc2dd488d31a91fd00dad5b",
+  "provider_identity": {
+    "schema": "narrative-analysis-package-identity/v1",
+    "plugin_id": "com.plotpilot.novelagent.narrative-analysis",
+    "version": "0.1.0",
+    "package_hash": "f50dbdd9f2346030cd983020de19127bce6596e8f7843971d819407282955e6f",
+    "release_id": "e85d0cdc25b757acbf3514c8175745f64c4ca9761fc2dd488d31a91fd00dad5b"
+  },
+  "capability_projection": [
+    {
+      "capability_id": "analysis.narrative.unit.extract/v1",
+      "descriptor_path": "descriptor.json",
+      "schema_index_path": "narrative_analysis/schemas/unit-extract/index.json",
+      "input_schema": "analysis.narrative.unit.extract-request/v1",
+      "output_schema": "analysis.narrative.unit.extract-result/v1",
+      "result_contract": "candidate-batch/v1",
+      "bundle_type": "candidate_batch",
+      "supports": [
+        "run",
+        "resume",
+        "cancel"
+      ],
+      "deterministic": false,
+      "accepted_data_formats": [
+        "book-analysis-taxonomy/v1",
+        "plot-structure-template/v1"
+      ],
+      "ui_contributions": [
+        {
+          "contribution_id": "nap-ui-analysis-narrative-unit-extract-v1-donors-analysis-configure",
+          "slot": "donors.analysis.configure"
+        }
+      ]
+    },
+    {
+      "capability_id": "analysis.narrative.plan.compile/v1",
+      "descriptor_path": "descriptor-plan-compile.json",
+      "schema_index_path": "narrative_analysis/schemas/plan-compile/index.json",
+      "input_schema": "analysis.narrative.plan.compile-request/v1",
+      "output_schema": "analysis.narrative.plan.compile-result/v1",
+      "result_contract": "candidate-batch/v1",
+      "bundle_type": "candidate_batch",
+      "supports": [
+        "run",
+        "validate"
+      ],
+      "deterministic": true,
+      "accepted_data_formats": [
+        "plot-structure-template/v1"
+      ],
+      "ui_contributions": [
+        {
+          "contribution_id": "nap-ui-analysis-narrative-plan-compile-v1-donors-analysis-configure",
+          "slot": "donors.analysis.configure"
+        }
+      ]
+    },
+    {
+      "capability_id": "analysis.narrative.synthesize/v1",
+      "descriptor_path": "descriptor-synthesize.json",
+      "schema_index_path": "narrative_analysis/schemas/synthesize/index.json",
+      "input_schema": "analysis.narrative.synthesize-request/v1",
+      "output_schema": "analysis.narrative.synthesize-result/v1",
+      "result_contract": "candidate-batch/v1",
+      "bundle_type": "candidate_batch",
+      "supports": [
+        "run",
+        "resume",
+        "cancel"
+      ],
+      "deterministic": false,
+      "accepted_data_formats": [
+        "plot-structure-template/v1"
+      ],
+      "ui_contributions": [
+        {
+          "contribution_id": "nap-ui-analysis-narrative-synthesize-v1-donors-analysis-review",
+          "slot": "donors.analysis.review"
+        },
+        {
+          "contribution_id": "nap-ui-analysis-narrative-synthesize-v1-outline-visualization-panel",
+          "slot": "outline.visualization.panel"
+        }
+      ]
+    }
+  ],
+  "capability_projection_sha256": "594db2ae589128e3dc52c5fc15173997e6f91280d2230fd1c379a552f9b0ed93",
+  "descriptor_paths": [
+    "descriptor.json",
+    "descriptor-plan-compile.json",
+    "descriptor-synthesize.json"
+  ],
+  "descriptor_sha256": {
+    "descriptor.json": "891bf42fbc336846169965871b48c06fd551c7e2c223cf8abbe437110177bc06",
+    "descriptor-plan-compile.json": "be2fea49c462cd307d215ed4b6c58fd74f7a07611101b7c522da0514802a13a1",
+    "descriptor-synthesize.json": "2aad4cf7dc17e711a951c86174124b5bd8b02ff1549a81175efefd5af3ae140f"
+  },
+  "descriptor_provider_identity": {
+    "descriptor.json": {
+      "plugin_id": "com.plotpilot.novelagent.narrative-analysis",
+      "release_id": "e85d0cdc25b757acbf3514c8175745f64c4ca9761fc2dd488d31a91fd00dad5b"
+    },
+    "descriptor-plan-compile.json": {
+      "plugin_id": "com.plotpilot.novelagent.narrative-analysis",
+      "release_id": "e85d0cdc25b757acbf3514c8175745f64c4ca9761fc2dd488d31a91fd00dad5b"
+    },
+    "descriptor-synthesize.json": {
+      "plugin_id": "com.plotpilot.novelagent.narrative-analysis",
+      "release_id": "e85d0cdc25b757acbf3514c8175745f64c4ca9761fc2dd488d31a91fd00dad5b"
+    }
+  },
+  "schema_index_paths": {
+    "analysis.narrative.unit.extract/v1": "narrative_analysis/schemas/unit-extract/index.json",
+    "analysis.narrative.plan.compile/v1": "narrative_analysis/schemas/plan-compile/index.json",
+    "analysis.narrative.synthesize/v1": "narrative_analysis/schemas/synthesize/index.json"
+  },
+  "schema_index_path_list": [
+    "narrative_analysis/schemas/unit-extract/index.json",
+    "narrative_analysis/schemas/plan-compile/index.json",
+    "narrative_analysis/schemas/synthesize/index.json"
+  ],
+  "schema_index_sha256": {
+    "narrative_analysis/schemas/unit-extract/index.json": "728c71018a337daed845c6ca027fdf16e0da3230b6e9a330d4757a05ffd9db02",
+    "narrative_analysis/schemas/plan-compile/index.json": "3ca083bf1c14658fdee740bfee8b73cf64d1b393467558b8f8fd46255626dc62",
+    "narrative_analysis/schemas/synthesize/index.json": "03bd19061d1961680096316da8d8f073efa1ae4dc8908eb11215047f41415f16"
+  },
+  "schema_artifacts": {
+    "narrative_analysis/schemas/unit-extract/index.json": [
+      {
+        "schema_id": "analysis.narrative.unit.extract-request/v1",
+        "path": "schemas/unit-extract/input.schema.json",
+        "sha256": "832af892204e62d86ef8b745f8c778826bc37ff07659fcda28eb0654bf14de76"
+      },
+      {
+        "schema_id": "analysis.narrative.unit.extract-result/v1",
+        "path": "schemas/unit-extract/result.schema.json",
+        "sha256": "d012093f91d832744adf3f4a78195834879fd186f055460a840c7ec62796df99"
+      }
+    ],
+    "narrative_analysis/schemas/plan-compile/index.json": [
+      {
+        "schema_id": "analysis.narrative.plan.compile-request/v1",
+        "path": "schemas/plan-compile/input.schema.json",
+        "sha256": "f110680e18f8a251525b2a2febaf5263da02db7f6c83d139d017c29654172c5b"
+      },
+      {
+        "schema_id": "analysis.narrative.plan.compile-result/v1",
+        "path": "schemas/plan-compile/result.schema.json",
+        "sha256": "8bef54258de01035150429d57830cc638c077cdfb7dc7928a13a622d3f61b622"
+      }
+    ],
+    "narrative_analysis/schemas/synthesize/index.json": [
+      {
+        "schema_id": "analysis.narrative.synthesize-request/v1",
+        "path": "schemas/synthesize/input.schema.json",
+        "sha256": "7a4e83b22b1ddf87264046c760ccc6d88b7955f5fb275c3e56200269552fbacb"
+      },
+      {
+        "schema_id": "analysis.narrative.synthesize-result/v1",
+        "path": "schemas/synthesize/result.schema.json",
+        "sha256": "4f526d9fe3979555b4edc95c054a847bdd939cb084c2e8b9e5497f8686a1ffd5"
+      }
+    ]
+  },
+  "schema_artifact_sha256": {
+    "narrative_analysis/schemas/evidence-span.schema.json": "62e91392e4017f914a5c58cf3ba61602aeee125ad86a29dfb2b87a542f528045",
+    "narrative_analysis/schemas/narrative-plan.schema.json": "c10107e723c3ce8b2d7ddae6c627c72c29a8b7b07a8772f8c03ab1ab1be18e2f",
+    "narrative_analysis/schemas/narrative-synthesis.schema.json": "55242537099074c1b0aaacd988007aa0ab39b9c8954c8884f5007a4458e69ac4",
+    "narrative_analysis/schemas/narrative-unit.schema.json": "0037bf9fe47ef9f8bfab2d4a4e2f25af45a35e2ed87fba42f19afb7a421a9951",
+    "narrative_analysis/schemas/plan-compile/input.schema.json": "f110680e18f8a251525b2a2febaf5263da02db7f6c83d139d017c29654172c5b",
+    "narrative_analysis/schemas/plan-compile/result.schema.json": "8bef54258de01035150429d57830cc638c077cdfb7dc7928a13a622d3f61b622",
+    "narrative_analysis/schemas/synthesize/input.schema.json": "7a4e83b22b1ddf87264046c760ccc6d88b7955f5fb275c3e56200269552fbacb",
+    "narrative_analysis/schemas/synthesize/result.schema.json": "4f526d9fe3979555b4edc95c054a847bdd939cb084c2e8b9e5497f8686a1ffd5",
+    "narrative_analysis/schemas/unit-extract/input.schema.json": "832af892204e62d86ef8b745f8c778826bc37ff07659fcda28eb0654bf14de76",
+    "narrative_analysis/schemas/unit-extract/result.schema.json": "d012093f91d832744adf3f4a78195834879fd186f055460a840c7ec62796df99"
+  },
+  "wheel_path": "backend/plotpilot_narrative_analysis-0.1.0-py3-none-any.whl",
+  "wheel_import": "narrative_analysis",
+  "plugin_path": "plugin.json",
+  "identity_path": "narrative_analysis/identity.json"
+}

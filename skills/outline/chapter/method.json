@@ -1,0 +1,18 @@
+{
+  "schema": "outline-skill-method/v1",
+  "skill_id": "com.plotpilot.skill.outline.chapter",
+  "input_format_id": "plot-structure-template/v1",
+  "capability_ids": [
+    "analysis.narrative.plan.compile/v1"
+  ],
+  "result_contract": "candidate-batch/v1",
+  "rules": [
+    "immutable_inputs",
+    "evidence_span_closure",
+    "per_source_attribution",
+    "broker_child_receipt_closure",
+    "candidate_only_no_publication"
+  ],
+  "authority": "candidate_only",
+  "immutable": true
+}

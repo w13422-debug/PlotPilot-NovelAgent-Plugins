@@ -1,0 +1,68 @@
+{
+  "schema": "narrative-synthesis/v1",
+  "synthesis_id": "synthesis-fixture-1",
+  "title": "综合剧情",
+  "summary": "每个来源均可回溯到 EvidenceSpan 与 Broker child receipt。",
+  "plan_ref": {
+    "plan_id": "plan-fixture-1",
+    "payload_asset_id": "asset-plan-fixture",
+    "payload_hash": "7777777777777777777777777777777777777777777777777777777777777777"
+  },
+  "sections": [
+    {
+      "section_id": "section-fixture-1",
+      "title": "开篇转折",
+      "summary": "固定摘要",
+      "unit_ids": [
+        "unit-fixture-1"
+      ],
+      "evidence_span_ids": [
+        "span-fixture-1"
+      ],
+      "source_attribution_ids": [
+        "attr-fixture-1"
+      ]
+    }
+  ],
+  "evidence_spans": [
+    {
+      "evidence_span_id": "span-fixture-1",
+      "schema": "evidence-span/v1",
+      "workspace_id": "ws-fixture",
+      "document_id": "doc-fixture",
+      "revision_id": "rev-fixture",
+      "node_id": "node-fixture",
+      "start_codepoint": 0,
+      "end_codepoint": 2,
+      "quote": "甲乙",
+      "quote_hash": "f73ab1f5c2b9542c9cea79597b69a5c4dc106721d7de6fa9e4303c0fe45cfe3d",
+      "canonical_text_hash": "f73ab1f5c2b9542c9cea79597b69a5c4dc106721d7de6fa9e4303c0fe45cfe3d"
+    }
+  ],
+  "source_attributions": [
+    {
+      "attribution_id": "attr-fixture-1",
+      "source_type": "canonical_revision",
+      "workspace_id": "ws-fixture",
+      "source_id": "doc-fixture",
+      "revision_or_hash": "rev-fixture",
+      "evidence_span_ids": [
+        "span-fixture-1"
+      ],
+      "child_receipt_id": "receipt-child-fixture"
+    }
+  ],
+  "broker_children": [
+    {
+      "binding_id": "binding-fixture",
+      "child_job_id": "job-child-fixture",
+      "child_run_snapshot_hash": "6666666666666666666666666666666666666666666666666666666666666666",
+      "result_contract": "candidate-batch/v1",
+      "result_bundle_asset_id": "asset-result-fixture",
+      "result_bundle_hash": "8888888888888888888888888888888888888888888888888888888888888888",
+      "provenance_receipt_id": "receipt-child-fixture",
+      "broker_invocation_asset_id": "asset-invocation-fixture",
+      "broker_invocation_hash": "5555555555555555555555555555555555555555555555555555555555555555"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "child_job_id": "job-child-fixture",
+  "parent_job_id": "job-parent-fixture",
+  "parent_step_id": "step-parent-fixture",
+  "parent_attempt_id": "attempt-parent-fixture",
+  "invoke_operation_key": "invoke-op-fixture",
+  "binding_id": "binding-fixture",
+  "broker_invocation_asset_id": "asset-invocation-fixture",
+  "broker_invocation_hash": "5555555555555555555555555555555555555555555555555555555555555555",
+  "child_run_snapshot_asset_id": "asset-snapshot-fixture",
+  "child_run_snapshot_hash": "6666666666666666666666666666666666666666666666666666666666666666",
+  "result_contract": "candidate-batch/v1",
+  "required": true,
+  "propagate_cancel": true,
+  "state": "succeeded",
+  "result_bundle_asset_id": "asset-result-fixture",
+  "provenance_receipt_id": "receipt-child-fixture"
+}

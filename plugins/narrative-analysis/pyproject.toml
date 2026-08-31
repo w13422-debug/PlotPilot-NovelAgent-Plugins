@@ -1,0 +1,11 @@
+[build-system]
+requires = []
+build-backend = "narrative_analysis.build_backend"
+backend-path = ["."]
+
+[project]
+name = "plotpilot-narrative-analysis"
+version = "0.1.0"
+description = "PlotPilot Novel-Agent evidence-closed narrative unit, plan and synthesis plugin"
+requires-python = ">=3.12,<3.13"
+dependencies = []

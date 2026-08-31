@@ -1,0 +1,19 @@
+{
+  "schema": "capability-provider/v1",
+  "capability_id": "analysis.narrative.plan.compile/v1",
+  "provider": {
+    "plugin_id": "com.plotpilot.novelagent.narrative-analysis",
+    "release_id": "e85d0cdc25b757acbf3514c8175745f64c4ca9761fc2dd488d31a91fd00dad5b"
+  },
+  "input_schema": "analysis.narrative.plan.compile-request/v1",
+  "output_schema": "analysis.narrative.plan.compile-result/v1",
+  "result_contract": "candidate-batch/v1",
+  "supports": [
+    "run",
+    "validate"
+  ],
+  "deterministic": true,
+  "accepted_data_formats": [
+    "plot-structure-template/v1"
+  ]
+}

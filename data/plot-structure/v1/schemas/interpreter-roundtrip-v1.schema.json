@@ -1,0 +1,15 @@
+{
+  "$id": "https://plotpilot.local/data/plot-structure-template-interpreter-roundtrip-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "format_id", "interpreters", "forward_direction", "reverse_direction", "mergeable"],
+  "properties": {
+    "schema": {"const": "plot-structure-template-interpreter-roundtrip/v1"},
+    "format_id": {"const": "plot-structure-template/v1"},
+    "interpreters": {"type": "array", "minItems": 8, "maxItems": 8, "uniqueItems": true, "items": {"type": "object", "additionalProperties": false, "required": ["plugin_id", "capability_id"], "properties": {"plugin_id": {"type": "string", "minLength": 1}, "capability_id": {"type": "string", "minLength": 1}}}},
+    "forward_direction": {"const": "format_to_capability"},
+    "reverse_direction": {"const": "capability_to_format"},
+    "mergeable": {"const": false}
+  }
+}

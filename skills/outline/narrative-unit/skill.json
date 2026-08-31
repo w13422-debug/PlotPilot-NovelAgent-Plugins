@@ -1,0 +1,10 @@
+{
+  "schema": "plotpilot-skill/v1",
+  "skill_id": "com.plotpilot.skill.donor.narrative-unit",
+  "version": "1.0.0",
+  "display_name": "供体剧情单元提取",
+  "stage": "analysis",
+  "actions": [
+    "extract"
+  ]
+}

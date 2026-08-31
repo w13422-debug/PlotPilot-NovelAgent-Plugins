@@ -1,0 +1,17 @@
+{
+  "schema": "provider-schema-index/v1",
+  "plugin_id": "com.plotpilot.novelagent.outline-projection",
+  "capability_id": "outline.projection.render/v1",
+  "schemas": [
+    {
+      "schema_id": "outline.projection.render-request/v1",
+      "path": "schemas/render/input.schema.json",
+      "sha256": "ce3b1fbb7b01fc214340a94c592c73d26e3d5d3bd3405fd3ad4df76ccda8ab26"
+    },
+    {
+      "schema_id": "outline.projection.render-result/v1",
+      "path": "schemas/render/result.schema.json",
+      "sha256": "f9e1eb457ee3cefbfc105632603ed3c727ebab54eb759a74fc52b3b1a5ae752a"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "schema": "capability-provider/v1",
+  "capability_id": "outline.projection.render/v1",
+  "provider": {
+    "plugin_id": "com.plotpilot.novelagent.outline-projection",
+    "release_id": "5d74ee44c2b433f373198579e001ccb3248ec59a76239cc83708a1911d8f206d"
+  },
+  "input_schema": "outline.projection.render-request/v1",
+  "output_schema": "outline.projection.render-result/v1",
+  "result_contract": "artifact-bundle/v1",
+  "supports": [
+    "run",
+    "cancel"
+  ],
+  "deterministic": true,
+  "accepted_data_formats": []
+}

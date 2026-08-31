@@ -1,0 +1,22 @@
+{
+  "$id": "https://plotpilot.local/data/plot-structure-template-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "format_id", "template_set_id", "version", "templates", "interpreter_mappings", "mergeable"],
+  "properties": {
+    "schema": {"const": "plot-structure-template/v1"},
+    "format_id": {"const": "plot-structure-template/v1"},
+    "template_set_id": {"const": "com.plotpilot.novelagent.plot-structure-template"},
+    "version": {"const": "1.0.0"},
+    "templates": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/template"}},
+    "interpreter_mappings": {"type": "array", "minItems": 16, "maxItems": 16, "uniqueItems": true, "items": {"$ref": "#/$defs/interpreter"}},
+    "mergeable": {"const": false}
+  },
+  "$defs": {
+    "beat": {"type": "object", "additionalProperties": false, "required": ["beat_id", "label_zh", "order", "target_level", "purpose", "required"], "properties": {"beat_id": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"}, "label_zh": {"type": "string", "minLength": 1}, "order": {"type": "integer", "minimum": 0}, "target_level": {"enum": ["book", "volume", "chapter", "plot_unit"]}, "purpose": {"type": "string", "minLength": 1}, "required": {"type": "boolean"}}},
+    "constraints": {"type": "object", "additionalProperties": false, "required": ["ordered", "allow_optional_beats", "requires_evidence_closure", "authority"], "properties": {"ordered": {"const": true}, "allow_optional_beats": {"type": "boolean"}, "requires_evidence_closure": {"const": true}, "authority": {"const": "template_only"}}},
+    "template": {"type": "object", "additionalProperties": false, "required": ["template_id", "display_name", "levels", "beats", "constraints"], "properties": {"template_id": {"type": "string", "pattern": "^[a-z][a-z0-9_-]*$"}, "display_name": {"type": "string", "minLength": 1}, "levels": {"const": ["book", "volume", "chapter", "plot_unit"]}, "beats": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/beat"}}, "constraints": {"$ref": "#/$defs/constraints"}}},
+    "interpreter": {"type": "object", "additionalProperties": false, "required": ["format_id", "plugin_id", "capability_id", "direction"], "properties": {"format_id": {"const": "plot-structure-template/v1"}, "plugin_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"}, "capability_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"}, "direction": {"enum": ["format_to_capability", "capability_to_format"]}}}
+  }
+}

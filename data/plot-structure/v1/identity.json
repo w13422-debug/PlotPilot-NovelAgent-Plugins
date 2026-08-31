@@ -1,0 +1,10 @@
+{
+  "schema": "plot-structure-template-package-identity/v1",
+  "package_kind": "data",
+  "plugin_id": "com.plotpilot.novelagent.plot-structure-template",
+  "format_id": "plot-structure-template/v1",
+  "version": "1.0.0",
+  "package_hash": "fa96f117e9ce134c05911c377615c2cdeb2719f99914e329f0140773d80a2c06",
+  "release_id": "cabac87f1ed3ea74a6766093c0a9f3a912e38957fc9037ec6c3df1d5c238a3e3",
+  "separate_from_code_plugin_id": "com.plotpilot.novelagent.narrative-analysis"
+}

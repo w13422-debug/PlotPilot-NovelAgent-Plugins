@@ -1,0 +1,523 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "unit_id",
+    "unit_kind",
+    "title",
+    "summary",
+    "order",
+    "evidence_spans",
+    "source_attributions",
+    "relations",
+    "provenance"
+  ],
+  "properties": {
+    "schema": {
+      "const": "narrative-unit/v1"
+    },
+    "unit_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "unit_kind": {
+      "enum": [
+        "setup",
+        "beat",
+        "scene",
+        "turn",
+        "conflict",
+        "reversal",
+        "climax",
+        "resolution",
+        "foreshadow",
+        "payoff",
+        "other"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "summary": {
+      "type": "string"
+    },
+    "order": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "evidence_spans": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/evidence_span"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "source_attributions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/attribution"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/relation"
+      }
+    },
+    "provenance": {
+      "$ref": "#/$defs/provenance"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "narrative-unit/v1",
+  "title": "Narrative Unit v1",
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "evidence_span": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_span_id",
+        "schema",
+        "workspace_id",
+        "document_id",
+        "revision_id",
+        "node_id",
+        "start_codepoint",
+        "end_codepoint",
+        "quote",
+        "quote_hash",
+        "canonical_text_hash"
+      ],
+      "properties": {
+        "evidence_span_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "schema": {
+          "const": "evidence-span/v1"
+        },
+        "workspace_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "document_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "revision_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "node_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "start_codepoint": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end_codepoint": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "quote": {
+          "type": "string"
+        },
+        "quote_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "canonical_text_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "attribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attribution_id",
+        "source_type",
+        "workspace_id",
+        "source_id",
+        "revision_or_hash",
+        "evidence_span_ids",
+        "child_receipt_id"
+      ],
+      "properties": {
+        "attribution_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "source_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "workspace_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "revision_or_hash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_span_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "child_receipt_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "relation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "relation_type",
+        "target_unit_id"
+      ],
+      "properties": {
+        "relation_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target_unit_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_mode",
+        "model_receipt_id"
+      ],
+      "properties": {
+        "source_mode": {
+          "enum": [
+            "model",
+            "manual",
+            "broker"
+          ]
+        },
+        "model_receipt_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "template_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "data_plugin_id",
+        "data_release_id",
+        "package_hash",
+        "format_id",
+        "template_id"
+      ],
+      "properties": {
+        "data_plugin_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "data_release_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "package_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "format_id": {
+          "const": "plot-structure-template/v1"
+        },
+        "template_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        }
+      }
+    },
+    "unit_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "unit_id",
+        "payload_asset_id",
+        "payload_hash",
+        "order",
+        "evidence_span_ids",
+        "source_attribution_ids"
+      ],
+      "properties": {
+        "unit_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "payload_asset_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "payload_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "order": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "evidence_span_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "source_attribution_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    "hierarchy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "node_id",
+        "parent_node_id",
+        "level",
+        "title",
+        "unit_ids",
+        "order"
+      ],
+      "properties": {
+        "node_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "parent_node_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "level": {
+          "enum": [
+            "book",
+            "volume",
+            "chapter",
+            "plot_unit"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "unit_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "order": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "plan_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plan_id",
+        "payload_asset_id",
+        "payload_hash"
+      ],
+      "properties": {
+        "plan_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "payload_asset_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "payload_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "section": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "section_id",
+        "title",
+        "summary",
+        "unit_ids",
+        "evidence_span_ids",
+        "source_attribution_ids"
+      ],
+      "properties": {
+        "section_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "summary": {
+          "type": "string"
+        },
+        "unit_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "evidence_span_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "source_attribution_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    "child": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "binding_id",
+        "child_job_id",
+        "child_run_snapshot_hash",
+        "result_contract",
+        "result_bundle_asset_id",
+        "result_bundle_hash",
+        "provenance_receipt_id",
+        "broker_invocation_asset_id",
+        "broker_invocation_hash"
+      ],
+      "properties": {
+        "binding_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "child_job_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "child_run_snapshot_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "result_contract": {
+          "enum": [
+            "candidate-batch/v1",
+            "artifact-bundle/v1",
+            "diagnostic-bundle/v1"
+          ]
+        },
+        "result_bundle_asset_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "result_bundle_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "provenance_receipt_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "broker_invocation_asset_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "broker_invocation_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,1 @@
+用 plot-structure-template/v1 将已接受的剧情单元组织为不可变全书层级。输出业务 narrative-plan/v1，不得冒充 plugin-plan/v1。

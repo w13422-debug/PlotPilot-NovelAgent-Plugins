@@ -1,0 +1,181 @@
+{
+  "schema": "plot-structure-template/v1",
+  "format_id": "plot-structure-template/v1",
+  "template_set_id": "com.plotpilot.novelagent.plot-structure-template",
+  "version": "1.0.0",
+  "templates": [
+    {
+      "template_id": "general-longform-seven-beat",
+      "display_name": "通用长篇七节拍",
+      "levels": [
+        "book",
+        "volume",
+        "chapter",
+        "plot_unit"
+      ],
+      "beats": [
+        {
+          "beat_id": "setup",
+          "label_zh": "建立常态与目标",
+          "order": 10,
+          "target_level": "book",
+          "purpose": "固定故事承诺、主角目标与初始约束",
+          "required": true
+        },
+        {
+          "beat_id": "inciting_incident",
+          "label_zh": "诱发事件",
+          "order": 20,
+          "target_level": "volume",
+          "purpose": "打破常态并迫使行动",
+          "required": true
+        },
+        {
+          "beat_id": "progressive_complications",
+          "label_zh": "递进冲突",
+          "order": 30,
+          "target_level": "chapter",
+          "purpose": "逐步提高代价并暴露关系变化",
+          "required": true
+        },
+        {
+          "beat_id": "midpoint_reversal",
+          "label_zh": "中点转折",
+          "order": 40,
+          "target_level": "volume",
+          "purpose": "改变目标理解或力量格局",
+          "required": false
+        },
+        {
+          "beat_id": "crisis",
+          "label_zh": "危机选择",
+          "order": 50,
+          "target_level": "chapter",
+          "purpose": "迫使不可兼得的选择",
+          "required": true
+        },
+        {
+          "beat_id": "climax",
+          "label_zh": "高潮兑现",
+          "order": 60,
+          "target_level": "plot_unit",
+          "purpose": "兑现核心冲突与人物行动",
+          "required": true
+        },
+        {
+          "beat_id": "resolution",
+          "label_zh": "结果与余波",
+          "order": 70,
+          "target_level": "chapter",
+          "purpose": "展示后果并闭合或延续线索",
+          "required": true
+        }
+      ],
+      "constraints": {
+        "ordered": true,
+        "allow_optional_beats": true,
+        "requires_evidence_closure": true,
+        "authority": "template_only"
+      }
+    }
+  ],
+  "interpreter_mappings": [
+    {
+      "format_id": "plot-structure-template/v1",
+      "plugin_id": "com.plotpilot.novelagent.narrative-analysis",
+      "capability_id": "analysis.narrative.unit.extract/v1",
+      "direction": "format_to_capability"
+    },
+    {
+      "format_id": "plot-structure-template/v1",
+      "plugin_id": "com.plotpilot.novelagent.narrative-analysis",
+      "capability_id": "analysis.narrative.unit.extract/v1",
+      "direction": "capability_to_format"
+    },
+    {
+      "format_id": "plot-structure-template/v1",
+      "plugin_id": "com.plotpilot.novelagent.narrative-analysis",
+      "capability_id": "analysis.narrative.plan.compile/v1",
+      "direction": "format_to_capability"
+    },
+    {
+      "format_id": "plot-structure-template/v1",
+      "plugin_id": "com.plotpilot.novelagent.narrative-analysis",
+      "capability_id": "analysis.narrative.plan.compile/v1",
+      "direction": "capability_to_format"
+    },
+    {
+      "format_id": "plot-structure-template/v1",
+      "plugin_id": "com.plotpilot.novelagent.narrative-analysis",
+      "capability_id": "analysis.narrative.synthesize/v1",
+      "direction": "format_to_capability"
+    },
+    {
+      "format_id": "plot-structure-template/v1",
+      "plugin_id": "com.plotpilot.novelagent.narrative-analysis",
+      "capability_id": "analysis.narrative.synthesize/v1",
+      "direction": "capability_to_format"
+    },
+    {
+      "format_id": "plot-structure-template/v1",
+      "plugin_id": "com.plotpilot.novelagent.asset-derivation",
+      "capability_id": "asset.template.derive/v1",
+      "direction": "format_to_capability"
+    },
+    {
+      "format_id": "plot-structure-template/v1",
+      "plugin_id": "com.plotpilot.novelagent.asset-derivation",
+      "capability_id": "asset.template.derive/v1",
+      "direction": "capability_to_format"
+    },
+    {
+      "format_id": "plot-structure-template/v1",
+      "plugin_id": "com.plotpilot.novelagent.writing-context",
+      "capability_id": "writing.context.assemble/v1",
+      "direction": "format_to_capability"
+    },
+    {
+      "format_id": "plot-structure-template/v1",
+      "plugin_id": "com.plotpilot.novelagent.writing-context",
+      "capability_id": "writing.context.assemble/v1",
+      "direction": "capability_to_format"
+    },
+    {
+      "format_id": "plot-structure-template/v1",
+      "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+      "capability_id": "writing.project.outline/v1",
+      "direction": "format_to_capability"
+    },
+    {
+      "format_id": "plot-structure-template/v1",
+      "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+      "capability_id": "writing.project.outline/v1",
+      "direction": "capability_to_format"
+    },
+    {
+      "format_id": "plot-structure-template/v1",
+      "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+      "capability_id": "writing.volume.outline/v1",
+      "direction": "format_to_capability"
+    },
+    {
+      "format_id": "plot-structure-template/v1",
+      "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+      "capability_id": "writing.volume.outline/v1",
+      "direction": "capability_to_format"
+    },
+    {
+      "format_id": "plot-structure-template/v1",
+      "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+      "capability_id": "writing.chapter.outline/v1",
+      "direction": "format_to_capability"
+    },
+    {
+      "format_id": "plot-structure-template/v1",
+      "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+      "capability_id": "writing.chapter.outline/v1",
+      "direction": "capability_to_format"
+    }
+  ],
+  "mergeable": false
+}

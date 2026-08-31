@@ -1,0 +1,19 @@
+{
+  "schema": "plugin-data-bundle/v1",
+  "bundle_id": "plot-structure-template-v1-bundle",
+  "data_plugin_id": "com.plotpilot.novelagent.plot-structure-template",
+  "data_release_id": "cabac87f1ed3ea74a6766093c0a9f3a912e38957fc9037ec6c3df1d5c238a3e3",
+  "package_hash": "fa96f117e9ce134c05911c377615c2cdeb2719f99914e329f0140773d80a2c06",
+  "format_id": "plot-structure-template/v1",
+  "root_path": "data/templates.json",
+  "files": [
+    {
+      "path": "data/templates.json",
+      "asset_id": "asset-plot-structure-template-v1",
+      "sha256": "c63c9f0fb3daa8db15c0789ca5720db436c9e53be1d8f0c13caef397d07c88f5",
+      "mime": "application/json",
+      "size": 5968
+    }
+  ],
+  "bundle_hash": "1abab9f99254940268542eccda332c1b88a1b967ca5bfa108a44f239f01333e9"
+}

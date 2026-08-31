@@ -1,0 +1,17 @@
+{
+  "schema": "provider-schema-index/v1",
+  "plugin_id": "com.plotpilot.novelagent.narrative-analysis",
+  "capability_id": "analysis.narrative.synthesize/v1",
+  "schemas": [
+    {
+      "schema_id": "analysis.narrative.synthesize-request/v1",
+      "path": "schemas/synthesize/input.schema.json",
+      "sha256": "7a4e83b22b1ddf87264046c760ccc6d88b7955f5fb275c3e56200269552fbacb"
+    },
+    {
+      "schema_id": "analysis.narrative.synthesize-result/v1",
+      "path": "schemas/synthesize/result.schema.json",
+      "sha256": "4f526d9fe3979555b4edc95c054a847bdd939cb084c2e8b9e5497f8686a1ffd5"
+    }
+  ]
+}
