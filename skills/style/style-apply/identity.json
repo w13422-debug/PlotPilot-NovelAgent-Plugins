@@ -1,0 +1,14 @@
+{
+  "schema": "style-skill-package-identity/v1",
+  "package_kind": "skill",
+  "skill_id": "com.plotpilot.skill.style.apply",
+  "version": "1.0.0",
+  "skill_package_hash": "c28e46b7b4c21f7b545b60b7106bceff615f90c69528d35fae9e350957e75886",
+  "skill_release_id": "9a4edff3c4d3e843a14c5a0b3f8435e26c26b07aba278bec98108770331124ab",
+  "separate_from_style_release_domain": "style-release/v1",
+  "separate_from_data_release_domain": "plotpilot-release/v1",
+  "separate_from_code_plugin_ids": [
+    "com.plotpilot.novelagent.style-manufacturing",
+    "com.plotpilot.novelagent.style-runtime"
+  ]
+}

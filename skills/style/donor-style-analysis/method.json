@@ -1,0 +1,10 @@
+{
+  "schema": "style-skill-method/v1",
+  "skill_id": "com.plotpilot.skill.donor.style-analysis",
+  "input_format_ids": ["book-analysis-taxonomy/v1", "lexicon/v1"],
+  "capability_ids": ["style.manufacture/v1", "style.qualify/v1"],
+  "result_contracts": ["candidate-batch/v1", "diagnostic-bundle/v1"],
+  "rules": ["exact_source_cas", "evidence_before_inference", "independent_qualification_path", "style_never_skill", "no_publication_authority"],
+  "authority": "candidate_or_diagnostic_only",
+  "identity_boundary": "skill_never_style_or_data"
+}

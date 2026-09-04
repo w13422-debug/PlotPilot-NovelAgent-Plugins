@@ -1,0 +1,78 @@
+{
+  "$id": "https://plotpilot.local/data/lexicon-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "lexicon_id",
+    "version",
+    "normalization",
+    "conflict_policy",
+    "entries"
+  ],
+  "properties": {
+    "schema": {
+      "const": "lexicon/v1"
+    },
+    "lexicon_id": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:-(?:0|[1-9][0-9]*|[0-9A-Za-z-]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9A-Za-z-]*[A-Za-z-][0-9A-Za-z-]*))*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
+    },
+    "normalization": {
+      "const": "unicode-nfc-casefold-v1"
+    },
+    "conflict_policy": {
+      "const": "highest-priority-then-plugin-id-byte-order"
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "term",
+          "normalized_term",
+          "preferred",
+          "aliases",
+          "forbidden",
+          "note",
+          "priority",
+          "source_plugin_id"
+        ],
+        "properties": {
+          "term": {
+            "type": "string"
+          },
+          "normalized_term": {
+            "type": "string"
+          },
+          "preferred": {
+            "type": "string"
+          },
+          "aliases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "forbidden": {
+            "type": "boolean"
+          },
+          "note": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "integer"
+          },
+          "source_plugin_id": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

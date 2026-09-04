@@ -1,0 +1,14 @@
+{
+  "schema": "style-runtime-package-identity/v1",
+  "package_kind": "code",
+  "plugin_id": "com.plotpilot.novelagent.style-runtime",
+  "version": "0.1.0",
+  "package_hash": "f4da997d04c58bdbcf6a13f2d1fdfde279d28daa7b24e68942a136bf3bfe0c7a",
+  "release_id": "3bfac8ae0761539cfccb0efeeef995eb4932518c43aa33dd8cf1d750e8ecfacd",
+  "identity_separation": {
+    "style_release_domain": "style-release/v1",
+    "data_release_domain": "plotpilot-release/v1",
+    "skill_release_domain": "plotpilot-skill-release/v1",
+    "code_release_domain": "plotpilot-release/v1"
+  }
+}

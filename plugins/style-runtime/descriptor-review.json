@@ -1,0 +1,21 @@
+{
+  "schema": "capability-provider/v1",
+  "capability_id": "style.review/v1",
+  "provider": {
+    "plugin_id": "com.plotpilot.novelagent.style-runtime",
+    "release_id": "3bfac8ae0761539cfccb0efeeef995eb4932518c43aa33dd8cf1d750e8ecfacd"
+  },
+  "input_schema": "style.review-request/v1",
+  "output_schema": "style.review-result/v1",
+  "result_contract": "diagnostic-bundle/v1",
+  "supports": [
+    "run",
+    "resume",
+    "cancel"
+  ],
+  "deterministic": false,
+  "accepted_data_formats": [
+    "style-pack/v1",
+    "quality-rubric/v1"
+  ]
+}

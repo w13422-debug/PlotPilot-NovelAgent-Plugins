@@ -1,0 +1,1 @@
+Analyze only the exact frozen source CAS and frozen taxonomy/lexicon bindings. Separate observation from inference, preserve source evidence and model-attempt receipts, and never claim qualification. Qualification must use an independent writer/reviewer route. Produce only Candidate or diagnostic content for Core; a Skill identity is never a Style release or Data release.

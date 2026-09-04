@@ -1,0 +1,19 @@
+{
+  "schema": "capability-provider/v1",
+  "capability_id": "style.data-plugin.package/v1",
+  "provider": {
+    "plugin_id": "com.plotpilot.novelagent.style-manufacturing",
+    "release_id": "e217d3b901ee66ebcc922d078fa9bcb3deae040816076dbb568f44afd7f1802f"
+  },
+  "input_schema": "style.data-plugin.package-request/v1",
+  "output_schema": "style.data-plugin.package-result/v1",
+  "result_contract": "artifact-bundle/v1",
+  "supports": [
+    "run",
+    "validate"
+  ],
+  "deterministic": true,
+  "accepted_data_formats": [
+    "style-pack/v1"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "schema": "style-manufacturing-package-identity/v1",
+  "plugin_id": "com.plotpilot.novelagent.style-manufacturing",
+  "version": "0.1.0",
+  "package_hash": "801379f39cf60e3733ba8844c191ebaa34f5415e7761e938d22f09dbbc26787f",
+  "release_id": "e217d3b901ee66ebcc922d078fa9bcb3deae040816076dbb568f44afd7f1802f"
+}

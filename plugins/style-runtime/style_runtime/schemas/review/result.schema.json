@@ -1,0 +1,9 @@
+{
+  "$id": "https://plotpilot.local/schemas/style.review-result-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "allOf": [{"$ref": "https://plotpilot.local/contracts/result-bundle-v1"}],
+  "properties": {"schema": {}, "contract_id": {"const": "diagnostic-bundle/v1"}, "bundle_id": {}, "bundle_type": {"const": "diagnostic"}, "producer": {}, "input_snapshot_hash": {}, "items": {}, "warnings": {}, "partial": {}, "provenance_receipt_id": {}, "skill_chain_result_refs": {}},
+  "required": ["contract_id", "bundle_type"]
+}

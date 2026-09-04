@@ -1,0 +1,34 @@
+{
+  "$id": "https://plotpilot.local/data/lexicon-merge-fixture-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "inputs",
+    "expected",
+    "conflict_rules"
+  ],
+  "properties": {
+    "schema": {
+      "const": "lexicon-merge-fixture/v1"
+    },
+    "inputs": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "$ref": "lexicon-v1.schema.json"
+      }
+    },
+    "expected": {
+      "$ref": "lexicon-v1.schema.json"
+    },
+    "conflict_rules": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

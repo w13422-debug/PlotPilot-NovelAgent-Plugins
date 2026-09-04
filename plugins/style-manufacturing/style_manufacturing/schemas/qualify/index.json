@@ -1,0 +1,17 @@
+{
+  "schema": "provider-schema-index/v1",
+  "plugin_id": "com.plotpilot.novelagent.style-manufacturing",
+  "capability_id": "style.qualify/v1",
+  "schemas": [
+    {
+      "schema_id": "style.qualify-request/v1",
+      "path": "schemas/qualify/input.schema.json",
+      "sha256": "1f4cd22e06e0d44df3c72140c92b8a6ed9d69ea7a304d284c0445a664b833c15"
+    },
+    {
+      "schema_id": "style.qualify-result/v1",
+      "path": "schemas/qualify/result.schema.json",
+      "sha256": "aa3516b120ce202de3c8305d13fc45f2c555f2aaf2c2fc51c624dedcf2ade824"
+    }
+  ]
+}

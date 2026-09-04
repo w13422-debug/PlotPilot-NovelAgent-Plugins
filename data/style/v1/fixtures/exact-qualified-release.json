@@ -1,0 +1,120 @@
+{
+  "schema": "style-pack-qualification-fixture/v1",
+  "style_pack": {
+    "schema": "style-pack/v1",
+    "style_pack_id": "com.plotpilot.style.core-default",
+    "version": "1.0.0",
+    "style_release_id": "f8def5e6b41368e13081a2319ae331b92b34848bd376d2ae3819f11525a600a7",
+    "payload_hash": "a4aca0c7f3dfd74d646b322d029919289610e987309a95ef4fecf6626fcc9e1f",
+    "source_cas": {
+      "asset_id": "asset-style-source-core-default",
+      "sha256": "e052a056094c2f5216a3bab30236b6d552af9c542d519da7a526c3a555ce76dc",
+      "revision_id": "revision-style-source-core-default"
+    },
+    "target_cas": {
+      "workspace_id": "workspace-style-library",
+      "entity_id": "style-core-default",
+      "base_revision_id": "revision-style-base-1",
+      "base_content_hash": "609795e92e3b023187610a40b30db24ad49f648d3fbbdfd58fb9758c437b0509"
+    },
+    "manufacture_snapshot": {
+      "run_snapshot_hash": "fb93db90e4064b9106f550fde93b6e2f25f5331a99e9e42fc5dc782c8da4cccc",
+      "route_id": "route-style-manufacturer",
+      "prompt_hash": "8967b6d2bbd40b23d96cd5841c839b96600d4fa343c72e1b3bd01c897b38b664",
+      "output_schema_hash": "fefc70e1b3c6f395c0dfea253752cab32d14aeba5ebb8c8be78d19387a9f8fd6",
+      "chunk_plan_hash": "cb55d9b145ca8592dfcfe9885b9a56bc6da42c2671a22098d06865dafc47d1c9",
+      "provider_attempt_ids": [
+        "provider-attempt-manufacturer-1"
+      ],
+      "checkpoint_ids": [
+        "checkpoint-style-manufacturer-1"
+      ],
+      "usage": {
+        "input_tokens": 128,
+        "output_tokens": 64,
+        "total_tokens": 192
+      }
+    },
+    "features": {
+      "voice": [
+        "克制",
+        "清晰"
+      ],
+      "rhythm": [
+        "短长句交错"
+      ],
+      "syntax": [
+        "主动句优先"
+      ],
+      "imagery": [
+        "自然意象"
+      ],
+      "taboos": [
+        "空泛堆砌"
+      ]
+    },
+    "lexicon_bindings": [],
+    "constraints": [
+      "不复制范文句子",
+      "不改变事实"
+    ],
+    "exemplar_hashes": [
+      "e052a056094c2f5216a3bab30236b6d552af9c542d519da7a526c3a555ce76dc"
+    ]
+  },
+  "qualification_receipt": {
+    "schema": "author-style-qualification-receipt/v1",
+    "receipt_id": "style-qualification-core-default",
+    "style_pack_id": "com.plotpilot.style.core-default",
+    "style_release_id": "f8def5e6b41368e13081a2319ae331b92b34848bd376d2ae3819f11525a600a7",
+    "style_payload_hash": "a4aca0c7f3dfd74d646b322d029919289610e987309a95ef4fecf6626fcc9e1f",
+    "qualification_run_snapshot_hash": "0e17298274d9b9085bf0580b5127f5fb4ff2f36feded44b60e20db1e39700c30",
+    "rubric_hash": "0aba288f9d9146f8cf63393c86147cdd9bfcda24a95c514b36d907086dfac4f3",
+    "manufacturing_route_id": "route-style-manufacturer",
+    "writer_route_id": "route-style-writer-blind",
+    "reviewer_route_id": "route-style-reviewer-blind",
+    "manufacturing_attempt_ids": [
+      "provider-attempt-manufacturer-1"
+    ],
+    "writer_attempt_ids": [
+      "provider-attempt-writer-1"
+    ],
+    "reviewer_attempt_ids": [
+      "provider-attempt-reviewer-1"
+    ],
+    "case_results": [
+      {
+        "case_id": "blind-case-1",
+        "writer_output_hash": "0beb760a1e27209b1db14021d4964c4c6a4a79e8e2bcdef97de860eb81e69aab",
+        "review_output_hash": "19f365a95185035965832eb2ea072ba6a9741ba32c7a5348260ab681856818f1",
+        "score_0_100": 89,
+        "passed": true
+      },
+      {
+        "case_id": "blind-case-2",
+        "writer_output_hash": "ac07d2c0740d7c036e9544a72620ae6077e2e3e4b14fa9dbd3673b9c3642f765",
+        "review_output_hash": "72bbeb75306e44a7f5ce5b9d9c2faa6d624336110eaf089416bbdbee934f5d85",
+        "score_0_100": 88,
+        "passed": true
+      },
+      {
+        "case_id": "blind-case-3",
+        "writer_output_hash": "281a444f9659b0f4a73be1d50c9ebcd62476fa30728c0540a33820ade24eb88e",
+        "review_output_hash": "1d795ba0b258280096c1cd959a4505736a3e1e76c7a0b809aca826f1279f8057",
+        "score_0_100": 87,
+        "passed": true
+      }
+    ],
+    "decision": "pass",
+    "automatic_eligible": true,
+    "created_at": "2026-08-30T09:00:00Z",
+    "receipt_hash": "4acb599b2fd29cd06701979edb3e2bc3c53848d8f8f8ec2722bfa8c4e8013119"
+  },
+  "exact_release_eligible": true,
+  "identity_domains": {
+    "style": "style-release/v1",
+    "data_or_code": "plotpilot-release/v1",
+    "skill": "plotpilot-skill-release/v1",
+    "code_plugin_id": "com.plotpilot.novelagent.style-manufacturing"
+  }
+}

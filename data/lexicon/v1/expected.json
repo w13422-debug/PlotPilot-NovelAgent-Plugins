@@ -1,0 +1,35 @@
+{
+  "schema": "lexicon-data-package-expected/v1",
+  "package_kind": "data",
+  "plugin_id": "com.plotpilot.novelagent.lexicon.zh-core",
+  "format_id": "lexicon/v1",
+  "version": "1.0.0",
+  "manifest_path": "plugin.json",
+  "root_path": "data/lexicon.json",
+  "package_files": [
+    "data/lexicon.json",
+    "fixtures/merge-conflicts.json",
+    "plugin.json",
+    "schemas/lexicon-merge-fixture-v1.schema.json",
+    "schemas/lexicon-v1.schema.json"
+  ],
+  "files_sha256": "69157c9cf3009535314b9f7c46b492c6ab0ecf04904661e0b112e46cc2244ad1  data/lexicon.json\nc389e6b6059c08915e47e51b80f59dce0b04cf508efaa86daf72c807cb54c723  fixtures/merge-conflicts.json\n5d1c5768f98df04a2209ad5d4916224ff21e7039a1011721119e3057ce6b19e2  plugin.json\n3ddea58e15fae9bdf86c30b5edc3e94e1d972d2a13011a1c3d7c71313e3cbefb  schemas/lexicon-merge-fixture-v1.schema.json\n844cef6d5623e4153971b5dc5c10f172ef686ea17da55246b8120dbf24338c28  schemas/lexicon-v1.schema.json\n",
+  "fixture_hashes": {
+    "data/lexicon.json": "69157c9cf3009535314b9f7c46b492c6ab0ecf04904661e0b112e46cc2244ad1",
+    "fixtures/merge-conflicts.json": "c389e6b6059c08915e47e51b80f59dce0b04cf508efaa86daf72c807cb54c723",
+    "plugin.json": "5d1c5768f98df04a2209ad5d4916224ff21e7039a1011721119e3057ce6b19e2",
+    "schemas/lexicon-v1.schema.json": "844cef6d5623e4153971b5dc5c10f172ef686ea17da55246b8120dbf24338c28",
+    "schemas/lexicon-merge-fixture-v1.schema.json": "3ddea58e15fae9bdf86c30b5edc3e94e1d972d2a13011a1c3d7c71313e3cbefb"
+  },
+  "package_hash": "f45958534c42d8252a79c6a9a9eae6aae0e534636bc70ffdb28c23312c268d82",
+  "release_id": "517551dc4a4937fdb1f4c911f156546f8852b2312370945aa38e06f0fa851f4c",
+  "bundle_hash": "614510f745b743f70427701d8d813da0756284357d1a5d90005f525c5a668cb7",
+  "identity_path": "identity.json",
+  "merge_policy": "highest-priority-then-plugin-id-byte-order",
+  "identity_domains": {
+    "style": "style-release/v1",
+    "data_or_code": "plotpilot-release/v1",
+    "skill": "plotpilot-skill-release/v1",
+    "code_plugin_id": "com.plotpilot.novelagent.style-manufacturing"
+  }
+}

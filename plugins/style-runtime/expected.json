@@ -1,0 +1,223 @@
+{
+  "schema": "style-runtime-package-expected/v1",
+  "plugin_id": "com.plotpilot.novelagent.style-runtime",
+  "version": "0.1.0",
+  "package_files": [
+    "backend/plotpilot_style_runtime-0.1.0-py3-none-any.whl",
+    "backend/requirements.lock",
+    "backend/wheels/README.txt",
+    "descriptor-refine.json",
+    "descriptor-review.json",
+    "descriptor.json",
+    "files.sha256",
+    "migrations/manifest.json",
+    "plugin.json",
+    "pyproject.toml",
+    "rebuild_package.py",
+    "style_runtime/__init__.py",
+    "style_runtime/build_backend.py",
+    "style_runtime/capability_spec.py",
+    "style_runtime/contract.py",
+    "style_runtime/identity.json",
+    "style_runtime/package_identity.py",
+    "style_runtime/runtime.py",
+    "style_runtime/schemas/apply/index.json",
+    "style_runtime/schemas/apply/input.schema.json",
+    "style_runtime/schemas/apply/result.schema.json",
+    "style_runtime/schemas/refine/index.json",
+    "style_runtime/schemas/refine/input.schema.json",
+    "style_runtime/schemas/refine/result.schema.json",
+    "style_runtime/schemas/review/index.json",
+    "style_runtime/schemas/review/input.schema.json",
+    "style_runtime/schemas/review/result.schema.json",
+    "ui/metadata-only.json"
+  ],
+  "files_sha256": "1c38bf8ab553658b35c566aca89a9793447a43a0fe51b11b139c37d531c1b456  backend/plotpilot_style_runtime-0.1.0-py3-none-any.whl\nf21193e7c1257b22d7a0a143263443020ec361cff1db75f22283254d15915b0e  backend/requirements.lock\n00c5a5f4ebf9fe046caffb12a70bc4010d479b02e5a03cb7beb5381c75200fd2  backend/wheels/README.txt\n75438e1a4c537a39143c7e57cf9868245f192d7221aa5d6b05cd36479b77b69f  migrations/manifest.json\n9c9bd61c8c4d0a501afd184cff316078d5c1c001a470a56613f4e96ed451d874  plugin.json\n277672093fb26f48db3f35489fc9a864ad573242aa12db2c2a6f80657f968a60  pyproject.toml\nb29e032984ad80bb357ac124aaa77737f632bc38504f4b095c14e42d5a3ed761  rebuild_package.py\ne3192834fdfeb0683e097018ee93c5bcd747eb66ea9a1cd74aa296790aff3164  style_runtime/__init__.py\n16fd2266729a96ad080231abec085a005c74085a57673191905a7b4fc991a03e  style_runtime/build_backend.py\ne9b4a7d4f8413ca4e9e765a001dedcf93807c40806d92ef3ceebcba9cc55575b  style_runtime/capability_spec.py\n8ee16d4abe02f82fed40b7fc95489d4ed4b0917ff15408490f5b9b69f3ed7bd4  style_runtime/contract.py\n230d87fb25a5721e3603991b92e87dee794a457636fa78a0a647cf09c35dd6ae  style_runtime/package_identity.py\n2cbec644088010ff13652c3f266eba5d255e40d95cd661754652e58a68568646  style_runtime/runtime.py\n269209e0b1d3a351b8397c0dc42de8b469fb8c588b6c16e523c15a214c207adc  style_runtime/schemas/apply/index.json\n9801b3337223267361b5289e057686f502734ab5dcde3df9fc687a50ebef654a  style_runtime/schemas/apply/input.schema.json\n5d09eb085b527761930e04bb19fd80f68f731024add0c3882187a9bf77892d5e  style_runtime/schemas/apply/result.schema.json\n6e2ee8c18bc674a496bc87fb72a4215c706ee41cf6bc0f57c24d491c03242108  style_runtime/schemas/refine/index.json\n02a6db6c1a729c82f3fabbff15f3bb2c0803a11a6d7b34d145b5f7ccfaa9cd5b  style_runtime/schemas/refine/input.schema.json\nace37640a70098aea4b9f203e869e949eb7697ebf1a3a84c83fd6bbcebfd3d9a  style_runtime/schemas/refine/result.schema.json\n55509257de1992bda4a642ad5d19f80c3f018df9ab28f1839e73da6bfde1584e  style_runtime/schemas/review/index.json\n7d8e9856a40ec2bd114474a3aefe488ed4b4dc8fe4ee7a8f2b2e20e4cdf97fa0  style_runtime/schemas/review/input.schema.json\nb9b6983fed82919f2ffec1bbe37de52e45bfdf0d1006124ca53beff916dcec7b  style_runtime/schemas/review/result.schema.json\nf7cf6bbd8e37ace34357f28e148cb36a2eef523413edc3aedbc4c087a13f48fb  ui/metadata-only.json\n",
+  "package_hash": "f4da997d04c58bdbcf6a13f2d1fdfde279d28daa7b24e68942a136bf3bfe0c7a",
+  "release_id": "3bfac8ae0761539cfccb0efeeef995eb4932518c43aa33dd8cf1d750e8ecfacd",
+  "provider_identity": {
+    "schema": "style-runtime-package-identity/v1",
+    "package_kind": "code",
+    "plugin_id": "com.plotpilot.novelagent.style-runtime",
+    "version": "0.1.0",
+    "package_hash": "f4da997d04c58bdbcf6a13f2d1fdfde279d28daa7b24e68942a136bf3bfe0c7a",
+    "release_id": "3bfac8ae0761539cfccb0efeeef995eb4932518c43aa33dd8cf1d750e8ecfacd",
+    "identity_separation": {
+      "style_release_domain": "style-release/v1",
+      "data_release_domain": "plotpilot-release/v1",
+      "skill_release_domain": "plotpilot-skill-release/v1",
+      "code_release_domain": "plotpilot-release/v1"
+    }
+  },
+  "capability_projection": [
+    {
+      "capability_id": "style.apply/v1",
+      "descriptor_path": "descriptor.json",
+      "schema_index_path": "style_runtime/schemas/apply/index.json",
+      "input_schema": "style.apply-request/v1",
+      "output_schema": "style.apply-result/v1",
+      "result_contract": "candidate-batch/v1",
+      "bundle_type": "candidate_batch",
+      "supports": [
+        "run",
+        "resume",
+        "cancel"
+      ],
+      "deterministic": false,
+      "accepted_data_formats": [
+        "style-pack/v1",
+        "lexicon/v1"
+      ],
+      "ui_contributions": [
+        {
+          "contribution_id": "nap-ui-style-apply-v1-workbench-reference-panel",
+          "slot": "workbench.reference.panel"
+        },
+        {
+          "contribution_id": "nap-ui-style-apply-v1-workbench-generate-context",
+          "slot": "workbench.generate.context"
+        }
+      ]
+    },
+    {
+      "capability_id": "style.review/v1",
+      "descriptor_path": "descriptor-review.json",
+      "schema_index_path": "style_runtime/schemas/review/index.json",
+      "input_schema": "style.review-request/v1",
+      "output_schema": "style.review-result/v1",
+      "result_contract": "diagnostic-bundle/v1",
+      "bundle_type": "diagnostic",
+      "supports": [
+        "run",
+        "resume",
+        "cancel"
+      ],
+      "deterministic": false,
+      "accepted_data_formats": [
+        "style-pack/v1",
+        "quality-rubric/v1"
+      ],
+      "ui_contributions": [
+        {
+          "contribution_id": "nap-ui-style-review-v1-workbench-quality-panel",
+          "slot": "workbench.quality.panel"
+        }
+      ]
+    },
+    {
+      "capability_id": "style.refine/v1",
+      "descriptor_path": "descriptor-refine.json",
+      "schema_index_path": "style_runtime/schemas/refine/index.json",
+      "input_schema": "style.refine-request/v1",
+      "output_schema": "style.refine-result/v1",
+      "result_contract": "candidate-batch/v1",
+      "bundle_type": "candidate_batch",
+      "supports": [
+        "run",
+        "resume",
+        "cancel"
+      ],
+      "deterministic": false,
+      "accepted_data_formats": [
+        "style-pack/v1",
+        "quality-rubric/v1"
+      ],
+      "ui_contributions": [
+        {
+          "contribution_id": "nap-ui-style-refine-v1-workbench-quality-panel",
+          "slot": "workbench.quality.panel"
+        }
+      ]
+    }
+  ],
+  "capability_projection_sha256": "5c3c2708d6ed73005fa35293aa2fb43ab9bcd55b0144248da10916d444e99c9f",
+  "descriptor_paths": [
+    "descriptor.json",
+    "descriptor-review.json",
+    "descriptor-refine.json"
+  ],
+  "descriptor_sha256": {
+    "descriptor.json": "1c46a50e5eb17bc762e10ce2c60c4ceafb7ede8c697a984b62c6e453460acb17",
+    "descriptor-review.json": "066a450a645f15f9f0e5431680a1334051769622b7ddca50b101188911c6b37f",
+    "descriptor-refine.json": "42cb33e8542ca894131cf9a213bf6c6d9f01bb58f47d8a90ff65287d7cadac65"
+  },
+  "descriptor_provider_identity": {
+    "descriptor.json": {
+      "plugin_id": "com.plotpilot.novelagent.style-runtime",
+      "release_id": "3bfac8ae0761539cfccb0efeeef995eb4932518c43aa33dd8cf1d750e8ecfacd"
+    },
+    "descriptor-review.json": {
+      "plugin_id": "com.plotpilot.novelagent.style-runtime",
+      "release_id": "3bfac8ae0761539cfccb0efeeef995eb4932518c43aa33dd8cf1d750e8ecfacd"
+    },
+    "descriptor-refine.json": {
+      "plugin_id": "com.plotpilot.novelagent.style-runtime",
+      "release_id": "3bfac8ae0761539cfccb0efeeef995eb4932518c43aa33dd8cf1d750e8ecfacd"
+    }
+  },
+  "schema_index_paths": {
+    "style.apply/v1": "style_runtime/schemas/apply/index.json",
+    "style.review/v1": "style_runtime/schemas/review/index.json",
+    "style.refine/v1": "style_runtime/schemas/refine/index.json"
+  },
+  "schema_index_path_list": [
+    "style_runtime/schemas/apply/index.json",
+    "style_runtime/schemas/review/index.json",
+    "style_runtime/schemas/refine/index.json"
+  ],
+  "schema_index_sha256": {
+    "style_runtime/schemas/apply/index.json": "269209e0b1d3a351b8397c0dc42de8b469fb8c588b6c16e523c15a214c207adc",
+    "style_runtime/schemas/review/index.json": "55509257de1992bda4a642ad5d19f80c3f018df9ab28f1839e73da6bfde1584e",
+    "style_runtime/schemas/refine/index.json": "6e2ee8c18bc674a496bc87fb72a4215c706ee41cf6bc0f57c24d491c03242108"
+  },
+  "schema_artifacts": {
+    "style_runtime/schemas/apply/index.json": [
+      {
+        "schema_id": "style.apply-request/v1",
+        "path": "schemas/apply/input.schema.json",
+        "sha256": "9801b3337223267361b5289e057686f502734ab5dcde3df9fc687a50ebef654a"
+      },
+      {
+        "schema_id": "style.apply-result/v1",
+        "path": "schemas/apply/result.schema.json",
+        "sha256": "5d09eb085b527761930e04bb19fd80f68f731024add0c3882187a9bf77892d5e"
+      }
+    ],
+    "style_runtime/schemas/review/index.json": [
+      {
+        "schema_id": "style.review-request/v1",
+        "path": "schemas/review/input.schema.json",
+        "sha256": "7d8e9856a40ec2bd114474a3aefe488ed4b4dc8fe4ee7a8f2b2e20e4cdf97fa0"
+      },
+      {
+        "schema_id": "style.review-result/v1",
+        "path": "schemas/review/result.schema.json",
+        "sha256": "b9b6983fed82919f2ffec1bbe37de52e45bfdf0d1006124ca53beff916dcec7b"
+      }
+    ],
+    "style_runtime/schemas/refine/index.json": [
+      {
+        "schema_id": "style.refine-request/v1",
+        "path": "schemas/refine/input.schema.json",
+        "sha256": "02a6db6c1a729c82f3fabbff15f3bb2c0803a11a6d7b34d145b5f7ccfaa9cd5b"
+      },
+      {
+        "schema_id": "style.refine-result/v1",
+        "path": "schemas/refine/result.schema.json",
+        "sha256": "ace37640a70098aea4b9f203e869e949eb7697ebf1a3a84c83fd6bbcebfd3d9a"
+      }
+    ]
+  },
+  "schema_artifact_sha256": {
+    "style_runtime/schemas/apply/input.schema.json": "9801b3337223267361b5289e057686f502734ab5dcde3df9fc687a50ebef654a",
+    "style_runtime/schemas/apply/result.schema.json": "5d09eb085b527761930e04bb19fd80f68f731024add0c3882187a9bf77892d5e",
+    "style_runtime/schemas/refine/input.schema.json": "02a6db6c1a729c82f3fabbff15f3bb2c0803a11a6d7b34d145b5f7ccfaa9cd5b",
+    "style_runtime/schemas/refine/result.schema.json": "ace37640a70098aea4b9f203e869e949eb7697ebf1a3a84c83fd6bbcebfd3d9a",
+    "style_runtime/schemas/review/input.schema.json": "7d8e9856a40ec2bd114474a3aefe488ed4b4dc8fe4ee7a8f2b2e20e4cdf97fa0",
+    "style_runtime/schemas/review/result.schema.json": "b9b6983fed82919f2ffec1bbe37de52e45bfdf0d1006124ca53beff916dcec7b"
+  },
+  "wheel_path": "backend/plotpilot_style_runtime-0.1.0-py3-none-any.whl",
+  "wheel_import": "style_runtime",
+  "plugin_path": "plugin.json",
+  "identity_path": "style_runtime/identity.json"
+}

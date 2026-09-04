@@ -1,0 +1,20 @@
+{
+  "schema": "plotpilot-plugin/v1",
+  "plugin_id": "com.plotpilot.novelagent.style-pack.core-default",
+  "version": "1.0.0",
+  "display_name": "Novel-Agent 默认合格文风包",
+  "compatibility": {
+    "core_api": ">=1.0 <2.0",
+    "plugin_rpc": "1",
+    "ui_host": "1",
+    "python": "3.12.*"
+  },
+  "capabilities": [],
+  "settings": null,
+  "needs": [],
+  "kind": "data",
+  "data": {
+    "format": "style-pack/v1",
+    "root": "data/style-pack.json"
+  }
+}

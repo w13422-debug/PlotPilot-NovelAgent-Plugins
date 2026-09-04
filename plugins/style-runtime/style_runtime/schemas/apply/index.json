@@ -1,0 +1,17 @@
+{
+  "schema": "plugin-schema-index/v1",
+  "plugin_id": "com.plotpilot.novelagent.style-runtime",
+  "capability_id": "style.apply/v1",
+  "schemas": [
+    {
+      "schema_id": "style.apply-request/v1",
+      "path": "schemas/apply/input.schema.json",
+      "sha256": "9801b3337223267361b5289e057686f502734ab5dcde3df9fc687a50ebef654a"
+    },
+    {
+      "schema_id": "style.apply-result/v1",
+      "path": "schemas/apply/result.schema.json",
+      "sha256": "5d09eb085b527761930e04bb19fd80f68f731024add0c3882187a9bf77892d5e"
+    }
+  ]
+}

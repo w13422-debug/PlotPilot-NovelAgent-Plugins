@@ -1,0 +1,10 @@
+{
+  "schema": "plugin-ui-metadata/v1",
+  "plugin_id": "com.plotpilot.novelagent.style-manufacturing",
+  "implementation": "host-projected-metadata-only",
+  "slots": [
+    "donors.analysis.configure",
+    "donors.analysis.review",
+    "donors.asset.derivation"
+  ]
+}

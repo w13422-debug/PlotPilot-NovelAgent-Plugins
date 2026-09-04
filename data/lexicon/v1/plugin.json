@@ -1,0 +1,20 @@
+{
+  "schema": "plotpilot-plugin/v1",
+  "plugin_id": "com.plotpilot.novelagent.lexicon.zh-core",
+  "version": "1.0.0",
+  "display_name": "Novel-Agent 中文核心词库",
+  "compatibility": {
+    "core_api": ">=1.0 <2.0",
+    "plugin_rpc": "1",
+    "ui_host": "1",
+    "python": "3.12.*"
+  },
+  "capabilities": [],
+  "settings": null,
+  "needs": [],
+  "kind": "data",
+  "data": {
+    "format": "lexicon/v1",
+    "root": "data/lexicon.json"
+  }
+}

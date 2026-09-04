@@ -1,0 +1,144 @@
+{
+  "schema": "lexicon-merge-fixture/v1",
+  "inputs": [
+    {
+      "schema": "lexicon/v1",
+      "lexicon_id": "lexicon-foundation-a",
+      "version": "1.0.0",
+      "normalization": "unicode-nfc-casefold-v1",
+      "conflict_policy": "highest-priority-then-plugin-id-byte-order",
+      "entries": [
+        {
+          "term": "凝视",
+          "normalized_term": "凝视",
+          "preferred": "注视",
+          "aliases": [
+            "凝望"
+          ],
+          "forbidden": false,
+          "note": "",
+          "priority": 10,
+          "source_plugin_id": "com.plotpilot.lexicon.a"
+        },
+        {
+          "term": "归途",
+          "normalized_term": "归途",
+          "preferred": "归途",
+          "aliases": [],
+          "forbidden": false,
+          "note": "",
+          "priority": 5,
+          "source_plugin_id": "com.plotpilot.lexicon.a"
+        },
+        {
+          "term": "非常",
+          "normalized_term": "非常",
+          "preferred": "避免使用",
+          "aliases": [],
+          "forbidden": true,
+          "note": "避免空泛程度副词",
+          "priority": 20,
+          "source_plugin_id": "com.plotpilot.lexicon.a"
+        }
+      ]
+    },
+    {
+      "schema": "lexicon/v1",
+      "lexicon_id": "lexicon-project-b",
+      "version": "1.0.0",
+      "normalization": "unicode-nfc-casefold-v1",
+      "conflict_policy": "highest-priority-then-plugin-id-byte-order",
+      "entries": [
+        {
+          "term": "凝视",
+          "normalized_term": "凝视",
+          "preferred": "端详",
+          "aliases": [
+            "打量"
+          ],
+          "forbidden": false,
+          "note": "项目偏好，高优先级胜出",
+          "priority": 30,
+          "source_plugin_id": "com.plotpilot.lexicon.b"
+        },
+        {
+          "term": "归途",
+          "normalized_term": "归途",
+          "preferred": "归程",
+          "aliases": [],
+          "forbidden": false,
+          "note": "同优先级时 plugin_id 字节序 a 胜出",
+          "priority": 5,
+          "source_plugin_id": "com.plotpilot.lexicon.b"
+        },
+        {
+          "term": "月色",
+          "normalized_term": "月色",
+          "preferred": "月光",
+          "aliases": [],
+          "forbidden": false,
+          "note": "",
+          "priority": 10,
+          "source_plugin_id": "com.plotpilot.lexicon.b"
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "schema": "lexicon/v1",
+    "lexicon_id": "merged:44b64889979377a915e320558dd70ada7b20d7b16598d596",
+    "version": "1.0.0",
+    "normalization": "unicode-nfc-casefold-v1",
+    "conflict_policy": "highest-priority-then-plugin-id-byte-order",
+    "entries": [
+      {
+        "term": "凝视",
+        "normalized_term": "凝视",
+        "preferred": "端详",
+        "aliases": [
+          "打量"
+        ],
+        "forbidden": false,
+        "note": "项目偏好，高优先级胜出",
+        "priority": 30,
+        "source_plugin_id": "com.plotpilot.lexicon.b"
+      },
+      {
+        "term": "归途",
+        "normalized_term": "归途",
+        "preferred": "归途",
+        "aliases": [],
+        "forbidden": false,
+        "note": "",
+        "priority": 5,
+        "source_plugin_id": "com.plotpilot.lexicon.a"
+      },
+      {
+        "term": "月色",
+        "normalized_term": "月色",
+        "preferred": "月光",
+        "aliases": [],
+        "forbidden": false,
+        "note": "",
+        "priority": 10,
+        "source_plugin_id": "com.plotpilot.lexicon.b"
+      },
+      {
+        "term": "非常",
+        "normalized_term": "非常",
+        "preferred": "避免使用",
+        "aliases": [],
+        "forbidden": true,
+        "note": "避免空泛程度副词",
+        "priority": 20,
+        "source_plugin_id": "com.plotpilot.lexicon.a"
+      }
+    ]
+  },
+  "conflict_rules": [
+    "higher priority wins",
+    "equal priority uses source_plugin_id UTF-8 byte order",
+    "exact tie uses canonical row bytes",
+    "output uses normalized_term UTF-8 byte order"
+  ]
+}

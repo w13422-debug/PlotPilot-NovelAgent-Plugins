@@ -1,0 +1,8 @@
+{
+  "schema": "plotpilot-skill/v1",
+  "skill_id": "com.plotpilot.skill.style.apply",
+  "version": "1.0.0",
+  "display_name": "精确文风应用与返修",
+  "stage": "draft",
+  "actions": ["draft", "refine"]
+}

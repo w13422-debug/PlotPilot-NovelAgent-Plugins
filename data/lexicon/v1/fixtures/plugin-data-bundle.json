@@ -1,0 +1,19 @@
+{
+  "schema": "plugin-data-bundle/v1",
+  "bundle_id": "lexicon-zh-core-v1-bundle",
+  "data_plugin_id": "com.plotpilot.novelagent.lexicon.zh-core",
+  "data_release_id": "517551dc4a4937fdb1f4c911f156546f8852b2312370945aa38e06f0fa851f4c",
+  "package_hash": "f45958534c42d8252a79c6a9a9eae6aae0e534636bc70ffdb28c23312c268d82",
+  "format_id": "lexicon/v1",
+  "root_path": "data/lexicon.json",
+  "files": [
+    {
+      "path": "data/lexicon.json",
+      "asset_id": "asset-lexicon-zh-core-v1",
+      "sha256": "69157c9cf3009535314b9f7c46b492c6ab0ecf04904661e0b112e46cc2244ad1",
+      "mime": "application/json",
+      "size": 962
+    }
+  ],
+  "bundle_hash": "614510f745b743f70427701d8d813da0756284357d1a5d90005f525c5a668cb7"
+}

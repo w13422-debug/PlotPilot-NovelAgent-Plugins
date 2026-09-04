@@ -1,0 +1,10 @@
+{
+  "schema": "style-data-package-identity/v1",
+  "package_kind": "data",
+  "plugin_id": "com.plotpilot.novelagent.style-pack.core-default",
+  "format_id": "style-pack/v1",
+  "version": "1.0.0",
+  "package_hash": "07e55ef065f29a68f29952c4dc44bc8f3d11e9901430b49df8c5d59b5fb96362",
+  "release_id": "3d3c29207b7b121e2eec69be9b1492b99c3a8ae451f06aaf36a3ed4a7b61aa6c",
+  "separate_from_code_plugin_id": "com.plotpilot.novelagent.style-manufacturing"
+}

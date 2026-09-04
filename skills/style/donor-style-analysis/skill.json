@@ -1,0 +1,8 @@
+{
+  "schema": "plotpilot-skill/v1",
+  "skill_id": "com.plotpilot.skill.donor.style-analysis",
+  "version": "1.0.0",
+  "display_name": "供体文风证据分析",
+  "stage": "analysis",
+  "actions": ["analyze"]
+}

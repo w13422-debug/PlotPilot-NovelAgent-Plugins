@@ -1,0 +1,17 @@
+{
+  "$id": "https://plotpilot.local/skills/style-skill-method-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "style-skill-method/v1"},
+    "skill_id": {"enum": ["com.plotpilot.skill.donor.style-analysis", "com.plotpilot.skill.style.apply"]},
+    "input_format_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["book-analysis-taxonomy/v1", "style-pack/v1", "quality-rubric/v1", "lexicon/v1"]}},
+    "capability_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["style.manufacture/v1", "style.qualify/v1", "style.apply/v1", "style.review/v1", "style.refine/v1"]}},
+    "result_contracts": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["candidate-batch/v1", "diagnostic-bundle/v1"]}},
+    "rules": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"}},
+    "authority": {"const": "candidate_or_diagnostic_only"},
+    "identity_boundary": {"const": "skill_never_style_or_data"}
+  },
+  "required": ["schema", "skill_id", "input_format_ids", "capability_ids", "result_contracts", "rules", "authority", "identity_boundary"]
+}

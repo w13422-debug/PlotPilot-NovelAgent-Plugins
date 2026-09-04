@@ -1,0 +1,27 @@
+{
+  "schema": "provider-schema-index/v1",
+  "plugin_id": "com.plotpilot.novelagent.style-manufacturing",
+  "capability_id": "style.manufacture/v1",
+  "schemas": [
+    {
+      "schema_id": "style.manufacture-request/v1",
+      "path": "schemas/manufacture/input.schema.json",
+      "sha256": "aba1cb56587637e1aa0c60279aee429f4212f11a2183fe632dd8d15e66709fb2"
+    },
+    {
+      "schema_id": "style.manufacture-result/v1",
+      "path": "schemas/manufacture/result.schema.json",
+      "sha256": "9dbcc99ddad43a3a09f823107ead8e6567adf12109f945022edf98cdb53c6b9e"
+    },
+    {
+      "schema_id": "style.chunk-plan/v1",
+      "path": "schemas/manufacture/chunk-plan.schema.json",
+      "sha256": "5ba973a13ea5b1bc3fe1937f2551d6b3621f9456a91f840bfb36afe290e5eb20"
+    },
+    {
+      "schema_id": "style.manufacture-map/v1",
+      "path": "schemas/manufacture/map.schema.json",
+      "sha256": "0f9e33fd46f783ed4fab1d667338acbf5edf27a17e4f56c14a9361638f2858b8"
+    }
+  ]
+}

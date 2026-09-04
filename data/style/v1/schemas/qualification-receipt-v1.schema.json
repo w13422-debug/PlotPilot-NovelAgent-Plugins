@@ -1,0 +1,270 @@
+{
+  "$id": "https://plotpilot.local/data/author-style-qualification-receipt-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "receipt_id",
+    "style_pack_id",
+    "style_release_id",
+    "style_payload_hash",
+    "qualification_run_snapshot_hash",
+    "rubric_hash",
+    "manufacturing_route_id",
+    "writer_route_id",
+    "reviewer_route_id",
+    "manufacturing_attempt_ids",
+    "writer_attempt_ids",
+    "reviewer_attempt_ids",
+    "case_results",
+    "decision",
+    "automatic_eligible",
+    "created_at",
+    "receipt_hash"
+  ],
+  "properties": {
+    "schema": {
+      "const": "author-style-qualification-receipt/v1"
+    },
+    "receipt_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "style_pack_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "style_release_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "style_payload_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "qualification_run_snapshot_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "rubric_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "manufacturing_route_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "writer_route_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "reviewer_route_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "manufacturing_attempt_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+      }
+    },
+    "writer_attempt_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+      }
+    },
+    "reviewer_attempt_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+      }
+    },
+    "case_results": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "case_id",
+          "writer_output_hash",
+          "review_output_hash",
+          "score_0_100",
+          "passed"
+        ],
+        "properties": {
+          "case_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+          },
+          "writer_output_hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "review_output_hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "score_0_100": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "passed": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "decision": {
+      "enum": [
+        "pass",
+        "fail"
+      ]
+    },
+    "automatic_eligible": {
+      "type": "boolean"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "receipt_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "style_pack_asset_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "style_pack_asset_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "sealed_case_asset_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "sealed_case_asset_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "rubric_asset_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "rubric_asset_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "review_output_asset_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "review_output_asset_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "writer_output_asset_ids": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+      }
+    },
+    "writer_output_asset_hashes": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      }
+    }
+  },
+  "allOf": [
+    {
+      "oneOf": [
+        {
+          "not": {
+            "anyOf": [
+              {
+                "required": [
+                  "style_pack_asset_id"
+                ]
+              },
+              {
+                "required": [
+                  "style_pack_asset_hash"
+                ]
+              },
+              {
+                "required": [
+                  "sealed_case_asset_id"
+                ]
+              },
+              {
+                "required": [
+                  "sealed_case_asset_hash"
+                ]
+              },
+              {
+                "required": [
+                  "rubric_asset_id"
+                ]
+              },
+              {
+                "required": [
+                  "rubric_asset_hash"
+                ]
+              },
+              {
+                "required": [
+                  "writer_output_asset_ids"
+                ]
+              },
+              {
+                "required": [
+                  "writer_output_asset_hashes"
+                ]
+              },
+              {
+                "required": [
+                  "review_output_asset_id"
+                ]
+              },
+              {
+                "required": [
+                  "review_output_asset_hash"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "required": [
+            "style_pack_asset_id",
+            "style_pack_asset_hash",
+            "sealed_case_asset_id",
+            "sealed_case_asset_hash",
+            "rubric_asset_id",
+            "rubric_asset_hash",
+            "writer_output_asset_ids",
+            "writer_output_asset_hashes",
+            "review_output_asset_id",
+            "review_output_asset_hash"
+          ]
+        }
+      ]
+    }
+  ]
+}
