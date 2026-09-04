@@ -1,0 +1,1 @@
+将卷级节拍细化为章节级只读计划，保持 unit 引用闭包，不创建正文、Revision 或 Publication 权威。

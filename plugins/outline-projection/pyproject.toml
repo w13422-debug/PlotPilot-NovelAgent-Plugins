@@ -1,0 +1,10 @@
+[build-system]
+requires = []
+build-backend = "outline_projection.build_backend"
+backend-path = ["."]
+
+[project]
+name = "plotpilot-outline-projection"
+version = "0.1.0"
+requires-python = ">=3.12,<3.13"
+dependencies = []

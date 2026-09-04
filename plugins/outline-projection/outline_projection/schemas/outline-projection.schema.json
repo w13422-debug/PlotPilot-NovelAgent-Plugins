@@ -1,0 +1,843 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "projection_id",
+    "source",
+    "views",
+    "evidence_spans",
+    "source_attributions",
+    "broker_children",
+    "authority"
+  ],
+  "properties": {
+    "schema": {
+      "const": "outline-projection/v1"
+    },
+    "projection_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "asset_id",
+        "asset_hash",
+        "schema",
+        "synthesis_id",
+        "plan_id"
+      ],
+      "properties": {
+        "asset_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "asset_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "schema": {
+          "const": "narrative-synthesis/v1"
+        },
+        "synthesis_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "plan_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        }
+      }
+    },
+    "views": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "mode",
+              "payload"
+            ],
+            "properties": {
+              "mode": {
+                "const": "tree"
+              },
+              "payload": {
+                "$ref": "#/$defs/tree_payload"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "mode",
+              "payload"
+            ],
+            "properties": {
+              "mode": {
+                "const": "card"
+              },
+              "payload": {
+                "$ref": "#/$defs/card_payload"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "mode",
+              "payload"
+            ],
+            "properties": {
+              "mode": {
+                "const": "timeline"
+              },
+              "payload": {
+                "$ref": "#/$defs/timeline_payload"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "mode",
+              "payload"
+            ],
+            "properties": {
+              "mode": {
+                "const": "relation"
+              },
+              "payload": {
+                "$ref": "#/$defs/relation_payload"
+              }
+            }
+          }
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 4,
+      "uniqueItems": true
+    },
+    "evidence_spans": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "evidence_span_id",
+          "schema",
+          "workspace_id",
+          "document_id",
+          "revision_id",
+          "node_id",
+          "start_codepoint",
+          "end_codepoint",
+          "quote",
+          "quote_hash",
+          "canonical_text_hash"
+        ],
+        "properties": {
+          "evidence_span_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+          },
+          "schema": {
+            "const": "evidence-span/v1"
+          },
+          "workspace_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+          },
+          "document_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+          },
+          "revision_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+          },
+          "node_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+          },
+          "start_codepoint": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "end_codepoint": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "quote": {
+            "type": "string"
+          },
+          "quote_hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "canonical_text_hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "source_attributions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "attribution_id",
+          "source_type",
+          "workspace_id",
+          "source_id",
+          "revision_or_hash",
+          "evidence_span_ids",
+          "child_receipt_id"
+        ],
+        "properties": {
+          "attribution_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+          },
+          "source_type": {
+            "type": "string",
+            "minLength": 1
+          },
+          "workspace_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "source_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+          },
+          "revision_or_hash": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence_span_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "child_receipt_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "broker_children": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "binding_id",
+          "child_job_id",
+          "child_run_snapshot_hash",
+          "result_contract",
+          "result_bundle_asset_id",
+          "result_bundle_hash",
+          "provenance_receipt_id",
+          "broker_invocation_asset_id",
+          "broker_invocation_hash"
+        ],
+        "properties": {
+          "binding_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+          },
+          "child_job_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+          },
+          "child_run_snapshot_hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "result_contract": {
+            "enum": [
+              "candidate-batch/v1",
+              "artifact-bundle/v1",
+              "diagnostic-bundle/v1"
+            ]
+          },
+          "result_bundle_asset_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+          },
+          "result_bundle_hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "provenance_receipt_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+          },
+          "broker_invocation_asset_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+          },
+          "broker_invocation_hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "authoritative_source",
+        "creates_second_authority",
+        "free_form_canvas"
+      ],
+      "properties": {
+        "mode": {
+          "const": "read_only_projection"
+        },
+        "authoritative_source": {
+          "const": "narrative-synthesis/v1"
+        },
+        "creates_second_authority": {
+          "const": false
+        },
+        "free_form_canvas": {
+          "const": false
+        }
+      }
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "outline-projection/v1",
+  "title": "Outline Projection v1",
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "evidence_span": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_span_id",
+        "schema",
+        "workspace_id",
+        "document_id",
+        "revision_id",
+        "node_id",
+        "start_codepoint",
+        "end_codepoint",
+        "quote",
+        "quote_hash",
+        "canonical_text_hash"
+      ],
+      "properties": {
+        "evidence_span_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "schema": {
+          "const": "evidence-span/v1"
+        },
+        "workspace_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "document_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "revision_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "node_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "start_codepoint": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end_codepoint": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "quote": {
+          "type": "string"
+        },
+        "quote_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "canonical_text_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "attribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attribution_id",
+        "source_type",
+        "workspace_id",
+        "source_id",
+        "revision_or_hash",
+        "evidence_span_ids",
+        "child_receipt_id"
+      ],
+      "properties": {
+        "attribution_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "source_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "workspace_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "revision_or_hash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_span_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "child_receipt_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "child": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "binding_id",
+        "child_job_id",
+        "child_run_snapshot_hash",
+        "result_contract",
+        "result_bundle_asset_id",
+        "result_bundle_hash",
+        "provenance_receipt_id",
+        "broker_invocation_asset_id",
+        "broker_invocation_hash"
+      ],
+      "properties": {
+        "binding_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "child_job_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "child_run_snapshot_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "result_contract": {
+          "enum": [
+            "candidate-batch/v1",
+            "artifact-bundle/v1",
+            "diagnostic-bundle/v1"
+          ]
+        },
+        "result_bundle_asset_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "result_bundle_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "provenance_receipt_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "broker_invocation_asset_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "broker_invocation_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "tree_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "nodes"
+      ],
+      "properties": {
+        "schema": {
+          "const": "outline-tree-projection/v1"
+        },
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "node_id",
+              "parent_node_id",
+              "level",
+              "title",
+              "unit_ids",
+              "order",
+              "evidence_span_ids",
+              "source_attribution_ids"
+            ],
+            "properties": {
+              "node_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+              },
+              "parent_node_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "level": {
+                "enum": [
+                  "book",
+                  "volume",
+                  "chapter",
+                  "plot_unit"
+                ]
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "unit_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+                },
+                "minItems": 0,
+                "uniqueItems": true
+              },
+              "order": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "evidence_span_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+                },
+                "minItems": 0,
+                "uniqueItems": true
+              },
+              "source_attribution_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+                },
+                "minItems": 0,
+                "uniqueItems": true
+              }
+            }
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "card_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "cards"
+      ],
+      "properties": {
+        "schema": {
+          "const": "outline-card-projection/v1"
+        },
+        "cards": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "unit_id",
+              "unit_kind",
+              "title",
+              "summary",
+              "order",
+              "evidence_span_ids",
+              "source_attribution_ids"
+            ],
+            "properties": {
+              "unit_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+              },
+              "unit_kind": {
+                "type": "string",
+                "minLength": 1
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "summary": {
+                "type": "string"
+              },
+              "order": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "evidence_span_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              },
+              "source_attribution_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              }
+            }
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "timeline_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "events"
+      ],
+      "properties": {
+        "schema": {
+          "const": "outline-timeline-projection/v1"
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "event_id",
+              "sequence",
+              "unit_id",
+              "unit_kind",
+              "title",
+              "summary",
+              "order",
+              "evidence_span_ids",
+              "source_attribution_ids"
+            ],
+            "properties": {
+              "event_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+              },
+              "sequence": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "unit_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+              },
+              "unit_kind": {
+                "type": "string",
+                "minLength": 1
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "summary": {
+                "type": "string"
+              },
+              "order": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "evidence_span_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              },
+              "source_attribution_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              }
+            }
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "relation_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "relations"
+      ],
+      "properties": {
+        "schema": {
+          "const": "outline-relation-projection/v1"
+        },
+        "relations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "relation_id",
+              "source_unit_id",
+              "relation_type",
+              "target_unit_id",
+              "evidence_span_ids",
+              "source_attribution_ids"
+            ],
+            "properties": {
+              "relation_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+              },
+              "source_unit_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+              },
+              "relation_type": {
+                "type": "string",
+                "minLength": 1
+              },
+              "target_unit_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+              },
+              "evidence_span_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              },
+              "source_attribution_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              }
+            }
+          },
+          "minItems": 0
+        }
+      }
+    }
+  }
+}

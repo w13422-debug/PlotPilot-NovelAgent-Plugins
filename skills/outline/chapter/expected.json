@@ -1,0 +1,28 @@
+{
+  "schema": "outline-skill-package-expected/v1",
+  "package_kind": "skill",
+  "skill_id": "com.plotpilot.skill.outline.chapter",
+  "version": "1.0.0",
+  "manifest_path": "skill.json",
+  "method_path": "method.json",
+  "package_files": [
+    "method.json",
+    "method.schema.json",
+    "prompt.txt",
+    "skill.json"
+  ],
+  "files_sha256": "12ddde777988856bb8791bcff63fe986128c7e2318cf04ae9d859c35c5fa5133  method.json\n58717591da55f074090fb7eba3a90de18eef764fa7ecb9c0e113adf02794bac5  method.schema.json\n4d6eef5382009a2391ab23f33c5446de73a7767723d62803de2a0996e071ee14  prompt.txt\neccefdfe9847f783fdbbf4dd1cf7c2ff4f7e6803d25797a8eaf3e5f11654922f  skill.json\n",
+  "fixture_hashes": {
+    "method.json": "12ddde777988856bb8791bcff63fe986128c7e2318cf04ae9d859c35c5fa5133",
+    "prompt.txt": "4d6eef5382009a2391ab23f33c5446de73a7767723d62803de2a0996e071ee14",
+    "method.schema.json": "58717591da55f074090fb7eba3a90de18eef764fa7ecb9c0e113adf02794bac5"
+  },
+  "skill_package_hash": "c2f9e979445796bed4167cb53df2a8706d12dd24c44935fc3d09e148e57301fc",
+  "skill_release_id": "5133e65b7955b2c29d4167511c21e26bc495e338859d5d8a56519694e768ea5e",
+  "identity_path": "identity.json",
+  "identity_domains": {
+    "skill": "plotpilot-skill-release/v1",
+    "data_or_code": "plotpilot-release/v1",
+    "code_plugin_id": "com.plotpilot.novelagent.narrative-analysis"
+  }
+}

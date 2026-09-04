@@ -1,0 +1,7 @@
+{
+  "schema": "narrative-analysis-package-identity/v1",
+  "plugin_id": "com.plotpilot.novelagent.narrative-analysis",
+  "version": "0.1.0",
+  "package_hash": "a572124c7d28f106d36f8bff91899d4c89841eacf865fd33851314196e6e5474",
+  "release_id": "46e1ba9f430c0ca78fa2f3acba30c53d1ca3ad2978b4f6d53deafbc3ec8eedc3"
+}

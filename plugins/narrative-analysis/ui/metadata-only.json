@@ -1,0 +1,10 @@
+{
+  "schema": "plugin-ui-metadata/v1",
+  "plugin_id": "com.plotpilot.novelagent.narrative-analysis",
+  "implementation": "host-projected-metadata-only",
+  "slots": [
+    "donors.analysis.configure",
+    "donors.analysis.review",
+    "outline.visualization.panel"
+  ]
+}

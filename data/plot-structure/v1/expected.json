@@ -1,0 +1,32 @@
+{
+  "schema": "plot-structure-template-expected/v1",
+  "package_kind": "data",
+  "plugin_id": "com.plotpilot.novelagent.plot-structure-template",
+  "format_id": "plot-structure-template/v1",
+  "version": "1.0.0",
+  "manifest_path": "plugin.json",
+  "root_path": "data/templates.json",
+  "package_files": [
+    "data/templates.json",
+    "fixtures/interpreter-roundtrip.json",
+    "plugin.json",
+    "schemas/interpreter-roundtrip-v1.schema.json",
+    "schemas/plot-structure-template-v1.schema.json"
+  ],
+  "files_sha256": "c63c9f0fb3daa8db15c0789ca5720db436c9e53be1d8f0c13caef397d07c88f5  data/templates.json\naf42435a4f4e55846622e55d2047cbfb676c5be80e77ba79927ee9d35fecc054  fixtures/interpreter-roundtrip.json\n4b99120eb672ac8bf60d7b2f0dbdcb57a9ce676e9f9444c4b9f983c99e51eed6  plugin.json\n59976539e5b2fef70026a5cd147883c54626d9b18ca1a9eb279695c3773c13a5  schemas/interpreter-roundtrip-v1.schema.json\n3d379209814251928e27108726f9c9bd9c4f47e812a473aff217721a76de185d  schemas/plot-structure-template-v1.schema.json\n",
+  "fixture_hashes": {
+    "fixtures/interpreter-roundtrip.json": "af42435a4f4e55846622e55d2047cbfb676c5be80e77ba79927ee9d35fecc054",
+    "schemas/plot-structure-template-v1.schema.json": "3d379209814251928e27108726f9c9bd9c4f47e812a473aff217721a76de185d",
+    "schemas/interpreter-roundtrip-v1.schema.json": "59976539e5b2fef70026a5cd147883c54626d9b18ca1a9eb279695c3773c13a5",
+    "data/templates.json": "c63c9f0fb3daa8db15c0789ca5720db436c9e53be1d8f0c13caef397d07c88f5"
+  },
+  "package_hash": "fa96f117e9ce134c05911c377615c2cdeb2719f99914e329f0140773d80a2c06",
+  "release_id": "cabac87f1ed3ea74a6766093c0a9f3a912e38957fc9037ec6c3df1d5c238a3e3",
+  "bundle_hash": "1abab9f99254940268542eccda332c1b88a1b967ca5bfa108a44f239f01333e9",
+  "identity_path": "identity.json",
+  "identity_domains": {
+    "data_or_code": "plotpilot-release/v1",
+    "skill": "plotpilot-skill-release/v1",
+    "code_plugin_id": "com.plotpilot.novelagent.narrative-analysis"
+  }
+}

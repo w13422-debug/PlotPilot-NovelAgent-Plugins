@@ -1,0 +1,40 @@
+{
+  "schema": "narrative-plan/v1",
+  "plan_id": "plan-fixture-1",
+  "version": 1,
+  "template_binding": {
+    "data_plugin_id": "com.plotpilot.data.plot-structure",
+    "data_release_id": "1111111111111111111111111111111111111111111111111111111111111111",
+    "package_hash": "2222222222222222222222222222222222222222222222222222222222222222",
+    "format_id": "plot-structure-template/v1",
+    "template_id": "template-three-act"
+  },
+  "unit_refs": [
+    {
+      "unit_id": "unit-fixture-1",
+      "payload_asset_id": "asset-unit-fixture",
+      "payload_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+      "order": 0,
+      "evidence_span_ids": [
+        "span-fixture-1"
+      ],
+      "source_attribution_ids": [
+        "attr-fixture-1"
+      ]
+    }
+  ],
+  "hierarchy": [
+    {
+      "node_id": "book-fixture",
+      "parent_node_id": null,
+      "level": "book",
+      "title": "Book",
+      "unit_ids": [
+        "unit-fixture-1"
+      ],
+      "order": 0
+    }
+  ],
+  "created_from_snapshot_hash": "4444444444444444444444444444444444444444444444444444444444444444",
+  "immutable": true
+}

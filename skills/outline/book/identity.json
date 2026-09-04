@@ -1,0 +1,10 @@
+{
+  "schema": "outline-skill-package-identity/v1",
+  "package_kind": "skill",
+  "skill_id": "com.plotpilot.skill.outline.book",
+  "version": "1.0.0",
+  "skill_package_hash": "2078e682e4c218377cd41004192c27ecd49db2414b97982d94f538969150b34b",
+  "skill_release_id": "4659a03f5575067c9513cf9767a5b2d61cdbdb0b9558d55d73e3f448ce69ec29",
+  "separate_from_data_plugin_id": "com.plotpilot.novelagent.plot-structure-template",
+  "separate_from_code_plugin_id": "com.plotpilot.novelagent.narrative-analysis"
+}

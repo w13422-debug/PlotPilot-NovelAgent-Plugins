@@ -1,0 +1,46 @@
+{
+  "schema": "narrative-unit/v1",
+  "unit_id": "unit-fixture-1",
+  "unit_kind": "turn",
+  "title": "转折",
+  "summary": "冻结来源证据的叙事转折。",
+  "order": 0,
+  "evidence_spans": [
+    {
+      "evidence_span_id": "span-fixture-1",
+      "schema": "evidence-span/v1",
+      "workspace_id": "ws-fixture",
+      "document_id": "doc-fixture",
+      "revision_id": "rev-fixture",
+      "node_id": "node-fixture",
+      "start_codepoint": 0,
+      "end_codepoint": 2,
+      "quote": "甲乙",
+      "quote_hash": "f73ab1f5c2b9542c9cea79597b69a5c4dc106721d7de6fa9e4303c0fe45cfe3d",
+      "canonical_text_hash": "f73ab1f5c2b9542c9cea79597b69a5c4dc106721d7de6fa9e4303c0fe45cfe3d"
+    }
+  ],
+  "source_attributions": [
+    {
+      "attribution_id": "attr-fixture-1",
+      "source_type": "canonical_revision",
+      "workspace_id": "ws-fixture",
+      "source_id": "doc-fixture",
+      "revision_or_hash": "rev-fixture",
+      "evidence_span_ids": [
+        "span-fixture-1"
+      ],
+      "child_receipt_id": "receipt-child-fixture"
+    }
+  ],
+  "relations": [
+    {
+      "relation_type": "precedes",
+      "target_unit_id": "unit-fixture-2"
+    }
+  ],
+  "provenance": {
+    "source_mode": "broker",
+    "model_receipt_id": null
+  }
+}

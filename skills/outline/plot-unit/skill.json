@@ -1,0 +1,10 @@
+{
+  "schema": "plotpilot-skill/v1",
+  "skill_id": "com.plotpilot.skill.outline.plot-unit",
+  "version": "1.0.0",
+  "display_name": "剧情单元大纲规划",
+  "stage": "outline",
+  "actions": [
+    "plan"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "schema": "capability-provider/v1",
+  "capability_id": "analysis.narrative.synthesize/v1",
+  "provider": {
+    "plugin_id": "com.plotpilot.novelagent.narrative-analysis",
+    "release_id": "46e1ba9f430c0ca78fa2f3acba30c53d1ca3ad2978b4f6d53deafbc3ec8eedc3"
+  },
+  "input_schema": "analysis.narrative.synthesize-request/v1",
+  "output_schema": "analysis.narrative.synthesize-result/v1",
+  "result_contract": "candidate-batch/v1",
+  "supports": [
+    "run",
+    "resume",
+    "cancel"
+  ],
+  "deterministic": false,
+  "accepted_data_formats": [
+    "plot-structure-template/v1"
+  ]
+}

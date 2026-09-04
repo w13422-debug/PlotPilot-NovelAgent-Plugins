@@ -1,0 +1,10 @@
+{
+  "schema": "plotpilot-skill/v1",
+  "skill_id": "com.plotpilot.skill.outline.chapter",
+  "version": "1.0.0",
+  "display_name": "章节大纲规划",
+  "stage": "outline",
+  "actions": [
+    "plan"
+  ]
+}

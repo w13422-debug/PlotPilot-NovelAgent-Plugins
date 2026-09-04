@@ -1,0 +1,41 @@
+{
+  "schema": "plot-structure-template-interpreter-roundtrip/v1",
+  "format_id": "plot-structure-template/v1",
+  "interpreters": [
+    {
+      "plugin_id": "com.plotpilot.novelagent.narrative-analysis",
+      "capability_id": "analysis.narrative.unit.extract/v1"
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.narrative-analysis",
+      "capability_id": "analysis.narrative.plan.compile/v1"
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.narrative-analysis",
+      "capability_id": "analysis.narrative.synthesize/v1"
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.asset-derivation",
+      "capability_id": "asset.template.derive/v1"
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.writing-context",
+      "capability_id": "writing.context.assemble/v1"
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+      "capability_id": "writing.project.outline/v1"
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+      "capability_id": "writing.volume.outline/v1"
+    },
+    {
+      "plugin_id": "com.plotpilot.novelagent.chapter-workflow",
+      "capability_id": "writing.chapter.outline/v1"
+    }
+  ],
+  "forward_direction": "format_to_capability",
+  "reverse_direction": "capability_to_format",
+  "mergeable": false
+}

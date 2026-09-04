@@ -1,0 +1,1 @@
+按明确节拍排列剧情单元，保留关系、EvidenceSpan、来源归因和 Broker child receipt，输出不可变候选。
