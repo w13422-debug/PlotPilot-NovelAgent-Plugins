@@ -1,0 +1,11 @@
+[build-system]
+requires = []
+build-backend = "style_manufacturing.build_backend"
+backend-path = ["."]
+
+[project]
+name = "plotpilot-style-manufacturing"
+version = "0.1.0"
+description = "PlotPilot Novel-Agent immutable style manufacture qualification and Data packaging plugin"
+requires-python = ">=3.12,<3.13"
+dependencies = []

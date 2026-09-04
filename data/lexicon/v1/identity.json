@@ -1,0 +1,10 @@
+{
+  "schema": "lexicon-data-package-identity/v1",
+  "package_kind": "data",
+  "plugin_id": "com.plotpilot.novelagent.lexicon.zh-core",
+  "format_id": "lexicon/v1",
+  "version": "1.0.0",
+  "package_hash": "f45958534c42d8252a79c6a9a9eae6aae0e534636bc70ffdb28c23312c268d82",
+  "release_id": "517551dc4a4937fdb1f4c911f156546f8852b2312370945aa38e06f0fa851f4c",
+  "separate_from_code_plugin_id": "com.plotpilot.novelagent.style-manufacturing"
+}

@@ -1,0 +1,28 @@
+{
+  "schema": "style-skill-package-expected/v1",
+  "package_kind": "skill",
+  "skill_id": "com.plotpilot.skill.donor.style-analysis",
+  "version": "1.0.0",
+  "manifest_path": "skill.json",
+  "method_path": "method.json",
+  "package_files": [
+    "method.json",
+    "method.schema.json",
+    "prompt.txt",
+    "skill.json"
+  ],
+  "files_sha256": "37d695a55d1dfe1728eecfacbbc3f384e238aca378873d95de5d2519eafc2a4a  method.json\n2628c858390ab148ef38221ee0b84c789f1c409cce84617be30b6d33d9ab29c5  method.schema.json\n0baabb4a66dfb4fee39c07fc928d1550e3d752276bde7a7be376eaa0200b2754  prompt.txt\n6cfa85e2d8ad1ee1b2b99249e71b468085379edbb24b3adbf9920614467caa0b  skill.json\n",
+  "fixture_hashes": {
+    "method.json": "37d695a55d1dfe1728eecfacbbc3f384e238aca378873d95de5d2519eafc2a4a",
+    "prompt.txt": "0baabb4a66dfb4fee39c07fc928d1550e3d752276bde7a7be376eaa0200b2754",
+    "method.schema.json": "2628c858390ab148ef38221ee0b84c789f1c409cce84617be30b6d33d9ab29c5"
+  },
+  "skill_package_hash": "bc02221e3d492d97a2422813bb1a67e415b7a26ecee1adad3424e26ab2829883",
+  "skill_release_id": "289825c58be801d534f5aa092ce1fe67188cd9c6b489713f8272ed4d5c8e9d65",
+  "identity_path": "identity.json",
+  "identity_domains": {
+    "skill": "plotpilot-skill-release/v1",
+    "style": "style-release/v1",
+    "data_or_code": "plotpilot-release/v1"
+  }
+}

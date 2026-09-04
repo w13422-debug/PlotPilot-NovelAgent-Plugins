@@ -1,0 +1,10 @@
+{
+  "schema": "plugin-ui-metadata/v1",
+  "plugin_id": "com.plotpilot.novelagent.style-runtime",
+  "implementation": "host-projected-metadata-only",
+  "slots": [
+    "workbench.reference.panel",
+    "workbench.generate.context",
+    "workbench.quality.panel"
+  ]
+}

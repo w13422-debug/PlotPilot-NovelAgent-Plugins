@@ -1,0 +1,19 @@
+{
+  "schema": "plugin-data-bundle/v1",
+  "bundle_id": "style-pack-core-default-v1-bundle",
+  "data_plugin_id": "com.plotpilot.novelagent.style-pack.core-default",
+  "data_release_id": "3d3c29207b7b121e2eec69be9b1492b99c3a8ae451f06aaf36a3ed4a7b61aa6c",
+  "package_hash": "07e55ef065f29a68f29952c4dc44bc8f3d11e9901430b49df8c5d59b5fb96362",
+  "format_id": "style-pack/v1",
+  "root_path": "data/style-pack.json",
+  "files": [
+    {
+      "path": "data/style-pack.json",
+      "asset_id": "asset-style-pack-core-default-v1",
+      "sha256": "85663f4abc78397b634e6b455412ea8788b520f34ebec60009738e2148afd5c7",
+      "mime": "application/json",
+      "size": 1571
+    }
+  ],
+  "bundle_hash": "a74de428ada0847db341a5c407272522229ed770ef8816806e395b0bd6c194d8"
+}

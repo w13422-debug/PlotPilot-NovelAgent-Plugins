@@ -1,0 +1,34 @@
+{
+  "schema": "style-data-package-expected/v1",
+  "package_kind": "data",
+  "plugin_id": "com.plotpilot.novelagent.style-pack.core-default",
+  "format_id": "style-pack/v1",
+  "version": "1.0.0",
+  "manifest_path": "plugin.json",
+  "root_path": "data/style-pack.json",
+  "package_files": [
+    "data/style-pack.json",
+    "fixtures/exact-qualified-release.json",
+    "plugin.json",
+    "schemas/qualification-receipt-v1.schema.json",
+    "schemas/style-pack-v1.schema.json"
+  ],
+  "files_sha256": "85663f4abc78397b634e6b455412ea8788b520f34ebec60009738e2148afd5c7  data/style-pack.json\n4113488c0da5c0cac9ed73763a7b75d93224ed0c6510371ec8c442fc7e89b577  fixtures/exact-qualified-release.json\nf156330ac83efb49566218dcc8e869a220172215342ccf477077d536b95c1e7f  plugin.json\na1c8128b0a60c3cc926ed69d7ed09cf4f53817ab99b0bd8561c3a61823eff18a  schemas/qualification-receipt-v1.schema.json\n8b9ddd2cd8b4ce9f6b11c326a5e7f09468b386cfdc59c898200fd0259d0d47b2  schemas/style-pack-v1.schema.json\n",
+  "fixture_hashes": {
+    "data/style-pack.json": "85663f4abc78397b634e6b455412ea8788b520f34ebec60009738e2148afd5c7",
+    "fixtures/exact-qualified-release.json": "4113488c0da5c0cac9ed73763a7b75d93224ed0c6510371ec8c442fc7e89b577",
+    "plugin.json": "f156330ac83efb49566218dcc8e869a220172215342ccf477077d536b95c1e7f",
+    "schemas/style-pack-v1.schema.json": "8b9ddd2cd8b4ce9f6b11c326a5e7f09468b386cfdc59c898200fd0259d0d47b2",
+    "schemas/qualification-receipt-v1.schema.json": "a1c8128b0a60c3cc926ed69d7ed09cf4f53817ab99b0bd8561c3a61823eff18a"
+  },
+  "package_hash": "07e55ef065f29a68f29952c4dc44bc8f3d11e9901430b49df8c5d59b5fb96362",
+  "release_id": "3d3c29207b7b121e2eec69be9b1492b99c3a8ae451f06aaf36a3ed4a7b61aa6c",
+  "bundle_hash": "a74de428ada0847db341a5c407272522229ed770ef8816806e395b0bd6c194d8",
+  "identity_path": "identity.json",
+  "identity_domains": {
+    "style": "style-release/v1",
+    "data_or_code": "plotpilot-release/v1",
+    "skill": "plotpilot-skill-release/v1",
+    "code_plugin_id": "com.plotpilot.novelagent.style-manufacturing"
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "$id": "style.qualify.writer-model-request/v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "style_release_id",
+    "style_payload_hash",
+    "rubric_hash",
+    "sealed_case_ids",
+    "output_schema",
+    "style_pack_asset_id",
+    "style_pack_asset_hash",
+    "sealed_case_asset_id",
+    "sealed_case_asset_hash",
+    "rubric_asset_id",
+    "rubric_asset_hash",
+    "style_pack",
+    "sealed_case",
+    "rubric",
+    "frozen_inputs",
+    "route_id",
+    "model_profile_revision_id",
+    "run_snapshot_hash",
+    "attempt_ids"
+  ],
+  "properties": {
+    "schema": {
+      "const": "style.qualify.writer-model-request/v1"
+    },
+    "style_release_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "style_payload_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "rubric_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "sealed_case_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+      }
+    },
+    "output_schema": {
+      "const": "style.qualify.writer-model-response/v1"
+    },
+    "style_pack_asset_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "style_pack_asset_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "sealed_case_asset_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "sealed_case_asset_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "rubric_asset_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "rubric_asset_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "style_pack": {
+      "$ref": "#/$defs/frozenInput"
+    },
+    "sealed_case": {
+      "$ref": "#/$defs/frozenInput"
+    },
+    "rubric": {
+      "$ref": "#/$defs/frozenInput"
+    },
+    "frozen_inputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["style_pack", "sealed_case", "rubric"],
+      "properties": {
+        "style_pack": {"$ref": "#/$defs/frozenInput"},
+        "sealed_case": {"$ref": "#/$defs/frozenInput"},
+        "rubric": {"$ref": "#/$defs/frozenInput"}
+      }
+    },
+    "route_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "model_profile_revision_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "run_snapshot_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "attempt_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+      }
+    }
+  },
+  "$defs": {
+    "frozenInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["asset_id", "asset_hash", "content_hash", "content"],
+      "properties": {
+        "asset_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"},
+        "asset_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "content_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "content": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "$id": "style.manufacture-map/v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "chunk_id",
+    "ordinal",
+    "chunk_plan_asset_id",
+    "chunk_plan_asset_hash",
+    "chunk_content_hash",
+    "map_output_asset_id",
+    "map_output_asset_hash",
+    "map_output",
+    "model_receipt_id",
+    "map_record_asset_id",
+    "map_record_asset_hash"
+  ],
+  "properties": {
+    "schema": {
+      "const": "style.manufacture-map/v1"
+    },
+    "chunk_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "ordinal": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "chunk_plan_asset_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "chunk_plan_asset_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "chunk_content_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "map_output_asset_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "map_output_asset_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "map_output": {
+      "$ref": "../manufacture-model-response.schema.json"
+    },
+    "model_receipt_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "map_record_asset_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "map_record_asset_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

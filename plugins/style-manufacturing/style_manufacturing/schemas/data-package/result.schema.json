@@ -1,0 +1,103 @@
+{
+  "$id": "style.data-plugin.package-result/v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "schema",
+    "contract_id",
+    "bundle_id",
+    "bundle_type",
+    "producer",
+    "input_snapshot_hash",
+    "items",
+    "warnings",
+    "partial",
+    "provenance_receipt_id",
+    "skill_chain_result_refs"
+  ],
+  "properties": {
+    "schema": {
+      "const": "result-bundle/v1"
+    },
+    "contract_id": {
+      "enum": [
+        "artifact-bundle/v1",
+        "diagnostic-bundle/v1"
+      ]
+    },
+    "bundle_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "bundle_type": {
+      "enum": [
+        "artifact",
+        "diagnostic"
+      ]
+    },
+    "producer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plugin_id",
+        "release_id",
+        "capability_id",
+        "job_id",
+        "step_id",
+        "attempt_id",
+        "lease_epoch"
+      ],
+      "properties": {
+        "plugin_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "release_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "capability_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "job_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "step_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "attempt_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+        },
+        "lease_epoch": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "input_snapshot_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "items": {
+      "type": "array"
+    },
+    "warnings": {
+      "type": "array"
+    },
+    "partial": {
+      "type": "boolean"
+    },
+    "provenance_receipt_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "skill_chain_result_refs": {
+      "type": "array"
+    }
+  },
+  "additionalProperties": false
+}

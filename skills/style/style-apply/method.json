@@ -1,0 +1,10 @@
+{
+  "schema": "style-skill-method/v1",
+  "skill_id": "com.plotpilot.skill.style.apply",
+  "input_format_ids": ["style-pack/v1", "lexicon/v1", "quality-rubric/v1"],
+  "capability_ids": ["style.apply/v1", "style.review/v1", "style.refine/v1"],
+  "result_contracts": ["candidate-batch/v1", "diagnostic-bundle/v1"],
+  "rules": ["exact_qualified_style_release", "qualification_receipt_bound", "deterministic_lexicon_merge", "review_is_diagnostic_only", "apply_and_refine_candidate_only", "style_never_skill"],
+  "authority": "candidate_or_diagnostic_only",
+  "identity_boundary": "skill_never_style_or_data"
+}

@@ -1,0 +1,242 @@
+{
+  "schema": "style-manufacturing-package-expected/v1",
+  "plugin_id": "com.plotpilot.novelagent.style-manufacturing",
+  "version": "0.1.0",
+  "package_files": [
+    "backend/plotpilot_style_manufacturing-0.1.0-py3-none-any.whl",
+    "backend/requirements.lock",
+    "backend/wheels/README.txt",
+    "descriptor-data-package.json",
+    "descriptor-qualify.json",
+    "descriptor.json",
+    "files.sha256",
+    "migrations/manifest.json",
+    "plugin.json",
+    "pyproject.toml",
+    "rebuild_package.py",
+    "style_manufacturing/__init__.py",
+    "style_manufacturing/build_backend.py",
+    "style_manufacturing/capability_spec.py",
+    "style_manufacturing/contract.py",
+    "style_manufacturing/identity.json",
+    "style_manufacturing/package_identity.py",
+    "style_manufacturing/runtime.py",
+    "style_manufacturing/schemas/data-package/index.json",
+    "style_manufacturing/schemas/data-package/input.schema.json",
+    "style_manufacturing/schemas/data-package/result.schema.json",
+    "style_manufacturing/schemas/manufacture-model-request.schema.json",
+    "style_manufacturing/schemas/manufacture-model-response.schema.json",
+    "style_manufacturing/schemas/manufacture/chunk-plan.schema.json",
+    "style_manufacturing/schemas/manufacture/index.json",
+    "style_manufacturing/schemas/manufacture/input.schema.json",
+    "style_manufacturing/schemas/manufacture/map.schema.json",
+    "style_manufacturing/schemas/manufacture/result.schema.json",
+    "style_manufacturing/schemas/qualification-receipt.schema.json",
+    "style_manufacturing/schemas/qualify-reviewer-model-request.schema.json",
+    "style_manufacturing/schemas/qualify-reviewer-model-response.schema.json",
+    "style_manufacturing/schemas/qualify-writer-model-request.schema.json",
+    "style_manufacturing/schemas/qualify-writer-model-response.schema.json",
+    "style_manufacturing/schemas/qualify/index.json",
+    "style_manufacturing/schemas/qualify/input.schema.json",
+    "style_manufacturing/schemas/qualify/result.schema.json",
+    "style_manufacturing/schemas/style-pack.schema.json",
+    "ui/metadata-only.json"
+  ],
+  "files_sha256": "d5e17d6ca05d9d6867220fe3c2938955b662beb68c09cb3a4bf33cd33f6805e2  backend/plotpilot_style_manufacturing-0.1.0-py3-none-any.whl\n81e7990ffd51938ca4231ec67ef4d862ec0e15fa91dc85f3b7828bbbc1fd7ff8  backend/requirements.lock\n563a7dc7fc03cef3c3d042e443b14c1ba2dfd5c9c90d2a1258e01791a63950df  backend/wheels/README.txt\n2991977e0b3fa3cf1207fb8a2fc8e693edea22f411ee1b982faa8c442542a101  migrations/manifest.json\n37b1c9f4d0af10fbd61586a327539c9d1364f0daa8aa663de537ec37bc906bb5  plugin.json\n59590b61c381c96b204a72b9d912de3586860f35474d70d5e1d6856c4d026041  pyproject.toml\n57a968a771c7571d0bedf62a679bcc38bf269060742962ddf5c0545822910247  rebuild_package.py\n1bc41883c5d652324c9a3d72432f3a17568bd5199a5465abe3ba36710e612be4  style_manufacturing/__init__.py\n8e034f802a903d5850550ee9a1518563677b3c36fec7e6f948450091f28d733f  style_manufacturing/build_backend.py\n1385913f23b914f4c4da61e727a571cb9016a89fe9edef6295063a494fac3afc  style_manufacturing/capability_spec.py\n39b097a1abdef9ce1aeefa183d40ed2ef1dbc6aba5e54fc37c7bdb3078dad4b7  style_manufacturing/contract.py\n1f4db9468a960adf4b52965799663ccd5d13768c253e4f6b6bffdfe1886b7351  style_manufacturing/package_identity.py\nf85c727e2371e60dfeadf6c1da1baab2a76046a267fbc8236cccea05f85c7544  style_manufacturing/runtime.py\n42a00ca80d2650fe896b45f4da51a0dced22edd99c990885bff5ac94d73e684a  style_manufacturing/schemas/data-package/index.json\nd857c96a7e617ec94e6186befb9f633d9f95d75147ea30a53efa331f0e28daae  style_manufacturing/schemas/data-package/input.schema.json\n7e6b3ee529d37ff8f7738c465971d2486a8441881f4d372f35bb6ecfb5fff1b8  style_manufacturing/schemas/data-package/result.schema.json\n8724afb0d7d5caa580dcc1dc6b74ef3141f91a12a99b7fda606e9d0372fdad82  style_manufacturing/schemas/manufacture-model-request.schema.json\n0e84887ace491083ceecce82857ef9b54b376988b9ffc37bb6015dbd73476548  style_manufacturing/schemas/manufacture-model-response.schema.json\n5ba973a13ea5b1bc3fe1937f2551d6b3621f9456a91f840bfb36afe290e5eb20  style_manufacturing/schemas/manufacture/chunk-plan.schema.json\n3bb41b2a3cbae2e43d416000fc3972d0c41f78325c9fe66957d61ff72aa4017c  style_manufacturing/schemas/manufacture/index.json\naba1cb56587637e1aa0c60279aee429f4212f11a2183fe632dd8d15e66709fb2  style_manufacturing/schemas/manufacture/input.schema.json\n0f9e33fd46f783ed4fab1d667338acbf5edf27a17e4f56c14a9361638f2858b8  style_manufacturing/schemas/manufacture/map.schema.json\n9dbcc99ddad43a3a09f823107ead8e6567adf12109f945022edf98cdb53c6b9e  style_manufacturing/schemas/manufacture/result.schema.json\n28ea03d438737b0e5b2ca7a9f3d679586622cf3a47a12e08413384323d650727  style_manufacturing/schemas/qualification-receipt.schema.json\n57cf43692b77179164b8294565038741e7a7c57868c894fc8f095031c90cccf3  style_manufacturing/schemas/qualify-reviewer-model-request.schema.json\n2a9b7249bbb4d1cc18bc11ea4d816c6c592cb235eee465eb56a931f025d7b6cb  style_manufacturing/schemas/qualify-reviewer-model-response.schema.json\n0610d28eb61493baf85c44d50af50a9c8c21edf5db527d08058504e2c59b84df  style_manufacturing/schemas/qualify-writer-model-request.schema.json\ne6ff23b99a279d6b50c47152e2971a2569a1a709a7feebf26d79abab085eed7d  style_manufacturing/schemas/qualify-writer-model-response.schema.json\n6caa0019adde5f03885597f0ddc3b32e4995d00d8f0b9a1cc970f0541b2f6c69  style_manufacturing/schemas/qualify/index.json\n1f4cd22e06e0d44df3c72140c92b8a6ed9d69ea7a304d284c0445a664b833c15  style_manufacturing/schemas/qualify/input.schema.json\naa3516b120ce202de3c8305d13fc45f2c555f2aaf2c2fc51c624dedcf2ade824  style_manufacturing/schemas/qualify/result.schema.json\n6c437e2afd33924cb1310641e37d2e92a9de0922e5cec96d043124bd1167c88b  style_manufacturing/schemas/style-pack.schema.json\n815ee6e737fa4d6087a4f07d3aa3a80784756bff0472e8c05977a4fa56973106  ui/metadata-only.json\n",
+  "package_hash": "801379f39cf60e3733ba8844c191ebaa34f5415e7761e938d22f09dbbc26787f",
+  "release_id": "e217d3b901ee66ebcc922d078fa9bcb3deae040816076dbb568f44afd7f1802f",
+  "provider_identity": {
+    "schema": "style-manufacturing-package-identity/v1",
+    "plugin_id": "com.plotpilot.novelagent.style-manufacturing",
+    "version": "0.1.0",
+    "package_hash": "801379f39cf60e3733ba8844c191ebaa34f5415e7761e938d22f09dbbc26787f",
+    "release_id": "e217d3b901ee66ebcc922d078fa9bcb3deae040816076dbb568f44afd7f1802f"
+  },
+  "capability_projection": [
+    {
+      "capability_id": "style.manufacture/v1",
+      "descriptor_path": "descriptor.json",
+      "schema_index_path": "style_manufacturing/schemas/manufacture/index.json",
+      "input_schema": "style.manufacture-request/v1",
+      "output_schema": "style.manufacture-result/v1",
+      "result_contract": "candidate-batch/v1",
+      "bundle_type": "candidate_batch",
+      "supports": [
+        "run",
+        "resume",
+        "cancel"
+      ],
+      "deterministic": false,
+      "request_fields_group": "manufacture",
+      "accepted_data_formats": [
+        "book-analysis-taxonomy/v1",
+        "lexicon/v1"
+      ],
+      "ui_contributions": [
+        {
+          "contribution_id": "nap-ui-style-manufacture-v1-donors-analysis-configure",
+          "slot": "donors.analysis.configure"
+        }
+      ]
+    },
+    {
+      "capability_id": "style.qualify/v1",
+      "descriptor_path": "descriptor-qualify.json",
+      "schema_index_path": "style_manufacturing/schemas/qualify/index.json",
+      "input_schema": "style.qualify-request/v1",
+      "output_schema": "style.qualify-result/v1",
+      "result_contract": "diagnostic-bundle/v1",
+      "bundle_type": "diagnostic",
+      "supports": [
+        "run",
+        "resume",
+        "cancel"
+      ],
+      "deterministic": false,
+      "request_fields_group": "qualify",
+      "accepted_data_formats": [
+        "quality-rubric/v1"
+      ],
+      "ui_contributions": [
+        {
+          "contribution_id": "nap-ui-style-qualify-v1-donors-analysis-review",
+          "slot": "donors.analysis.review"
+        }
+      ]
+    },
+    {
+      "capability_id": "style.data-plugin.package/v1",
+      "descriptor_path": "descriptor-data-package.json",
+      "schema_index_path": "style_manufacturing/schemas/data-package/index.json",
+      "input_schema": "style.data-plugin.package-request/v1",
+      "output_schema": "style.data-plugin.package-result/v1",
+      "result_contract": "artifact-bundle/v1",
+      "bundle_type": "artifact",
+      "supports": [
+        "run",
+        "validate"
+      ],
+      "deterministic": true,
+      "request_fields_group": "package",
+      "accepted_data_formats": [
+        "style-pack/v1"
+      ],
+      "ui_contributions": [
+        {
+          "contribution_id": "nap-ui-style-data-plugin-package-v1-donors-asset-derivation",
+          "slot": "donors.asset.derivation"
+        }
+      ]
+    }
+  ],
+  "capability_projection_sha256": "4acb1975faa4cb9b38ca9a0798f679fe8485be0c3712eeb0e3a3fe9190228ef3",
+  "descriptor_paths": [
+    "descriptor.json",
+    "descriptor-qualify.json",
+    "descriptor-data-package.json"
+  ],
+  "descriptor_sha256": {
+    "descriptor.json": "a71f3444e81dc50613df9f29fde654a6f0187693a6bfb8bed7e6c19d649441ce",
+    "descriptor-qualify.json": "a8635d731d97e5efc1dcbc7fbab8dbf77611e842a3c90b592efd53236db8de9d",
+    "descriptor-data-package.json": "d894266189ea1a5d9d4d48bd7df7abab3e3eef3608d8730f7f723de011c647fb"
+  },
+  "descriptor_provider_identity": {
+    "descriptor.json": {
+      "plugin_id": "com.plotpilot.novelagent.style-manufacturing",
+      "release_id": "e217d3b901ee66ebcc922d078fa9bcb3deae040816076dbb568f44afd7f1802f"
+    },
+    "descriptor-qualify.json": {
+      "plugin_id": "com.plotpilot.novelagent.style-manufacturing",
+      "release_id": "e217d3b901ee66ebcc922d078fa9bcb3deae040816076dbb568f44afd7f1802f"
+    },
+    "descriptor-data-package.json": {
+      "plugin_id": "com.plotpilot.novelagent.style-manufacturing",
+      "release_id": "e217d3b901ee66ebcc922d078fa9bcb3deae040816076dbb568f44afd7f1802f"
+    }
+  },
+  "schema_index_paths": {
+    "style.manufacture/v1": "style_manufacturing/schemas/manufacture/index.json",
+    "style.qualify/v1": "style_manufacturing/schemas/qualify/index.json",
+    "style.data-plugin.package/v1": "style_manufacturing/schemas/data-package/index.json"
+  },
+  "schema_index_path_list": [
+    "style_manufacturing/schemas/manufacture/index.json",
+    "style_manufacturing/schemas/qualify/index.json",
+    "style_manufacturing/schemas/data-package/index.json"
+  ],
+  "schema_index_sha256": {
+    "style_manufacturing/schemas/manufacture/index.json": "3bb41b2a3cbae2e43d416000fc3972d0c41f78325c9fe66957d61ff72aa4017c",
+    "style_manufacturing/schemas/qualify/index.json": "6caa0019adde5f03885597f0ddc3b32e4995d00d8f0b9a1cc970f0541b2f6c69",
+    "style_manufacturing/schemas/data-package/index.json": "42a00ca80d2650fe896b45f4da51a0dced22edd99c990885bff5ac94d73e684a"
+  },
+  "schema_artifacts": {
+    "style_manufacturing/schemas/manufacture/index.json": [
+      {
+        "schema_id": "style.manufacture-request/v1",
+        "path": "schemas/manufacture/input.schema.json",
+        "sha256": "aba1cb56587637e1aa0c60279aee429f4212f11a2183fe632dd8d15e66709fb2"
+      },
+      {
+        "schema_id": "style.manufacture-result/v1",
+        "path": "schemas/manufacture/result.schema.json",
+        "sha256": "9dbcc99ddad43a3a09f823107ead8e6567adf12109f945022edf98cdb53c6b9e"
+      },
+      {
+        "schema_id": "style.chunk-plan/v1",
+        "path": "schemas/manufacture/chunk-plan.schema.json",
+        "sha256": "5ba973a13ea5b1bc3fe1937f2551d6b3621f9456a91f840bfb36afe290e5eb20"
+      },
+      {
+        "schema_id": "style.manufacture-map/v1",
+        "path": "schemas/manufacture/map.schema.json",
+        "sha256": "0f9e33fd46f783ed4fab1d667338acbf5edf27a17e4f56c14a9361638f2858b8"
+      }
+    ],
+    "style_manufacturing/schemas/qualify/index.json": [
+      {
+        "schema_id": "style.qualify-request/v1",
+        "path": "schemas/qualify/input.schema.json",
+        "sha256": "1f4cd22e06e0d44df3c72140c92b8a6ed9d69ea7a304d284c0445a664b833c15"
+      },
+      {
+        "schema_id": "style.qualify-result/v1",
+        "path": "schemas/qualify/result.schema.json",
+        "sha256": "aa3516b120ce202de3c8305d13fc45f2c555f2aaf2c2fc51c624dedcf2ade824"
+      }
+    ],
+    "style_manufacturing/schemas/data-package/index.json": [
+      {
+        "schema_id": "style.data-plugin.package-request/v1",
+        "path": "schemas/data-package/input.schema.json",
+        "sha256": "d857c96a7e617ec94e6186befb9f633d9f95d75147ea30a53efa331f0e28daae"
+      },
+      {
+        "schema_id": "style.data-plugin.package-result/v1",
+        "path": "schemas/data-package/result.schema.json",
+        "sha256": "7e6b3ee529d37ff8f7738c465971d2486a8441881f4d372f35bb6ecfb5fff1b8"
+      }
+    ]
+  },
+  "schema_artifact_sha256": {
+    "style_manufacturing/schemas/data-package/input.schema.json": "d857c96a7e617ec94e6186befb9f633d9f95d75147ea30a53efa331f0e28daae",
+    "style_manufacturing/schemas/data-package/result.schema.json": "7e6b3ee529d37ff8f7738c465971d2486a8441881f4d372f35bb6ecfb5fff1b8",
+    "style_manufacturing/schemas/manufacture/chunk-plan.schema.json": "5ba973a13ea5b1bc3fe1937f2551d6b3621f9456a91f840bfb36afe290e5eb20",
+    "style_manufacturing/schemas/manufacture/input.schema.json": "aba1cb56587637e1aa0c60279aee429f4212f11a2183fe632dd8d15e66709fb2",
+    "style_manufacturing/schemas/manufacture/map.schema.json": "0f9e33fd46f783ed4fab1d667338acbf5edf27a17e4f56c14a9361638f2858b8",
+    "style_manufacturing/schemas/manufacture/result.schema.json": "9dbcc99ddad43a3a09f823107ead8e6567adf12109f945022edf98cdb53c6b9e",
+    "style_manufacturing/schemas/manufacture-model-request.schema.json": "8724afb0d7d5caa580dcc1dc6b74ef3141f91a12a99b7fda606e9d0372fdad82",
+    "style_manufacturing/schemas/manufacture-model-response.schema.json": "0e84887ace491083ceecce82857ef9b54b376988b9ffc37bb6015dbd73476548",
+    "style_manufacturing/schemas/qualification-receipt.schema.json": "28ea03d438737b0e5b2ca7a9f3d679586622cf3a47a12e08413384323d650727",
+    "style_manufacturing/schemas/qualify/input.schema.json": "1f4cd22e06e0d44df3c72140c92b8a6ed9d69ea7a304d284c0445a664b833c15",
+    "style_manufacturing/schemas/qualify/result.schema.json": "aa3516b120ce202de3c8305d13fc45f2c555f2aaf2c2fc51c624dedcf2ade824",
+    "style_manufacturing/schemas/qualify-reviewer-model-request.schema.json": "57cf43692b77179164b8294565038741e7a7c57868c894fc8f095031c90cccf3",
+    "style_manufacturing/schemas/qualify-reviewer-model-response.schema.json": "2a9b7249bbb4d1cc18bc11ea4d816c6c592cb235eee465eb56a931f025d7b6cb",
+    "style_manufacturing/schemas/qualify-writer-model-request.schema.json": "0610d28eb61493baf85c44d50af50a9c8c21edf5db527d08058504e2c59b84df",
+    "style_manufacturing/schemas/qualify-writer-model-response.schema.json": "e6ff23b99a279d6b50c47152e2971a2569a1a709a7feebf26d79abab085eed7d",
+    "style_manufacturing/schemas/style-pack.schema.json": "6c437e2afd33924cb1310641e37d2e92a9de0922e5cec96d043124bd1167c88b"
+  },
+  "wheel_path": "backend/plotpilot_style_manufacturing-0.1.0-py3-none-any.whl",
+  "wheel_import": "style_manufacturing",
+  "plugin_path": "plugin.json",
+  "identity_path": "style_manufacturing/identity.json"
+}
