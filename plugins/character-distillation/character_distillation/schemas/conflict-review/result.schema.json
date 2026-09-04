@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "analysis.character.conflict.review/v1 result",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "result-bundle/v1"
+    },
+    "capability_id": {
+      "const": "analysis.character.conflict.review/v1"
+    },
+    "contract_id": {
+      "enum": [
+        "candidate-batch/v1",
+        "diagnostic-bundle/v1"
+      ]
+    },
+    "bundle_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "release_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "required": [
+    "schema",
+    "capability_id",
+    "contract_id",
+    "bundle_id",
+    "release_id"
+  ]
+}

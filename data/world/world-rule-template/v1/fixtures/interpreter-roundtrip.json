@@ -1,0 +1,14 @@
+{
+  "schema": "world-rule-template-interpreter-roundtrip/v1",
+  "format_id": "world-rule-template/v1",
+  "capabilities": [
+    "asset.template.derive/v1",
+    "quality.consistency.audit/v1",
+    "story.chapter.settle/v1",
+    "story.state.derive/v1",
+    "writing.context.assemble/v1",
+    "writing.chapter.draft/v1"
+  ],
+  "forward_direction": "format_to_capability",
+  "reverse_direction": "capability_to_format"
+}

@@ -1,0 +1,11 @@
+{
+  "schema": "plotpilot-skill/v1",
+  "skill_id": "com.plotpilot.skill.donor.character-line",
+  "version": "1.0.0",
+  "display_name": "Character line distillation",
+  "stage": "analysis",
+  "actions": [
+    "extract",
+    "synthesize"
+  ]
+}

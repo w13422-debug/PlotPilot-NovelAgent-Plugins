@@ -1,0 +1,9 @@
+{
+  "schema": "plugin-ui-metadata/v1",
+  "plugin_id": "com.plotpilot.novelagent.character-distillation",
+  "implementation": "host-projected-metadata-only",
+  "slots": [
+    "donors.analysis.review",
+    "donors.asset.derivation"
+  ]
+}

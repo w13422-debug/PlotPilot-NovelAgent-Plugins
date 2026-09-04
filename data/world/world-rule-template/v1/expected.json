@@ -1,0 +1,33 @@
+{
+  "schema": "world-rule-template-expected/v1",
+  "package_kind": "data",
+  "plugin_id": "com.plotpilot.novelagent.world-rule-template",
+  "format_id": "world-rule-template/v1",
+  "version": "1.0.0",
+  "manifest_path": "plugin.json",
+  "root_path": "data/world-rules.json",
+  "package_files": [
+    "data/world-rules.json",
+    "fixtures/interpreter-mappings.json",
+    "fixtures/interpreter-roundtrip.json",
+    "plugin.json",
+    "schemas/interpreter-roundtrip-v1.schema.json",
+    "schemas/world-rule-template-v1.schema.json"
+  ],
+  "files_sha256": "eacc8de90ed4c9d997ce9e65a971927292397f5befdf42af106eadaad291914f  data/world-rules.json\n4f8bd412350d53be2fd57985f93024f5e071f56bfa041112a9e3215373f9725a  fixtures/interpreter-mappings.json\n0fa96977dbdf633f8fd39032b1382cadf9d0db06c787824675927ea837899b14  fixtures/interpreter-roundtrip.json\n480c40a0dca26b47f1b5db01dba17124a732fe254182e8d2932041e29fa8c8ca  plugin.json\n9f5ff271cc54b75e81f7c8ebe183224b889fa4b667dc41bd0095afc9e3135fa6  schemas/interpreter-roundtrip-v1.schema.json\na05996c8c22e49b71d190ebc23a6d19a340c9eedabc2ad02f0f90ae16c86cbe0  schemas/world-rule-template-v1.schema.json\n",
+  "fixture_hashes": {
+    "fixtures/interpreter-mappings.json": "4f8bd412350d53be2fd57985f93024f5e071f56bfa041112a9e3215373f9725a",
+    "fixtures/interpreter-roundtrip.json": "0fa96977dbdf633f8fd39032b1382cadf9d0db06c787824675927ea837899b14",
+    "schemas/interpreter-roundtrip-v1.schema.json": "9f5ff271cc54b75e81f7c8ebe183224b889fa4b667dc41bd0095afc9e3135fa6",
+    "schemas/world-rule-template-v1.schema.json": "a05996c8c22e49b71d190ebc23a6d19a340c9eedabc2ad02f0f90ae16c86cbe0"
+  },
+  "package_hash": "6e047e5fc172e6fa685432097b0788b17c4c82a37a52eb3562a6d17d63a9961a",
+  "release_id": "e43d6c183c75f35ada1b683da496fc4220f76f566eb9819679754bb61688b9f3",
+  "bundle_hash": "41b31d02ac4a27225f49e97b96471fd4cc6cd46d46c38a5dd6bb7b712324cf75",
+  "identity_path": "identity.json",
+  "identity_domains": {
+    "data_or_code": "plotpilot-release/v1",
+    "skill": "plotpilot-skill-release/v1",
+    "code_plugin_id": "com.plotpilot.novelagent.asset-derivation"
+  }
+}

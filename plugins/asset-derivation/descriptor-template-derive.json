@@ -1,0 +1,22 @@
+{
+  "schema": "capability-provider/v1",
+  "capability_id": "asset.template.derive/v1",
+  "provider": {
+    "plugin_id": "com.plotpilot.novelagent.asset-derivation",
+    "release_id": "251455bb34c68e8a19762ad750148cf6bb53b86100a74508ae8ea39e2a532f58"
+  },
+  "input_schema": "asset.template.derive-request/v1",
+  "output_schema": "asset.template.derive-result/v1",
+  "result_contract": "candidate-batch/v1",
+  "supports": [
+    "run",
+    "resume",
+    "cancel"
+  ],
+  "deterministic": false,
+  "accepted_data_formats": [
+    "character-archetype/v1",
+    "world-rule-template/v1",
+    "plot-structure-template/v1"
+  ]
+}

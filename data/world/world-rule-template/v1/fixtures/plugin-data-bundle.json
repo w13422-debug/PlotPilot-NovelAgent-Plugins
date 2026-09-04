@@ -1,0 +1,19 @@
+{
+  "schema": "plugin-data-bundle/v1",
+  "bundle_id": "world-rule-template-v1-bundle",
+  "data_plugin_id": "com.plotpilot.novelagent.world-rule-template",
+  "data_release_id": "e43d6c183c75f35ada1b683da496fc4220f76f566eb9819679754bb61688b9f3",
+  "package_hash": "6e047e5fc172e6fa685432097b0788b17c4c82a37a52eb3562a6d17d63a9961a",
+  "format_id": "world-rule-template/v1",
+  "root_path": "data/world-rules.json",
+  "files": [
+    {
+      "path": "data/world-rules.json",
+      "asset_id": "asset-world-rule-template-v1",
+      "sha256": "eacc8de90ed4c9d997ce9e65a971927292397f5befdf42af106eadaad291914f",
+      "mime": "application/json",
+      "size": 3198
+    }
+  ],
+  "bundle_hash": "41b31d02ac4a27225f49e97b96471fd4cc6cd46d46c38a5dd6bb7b712324cf75"
+}

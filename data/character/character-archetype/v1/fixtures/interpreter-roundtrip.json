@@ -1,0 +1,15 @@
+{
+  "schema": "character-archetype-interpreter-roundtrip/v1",
+  "format_id": "character-archetype/v1",
+  "capabilities": [
+    "analysis.character.atom.extract/v1",
+    "analysis.character.card.generate/v1",
+    "analysis.character.conflict.review/v1",
+    "analysis.character.conflict.apply/v1",
+    "asset.template.derive/v1",
+    "writing.context.assemble/v1",
+    "writing.chapter.draft/v1"
+  ],
+  "forward_direction": "format_to_capability",
+  "reverse_direction": "capability_to_format"
+}

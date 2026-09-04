@@ -1,0 +1,290 @@
+{
+  "schema": "character-distillation-package-expected/v1",
+  "plugin_id": "com.plotpilot.novelagent.character-distillation",
+  "version": "0.1.0",
+  "package_files": [
+    ".gitattributes",
+    "backend/plotpilot_character_distillation-0.1.0-py3-none-any.whl",
+    "backend/requirements.lock",
+    "backend/wheels/README.txt",
+    "character_distillation/__init__.py",
+    "character_distillation/build_backend.py",
+    "character_distillation/capability_spec.py",
+    "character_distillation/contract.py",
+    "character_distillation/package_identity.py",
+    "character_distillation/runtime.py",
+    "character_distillation/schemas/atom-extract/index.json",
+    "character_distillation/schemas/atom-extract/input.schema.json",
+    "character_distillation/schemas/atom-extract/result.schema.json",
+    "character_distillation/schemas/card-generate/index.json",
+    "character_distillation/schemas/card-generate/input.schema.json",
+    "character_distillation/schemas/card-generate/result.schema.json",
+    "character_distillation/schemas/character-archetype-ref-v1.schema.json",
+    "character_distillation/schemas/character-archetype-v1.schema.json",
+    "character_distillation/schemas/character-atom-v1.schema.json",
+    "character_distillation/schemas/character-card-v1.schema.json",
+    "character_distillation/schemas/character-conflict-ruling-v1.schema.json",
+    "character_distillation/schemas/character-conflict-v1.schema.json",
+    "character_distillation/schemas/conflict-apply/index.json",
+    "character_distillation/schemas/conflict-apply/input.schema.json",
+    "character_distillation/schemas/conflict-apply/result.schema.json",
+    "character_distillation/schemas/conflict-review/index.json",
+    "character_distillation/schemas/conflict-review/input.schema.json",
+    "character_distillation/schemas/conflict-review/result.schema.json",
+    "character_distillation/schemas/evidence-span-v1.schema.json",
+    "character_distillation/schemas/resume-state-v1.schema.json",
+    "migrations/manifest.json",
+    "plugin.json",
+    "pyproject.toml",
+    "rebuild_package.py",
+    "ui/metadata-only.json"
+  ],
+  "files_sha256": "79f0af9f4dd9c259ba686dd8b2a19db8c38f7a38cfa6ee47ecaa5eeb30ae4fd9  .gitattributes\nf375eaafb09f77c60f37565c912822f65d436a4145ba86ad7a13d9148b66c902  backend/plotpilot_character_distillation-0.1.0-py3-none-any.whl\ne3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  backend/requirements.lock\nfffacd72a63a968f2ead5cbe8f77ad494c925f23d79851811f0bede8f3b4e571  backend/wheels/README.txt\n5c9b388b2d5d2832197ef1912de5b70131bda2efd661c4d561839b1e83caad43  character_distillation/__init__.py\n93226b206324e5437a8dae7c39f8a41a2025c6337c0a8162c2b44754f562cc71  character_distillation/build_backend.py\n452d28c4dd33a7a4ee2b079542615ca02bee0d15a8a20a5916625171c533ee51  character_distillation/capability_spec.py\n97b20ca27e846cacca1a699d07105d7652c184823868f3e1487c3649c4818577  character_distillation/contract.py\n88eeaa9b2cc5adee2384e24e86200e96edea46ef8aed2f226ad361c8eea50659  character_distillation/package_identity.py\n4a0e3e727ff726102d46df0c12c759b5945f0673360c528ae93962f02951924e  character_distillation/runtime.py\n871834219d94f55439db760944d2c4f6443aa75f65bd4e5cf074c5bcccb599b0  character_distillation/schemas/atom-extract/index.json\n657888873fb0827503ec03341d37fac3ecab12b23e7ed29daac757c714b668f2  character_distillation/schemas/atom-extract/input.schema.json\n56c049676f576e7642e011315a174d68b930624d626f4bdb0677031d5b6c2fb9  character_distillation/schemas/atom-extract/result.schema.json\n27e56e916a1c12b725e2876ff63fd14605d8c481a03935108f6c73d8b4107ea3  character_distillation/schemas/card-generate/index.json\n1523f9a78414382c00c298ea51531a472f8b819a1f152ce9a9f8e4ae768e99c2  character_distillation/schemas/card-generate/input.schema.json\na490e3eabe0e35f2ab12f1f2a97b4ecd5f1a5c96cb4d2754f58fd5296bc078a0  character_distillation/schemas/card-generate/result.schema.json\nfb539c51abf6be0b61d060db341e4b72c127efbde022364b70bab2f8adfae988  character_distillation/schemas/character-archetype-ref-v1.schema.json\n96700f17bb3ce2c4acacf52e44887a357bb38220f93b52cb9bced0de9f290122  character_distillation/schemas/character-archetype-v1.schema.json\nd5a2a1d48fe5a09687b4ba22b32a8bd6b8f7d0468dcbed61dc8e4f6d0ea61107  character_distillation/schemas/character-atom-v1.schema.json\n6ea43e8183973e551a590e695ec427c3311aa6cfe9765271abc399e00af86cae  character_distillation/schemas/character-card-v1.schema.json\nc40d6824cb9ef6cf07970d7332fedcefac8d446e155b559cc757e79e512705d7  character_distillation/schemas/character-conflict-ruling-v1.schema.json\n808ecec23339b011ee72859fe0662bda5125713d29597f3aaea691411ff396ec  character_distillation/schemas/character-conflict-v1.schema.json\n30d7504fceaa204a7ef6e857375c80a46e6fbd10b007c28de0ba091d676a2ded  character_distillation/schemas/conflict-apply/index.json\nb33f39008e8ab32f87ec9d2c9a11c53591f3f34f19afc7ed810ad60a9d263be8  character_distillation/schemas/conflict-apply/input.schema.json\nc539ad23076be950c309a3dd7cac6c5a5d7bd5d10ad0141428575c7c0eb6642d  character_distillation/schemas/conflict-apply/result.schema.json\n3eed2c43fbffa48ed9088fb574c8ce005e194566387a3836562da206d69f30b3  character_distillation/schemas/conflict-review/index.json\nc501950495d4e9bd8121cd200667e9316401901259cdac662587de71c235dcf8  character_distillation/schemas/conflict-review/input.schema.json\n1e0f95040c778e804bc5da5254ca56869b361a17e553a6c672fc3810b228c414  character_distillation/schemas/conflict-review/result.schema.json\n7db3d86ff2e96831b403e510a826f247d8c8acebdc4d03cffdbac151c5568e4d  character_distillation/schemas/evidence-span-v1.schema.json\n1b342d54df8af8a76d4d1b6dcb43db1a550be76e33efd44eb61a95c650cb4ac6  character_distillation/schemas/resume-state-v1.schema.json\n82849ab719b026812c6cc1829b75b4bc77ff1b510aa22a2efcab621defe4dcf9  migrations/manifest.json\nfeae773a8aa108fc64193867392aca2f4aaf670fd81c7e4ba60a6614a4d95cf0  plugin.json\n4142dca7e650904d13e91bf47aa42f827f2837fb9ae24ca2a3c779b3212eeed7  pyproject.toml\n8d68a4c1269ab6faea039579a23dbf5cc7191d61d675b294f138d05a9da79f70  rebuild_package.py\nf44fd6dbf5f6b636b92dc9ea37de4c862edca0f4a26d6bc6c96177a5c9731555  ui/metadata-only.json\n",
+  "package_hash": "a9f2b878e27aea50639ccb580b44248f8de273d2638ed84ee5887f54e5d1dd95",
+  "release_id": "0eae2c7c905d2493937f2f7949c8c4e8cb5d49bf9799632f419035b1c9d8e02f",
+  "provider_identity": {
+    "schema": "character-distillation-package-identity/v1",
+    "plugin_id": "com.plotpilot.novelagent.character-distillation",
+    "version": "0.1.0",
+    "package_hash": "a9f2b878e27aea50639ccb580b44248f8de273d2638ed84ee5887f54e5d1dd95",
+    "release_id": "0eae2c7c905d2493937f2f7949c8c4e8cb5d49bf9799632f419035b1c9d8e02f"
+  },
+  "descriptor_paths": [
+    "descriptor-atom-extract.json",
+    "descriptor-card-generate.json",
+    "descriptor-conflict-review.json",
+    "descriptor-conflict-apply.json"
+  ],
+  "descriptor_sha256": {
+    "descriptor-atom-extract.json": "2df4fb8f167e40f4a210756ce07ce9e15ebf6134caaf516590f2aec4572d1da6",
+    "descriptor-card-generate.json": "c16ae02409e6241e61d15d6d89901a56eb9e2e274df135cfc4c4e2e97a5e30d7",
+    "descriptor-conflict-review.json": "61d25da2eae889d5bea7946390b2d653f44f89850b9246488d6e5d339bb61212",
+    "descriptor-conflict-apply.json": "d129d31c64ffd9703cbabade48272948e172d1f08f642774cd3851c1809b9857"
+  },
+  "descriptor_provider_identity": {
+    "descriptor-atom-extract.json": {
+      "plugin_id": "com.plotpilot.novelagent.character-distillation",
+      "release_id": "0eae2c7c905d2493937f2f7949c8c4e8cb5d49bf9799632f419035b1c9d8e02f"
+    },
+    "descriptor-card-generate.json": {
+      "plugin_id": "com.plotpilot.novelagent.character-distillation",
+      "release_id": "0eae2c7c905d2493937f2f7949c8c4e8cb5d49bf9799632f419035b1c9d8e02f"
+    },
+    "descriptor-conflict-review.json": {
+      "plugin_id": "com.plotpilot.novelagent.character-distillation",
+      "release_id": "0eae2c7c905d2493937f2f7949c8c4e8cb5d49bf9799632f419035b1c9d8e02f"
+    },
+    "descriptor-conflict-apply.json": {
+      "plugin_id": "com.plotpilot.novelagent.character-distillation",
+      "release_id": "0eae2c7c905d2493937f2f7949c8c4e8cb5d49bf9799632f419035b1c9d8e02f"
+    }
+  },
+  "schema_index_paths": {
+    "analysis.character.atom.extract/v1": "character_distillation/schemas/atom-extract/index.json",
+    "analysis.character.card.generate/v1": "character_distillation/schemas/card-generate/index.json",
+    "analysis.character.conflict.review/v1": "character_distillation/schemas/conflict-review/index.json",
+    "analysis.character.conflict.apply/v1": "character_distillation/schemas/conflict-apply/index.json"
+  },
+  "schema_index_path_list": [
+    "character_distillation/schemas/atom-extract/index.json",
+    "character_distillation/schemas/card-generate/index.json",
+    "character_distillation/schemas/conflict-review/index.json",
+    "character_distillation/schemas/conflict-apply/index.json"
+  ],
+  "schema_index_sha256": {
+    "character_distillation/schemas/atom-extract/index.json": "871834219d94f55439db760944d2c4f6443aa75f65bd4e5cf074c5bcccb599b0",
+    "character_distillation/schemas/card-generate/index.json": "27e56e916a1c12b725e2876ff63fd14605d8c481a03935108f6c73d8b4107ea3",
+    "character_distillation/schemas/conflict-review/index.json": "3eed2c43fbffa48ed9088fb574c8ce005e194566387a3836562da206d69f30b3",
+    "character_distillation/schemas/conflict-apply/index.json": "30d7504fceaa204a7ef6e857375c80a46e6fbd10b007c28de0ba091d676a2ded"
+  },
+  "schema_artifacts": {
+    "character_distillation/schemas/atom-extract/index.json": [
+      {
+        "schema_id": "analysis.character.atom.extract-request/v1",
+        "path": "schemas/atom-extract/input.schema.json",
+        "sha256": "657888873fb0827503ec03341d37fac3ecab12b23e7ed29daac757c714b668f2"
+      },
+      {
+        "schema_id": "analysis.character.atom.extract-result/v1",
+        "path": "schemas/atom-extract/result.schema.json",
+        "sha256": "56c049676f576e7642e011315a174d68b930624d626f4bdb0677031d5b6c2fb9"
+      }
+    ],
+    "character_distillation/schemas/card-generate/index.json": [
+      {
+        "schema_id": "analysis.character.card.generate-request/v1",
+        "path": "schemas/card-generate/input.schema.json",
+        "sha256": "1523f9a78414382c00c298ea51531a472f8b819a1f152ce9a9f8e4ae768e99c2"
+      },
+      {
+        "schema_id": "analysis.character.card.generate-result/v1",
+        "path": "schemas/card-generate/result.schema.json",
+        "sha256": "a490e3eabe0e35f2ab12f1f2a97b4ecd5f1a5c96cb4d2754f58fd5296bc078a0"
+      }
+    ],
+    "character_distillation/schemas/conflict-review/index.json": [
+      {
+        "schema_id": "analysis.character.conflict.review-request/v1",
+        "path": "schemas/conflict-review/input.schema.json",
+        "sha256": "c501950495d4e9bd8121cd200667e9316401901259cdac662587de71c235dcf8"
+      },
+      {
+        "schema_id": "analysis.character.conflict.review-result/v1",
+        "path": "schemas/conflict-review/result.schema.json",
+        "sha256": "1e0f95040c778e804bc5da5254ca56869b361a17e553a6c672fc3810b228c414"
+      }
+    ],
+    "character_distillation/schemas/conflict-apply/index.json": [
+      {
+        "schema_id": "analysis.character.conflict.apply-request/v1",
+        "path": "schemas/conflict-apply/input.schema.json",
+        "sha256": "b33f39008e8ab32f87ec9d2c9a11c53591f3f34f19afc7ed810ad60a9d263be8"
+      },
+      {
+        "schema_id": "analysis.character.conflict.apply-result/v1",
+        "path": "schemas/conflict-apply/result.schema.json",
+        "sha256": "c539ad23076be950c309a3dd7cac6c5a5d7bd5d10ad0141428575c7c0eb6642d"
+      }
+    ]
+  },
+  "schema_artifact_sha256": {
+    "character_distillation/schemas/atom-extract/index.json": "871834219d94f55439db760944d2c4f6443aa75f65bd4e5cf074c5bcccb599b0",
+    "character_distillation/schemas/atom-extract/input.schema.json": "657888873fb0827503ec03341d37fac3ecab12b23e7ed29daac757c714b668f2",
+    "character_distillation/schemas/atom-extract/result.schema.json": "56c049676f576e7642e011315a174d68b930624d626f4bdb0677031d5b6c2fb9",
+    "character_distillation/schemas/card-generate/index.json": "27e56e916a1c12b725e2876ff63fd14605d8c481a03935108f6c73d8b4107ea3",
+    "character_distillation/schemas/card-generate/input.schema.json": "1523f9a78414382c00c298ea51531a472f8b819a1f152ce9a9f8e4ae768e99c2",
+    "character_distillation/schemas/card-generate/result.schema.json": "a490e3eabe0e35f2ab12f1f2a97b4ecd5f1a5c96cb4d2754f58fd5296bc078a0",
+    "character_distillation/schemas/character-archetype-ref-v1.schema.json": "fb539c51abf6be0b61d060db341e4b72c127efbde022364b70bab2f8adfae988",
+    "character_distillation/schemas/character-archetype-v1.schema.json": "96700f17bb3ce2c4acacf52e44887a357bb38220f93b52cb9bced0de9f290122",
+    "character_distillation/schemas/character-atom-v1.schema.json": "d5a2a1d48fe5a09687b4ba22b32a8bd6b8f7d0468dcbed61dc8e4f6d0ea61107",
+    "character_distillation/schemas/character-card-v1.schema.json": "6ea43e8183973e551a590e695ec427c3311aa6cfe9765271abc399e00af86cae",
+    "character_distillation/schemas/character-conflict-ruling-v1.schema.json": "c40d6824cb9ef6cf07970d7332fedcefac8d446e155b559cc757e79e512705d7",
+    "character_distillation/schemas/character-conflict-v1.schema.json": "808ecec23339b011ee72859fe0662bda5125713d29597f3aaea691411ff396ec",
+    "character_distillation/schemas/conflict-apply/index.json": "30d7504fceaa204a7ef6e857375c80a46e6fbd10b007c28de0ba091d676a2ded",
+    "character_distillation/schemas/conflict-apply/input.schema.json": "b33f39008e8ab32f87ec9d2c9a11c53591f3f34f19afc7ed810ad60a9d263be8",
+    "character_distillation/schemas/conflict-apply/result.schema.json": "c539ad23076be950c309a3dd7cac6c5a5d7bd5d10ad0141428575c7c0eb6642d",
+    "character_distillation/schemas/conflict-review/index.json": "3eed2c43fbffa48ed9088fb574c8ce005e194566387a3836562da206d69f30b3",
+    "character_distillation/schemas/conflict-review/input.schema.json": "c501950495d4e9bd8121cd200667e9316401901259cdac662587de71c235dcf8",
+    "character_distillation/schemas/conflict-review/result.schema.json": "1e0f95040c778e804bc5da5254ca56869b361a17e553a6c672fc3810b228c414",
+    "character_distillation/schemas/evidence-span-v1.schema.json": "7db3d86ff2e96831b403e510a826f247d8c8acebdc4d03cffdbac151c5568e4d",
+    "character_distillation/schemas/resume-state-v1.schema.json": "1b342d54df8af8a76d4d1b6dcb43db1a550be76e33efd44eb61a95c650cb4ac6"
+  },
+  "wheel_path": "backend/plotpilot_character_distillation-0.1.0-py3-none-any.whl",
+  "wheel_import": "character_distillation",
+  "plugin_path": "plugin.json",
+  "identity_path": "character_distillation/identity.json",
+  "capability_projection": [
+    {
+      "capability_id": "analysis.character.atom.extract/v1",
+      "descriptor_path": "descriptor-atom-extract.json",
+      "schema_index_path": "character_distillation/schemas/atom-extract/index.json",
+      "input_schema": "analysis.character.atom.extract-request/v1",
+      "output_schema": "analysis.character.atom.extract-result/v1",
+      "result_contract": "candidate-batch/v1",
+      "bundle_type": "candidate_batch",
+      "supports": [
+        "run",
+        "resume",
+        "cancel"
+      ],
+      "deterministic": false,
+      "request_fields_group": [
+        "source"
+      ],
+      "accepted_data_formats": [
+        "character-archetype/v1"
+      ],
+      "ui_contributions": [
+        {
+          "contribution_id": "nap-ui-analysis-character-atom-extract-v1-donors-analysis-review",
+          "slot": "donors.analysis.review"
+        }
+      ]
+    },
+    {
+      "capability_id": "analysis.character.card.generate/v1",
+      "descriptor_path": "descriptor-card-generate.json",
+      "schema_index_path": "character_distillation/schemas/card-generate/index.json",
+      "input_schema": "analysis.character.card.generate-request/v1",
+      "output_schema": "analysis.character.card.generate-result/v1",
+      "result_contract": "candidate-batch/v1",
+      "bundle_type": "candidate_batch",
+      "supports": [
+        "run",
+        "resume",
+        "cancel"
+      ],
+      "deterministic": false,
+      "request_fields_group": [
+        "source",
+        "atoms"
+      ],
+      "accepted_data_formats": [
+        "character-archetype/v1"
+      ],
+      "ui_contributions": [
+        {
+          "contribution_id": "nap-ui-analysis-character-card-generate-v1-donors-analysis-review",
+          "slot": "donors.analysis.review"
+        },
+        {
+          "contribution_id": "nap-ui-analysis-character-card-generate-v1-donors-asset-derivation",
+          "slot": "donors.asset.derivation"
+        }
+      ]
+    },
+    {
+      "capability_id": "analysis.character.conflict.review/v1",
+      "descriptor_path": "descriptor-conflict-review.json",
+      "schema_index_path": "character_distillation/schemas/conflict-review/index.json",
+      "input_schema": "analysis.character.conflict.review-request/v1",
+      "output_schema": "analysis.character.conflict.review-result/v1",
+      "result_contract": "diagnostic-bundle/v1",
+      "bundle_type": "diagnostic",
+      "supports": [
+        "run"
+      ],
+      "deterministic": false,
+      "request_fields_group": [
+        "conflict"
+      ],
+      "accepted_data_formats": [
+        "character-archetype/v1"
+      ],
+      "ui_contributions": [
+        {
+          "contribution_id": "nap-ui-analysis-character-conflict-review-v1-donors-analysis-review",
+          "slot": "donors.analysis.review"
+        }
+      ]
+    },
+    {
+      "capability_id": "analysis.character.conflict.apply/v1",
+      "descriptor_path": "descriptor-conflict-apply.json",
+      "schema_index_path": "character_distillation/schemas/conflict-apply/index.json",
+      "input_schema": "analysis.character.conflict.apply-request/v1",
+      "output_schema": "analysis.character.conflict.apply-result/v1",
+      "result_contract": "candidate-batch/v1",
+      "bundle_type": "candidate_batch",
+      "supports": [
+        "run",
+        "validate"
+      ],
+      "deterministic": true,
+      "request_fields_group": [
+        "conflict",
+        "ruling"
+      ],
+      "accepted_data_formats": [
+        "character-archetype/v1"
+      ],
+      "ui_contributions": [
+        {
+          "contribution_id": "nap-ui-analysis-character-conflict-apply-v1-donors-analysis-review",
+          "slot": "donors.analysis.review"
+        }
+      ]
+    }
+  ],
+  "capability_projection_sha256": "486eaf7a8f63a58d98b14e250ebd27cc47538601315c23f74651af52dba74c76"
+}

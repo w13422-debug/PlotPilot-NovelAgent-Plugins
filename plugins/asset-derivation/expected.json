@@ -1,0 +1,177 @@
+{
+  "schema": "asset-derivation-package-expected/v1",
+  "plugin_id": "com.plotpilot.novelagent.asset-derivation",
+  "version": "0.1.0",
+  "package_files": [
+    ".gitattributes",
+    "asset_derivation/__init__.py",
+    "asset_derivation/build_backend.py",
+    "asset_derivation/capability_spec.py",
+    "asset_derivation/contract.py",
+    "asset_derivation/package_identity.py",
+    "asset_derivation/runtime.py",
+    "asset_derivation/schemas/data-package/index.json",
+    "asset_derivation/schemas/data-package/input.schema.json",
+    "asset_derivation/schemas/data-package/result.schema.json",
+    "asset_derivation/schemas/targets/character-archetype-v1.schema.json",
+    "asset_derivation/schemas/targets/character-card-v1.schema.json",
+    "asset_derivation/schemas/targets/plot-structure-template-v1.schema.json",
+    "asset_derivation/schemas/targets/world-entry-v1.schema.json",
+    "asset_derivation/schemas/targets/world-rule-template-v1.schema.json",
+    "asset_derivation/schemas/template-derive/index.json",
+    "asset_derivation/schemas/template-derive/input.schema.json",
+    "asset_derivation/schemas/template-derive/result.schema.json",
+    "backend/plotpilot_asset_derivation-0.1.0-py3-none-any.whl",
+    "backend/requirements.lock",
+    "backend/wheels/README.txt",
+    "migrations/manifest.json",
+    "plugin.json",
+    "pyproject.toml",
+    "rebuild_package.py",
+    "ui/metadata-only.json"
+  ],
+  "files_sha256": "79f0af9f4dd9c259ba686dd8b2a19db8c38f7a38cfa6ee47ecaa5eeb30ae4fd9  .gitattributes\n5c9b388b2d5d2832197ef1912de5b70131bda2efd661c4d561839b1e83caad43  asset_derivation/__init__.py\n9e2a12f79dd86dbfff9a15ccc9e546f0ec79f8a544e5368b000f4fe56a3a728c  asset_derivation/build_backend.py\n20523aad9fc0a3ac16165722532a8e3ee4bd78e1395f70a186bbcf3a16a6b645  asset_derivation/capability_spec.py\nf0df4715b29a9461b06adc2eb9c84f27ee92db742410e276c0f98296edf19e64  asset_derivation/contract.py\n7657f5328be70602b650e9b3935d65548291fe93e420fdc19ba48c96b1eeb1ff  asset_derivation/package_identity.py\n5673fadf3409db91dd892b1bf2da4e8ba68e42757050065e371a4b4e197add77  asset_derivation/runtime.py\n09f28d9324f651ff29d5ff5449ebd0c519240f6539f51419af2088c26ff8e6f4  asset_derivation/schemas/data-package/index.json\n58a384674c0e695676d36f45f717350a734f1e60dc9dd6ffeb94cd08de536131  asset_derivation/schemas/data-package/input.schema.json\n4e22a75091a446e5d7c2b6c8d9f1ebffd2312b7fd88341f86147c5f00b96d738  asset_derivation/schemas/data-package/result.schema.json\n96700f17bb3ce2c4acacf52e44887a357bb38220f93b52cb9bced0de9f290122  asset_derivation/schemas/targets/character-archetype-v1.schema.json\n9fd09af47654bb8581e9536bbfd3d9e6f5865207f49c41c86beee7be4070c0e2  asset_derivation/schemas/targets/character-card-v1.schema.json\nf94090896520f9a495fe91e488a9d61a321ee7bc0579d0e4ab241184f534649d  asset_derivation/schemas/targets/plot-structure-template-v1.schema.json\n5b607f8c54e170c3a2d72e8c16de495778d682e2c72dce0b07d0db40f50f6238  asset_derivation/schemas/targets/world-entry-v1.schema.json\na05996c8c22e49b71d190ebc23a6d19a340c9eedabc2ad02f0f90ae16c86cbe0  asset_derivation/schemas/targets/world-rule-template-v1.schema.json\ndb1add869dc93e33ab29c8787347ba9e9ee7062958006c7775860a2fd5f3ff99  asset_derivation/schemas/template-derive/index.json\n61c15e57587cef3d3ddd2e36fda60b78112b523e8c599a4cfed6e7e159344b90  asset_derivation/schemas/template-derive/input.schema.json\nda5daf3ac1785dcc331f1d1eaf8bda354bab1aa09d14b9ea8dedfa5dda074d43  asset_derivation/schemas/template-derive/result.schema.json\n442d4b02bf955ad3b7383b064f49a41786b0cd566c0849d9810959dadcb0b6c7  backend/plotpilot_asset_derivation-0.1.0-py3-none-any.whl\ne3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  backend/requirements.lock\nfffacd72a63a968f2ead5cbe8f77ad494c925f23d79851811f0bede8f3b4e571  backend/wheels/README.txt\n82849ab719b026812c6cc1829b75b4bc77ff1b510aa22a2efcab621defe4dcf9  migrations/manifest.json\nfe70191dfb041322f2d23bb467fd98977f03687b799faf4054e41bcfe2596810  plugin.json\n89246616bd7b0bcdc35c147736329453e4ff42cff290ffd031d36b6d6ef8fa51  pyproject.toml\n77d46817d764f19c02a749ab02352e4fdef82d243d430055e4dce1001650e314  rebuild_package.py\nee9195876bf9230c2f7aec3f03e54a5a4f58e5832ea471709e0612cca8c04d75  ui/metadata-only.json\n",
+  "package_hash": "ea153df71d8e023881b1300bc14e2425ddd1c264f95e2f9279da8c9fb7c5582c",
+  "release_id": "251455bb34c68e8a19762ad750148cf6bb53b86100a74508ae8ea39e2a532f58",
+  "provider_identity": {
+    "schema": "asset-derivation-package-identity/v1",
+    "plugin_id": "com.plotpilot.novelagent.asset-derivation",
+    "version": "0.1.0",
+    "package_hash": "ea153df71d8e023881b1300bc14e2425ddd1c264f95e2f9279da8c9fb7c5582c",
+    "release_id": "251455bb34c68e8a19762ad750148cf6bb53b86100a74508ae8ea39e2a532f58"
+  },
+  "descriptor_paths": [
+    "descriptor-template-derive.json",
+    "descriptor-data-package.json"
+  ],
+  "descriptor_sha256": {
+    "descriptor-template-derive.json": "d75e12a54698e50e35736498f7ea24263a1b5619a7318518f5ec636458996a61",
+    "descriptor-data-package.json": "b4ddb86419999ff539c10b9d98a6da060466889408caf867f3742a655a7ede21"
+  },
+  "descriptor_provider_identity": {
+    "descriptor-template-derive.json": {
+      "plugin_id": "com.plotpilot.novelagent.asset-derivation",
+      "release_id": "251455bb34c68e8a19762ad750148cf6bb53b86100a74508ae8ea39e2a532f58"
+    },
+    "descriptor-data-package.json": {
+      "plugin_id": "com.plotpilot.novelagent.asset-derivation",
+      "release_id": "251455bb34c68e8a19762ad750148cf6bb53b86100a74508ae8ea39e2a532f58"
+    }
+  },
+  "schema_index_paths": {
+    "asset.template.derive/v1": "asset_derivation/schemas/template-derive/index.json",
+    "asset.data-plugin.package/v1": "asset_derivation/schemas/data-package/index.json"
+  },
+  "schema_index_path_list": [
+    "asset_derivation/schemas/template-derive/index.json",
+    "asset_derivation/schemas/data-package/index.json"
+  ],
+  "schema_index_sha256": {
+    "asset_derivation/schemas/template-derive/index.json": "db1add869dc93e33ab29c8787347ba9e9ee7062958006c7775860a2fd5f3ff99",
+    "asset_derivation/schemas/data-package/index.json": "09f28d9324f651ff29d5ff5449ebd0c519240f6539f51419af2088c26ff8e6f4"
+  },
+  "schema_artifacts": {
+    "asset_derivation/schemas/template-derive/index.json": [
+      {
+        "schema_id": "asset.template.derive-request/v1",
+        "path": "schemas/template-derive/input.schema.json",
+        "sha256": "61c15e57587cef3d3ddd2e36fda60b78112b523e8c599a4cfed6e7e159344b90"
+      },
+      {
+        "schema_id": "asset.template.derive-result/v1",
+        "path": "schemas/template-derive/result.schema.json",
+        "sha256": "da5daf3ac1785dcc331f1d1eaf8bda354bab1aa09d14b9ea8dedfa5dda074d43"
+      }
+    ],
+    "asset_derivation/schemas/data-package/index.json": [
+      {
+        "schema_id": "asset.data-plugin.package-request/v1",
+        "path": "schemas/data-package/input.schema.json",
+        "sha256": "58a384674c0e695676d36f45f717350a734f1e60dc9dd6ffeb94cd08de536131"
+      },
+      {
+        "schema_id": "asset.data-plugin.package-result/v1",
+        "path": "schemas/data-package/result.schema.json",
+        "sha256": "4e22a75091a446e5d7c2b6c8d9f1ebffd2312b7fd88341f86147c5f00b96d738"
+      }
+    ]
+  },
+  "schema_artifact_sha256": {
+    "asset_derivation/schemas/data-package/index.json": "09f28d9324f651ff29d5ff5449ebd0c519240f6539f51419af2088c26ff8e6f4",
+    "asset_derivation/schemas/data-package/input.schema.json": "58a384674c0e695676d36f45f717350a734f1e60dc9dd6ffeb94cd08de536131",
+    "asset_derivation/schemas/data-package/result.schema.json": "4e22a75091a446e5d7c2b6c8d9f1ebffd2312b7fd88341f86147c5f00b96d738",
+    "asset_derivation/schemas/targets/character-archetype-v1.schema.json": "96700f17bb3ce2c4acacf52e44887a357bb38220f93b52cb9bced0de9f290122",
+    "asset_derivation/schemas/targets/character-card-v1.schema.json": "9fd09af47654bb8581e9536bbfd3d9e6f5865207f49c41c86beee7be4070c0e2",
+    "asset_derivation/schemas/targets/plot-structure-template-v1.schema.json": "f94090896520f9a495fe91e488a9d61a321ee7bc0579d0e4ab241184f534649d",
+    "asset_derivation/schemas/targets/world-entry-v1.schema.json": "5b607f8c54e170c3a2d72e8c16de495778d682e2c72dce0b07d0db40f50f6238",
+    "asset_derivation/schemas/targets/world-rule-template-v1.schema.json": "a05996c8c22e49b71d190ebc23a6d19a340c9eedabc2ad02f0f90ae16c86cbe0",
+    "asset_derivation/schemas/template-derive/index.json": "db1add869dc93e33ab29c8787347ba9e9ee7062958006c7775860a2fd5f3ff99",
+    "asset_derivation/schemas/template-derive/input.schema.json": "61c15e57587cef3d3ddd2e36fda60b78112b523e8c599a4cfed6e7e159344b90",
+    "asset_derivation/schemas/template-derive/result.schema.json": "da5daf3ac1785dcc331f1d1eaf8bda354bab1aa09d14b9ea8dedfa5dda074d43"
+  },
+  "wheel_path": "backend/plotpilot_asset_derivation-0.1.0-py3-none-any.whl",
+  "wheel_import": "asset_derivation",
+  "plugin_path": "plugin.json",
+  "identity_path": "asset_derivation/identity.json",
+  "capability_projection": [
+    {
+      "capability_id": "asset.template.derive/v1",
+      "descriptor_path": "descriptor-template-derive.json",
+      "schema_index_path": "asset_derivation/schemas/template-derive/index.json",
+      "input_schema": "asset.template.derive-request/v1",
+      "output_schema": "asset.template.derive-result/v1",
+      "result_contract": "candidate-batch/v1",
+      "bundle_type": "candidate_batch",
+      "supports": [
+        "run",
+        "resume",
+        "cancel"
+      ],
+      "deterministic": false,
+      "request_fields_group": [
+        "source",
+        "target"
+      ],
+      "accepted_data_formats": [
+        "character-archetype/v1",
+        "world-rule-template/v1",
+        "plot-structure-template/v1"
+      ],
+      "ui_contributions": [
+        {
+          "contribution_id": "nap-ui-asset-template-derive-v1-donors-asset-derivation",
+          "slot": "donors.asset.derivation"
+        },
+        {
+          "contribution_id": "nap-ui-asset-template-derive-v1-workbench-reference-panel",
+          "slot": "workbench.reference.panel"
+        }
+      ]
+    },
+    {
+      "capability_id": "asset.data-plugin.package/v1",
+      "descriptor_path": "descriptor-data-package.json",
+      "schema_index_path": "asset_derivation/schemas/data-package/index.json",
+      "input_schema": "asset.data-plugin.package-request/v1",
+      "output_schema": "asset.data-plugin.package-result/v1",
+      "result_contract": "artifact-bundle/v1",
+      "bundle_type": "artifact",
+      "supports": [
+        "run",
+        "validate"
+      ],
+      "deterministic": true,
+      "request_fields_group": [
+        "package"
+      ],
+      "accepted_data_formats": [],
+      "ui_contributions": [
+        {
+          "contribution_id": "nap-ui-asset-data-plugin-package-v1-donors-asset-derivation",
+          "slot": "donors.asset.derivation"
+        }
+      ]
+    }
+  ],
+  "capability_projection_sha256": "7b5ca8abc9179f7a7eb290fa78a1497bfd87e489dce8fc83eabd33ba18a410d3"
+}

@@ -1,0 +1,15 @@
+{
+  "schema": "character-line-method/v1",
+  "skill_id": "com.plotpilot.skill.donor.character-line",
+  "version": "1.0.0",
+  "input_format_id": "character-archetype/v1",
+  "capability_ids": [
+    "analysis.character.atom.extract/v1",
+    "analysis.character.card.generate/v1"
+  ],
+  "result_contract": "candidate-batch/v1",
+  "authority": "candidate_only",
+  "deterministic": false,
+  "evidence_required": true,
+  "source_binding": "exact_revision"
+}

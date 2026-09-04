@@ -1,0 +1,1 @@
+Extract one character line at a time. Preserve exact source EvidenceSpan and keep every result candidate-only.

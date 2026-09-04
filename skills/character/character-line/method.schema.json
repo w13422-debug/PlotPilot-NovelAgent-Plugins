@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "character-line-method/v1"
+    },
+    "skill_id": {
+      "const": "com.plotpilot.skill.donor.character-line"
+    },
+    "version": {
+      "const": "1.0.0"
+    },
+    "input_format_id": {
+      "const": "character-archetype/v1"
+    },
+    "capability_ids": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "result_contract": {
+      "const": "candidate-batch/v1"
+    },
+    "authority": {
+      "const": "candidate_only"
+    },
+    "deterministic": {
+      "const": false
+    },
+    "evidence_required": {
+      "const": true
+    },
+    "source_binding": {
+      "const": "exact_revision"
+    }
+  },
+  "required": [
+    "schema",
+    "skill_id",
+    "version",
+    "input_format_id",
+    "capability_ids",
+    "result_contract",
+    "authority",
+    "deterministic",
+    "evidence_required",
+    "source_binding"
+  ]
+}

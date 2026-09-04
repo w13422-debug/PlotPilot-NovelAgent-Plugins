@@ -1,0 +1,7 @@
+{
+  "schema": "asset-derivation-package-identity/v1",
+  "plugin_id": "com.plotpilot.novelagent.asset-derivation",
+  "version": "0.1.0",
+  "package_hash": "ea153df71d8e023881b1300bc14e2425ddd1c264f95e2f9279da8c9fb7c5582c",
+  "release_id": "251455bb34c68e8a19762ad750148cf6bb53b86100a74508ae8ea39e2a532f58"
+}

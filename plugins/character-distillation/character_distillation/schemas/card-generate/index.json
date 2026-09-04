@@ -1,0 +1,17 @@
+{
+  "schema": "provider-schema-index/v1",
+  "plugin_id": "com.plotpilot.novelagent.character-distillation",
+  "capability_id": "analysis.character.card.generate/v1",
+  "schemas": [
+    {
+      "schema_id": "analysis.character.card.generate-request/v1",
+      "path": "schemas/card-generate/input.schema.json",
+      "sha256": "1523f9a78414382c00c298ea51531a472f8b819a1f152ce9a9f8e4ae768e99c2"
+    },
+    {
+      "schema_id": "analysis.character.card.generate-result/v1",
+      "path": "schemas/card-generate/result.schema.json",
+      "sha256": "a490e3eabe0e35f2ab12f1f2a97b4ecd5f1a5c96cb4d2754f58fd5296bc078a0"
+    }
+  ]
+}

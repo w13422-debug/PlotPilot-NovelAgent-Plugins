@@ -1,0 +1,10 @@
+{
+  "schema": "character-skill-package-identity/v1",
+  "package_kind": "skill",
+  "skill_id": "com.plotpilot.skill.donor.character-line",
+  "version": "1.0.0",
+  "skill_package_hash": "c39a93bee6972379fc74b4384673e1d347cbae766966f0befcb0ea14032a1959",
+  "skill_release_id": "8bc11715021cf9c38a41457af65cd102abf8b0f2d5ce0b2647f2f9848bd51eff",
+  "separate_from_code_plugin_id": "com.plotpilot.novelagent.character-distillation",
+  "separate_from_data_plugin_id": "com.plotpilot.novelagent.character-archetype"
+}

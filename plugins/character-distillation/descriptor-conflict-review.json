@@ -1,0 +1,18 @@
+{
+  "schema": "capability-provider/v1",
+  "capability_id": "analysis.character.conflict.review/v1",
+  "provider": {
+    "plugin_id": "com.plotpilot.novelagent.character-distillation",
+    "release_id": "0eae2c7c905d2493937f2f7949c8c4e8cb5d49bf9799632f419035b1c9d8e02f"
+  },
+  "input_schema": "analysis.character.conflict.review-request/v1",
+  "output_schema": "analysis.character.conflict.review-result/v1",
+  "result_contract": "diagnostic-bundle/v1",
+  "supports": [
+    "run"
+  ],
+  "deterministic": false,
+  "accepted_data_formats": [
+    "character-archetype/v1"
+  ]
+}

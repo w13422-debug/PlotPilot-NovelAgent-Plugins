@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://plotpilot.local/data/character-archetype-v1",
+  "title": "PlotPilot character-archetype/v1 frozen closed Data schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "character-archetype/v1"
+    },
+    "format_id": {
+      "const": "character-archetype/v1"
+    },
+    "archetype_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^1\\.0\\.0$"
+    },
+    "dimensions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "dimension_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,63}$"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "allowed_values": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "dimension_id",
+          "label",
+          "description",
+          "required",
+          "allowed_values"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "atom_kinds": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,63}$"
+      },
+      "uniqueItems": true
+    },
+    "card_fields": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,63}$"
+      },
+      "uniqueItems": true
+    },
+    "relation_kinds": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,63}$"
+      },
+      "uniqueItems": true
+    },
+    "arc_stages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,63}$"
+      },
+      "uniqueItems": true
+    },
+    "interpreter_mappings": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "format_id": {
+            "const": "character-archetype/v1"
+          },
+          "plugin_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "capability_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "direction": {
+            "enum": [
+              "format_to_capability",
+              "capability_to_format"
+            ]
+          }
+        },
+        "required": [
+          "format_id",
+          "plugin_id",
+          "capability_id",
+          "direction"
+        ]
+      },
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "schema",
+    "format_id",
+    "archetype_id",
+    "version",
+    "dimensions",
+    "atom_kinds",
+    "card_fields",
+    "relation_kinds",
+    "arc_stages",
+    "interpreter_mappings"
+  ]
+}
