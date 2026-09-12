@@ -2,7 +2,7 @@
 
 这是一个为 **PlotPilot-Pluginized** 开发的 Novel-Agent 插件化适配项目。
 
-本项目以我自己原有的 [Novel-Agent](https://github.com/w13422-debug/Novel-Agent) 软件为能力来源，在保留原有小说创作、拆书、分析和写作能力的基础上，将功能拆分为一组可独立安装、独立运行、独立升级和独立验收的插件，适配到另一个软件：[PlotPilot-Pluginized](https://github.com/w13422-debug/PlotPilot-Pluginized)。
+本项目以我自己原有的 Novel-Agent 软件为能力来源，在保留原有小说创作、拆书、分析和写作能力的基础上，将功能拆分为一组可独立安装、独立运行、独立升级和独立验收的插件，适配到另一个软件：[PlotPilot-Pluginized](https://github.com/w13422-debug/PlotPilot-Pluginized)。
 
 对应的插件化仓库地址：
 
